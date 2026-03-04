@@ -128,21 +128,19 @@ Lfunc_begin1:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp6:
-	lea	r8, [rip + l_anon.[ID].3]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
+	lea	rcx, [rip + L_anon.[ID].3]
 	lea	rdi, [rbp - 24]
-	mov	edx, 8
-	xor	ecx, ecx
+	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp8:
-	lea	r8, [rip + l_anon.[ID].8]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
+	lea	rcx, [rip + L_anon.[ID].8]
 	lea	rdi, [rbp - 24]
-	mov	edx, 8
-	xor	ecx, ecx
+	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 	mov	qword ptr [rbp - 56], 2
@@ -472,12 +470,10 @@ L_anon.[ID].1:
 L_anon.[ID].2:
 	.asciz	"drop_flag"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].3:
-	.byte	19
-	.space	39
+L_anon.[ID].3:
+	.asciz	"v@:"
 
+	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.byte	10
@@ -498,13 +494,10 @@ l_anon.[ID].7:
 	.quad	L_anon.[ID].6
 	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].8:
-	.byte	21
-	.space	39
-
 	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].8:
+	.asciz	"@@:"
+
 L_anon.[ID].9:
 	.asciz	"DropIvars"
 

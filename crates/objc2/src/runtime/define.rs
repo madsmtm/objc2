@@ -14,7 +14,8 @@ use crate::runtime::{AnyClass, AnyObject, AnyProtocol, Bool, Imp, MethodImplemen
 use crate::sel;
 use crate::Message;
 
-fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
+// Used in tests
+pub(crate) fn method_type_encoding(ret: &Encoding, args: &[Encoding]) -> CString {
     // First two arguments are always self and the selector
     let mut types = format!("{ret}{}{}", <*mut AnyObject>::ENCODING, Sel::ENCODING);
     for enc in args {
@@ -256,7 +257,7 @@ impl ClassBuilder {
         F: MethodImplementation<Callee = T>,
     {
         unsafe {
-            self.add_method_inner(
+            self.add_method_mono(
                 sel,
                 F::Arguments::ENCODINGS,
                 &F::Return::ENCODING_RETURN,
@@ -265,7 +266,7 @@ impl ClassBuilder {
         }
     }
 
-    unsafe fn add_method_inner(
+    unsafe fn add_method_mono(
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
@@ -280,9 +281,22 @@ impl ClassBuilder {
             enc_args.len(),
         );
 
-        // Verify that, if the method is present on the superclass, that the
-        // encoding is correct.
-        #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
+        if cfg!(all(
+            debug_assertions,
+            not(feature = "disable-encoding-assertions")
+        )) {
+            self.verify_method(sel, enc_args, enc_ret);
+        }
+
+        let encoding = method_type_encoding(enc_ret, enc_args);
+
+        // SAFETY: The encoding is correct, and the rest is upheld by the caller.
+        unsafe { self.add_method_inner(sel, func, &encoding) }
+    }
+
+    // Verify that, if the method is present on the superclass, that the
+    // encoding is correct.
+    pub(crate) fn verify_method(&self, sel: Sel, enc_args: &[Encoding], enc_ret: &Encoding) {
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.instance_method(sel) {
                 if let Err(err) = super::verify::verify_method_signature(method, enc_args, enc_ret)
@@ -294,9 +308,11 @@ impl ClassBuilder {
                 }
             }
         }
+    }
 
-        let types = method_type_encoding(enc_ret, enc_args);
-        let success = unsafe { ffi::class_addMethod(self.as_mut_ptr(), sel, func, types.as_ptr()) };
+    pub(crate) unsafe fn add_method_inner(&mut self, sel: Sel, func: Imp, encoding: &CStr) {
+        let success =
+            unsafe { ffi::class_addMethod(self.as_mut_ptr(), sel, func, encoding.as_ptr()) };
         assert!(success.as_bool(), "failed to add method {sel}");
     }
 
@@ -321,7 +337,7 @@ impl ClassBuilder {
         F: MethodImplementation<Callee = AnyClass>,
     {
         unsafe {
-            self.add_class_method_inner(
+            self.add_class_method_mono(
                 sel,
                 F::Arguments::ENCODINGS,
                 &F::Return::ENCODING_RETURN,
@@ -330,7 +346,7 @@ impl ClassBuilder {
         }
     }
 
-    unsafe fn add_class_method_inner(
+    unsafe fn add_class_method_mono(
         &mut self,
         sel: Sel,
         enc_args: &[Encoding],
@@ -345,9 +361,22 @@ impl ClassBuilder {
             enc_args.len(),
         );
 
-        // Verify that, if the method is present on the superclass, that the
-        // encoding is correct.
-        #[cfg(all(debug_assertions, not(feature = "disable-encoding-assertions")))]
+        if cfg!(all(
+            debug_assertions,
+            not(feature = "disable-encoding-assertions")
+        )) {
+            self.verify_class_method(sel, enc_args, enc_ret);
+        }
+
+        let encoding = method_type_encoding(enc_ret, enc_args);
+
+        // SAFETY: The encoding is correct, and the rest is upheld by the caller.
+        unsafe { self.add_class_method_inner(sel, func, &encoding) }
+    }
+
+    // Verify that, if the method is present on the superclass, that the
+    // encoding is correct.
+    pub(crate) fn verify_class_method(&self, sel: Sel, enc_args: &[Encoding], enc_ret: &Encoding) {
         if let Some(superclass) = self.superclass() {
             if let Some(method) = superclass.class_method(sel) {
                 if let Err(err) = super::verify::verify_method_signature(method, enc_args, enc_ret)
@@ -359,10 +388,11 @@ impl ClassBuilder {
                 }
             }
         }
+    }
 
-        let types = method_type_encoding(enc_ret, enc_args);
+    pub(crate) unsafe fn add_class_method_inner(&mut self, sel: Sel, func: Imp, encoding: &CStr) {
         let success =
-            unsafe { ffi::class_addMethod(self.metaclass_mut(), sel, func, types.as_ptr()) };
+            unsafe { ffi::class_addMethod(self.metaclass_mut(), sel, func, encoding.as_ptr()) };
         assert!(success.as_bool(), "failed to add class method {sel}");
     }
 

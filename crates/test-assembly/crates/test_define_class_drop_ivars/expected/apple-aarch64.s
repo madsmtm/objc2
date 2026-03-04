@@ -141,16 +141,15 @@ Lloh14:
 	ldr	x1, [x8]
 Ltmp6:
 Lloh15:
-	adrp	x4, l_anon.[ID].3@PAGE
+	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
 Lloh16:
-	add	x4, x4, l_anon.[ID].3@PAGEOFF
+	add	x2, x2, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
 Lloh17:
-	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
+	adrp	x3, l_anon.[ID].3@PAGE
 Lloh18:
-	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
+	add	x3, x3, l_anon.[ID].3@PAGEOFF
 	mov	x0, sp
-	mov	w2, #8
-	mov	x3, #0
+	mov	w4, #4
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 Lloh19:
@@ -161,16 +160,15 @@ Lloh21:
 	ldr	x1, [x8]
 Ltmp8:
 Lloh22:
-	adrp	x4, l_anon.[ID].8@PAGE
+	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
 Lloh23:
-	add	x4, x4, l_anon.[ID].8@PAGEOFF
+	add	x2, x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
 Lloh24:
-	adrp	x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGE
+	adrp	x3, l_anon.[ID].8@PAGE
 Lloh25:
-	add	x5, x5, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)@PAGEOFF
+	add	x3, x3, l_anon.[ID].8@PAGEOFF
 	mov	x0, sp
-	mov	w2, #8
-	mov	x3, #0
+	mov	w4, #4
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 	mov	w8, #2
@@ -607,12 +605,10 @@ l_anon.[ID].1:
 l_anon.[ID].2:
 	.asciz	"drop_flag"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
 l_anon.[ID].3:
-	.byte	19
-	.space	39
+	.asciz	"v@:"
 
+	.section	__TEXT,__const
 	.p2align	3, 0x0
 l_anon.[ID].4:
 	.byte	10
@@ -633,13 +629,10 @@ l_anon.[ID].7:
 	.quad	l_anon.[ID].6
 	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].8:
-	.byte	21
-	.space	39
-
 	.section	__TEXT,__cstring,cstring_literals
+l_anon.[ID].8:
+	.asciz	"@@:"
+
 l_anon.[ID].9:
 	.asciz	"DropIvars"
 

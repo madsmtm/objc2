@@ -16,7 +16,7 @@ LBB0_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -135,7 +135,7 @@ LBB3_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -165,7 +165,7 @@ LBB4_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -192,7 +192,7 @@ Lfunc_begin1:
 	jne	LBB6_17
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
-	lea	rsi, [rip + L_anon.[ID].12]
+	lea	rsi, [rip + L_anon.[ID].11]
 	xor	edx, edx
 	call	_objc_allocateClassPair
 	test	rax, rax
@@ -200,51 +200,46 @@ Lfunc_begin1:
 	mov	qword ptr [rbp - 16], rax
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297]
 Ltmp6:
-	lea	r8, [rip + l_anon.[ID].3]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
+	lea	rcx, [rip + L_anon.[ID].3]
 	lea	rdi, [rbp - 16]
-	mov	edx, 8
-	xor	ecx, ecx
+	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp7:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755]
 Ltmp8:
-	lea	r8, [rip + l_anon.[ID].4]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
+	lea	rcx, [rip + L_anon.[ID].4]
 	lea	rdi, [rbp - 16]
-	mov	edx, 8
-	xor	ecx, ecx
+	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9]
 Ltmp10:
-	lea	rdx, [rip + l_anon.[ID].5]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)]
+	lea	rcx, [rip + L_anon.[ID].5]
 	lea	rdi, [rbp - 16]
-	mov	ecx, 1
-	mov	r8, rdx
+	mov	r8d, 5
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp11:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4]
 Ltmp12:
-	lea	r8, [rip + l_anon.[ID].6]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
+	lea	rcx, [rip + L_anon.[ID].6]
 	lea	rdi, [rbp - 16]
-	mov	edx, 8
-	xor	ecx, ecx
+	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp13:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0]
 Ltmp14:
-	lea	rdx, [rip + l_anon.[ID].5]
-	lea	r8, [rip + l_anon.[ID].6]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)]
+	lea	rcx, [rip + L_anon.[ID].7]
 	lea	rdi, [rbp - 16]
-	mov	ecx, 1
+	mov	r8d, 5
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp15:
 Ltmp16:
-	lea	rdi, [rip + L_anon.[ID].7]
+	lea	rdi, [rip + L_anon.[ID].8]
 	mov	esi, 8
 	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 Ltmp17:
@@ -255,7 +250,7 @@ Ltmp17:
 	call	_class_addProtocol
 LBB6_10:
 Ltmp18:
-	lea	rdi, [rip + l_anon.[ID].8]
+	lea	rdi, [rip + l_anon.[ID].9]
 	mov	esi, 9
 	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
 Ltmp19:
@@ -267,11 +262,10 @@ Ltmp19:
 LBB6_13:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d]
 Ltmp20:
-	lea	rdx, [rip + l_anon.[ID].11]
-	lea	r8, [rip + l_anon.[ID].6]
-	lea	r9, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)]
+	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)]
+	lea	rcx, [rip + L_anon.[ID].10]
 	lea	rdi, [rbp - 16]
-	mov	ecx, 1
+	mov	r8d, 15
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp21:
 	mov	rbx, qword ptr [rbp - 16]
@@ -286,8 +280,8 @@ LBB6_17:
 	lea	rdi, [rip + l_anon.[ID].2]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB6_16:
-	lea	rdi, [rip + L_anon.[ID].12]
-	lea	rdx, [rip + l_anon.[ID].14]
+	lea	rdi, [rip + L_anon.[ID].11]
+	lea	rdx, [rip + l_anon.[ID].13]
 	mov	esi, 8
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB6_15:
@@ -355,7 +349,7 @@ LBB8_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -457,7 +451,7 @@ LBB10_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -489,7 +483,7 @@ LBB11_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -512,7 +506,7 @@ LBB12_1:
 	mov	qword ptr [rbp - 16], rax
 	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
 	lea	rcx, [rip + l_anon.[ID].0]
-	lea	r8, [rip + l_anon.[ID].14]
+	lea	r8, [rip + l_anon.[ID].13]
 	lea	rdx, [rbp - 16]
 	xor	esi, esi
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
@@ -625,66 +619,44 @@ l_anon.[ID].2:
 	.quad	L_anon.[ID].1
 	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
 
-	.section	__TEXT,__const
-	.p2align	3, 0x0
-l_anon.[ID].3:
-	.byte	23
-	.space	39
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].3:
+	.asciz	"#@:"
 
-	.p2align	3, 0x0
-l_anon.[ID].4:
-	.byte	19
-	.space	39
+L_anon.[ID].4:
+	.asciz	"v@:"
 
-	.p2align	3, 0x0
-l_anon.[ID].5:
-	.space	1
-	.space	39
+L_anon.[ID].5:
+	.asciz	"c@:c"
 
-	.p2align	3, 0x0
-l_anon.[ID].6:
-	.byte	21
-	.space	39
+L_anon.[ID].6:
+	.asciz	"@@:"
+
+L_anon.[ID].7:
+	.asciz	"@@:c"
 
 	.section	__TEXT,__literal8,8byte_literals
-L_anon.[ID].7:
+L_anon.[ID].8:
 	.ascii	"NSObject"
 
 	.section	__TEXT,__const
-l_anon.[ID].8:
+l_anon.[ID].9:
 	.ascii	"NSCopying"
 
-l_anon.[ID].9:
-	.ascii	"_NSZone"
-
-	.section	__DATA,__const
-	.p2align	3, 0x0
-l_anon.[ID].10:
-	.byte	30
-	.space	7
-	.quad	l_anon.[ID].9
-	.asciz	"\007\000\000\000\000\000\000"
-	.quad	8
-	.space	8
-
-	.p2align	3, 0x0
-l_anon.[ID].11:
-	.byte	27
-	.space	7
-	.quad	l_anon.[ID].10
-	.space	24
-
 	.section	__TEXT,__cstring,cstring_literals
-L_anon.[ID].12:
+L_anon.[ID].10:
+	.asciz	"@@:^{_NSZone=}"
+
+L_anon.[ID].11:
 	.asciz	"NoIvars"
 
-L_anon.[ID].13:
+L_anon.[ID].12:
 	.asciz	"crates/$DIR/lib.rs"
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
-l_anon.[ID].14:
-	.quad	L_anon.[ID].13
+l_anon.[ID].13:
+	.quad	L_anon.[ID].12
 	.asciz	"=\000\000\000\000\000\000\000\r\000\000\000\001\000\000"
 
 	.globl	___CLASS_NoIvars

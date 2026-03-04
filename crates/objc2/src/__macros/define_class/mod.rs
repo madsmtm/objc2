@@ -1,10 +1,12 @@
 mod checks;
+mod encoding;
 mod ivars;
 mod output_impls;
 mod register_impls;
 mod thunk;
 
 pub use self::checks::*;
+pub use self::encoding::*;
 pub use self::ivars::*;
 pub use self::thunk::*;
 

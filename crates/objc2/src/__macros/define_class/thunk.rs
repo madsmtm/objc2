@@ -20,7 +20,10 @@
 //! few arguments compared to the selector.
 use core::marker::PhantomData;
 
+use objc2_encode::Encoding;
+
 use super::super::{ConvertArgument, ConvertError, KindDefined, RetainSemantics};
+use crate::encode::{EncodeArguments, EncodeReturn};
 use crate::rc::Retained;
 use crate::runtime::{MethodImplementation, Sel};
 use crate::ClassType;
@@ -49,6 +52,22 @@ pub trait ConvertDefinedFn<'f, FnMarker, MethodFamily, Kind>: ClassType {
     /// The generated thunk.
     const THUNK: <Self::Func as FnToExternFn<FnMarker, MethodFamily, Kind, Self>>::ExternFn =
         { Self::Func::THUNK };
+
+    /// Helper for getting the return encoding of the extern function.
+    const RETURN_ENCODING: Encoding = <<<Self::Func as FnToExternFn<
+        FnMarker,
+        MethodFamily,
+        Kind,
+        Self,
+    >>::ExternFn as MethodImplementation>::Return as EncodeReturn>::ENCODING_RETURN;
+
+    /// Helper for getting the argument encodings of the extern function.
+    const ARGUMENT_ENCODINGS: &'static [Encoding] = <<<Self::Func as FnToExternFn<
+        FnMarker,
+        MethodFamily,
+        Kind,
+        Self,
+    >>::ExternFn as MethodImplementation>::Arguments as EncodeArguments>::ENCODINGS;
 }
 
 /// Function pointers that can be converted to `extern "C-unwind"` function
