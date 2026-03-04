@@ -16,8 +16,14 @@ unsafe fn assert_encoding(s: *const c_char, e: Encoding) {
     if !e.equivalent_to_str(s) {
         panic!("{} were not equivalent to {}", e, s);
     }
+    let expected_str = e.to_string();
     // To ensure `equivalent_to_str` is implemented correctly:
-    assert_eq!(e.to_string(), s.trim_start_matches('r'));
+    assert_eq!(expected_str, s.trim_start_matches('r'));
+    // To ensure `str_array` is implemented correctly:
+    assert_eq!(
+        expected_str,
+        str::from_utf8(&e.str_array::<300>()[..e.str_len()]).unwrap()
+    );
 }
 
 #[allow(unused)]

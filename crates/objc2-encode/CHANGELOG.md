@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 * Added `Encoding::Int128` and `Encoding::UInt128`.
+* Added `Encoding::str_len` and `Encoding::str_array` to allow statically
+  constructing encoding strings.
 
 ### Changed
 * Equivalence comparisons now consider `Encoding::String` as equivalent to

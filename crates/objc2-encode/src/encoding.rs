@@ -2,6 +2,7 @@ use core::fmt;
 
 use crate::helper::{compare_encodings, Helper, NestingLevel};
 use crate::parse::Parser;
+use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
 use crate::EncodingBox;
 
 /// An Objective-C type-encoding.
@@ -281,6 +282,81 @@ impl Encoding {
     pub fn size(&self) -> Option<usize> {
         Helper::new(self).size(NestingLevel::new())
     }
+
+    /// The length of the encoding when turned into a string.
+    ///
+    /// This returns the same value as `self.to_string().len()`, but is
+    /// available in `const` to allow constructing static encoding strings.
+    ///
+    /// See [`str_array`][Self::str_array] for more information.
+    pub const fn str_len(&self) -> usize {
+        static_encoding_str_len(self, NestingLevel::new())
+    }
+
+    /// An array containing the encoding's contents.
+    ///
+    /// The length should be at least [`str_len`][Self::str_len], remaining
+    /// bytes are zero-filled.
+    ///
+    /// This is equivalent to `self.to_string().to_bytes()`, but is available
+    /// in `const` to allow constructing static encoding strings.
+    ///
+    /// This is most often useful in macros - it is not really possible to use
+    /// in generics yet, it requires [`#![feature(generic_const_exprs)]`][g],
+    /// but once that's available, this should be useful there too.
+    ///
+    /// [g]: https://github.com/rust-lang/rust/issues/76560
+    ///
+    /// # Panics
+    ///
+    /// Panics if `LEN` is less than [`str_len`][Self::str_len], or if the
+    /// encoding contains structs or unions with invalid identifiers.
+    ///
+    /// # Example
+    ///
+    /// Construct an encoding string at `const`-time.
+    ///
+    /// ```
+    /// use core::ffi::CStr;
+    /// use objc2_encode::Encoding;
+    ///
+    /// // Let's say you have some constant encoding.
+    /// const ENCODING: Encoding = Encoding::Pointer(&Encoding::Struct("foo", &[Encoding::Sel, Encoding::Int]));
+    ///
+    /// // This can be converted to a constant string.
+    /// //
+    /// // SAFETY: `.str_array()` is guaranteed to be valid UTF-8.
+    /// const ENCODING_STR: &str = unsafe {
+    ///     str::from_utf8_unchecked(&ENCODING.str_array::<{ ENCODING.str_len() }>())
+    /// };
+    /// assert_eq!(ENCODING_STR, "^{foo=:i}");
+    ///
+    /// // Or to a constant C-string.
+    /// //
+    /// // SAFETY: `.str_array()` is guaranteed to not contain any NUL bytes,
+    /// // apart from at the end because we specify `.str_len() + 1`.
+    /// const ENCODING_CSTR: &CStr = unsafe {
+    ///     CStr::from_bytes_with_nul_unchecked(&ENCODING.str_array::<{ ENCODING.str_len() + 1 }>())
+    /// };
+    /// assert_eq!(ENCODING_CSTR, c"^{foo=:i}");
+    /// ```
+    ///
+    /// Attempt to construct an encoding string from an invalid encoding.
+    ///
+    /// ```should_panic
+    /// use objc2_encode::Encoding;
+    ///
+    /// // Invalid struct name (`-` is not an identifier).
+    /// const ENCODING: Encoding = Encoding::Pointer(&Encoding::Struct("-", &[Encoding::Int]));
+    ///
+    /// // This will panic.
+    /// let _ = str::from_utf8(&ENCODING.str_array::<{ ENCODING.str_len() }>()).unwrap();
+    ///
+    /// // If we did ^ at `const`-time, it would be a post-mono compile-error.
+    /// ```
+    pub const fn str_array<const LEN: usize>(&self) -> [u8; LEN] {
+        static_encoding_str_array(self, NestingLevel::new())
+    }
 }
 
 /// Formats this [`Encoding`] in a similar way that the `@encode` directive
@@ -298,7 +374,6 @@ impl fmt::Display for Encoding {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::static_str::{static_encoding_str_array, static_encoding_str_len};
     use alloc::boxed::Box;
     use alloc::string::ToString;
     use alloc::vec;
@@ -387,7 +462,7 @@ mod tests {
                 )*
 
                 // Check static str
-                const STATIC_ENCODING_DATA: [u8; static_encoding_str_len(&E, NestingLevel::new())] = static_encoding_str_array(&E, NestingLevel::new());
+                const STATIC_ENCODING_DATA: [u8; E.str_len()] = E.str_array();
                 const STATIC_ENCODING_STR: &str = unsafe { core::str::from_utf8_unchecked(&STATIC_ENCODING_DATA) };
                 assert_eq!(STATIC_ENCODING_STR, $string, "static");
             }
