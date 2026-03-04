@@ -1,4 +1,7 @@
-use crate::helper::{Helper, NestingLevel};
+use crate::{
+    helper::{ContainerKind, Helper, NestingLevel},
+    parse::verify_name,
+};
 
 use super::Encoding;
 
@@ -53,6 +56,7 @@ pub(crate) const fn static_encoding_str_len(encoding: &Encoding, level: NestingL
             1 + static_int_str_len(len) + static_encoding_str_len(item, level.array()) + 1
         }
         Container(_, name, items) => {
+            // Don't verify name here, we'll check it in `str_array` instead.
             let mut res = 1 + name.len();
             if let Some(level) = level.container_include_fields() {
                 res += 1;
@@ -148,7 +152,6 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
         }
         Array(len, item) => {
             let level = level.array();
-            let mut res_i = 0;
 
             res[res_i] = b'[';
             res_i += 1;
@@ -174,7 +177,12 @@ pub(crate) const fn static_encoding_str_array<const LEN: usize>(
             res[res_i] = b']';
         }
         Container(kind, name, items) => {
-            let mut res_i = 0;
+            if !verify_name(name) {
+                match kind {
+                    ContainerKind::Struct => panic!("struct name was not a valid identifier"),
+                    ContainerKind::Union => panic!("union name was not a valid identifier"),
+                }
+            }
 
             res[res_i] = kind.start_byte();
             res_i += 1;

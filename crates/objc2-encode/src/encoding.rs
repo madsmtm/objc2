@@ -144,6 +144,12 @@ pub enum Encoding {
     ///
     /// Note that the `=` may be omitted in some situations; this is
     /// considered equal to the case where there are no fields.
+    ///
+    /// # Panics
+    ///
+    /// If the name contains an invalid identifier, formatting or testing
+    /// equivalence may panic.
+    // Valid as `str`, identifiers in C are always valid unicode.
     Struct(&'static str, &'static [Encoding]),
     /// A union with the given name and members.
     ///
@@ -153,6 +159,12 @@ pub enum Encoding {
     ///
     /// Note that the `=` may be omitted in some situations; this is
     /// considered equal to the case where there are no members.
+    ///
+    /// # Panics
+    ///
+    /// If the name contains an invalid identifier, formatting or testing
+    /// equivalence may panic.
+    // Valid as `str`, identifiers in C are always valid unicode.
     Union(&'static str, &'static [Encoding]),
     /// The type does not have an Objective-C encoding.
     ///
@@ -700,21 +712,37 @@ mod tests {
     }
 
     #[test]
-    #[should_panic = "Struct name was not a valid identifier"]
+    #[should_panic = "struct name was not a valid identifier: \"\""]
     fn struct_empty() {
         let _ = Encoding::Struct("", &[]).to_string();
     }
 
     #[test]
-    #[should_panic = "Struct name was not a valid identifier"]
-    fn struct_unicode() {
-        let _ = Encoding::Struct("☃", &[Encoding::Char]).to_string();
+    #[should_panic = "struct name was not a valid identifier: \"\\0\""]
+    fn nul() {
+        let _ = Encoding::Struct("\0", &[]).to_string();
     }
 
     #[test]
-    #[should_panic = "Union name was not a valid identifier"]
+    #[should_panic = "struct name was not a valid identifier: \"@\""]
+    fn encoding() {
+        let _ = Encoding::Struct("@", &[]).to_string();
+    }
+
+    #[test]
+    fn struct_unicode() {
+        let res = Encoding::Struct("tést", &[Encoding::Char]).to_string();
+        assert_eq!(res, "{tést=c}");
+
+        // Not actually valid XID_Start, but we don't check that.
+        let res = Encoding::Struct("☃", &[]).to_string();
+        assert_eq!(res, "{☃=}");
+    }
+
+    #[test]
+    #[should_panic = "union name was not a valid identifier: \"a-b\""]
     fn union_invalid_identifier() {
-        let _ = Encoding::Union("a-b", &[Encoding::Char]).equivalent_to_str("(☃=c)");
+        let _ = Encoding::Union("a-b", &[Encoding::Char]).equivalent_to_str("(a-b=c)");
     }
 
     // Note: A raw `?` cannot happen in practice, since functions can only

@@ -8,7 +8,7 @@ use core::fmt;
 use crate::helper::{ContainerKind, EncodingType, Helper, NestingLevel, Primitive};
 use crate::{Encoding, EncodingBox};
 
-/// Check whether a struct or union name is a valid identifier
+/// Check whether a struct or union name is probably a valid identifier.
 pub(crate) const fn verify_name(name: &str) -> bool {
     let bytes = name.as_bytes();
 
@@ -23,7 +23,10 @@ pub(crate) const fn verify_name(name: &str) -> bool {
     let mut i = 0;
     while i < bytes.len() {
         let byte = bytes[i];
-        if !(byte.is_ascii_alphanumeric() || byte == b'_') {
+        // C identifiers can contain unicode characters, roughly `XID_Start` +
+        // `XID_Continue`. We don't wanna pull in a whole crate to check that,
+        // so allow all non-ASCII characters here for simplicity.
+        if byte.is_ascii() && !byte.is_ascii_alphanumeric() && byte != b'_' {
             return false;
         }
         i += 1;
@@ -319,6 +322,9 @@ impl Parser<'_> {
                 self.expect_byte(b']')
             }
             Helper::Container(kind, name, items) => {
+                if !verify_name(name) {
+                    panic!("{kind} name was not a valid identifier: {name:?}");
+                }
                 self.expect_byte(kind.start_byte())?;
                 self.expect_one_of_str([name])?;
                 if let Some(level) = level.container_include_fields() {
