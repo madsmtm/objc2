@@ -45,6 +45,109 @@
     doc = "[`MTLDevice::newLibraryWithSource_options_error`]: #needs-MTLDevice-feature"
 )]
 //!
+//! # Metal 4 Support
+//!
+//! This crate includes comprehensive support for Metal 4, introduced at WWDC 2025.
+//! Metal 4 provides significant new features including:
+//!
+//! - **Shader Direct Inference**: ML inference directly in Metal shaders
+//! - **Explicit Memory Management**: Direct control via [`MTL4CommandAllocator`]
+//! - **New Core APIs**: [`MTL4CommandQueue`], [`MTL4CommandBuffer`], [`MTL4Compiler`], etc.
+//!
+#![cfg_attr(
+    not(feature = "std"),
+    doc = "[`MTL4CommandAllocator`]: #needs-std-feature"
+)]
+//!
+//! ## Version Requirements
+//!
+//! Metal 4 requires specific OS versions:
+//!
+//! - macOS 26.0+ (Tahoe)
+//! - iOS 26.0+
+//! - iPadOS 26.0+
+//! - tvOS 26.0+
+//! - visionOS 26.0+
+//!
+//! ## Availability Detection
+//!
+//! Always check for Metal 4 availability at runtime, as not all devices support it:
+#![cfg_attr(
+    feature = "std",
+    doc = r##"
+//! ```no_run
+//! use objc2_metal::metal4_detection;
+//!
+//! if metal4_detection::is_metal4_available() {
+//!     // Use Metal 4 features
+//! } else {
+//!     // Fall back to earlier Metal versions
+//! }
+//! ```
+//! "##
+)]
+//!
+#![cfg_attr(
+    not(feature = "std"),
+    doc = "//! ```ignore\n//! // Metal 4 detection requires the `std` feature\n//! ```\n"
+)]
+//!
+//! Or use the [`available!`] macro for more granular control:
+//!
+//! ```no_run
+//! use objc2::available;
+//!
+//! if available!(macos = 26.0, ios = 26.0, tvos = 26.0, visionos = 26.0) {
+//!     // Use Metal 4 features
+//! } else {
+//!     // Fall back to earlier Metal versions
+//! }
+//! ```
+//!
+#![cfg_attr(
+    not(feature = "std"),
+    doc = "[`available!`]: https://docs.rs/objc2/latest/objc2/macro.available.html"
+)]
+//!
+#![cfg_attr(
+    feature = "std",
+    doc = r##"//! [`available!`]: https://docs.rs/objc2/latest/objc2/macro.available.html
+//! "##
+)]
+//!
+//! ## Metal 4 Types
+//!
+//! The following Metal 4 types are available when the corresponding features are enabled:
+//!
+//! - **Command Pipeline**: [`MTL4CommandQueue`], [`MTL4CommandBuffer`], [`MTL4CommandAllocator`], [`MTL4CommandEncoder`]
+//! - **Rendering**: [`MTL4RenderCommandEncoder`], [`MTL4RenderPass`], [`MTL4RenderPipeline`]
+//! - **Compute**: [`MTL4ComputeCommandEncoder`], [`MTL4ComputePipeline`]
+//! - **Compilation**: [`MTL4Compiler`], [`MTL4CompilerTask`], [`MTL4FunctionDescriptor`]
+//! - **Resources**: [`MTL4ArgumentTable`], [`MTL4BufferRange`], [`MTL4AccelerationStructure`]
+//! - **Machine Learning**: [`MTL4MachineLearningCommandEncoder`], [`MTL4MachineLearningPipeline`]
+//!
+#![cfg_attr(
+    not(any(
+        feature = "MTL4CommandQueue",
+        feature = "MTL4CommandBuffer",
+        feature = "MTL4CommandAllocator",
+        feature = "MTL4Compiler"
+    )),
+    doc = "//! [`MTL4CommandQueue`]: #needs-MTL4CommandQueue-feature\n"
+)]
+//!
+#![cfg_attr(
+    not(feature = "std"),
+    doc = r##"//! See [`metal4_detection`] module for runtime detection utilities.
+//! "##
+)]
+//!
+#![cfg_attr(
+    feature = "std",
+    doc = r##"//! See [`metal4_detection`] module for comprehensive runtime detection utilities.
+//! "##
+)]
+//!
 //! # Safety considerations
 //!
 //! Metal allows running arbitrary code on the GPU. We treat memory safety
@@ -99,7 +202,8 @@
 #![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
-#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
+// Disabled so `--all-features` works on stable Rust.
+// #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-metal/0.3.2")]
@@ -119,6 +223,10 @@ mod counters;
 #[cfg(feature = "MTLDevice")]
 mod device;
 mod generated;
+
+// Metal 4 detection utilities (always available when std feature is enabled)
+#[cfg(feature = "std")]
+pub mod metal4_detection;
 #[cfg(feature = "unstable-private")]
 mod private;
 #[cfg(feature = "MTLRasterizationRate")]
@@ -137,8 +245,12 @@ pub use self::acceleration_structure_types::MTLPackedFloat3;
 pub use self::counters::*;
 #[cfg(feature = "MTLDevice")]
 pub use self::device::*;
+
+// Re-export Metal 4 detection utilities
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "std")]
+pub use self::metal4_detection::*;
 #[cfg(feature = "unstable-private")]
 pub use self::private::MTLDevicePrivate;
 #[cfg(feature = "MTLResource")]

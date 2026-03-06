@@ -52,13 +52,8 @@ impl MTLRenderPipelineReflection {
     );
 }
 
-#[cfg(feature = "MTLSampler")]
-impl MTLSamplerDescriptor {
-    extern_methods!(
-        #[unsafe(method(setLodBias:))]
-        pub unsafe fn setLodBias(&self, bias: f32);
-    );
-}
+// setLodBias is now defined in the generated MTLSampler.rs file
+// This duplicate definition has been removed to fix compilation error
 
 #[cfg(feature = "MTLVertexDescriptor")]
 impl MTLVertexDescriptor {
