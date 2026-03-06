@@ -52,14 +52,6 @@ impl MTLRenderPipelineReflection {
     );
 }
 
-#[cfg(feature = "MTLSampler")]
-impl MTLSamplerDescriptor {
-    extern_methods!(
-        #[unsafe(method(setLodBias:))]
-        pub unsafe fn setLodBias(&self, bias: f32);
-    );
-}
-
 #[cfg(feature = "MTLVertexDescriptor")]
 impl MTLVertexDescriptor {
     extern_methods!(
