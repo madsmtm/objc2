@@ -15,8 +15,9 @@ Note in particular that **extensions must be bundled inside another application*
     ```
 
 2. Navigate to `System Settings > General > Login Items & Extensions`, and scroll down to the Extensions section.
-    - Opening the link `x-apple.systempreferences:com.apple.LoginItems-Settings.extension` should do the trick.
-    - In the File System Extensions cell, click the ⓘ symbol, and enable "FSKit Example Extension".
+    - (Opening the link `x-apple.systempreferences:com.apple.LoginItems-Settings.extension` should do the trick).
+    - On macOS 26, click `By Category`.
+    - In the `File System Extensions` cell, click the ⓘ symbol, and enable "FSKit Example Extension".
 
 4. Create a directory to serve as the mount target for the file system:
     ```sh
@@ -39,7 +40,7 @@ Note in particular that **extensions must be bundled inside another application*
 
 6. Optional: In another terminal, tun the following to get the logging output:
     ```sh
-    /usr/bin/log stream --predicate 'subsystem = "fskit-example"' --style compact --level debug
+    /usr/bin/log stream --predicate 'subsystem == "fskit-example"' --style compact --level debug
     ```
 
     See [`println!` debugging](#println-debugging) below for details.
@@ -118,7 +119,7 @@ Writing to `/tmp` files won't work either, as those are sandboxed away too.
 
 Instead, we use `tracing-oslog` to log errors via Apple's OSLog. These can be viewed with:
 ```sh
-/usr/bin/log stream --predicate 'subsystem = "fskit-example"' --style compact --level debug
+/usr/bin/log stream --predicate 'subsystem == "fskit-example"' --style compact --level debug
 ```
 
 That said, I _have_ seen it fail at the boundaries / entry/exit points (`deactivateWithOptions:replyHandler:` for example isn't logged IIRC), so it's not a perfect solution.

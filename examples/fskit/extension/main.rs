@@ -19,7 +19,7 @@ fn setup() {
     // stderr is swallowed up by FSKit when spawning our process.
     //
     // View all logs with:
-    // /usr/bin/log stream --predicate 'subsystem = "fskit-example"' --style compact --level debug
+    // /usr/bin/log stream --predicate 'subsystem == "fskit-example"' --style compact --level debug
     let logger = OsLogger::new("fskit-example", "default");
     tracing_subscriber::registry().with(logger).init();
 
