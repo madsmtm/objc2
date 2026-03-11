@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- Unsure whether this is necessary, or legacy? -->
+	<!-- <key>com.apple.application-identifier</key>
+	<string>com.example.fskit-example.extension</string> -->
+	<!-- App extensions must be sandboxed. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- When using ad-hoc signing, we don't request FSKit app extension capabilities, because that's gonna fail.
+		It doesn't seem to be needed when using ad-hoc signing though. -->
+	<!-- <key>com.apple.developer.fskit.fsmodule</key>
+	<true/> -->
+</dict>
+</plist>
