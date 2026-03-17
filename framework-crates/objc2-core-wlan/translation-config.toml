@@ -12,3 +12,6 @@ class.CWConfiguration.counterpart.mutable-subclass = "CoreWLAN.CWConfiguration.C
 class.CWMutableConfiguration.counterpart.immutable-superclass = "CoreWLAN.CWConfiguration.CWConfiguration"
 class.CWNetworkProfile.counterpart.mutable-subclass = "CoreWLAN.CWNetworkProfile.CWMutableNetworkProfile"
 class.CWMutableNetworkProfile.counterpart.immutable-superclass = "CoreWLAN.CWNetworkProfile.CWNetworkProfile"
+
+# See #828: the method has a wrongly-declared return nullability.
+class.CWConfiguration.methods.networkProfiles.return.nullability = "nullable"
