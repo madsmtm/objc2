@@ -12,9 +12,9 @@ Furthermore, the crates are (usually automatically) derived from Apple SDKs,
 and that may have implications for licensing, see below for details.
 
 [#23]: https://github.com/madsmtm/objc2/issues/23
-[MIT]: https://opensource.org/license/MIT
-[Zlib]: https://zlib.net/zlib_license.html
-[Apache-2.0]: https://www.apache.org/licenses/LICENSE-2.0
+[MIT]: ./LICENSE-MIT.txt
+[Zlib]: ./LICENSE-ZLIB.txt
+[Apache-2.0]: ./LICENSE-APACHE.txt
 
 
 ## Apple SDKs
