@@ -23,7 +23,7 @@ pub fn get_text_2(pasteboard: &NSPasteboard) -> Option<Retained<NSString>> {
     let obj = objects?.firstObject()?;
     // We now have to convert the object into an NSString, which we know it to
     // be since that's what we told `readObjectsForClasses:options:` we wanted.
-    Some(obj.downcast::<NSString>().unwrap())
+    obj.downcast::<NSString>().ok()
 }
 
 pub fn set_text(pasteboard: &NSPasteboard, text: &NSString) {
