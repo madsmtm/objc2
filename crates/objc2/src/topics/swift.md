@@ -132,3 +132,4 @@ To my knowledge, there exist a few projects in the Rust ecosystem that help with
 - [`swift-bridge`](https://github.com/chinedufn/swift-bridge)
 - [`swift-bindgen`](https://github.com/nvzqz/swift-bindgen)
 - [UniFFI](https://github.com/mozilla/uniffi-rs)
+- [`rswift`](https://github.com/eugenehp/rswift)
