@@ -5,19 +5,27 @@ Automatically mapping Apple's Swift-only frameworks is out of scope for the `obj
 That said, if you need to interface with Swift from Rust, there are a few ways to go about it.
 
 
-## Exposing C APIs with `@_cdecl`
+## Exposing C APIs with `@c`
 
-The simplest way is probably to sidestep `objc2` directly, and instead expose functionality as `@_cdecl("...")`.
+The simplest way is probably to sidestep `objc2` directly, and instead expose functionality as `@c(...)` (before Swift 6.3, use `@_cdecl("...")`).
 
 Something like the following:
 
 ```swift
 // foo.swift
 
+#if compiler(>=6.3)
+@c(foo)
+func foo() -> Int32 {
+    return 42;
+}
+#else
+// Support older Swift versions
 @_cdecl("foo")
 func foo() -> Int32 {
     return 42;
 }
+#endif
 ```
 
 ```rust,no_run
