@@ -43,6 +43,7 @@ default = [
     "PKPushCredentials",
     "PKPushPayload",
     "PKPushRegistry",
+    "PKVoIPPushMetadata",
     "block2",
     "dispatch2",
 ]
@@ -66,3 +67,4 @@ PKPushRegistry = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+PKVoIPPushMetadata = []

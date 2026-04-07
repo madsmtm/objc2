@@ -1536,9 +1536,11 @@ dependencies = [
 name = "objc2-browser-kit"
 version = "0.3.2"
 dependencies = [
+ "bitflags",
  "block2",
  "objc2",
  "objc2-foundation",
+ "objc2-ui-kit",
 ]
 
 [[package]]
@@ -1570,6 +1572,8 @@ dependencies = [
  "dispatch2",
  "objc2",
  "objc2-core-foundation",
+ "objc2-core-location",
+ "objc2-core-media",
  "objc2-foundation",
  "objc2-map-kit",
  "objc2-quartz-core",

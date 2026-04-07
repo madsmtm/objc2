@@ -1,6 +1,7 @@
 framework = "CloudKit"
 crate = "objc2-cloud-kit"
 required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
 macos = "10.10"
 maccatalyst = "13.0"
 ios = "8.0"

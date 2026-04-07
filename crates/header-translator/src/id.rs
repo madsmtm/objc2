@@ -112,7 +112,7 @@ impl Location {
 
             // These types are redefined in the framework crate itself.
             "Darwin.MacTypes" => "__builtin__".into(),
-            "Darwin.device" => "__builtin__".into(),
+            name if name.starts_with("Darwin.device") => "__builtin__".into(),
             "uuid.uuid_t" => "__builtin__".into(),
             "libkern.OSTypes" => "__builtin__".into(),
             "Darwin.net.if_media" => "__builtin__".into(),
@@ -142,7 +142,8 @@ impl Location {
                 "__core__.ffi".into()
             }
             // c_float and c_double
-            "_float" | "_Builtin_float" => "__core__.ffi".into(),
+            "_float" => "__core__.ffi".into(),
+            name if name.starts_with("_Builtin_float") => "__core__.ffi".into(),
 
             // Unstable in FFI.
             name if name.starts_with("simd") => "__core__.simd".into(),

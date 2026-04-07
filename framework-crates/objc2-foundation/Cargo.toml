@@ -173,6 +173,7 @@ default = [
     "NSPortMessage",
     "NSPortNameServer",
     "NSPredicate",
+    "NSPredicateValidating",
     "NSProcessInfo",
     "NSProgress",
     "NSPropertyList",
@@ -364,6 +365,7 @@ NSPortCoder = []
 NSPortMessage = []
 NSPortNameServer = []
 NSPredicate = []
+NSPredicateValidating = []
 NSProcessInfo = ["bitflags"]
 NSProgress = []
 NSPropertyList = ["bitflags"]

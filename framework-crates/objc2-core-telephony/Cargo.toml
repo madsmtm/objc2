@@ -58,6 +58,7 @@ CTCarrier = ["objc2-foundation/NSString"]
 CTCellularData = []
 CTCellularPlanProperties = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSCalendar",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

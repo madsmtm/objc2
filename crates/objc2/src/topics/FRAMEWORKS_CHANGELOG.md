@@ -29,12 +29,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Network` / `objc2-network`.
 
 ### Changed
-* Updated SDK from Xcode 26.0.1 to 26.3.
+* Updated SDK from Xcode 26.0.1 to 26.4.
 
   View the release notes to learn more details:
   - [26.1.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
   - [26.2](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_2-release-notes)
   - [26.3](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_3-release-notes)
+  - [26.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_4-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
@@ -51,6 +52,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `UIKit` / `objc2-ui-kit`.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
 * **BREAKING**: Renamed some deprecated `objc2-network-extension` classes to have a `NE` prefix instead of `NW` (to not clash with the types from `objc2-network`).
+* **BREAKING**: Renamed `BAAssetPackManager::getStatusOfAssetPackWithIdentifier_completionHandler` to `getLocalStatusOfAssetPackWithIdentifier_completionHandler`.
+* **BREAKING**: Marked `CPTemplateApplicationSceneDelegate` as `MainThreadOnly`.
+* **BREAKING**: `IOUSBDeviceCapabilityBillboardAltMode::dwAlternateModeVdo` is now a `u32` instead of `u16`.
+* **BREAKING**: `MTL4MachineLearningCommandEncoder::setArgumentTable` now takes a nullable argument table.
+* **BREAKING**: `MTL4RenderCommandEncoder::setArgumentTable_atStages` now takes a nullable argument table.
+* **BREAKING**: `PKAddCarKeyPassConfiguration::manufacturerIdentifier` is now nullable.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.
@@ -62,6 +69,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `HMErrorCode::QuotaExceeded`.
 * **BREAKING**: Removed `NSStatusBar::new`.
 * **BREAKING**: Removed unavailable methods.
+* **BREAKING**: Removed `CSSearchableItemAttributeSet::moveFrom`.
+* **BREAKING**: Removed various `kUSBHostBillboardDeviceProperty*` consts.
 
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.

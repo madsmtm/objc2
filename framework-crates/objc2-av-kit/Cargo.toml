@@ -79,6 +79,7 @@ default = [
     "AVKitCore",
     "AVKitDefines",
     "AVKitTypes",
+    "AVLegibleMediaOptionsMenuController",
     "AVPictureInPictureController",
     "AVPictureInPictureController_AVSampleBufferDisplayLayerSupport",
     "AVPlaybackSpeed",
@@ -111,6 +112,10 @@ AVCaptureView = [
 AVKitCore = []
 AVKitDefines = []
 AVKitTypes = ["bitflags"]
+AVLegibleMediaOptionsMenuController = [
+    "bitflags",
+    "objc2-foundation/NSString",
+]
 AVPictureInPictureController = ["objc2-foundation/NSError"]
 AVPictureInPictureController_AVSampleBufferDisplayLayerSupport = []
 AVPlaybackSpeed = [

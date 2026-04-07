@@ -479,7 +479,9 @@ AVCaptionGroup = ["objc2-foundation/NSArray"]
 AVCaptionGrouper = ["objc2-foundation/NSArray"]
 AVCaptionRenderer = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 AVCaptionSettings = ["objc2-foundation/NSString"]
 AVCaptureAudioDataOutput = [

@@ -133,7 +133,10 @@ const.kUSBHostReturnRedundant.skipped = true
 # Defined before the thing it refers to.
 const.kUSBDeviceContainerID.skipped = true
 
-# Overflows while calculating
+# Overflows while calculating, needs to be c_ulong
+const.kIOUSB20BitrateLow.skipped = true
+const.kIOUSB20BitrateFull.skipped = true
+const.kIOUSB20BitrateHigh.skipped = true
 const.kIOUSB30Bitrate5Gbps.skipped = true
 const.kIOUSB30Bitrate10Gbps.skipped = true
 const.kIOUSB32Bitrate20Gbps.skipped = true

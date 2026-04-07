@@ -9,6 +9,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-cloud-kit/0.3.2")]
+#![recursion_limit = "512"]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
