@@ -225,7 +225,7 @@ impl Encoding {
     ///   equivalent, since Objective-C compilers strip this information to
     ///   avoid unnecessary nesting.
     /// - Structs or unions with no fields/members are considered to represent
-    ///   "opqaue" types, and will therefore be equivalent to all other
+    ///   "opaque" types, and will therefore be equivalent to all other
     ///   structs / unions.
     /// - [`Object`], [`Block`] and [`Class`] compare as equivalent.
     /// - [`String`] and pointers to [`Char`]/[`UChar`] compare as equivalent.
