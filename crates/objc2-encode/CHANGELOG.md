@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 * Relaxed assertions on `Encoding::Struct`/`Encoding::Union`'s name to allow
   unicode identifiers.
+* Strip more modifiers to allow encoding parsing to work on macOS 10.7.
 
 
 ## [4.1.0] - 2025-01-22

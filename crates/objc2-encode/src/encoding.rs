@@ -254,8 +254,6 @@ impl Encoding {
     pub fn equivalent_to_str(&self, s: &str) -> bool {
         let mut parser = Parser::new(s);
 
-        parser.strip_leading_qualifiers();
-
         if let Some(()) = parser.expect_encoding(self, NestingLevel::new()) {
             // if the given encoding can be successfully removed from the
             // start and an empty string remains, they were fully equivalent!
@@ -783,6 +781,17 @@ mod tests {
             !"**";
             !"*c";
             !"^^c";
+        }
+
+        // Regression test for https://github.com/madsmtm/objc2/issues/834.
+        fn modifiers_behind_pointers() {
+            Encoding::Pointer(&Encoding::Object);
+            "^@";
+            ~"^r@";
+            ~"rrr^rrrr@";
+            !"^^r@";
+            !"r@";
+            !"^@r"; // Unsure?
         }
     }
 

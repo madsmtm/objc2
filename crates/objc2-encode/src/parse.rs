@@ -181,7 +181,7 @@ impl<'a> Parser<'a> {
 
 impl Parser<'_> {
     /// Strip leading qualifiers, if any.
-    pub(crate) fn strip_leading_qualifiers(&mut self) {
+    fn strip_leading_qualifiers(&mut self) {
         // TODO: Add API for accessing and outputting qualifiers.
         #[allow(clippy::byte_char_slices)]
         const QUALIFIERS: &[u8] = &[
@@ -270,6 +270,8 @@ impl Parser<'_> {
     }
 
     pub(crate) fn expect_encoding(&mut self, enc: &Encoding, level: NestingLevel) -> Option<()> {
+        self.strip_leading_qualifiers();
+
         match enc.helper() {
             Helper::Primitive(primitive) => {
                 match primitive {
@@ -426,6 +428,8 @@ impl Parser<'_> {
     }
 
     fn parse_inner(&mut self) -> Result<ParseInner> {
+        self.strip_leading_qualifiers();
+
         if self.is_empty() {
             return Ok(ParseInner::Empty);
         }

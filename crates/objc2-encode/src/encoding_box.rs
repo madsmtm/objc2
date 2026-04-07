@@ -124,8 +124,6 @@ impl EncodingBox {
     /// Returns an error if the string was an ill-formatted encoding string.
     pub fn from_start_of_str(s: &mut &str) -> Result<Self, ParseError> {
         let mut parser = Parser::new(s);
-        parser.strip_leading_qualifiers();
-
         match parser.parse_encoding_or_none() {
             Err(ErrorKind::Unknown(b'0'..=b'9')) => {
                 let remaining = parser.remaining();
@@ -168,8 +166,6 @@ impl FromStr for EncodingBox {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut parser = Parser::new(s);
-        parser.strip_leading_qualifiers();
-
         parser
             .parse_encoding_or_none()
             .and_then(|enc| parser.expect_empty().map(|()| enc))
