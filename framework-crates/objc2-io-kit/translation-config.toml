@@ -116,6 +116,11 @@ struct.LowLatencyUserBufferInfoV3.skipped = true
 # Overflows while calculating on 32-bit.
 const.kIORPCMessageIDKernel.skipped = true
 const.kUSBAllStreams.skipped = true
+const.kIOUSBLinkSpeed5Gbps.skipped = true
+const.kIOUSBLinkSpeed10Gbps.skipped = true
+const.kIOUSBLinkSpeed20Gbps.skipped = true
+const.kIOUSBLinkSpeed40Gbps.skipped = true
+const.kIOUSBLinkSpeed80Gbps.skipped = true
 
 # Defined twice
 const.kIOUserServerCDHashKey.skipped = true
