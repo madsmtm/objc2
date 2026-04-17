@@ -110,7 +110,7 @@ define_class!(
         ) {
             trace!(taskOptions = ?unsafe { options.taskOptions() }, "activate");
             let item = Item::new(FSItemID::RootDirectory).into_super();
-            reply.call((Retained::as_ptr(&item).cast_mut(), null_mut()));
+            reply.call(Retained::as_ptr(&item).cast_mut(), null_mut());
         }
 
         #[unsafe(method(deactivateWithOptions:replyHandler:))]
@@ -120,7 +120,7 @@ define_class!(
             reply: &block2::DynBlock<dyn Fn(*mut NSError)>,
         ) {
             trace!(?options, "deactivate");
-            reply.call((null_mut(),));
+            reply.call(null_mut());
         }
 
         #[unsafe(method(mountWithOptions:replyHandler:))]
@@ -130,13 +130,13 @@ define_class!(
             reply: &block2::DynBlock<dyn Fn(*mut NSError)>,
         ) {
             trace!(taskOptions = ?unsafe { options.taskOptions() }, "mount");
-            reply.call((null_mut(),));
+            reply.call(null_mut());
         }
 
         #[unsafe(method(unmountWithReplyHandler:))]
         fn unmountWithReplyHandler(&self, reply: &block2::DynBlock<dyn Fn()>) {
             trace!("unmount");
-            reply.call(());
+            reply.call();
         }
 
         #[unsafe(method(synchronizeWithFlags:replyHandler:))]
@@ -146,7 +146,7 @@ define_class!(
             reply: &block2::DynBlock<dyn Fn(*mut NSError)>,
         ) {
             trace!(?flags, "synchronize");
-            reply.call((null_mut(),));
+            reply.call(null_mut());
         }
 
         #[unsafe(method(getAttributes:ofItem:replyHandler:))]
@@ -159,7 +159,7 @@ define_class!(
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(wantedAttributes = ?unsafe { desired_attributes.wantedAttributes() }, ?item, "attributes");
             let attributes: *const FSItemAttributes = &**item.attributes();
-            reply.call((attributes.cast_mut(), null_mut()));
+            reply.call(attributes.cast_mut(), null_mut());
         }
 
         #[unsafe(method(setAttributes:onItem:replyHandler:))]
@@ -173,7 +173,7 @@ define_class!(
             trace!(?new_attributes, ?item, "setAttributes");
             item.set_attributes(new_attributes);
             let attributes: *const FSItemAttributes = &**item.attributes();
-            reply.call((attributes.cast_mut(), null_mut()));
+            reply.call(attributes.cast_mut(), null_mut());
         }
 
         #[unsafe(method(lookupItemNamed:inDirectory:replyHandler:))]
@@ -185,7 +185,7 @@ define_class!(
         ) {
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?name, ?directory, "lookupItem");
-            reply.call((null_mut(), null_mut(), posix_err(ENOENT)));
+            reply.call(null_mut(), null_mut(), posix_err(ENOENT));
         }
 
         #[unsafe(method(reclaimItem:replyHandler:))]
@@ -196,7 +196,7 @@ define_class!(
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(?item, "reclaimItem");
-            reply.call((null_mut(),));
+            reply.call(null_mut());
         }
 
         #[unsafe(method(readSymbolicLink:replyHandler:))]
@@ -207,7 +207,7 @@ define_class!(
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(?item, "readSymbolicLink");
-            reply.call((null_mut(), posix_err(EIO)));
+            reply.call(null_mut(), posix_err(EIO));
         }
 
         #[unsafe(method(createItemNamed:type:inDirectory:attributes:replyHandler:))]
@@ -221,7 +221,7 @@ define_class!(
         ) {
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?name, ?r#type, ?directory, ?new_attributes, "createItem");
-            reply.call((null_mut(), null_mut(), posix_err(EIO)));
+            reply.call(null_mut(), null_mut(), posix_err(EIO));
         }
 
         #[unsafe(method(createSymbolicLinkNamed:inDirectory:attributes:linkContents:replyHandler:))]
@@ -241,7 +241,7 @@ define_class!(
                 ?contents,
                 "createSymbolicLink"
             );
-            reply.call((null_mut(), null_mut(), posix_err(EIO)));
+            reply.call(null_mut(), null_mut(), posix_err(EIO));
         }
 
         #[unsafe(method(createLinkToItem:named:inDirectory:replyHandler:))]
@@ -255,7 +255,7 @@ define_class!(
             let item = item.downcast_ref::<Item>().unwrap();
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?item, ?name, ?directory, "createLink");
-            reply.call((null_mut(), posix_err(EIO)));
+            reply.call(null_mut(), posix_err(EIO));
         }
 
         #[unsafe(method(removeItem:named:fromDirectory:replyHandler:))]
@@ -269,7 +269,7 @@ define_class!(
             let item = item.downcast_ref::<Item>().unwrap();
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?item, ?name, ?directory, "removeItem");
-            reply.call((posix_err(EIO),));
+            reply.call(posix_err(EIO));
         }
 
         #[allow(clippy::too_many_arguments)]
@@ -296,7 +296,7 @@ define_class!(
                 ?over_item,
                 "renameItem",
             );
-            reply.call((null_mut(), posix_err(EIO)));
+            reply.call(null_mut(), posix_err(EIO));
         }
 
         #[unsafe(method(enumerateDirectory:startingAtCookie:verifier:providingAttributes:usingPacker:replyHandler:))]
@@ -318,7 +318,7 @@ define_class!(
                 ?packer,
                 "enumerateDirectory",
             );
-            reply.call((0, null_mut()));
+            reply.call(0, null_mut());
         }
     }
 );

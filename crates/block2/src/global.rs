@@ -77,7 +77,7 @@ impl<F: ?Sized> GlobalBlock<F> {
     // TODO: Add some constructor for when `F: Copy`.
 }
 
-impl<F: ?Sized + BlockFn> Deref for GlobalBlock<F> {
+impl<F: ?Sized> Deref for GlobalBlock<F> {
     type Target = Block<F>;
 
     #[inline]
@@ -119,7 +119,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 ///         42
 ///     };
 /// }
-/// assert_eq!(MY_BLOCK.call(()), 42);
+/// assert_eq!(MY_BLOCK.call(), 42);
 /// ```
 ///
 /// ```
@@ -129,7 +129,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 ///         x + y
 ///     };
 /// }
-/// assert_eq!(ADDER_BLOCK.call((5, 7)), 12);
+/// assert_eq!(ADDER_BLOCK.call(5, 7), 12);
 /// ```
 ///
 /// The following does not compile because [`Box`] is not [`EncodeArgument`]:
@@ -144,7 +144,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 /// This also doesn't work (yet), as blocks are overly restrictive about the
 /// lifetimes involved.
 ///
-/// ```compile_fail
+/// ```compile_error
 /// use block2::global_block;
 /// global_block! {
 ///     pub static BLOCK_WITH_LIFETIME = |x: &i32| -> i32 {
@@ -152,7 +152,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 ///     };
 /// }
 /// let x = 5;
-/// let res = BLOCK_WITH_LIFETIME.call((&x,));
+/// let res = BLOCK_WITH_LIFETIME.call(&x);
 /// assert_eq!(res, 47);
 /// ```
 ///
@@ -228,7 +228,7 @@ mod tests {
 
     #[test]
     fn test_noop_block() {
-        NOOP_BLOCK.call(());
+        NOOP_BLOCK.call();
     }
 
     #[test]
@@ -236,7 +236,7 @@ mod tests {
         global_block!(static MY_BLOCK = || -> i32 {
             42
         });
-        assert_eq!(MY_BLOCK.call(()), 42);
+        assert_eq!(MY_BLOCK.call(), 42);
     }
 
     #[cfg(target_vendor = "apple")]

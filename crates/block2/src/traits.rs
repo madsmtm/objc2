@@ -32,14 +32,6 @@ pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
 
     /// The return type of the block.
     type Output: EncodeReturn;
-
-    /// Calls the given invoke function with the block and arguments.
-    #[doc(hidden)]
-    unsafe fn __call_block(
-        invoke: unsafe extern "C-unwind" fn(),
-        block: *mut Block<Self>,
-        args: Self::Args,
-    ) -> Self::Output;
 }
 
 /// Types that may be converted into a block.
@@ -66,7 +58,7 @@ where
 }
 
 macro_rules! impl_traits {
-    ($($a:ident: $t:ident),*) => (
+    ($num_args:literal; $($a:ident: $t:ident),*) => (
         impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> private::Sealed<($($t,)*), R> for Closure
         where
             Closure: ?Sized + Fn($($t),*) -> R,
@@ -76,20 +68,6 @@ macro_rules! impl_traits {
         unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn> BlockFn for dyn Fn($($t),*) -> R + '_ {
             type Args = ($($t,)*);
             type Output = R;
-
-            #[inline]
-            unsafe fn __call_block(
-                invoke: unsafe extern "C-unwind" fn(),
-                block: *mut Block<Self>,
-                ($($a,)*): Self::Args,
-            ) -> Self::Output {
-                // Very similar to `MessageArguments::__invoke`
-                let invoke: unsafe extern "C-unwind" fn(*mut Block<Self> $(, $t)*) -> R = unsafe {
-                    mem::transmute(invoke)
-                };
-
-                unsafe { invoke(block $(, $a)*) }
-            }
         }
 
         unsafe impl<'f, $($t,)* R, Closure> IntoBlock<'f, ($($t,)*), R> for Closure
@@ -121,22 +99,41 @@ macro_rules! impl_traits {
                 }
             }
         }
+
+        impl<'f, $($t: EncodeArgument,)* R: EncodeReturn> Block<dyn Fn($($t),*) -> R + 'f> {
+            #[doc = concat!("Call the block with ", $num_args, " arguments.")]
+            ///
+            /// The return value is the output of the block.
+            #[doc(alias = "invoke")]
+            #[inline]
+            #[allow(clippy::too_many_arguments)]
+            pub fn call(&self, $($a: $t),*) -> R {
+                // Very similar to `MessageArguments::__invoke`
+                let invoke: unsafe extern "C-unwind" fn(&Self $(, $t)*) -> R = unsafe {
+                    mem::transmute(self.invoke_ptr())
+                };
+
+                // SAFETY: The closure is an `Fn`, and as such is safe to call
+                // from an immutable reference.
+                unsafe { invoke(self $(, $a)*) }
+            }
+        }
     );
 }
 
-impl_traits!();
-impl_traits!(t0: T0);
-impl_traits!(t0: T0, t1: T1);
-impl_traits!(t0: T0, t1: T1, t2: T2);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
-impl_traits!(t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+impl_traits!(0;);
+impl_traits!(1; t0: T0);
+impl_traits!(2; t0: T0, t1: T1);
+impl_traits!(3; t0: T0, t1: T1, t2: T2);
+impl_traits!(4; t0: T0, t1: T1, t2: T2, t3: T3);
+impl_traits!(5; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4);
+impl_traits!(6; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
+impl_traits!(7; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
+impl_traits!(8; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
+impl_traits!(9; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
+impl_traits!(10; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
+impl_traits!(11; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
+impl_traits!(12; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
 
 /// Interim abstraction to manually provide block encodings for use at compile
 /// time with [`StackBlock::with_encoding`] and [`RcBlock::with_encoding`].

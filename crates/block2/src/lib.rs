@@ -36,7 +36,7 @@
 //! #
 //! # impl ExampleObject {
 //! #     fn someMethod(&self, block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
-//! #         assert_eq!(block.call((5, 8)), 18);
+//! #         assert_eq!(block.call(5, 8), 18);
 //! #     }
 //! # }
 //! #
@@ -140,8 +140,8 @@
 //! let b = RcBlock::new(fnmut_to_fn(|| {
 //!     x += 1;
 //! }));
-//! b.call(());
-//! b.call(());
+//! b.call();
+//! b.call();
 //! drop(b);
 //! assert_eq!(x, 2);
 //! ```
@@ -182,7 +182,7 @@
 //! let b = RcBlock::new(fnonce_to_fn(move || {
 //!     drop(v);
 //! }));
-//! b.call(());
+//! b.call();
 //! ```
 //!
 //!
@@ -258,12 +258,9 @@
 //!
 //! #[no_mangle]
 //! extern "C" fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>) {
-//!     assert_eq!(block.call((5, 8)), 13);
+//!     assert_eq!(block.call(5, 8), 13);
 //! }
 //! ```
-//!
-//! Note the extra parentheses in the `call` method, since the arguments must
-//! be passed as a tuple.
 //!
 //!
 //! ## Specifying a runtime

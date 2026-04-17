@@ -6,11 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Changed
+* **BREAKING**: Removed extra parentheses when invoking `Block::call`.
+
 
 ## [0.6.2] - 2025-10-04
 [0.6.2]: https://github.com/madsmtm/objc2/compare/block2-0.6.1...block2-0.6.2
 
-## Fixed
+### Fixed
 * Fixed documentation on docs.rs.
 
 

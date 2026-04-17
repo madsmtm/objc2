@@ -176,7 +176,7 @@ where
     /// use block2::StackBlock;
     /// #
     /// # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
-    /// #     assert_eq!(block.call((5, 8)), 13);
+    /// #     assert_eq!(block.call(5, 8), 13);
     /// # }
     ///
     /// let block = StackBlock::new(|a, b| a + b);
@@ -246,7 +246,7 @@ where
     /// let my_block = StackBlock::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
-    /// assert_eq!(my_block.call((core::ptr::null_mut(),)), 42);
+    /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
     /// ```
     #[inline]
     pub fn with_encoding<E>(closure: Closure) -> Self

@@ -96,24 +96,9 @@ impl<F: ?Sized> Block<F> {
         unsafe { RcBlock::copy(ptr) }.unwrap_or_else(|| block_copy_fail())
     }
 
-    /// Call the block.
-    ///
-    /// The arguments must be passed as a tuple. The return is the output of
-    /// the block.
-    #[doc(alias = "invoke")]
-    pub fn call(&self, args: F::Args) -> F::Output
-    where
-        F: BlockFn,
-    {
+    pub(crate) fn invoke_ptr(&self) -> unsafe extern "C-unwind" fn() {
         // TODO: Is `invoke` actually ever null?
-        let invoke = self.header().invoke.unwrap_or_else(|| unreachable!());
-
-        let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: *mut Self = ptr.as_ptr();
-
-        // SAFETY: The closure is an `Fn`, and as such is safe to call from an
-        // immutable reference.
-        unsafe { F::__call_block(invoke, ptr, args) }
+        self.header().invoke.unwrap_or_else(|| unreachable!())
     }
 }
 
@@ -138,15 +123,15 @@ mod tests {
     #[test]
     fn test_rust_dyn_lifetime_semantics() {
         fn takes_static(block: &Block<dyn Fn() + 'static>) {
-            block.call(());
+            block.call();
         }
 
         fn takes_elided(block: &Block<dyn Fn() + '_>) {
-            block.call(());
+            block.call();
         }
 
         fn takes_unspecified(block: &Block<dyn Fn()>) {
-            block.call(());
+            block.call();
         }
 
         // Static lifetime
@@ -188,7 +173,7 @@ mod tests {
 
     #[allow(dead_code)]
     fn lending_block<'b>(block: &Block<dyn Fn() -> &'b i32 + 'b>) {
-        let _ = *block.call(());
+        let _ = *block.call();
     }
 
     #[allow(dead_code)]

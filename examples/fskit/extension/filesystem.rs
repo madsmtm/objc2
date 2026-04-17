@@ -45,7 +45,7 @@ define_class!(
         ) {
             let Some(resource) = resource.downcast_ref::<FSBlockDeviceResource>() else {
                 info!(?resource, "resource was not FSBlockDeviceResource");
-                reply.call((null_mut(), posix_err(EINVAL)));
+                reply.call(null_mut(), posix_err(EINVAL));
                 return;
             };
             trace!(
@@ -66,7 +66,7 @@ define_class!(
                 FSProbeResult::usableProbeResultWithName_containerID(&name, &container_identifier)
             };
             trace!(?probe_result, "probeResource response");
-            reply.call((Retained::as_ptr(&probe_result).cast_mut(), null_mut()));
+            reply.call(Retained::as_ptr(&probe_result).cast_mut(), null_mut());
         }
 
         #[unsafe(method(loadResource:options:replyHandler:))]
@@ -78,7 +78,7 @@ define_class!(
         ) {
             let Some(resource) = resource.downcast_ref::<FSBlockDeviceResource>() else {
                 info!("resource was not FSBlockDeviceResource");
-                reply.call((null_mut(), posix_err(EINVAL)));
+                reply.call(null_mut(), posix_err(EINVAL));
                 return;
             };
             trace!(
@@ -100,7 +100,7 @@ define_class!(
                 name = ?unsafe { volume.name() },
                 "loadResource response",
             );
-            reply.call((Retained::as_ptr(&volume).cast_mut(), null_mut()));
+            reply.call(Retained::as_ptr(&volume).cast_mut(), null_mut());
         }
 
         #[unsafe(method(unloadResource:options:replyHandler:))]
@@ -112,7 +112,7 @@ define_class!(
         ) {
             let Some(resource) = resource.downcast_ref::<FSBlockDeviceResource>() else {
                 error!("resource was not FSBlockDeviceResource");
-                reply.call((posix_err(EINVAL),));
+                reply.call(posix_err(EINVAL));
                 return;
             };
             trace!(
@@ -132,7 +132,7 @@ define_class!(
                 )))
             };
 
-            reply.call((null_mut(),));
+            reply.call(null_mut());
         }
 
         #[unsafe(method(didFinishLoading))]

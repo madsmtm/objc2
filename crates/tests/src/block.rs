@@ -122,7 +122,7 @@ fn test_block_debugging() {
 fn test_int_block() {
     #[track_caller]
     fn invoke_assert(block: &Block<dyn Fn() -> i32>, expected: i32) {
-        assert_eq!(block.call(()), expected);
+        assert_eq!(block.call(), expected);
         assert_eq!(unsafe { invoke_int_block(block) }, expected);
     }
 
@@ -148,7 +148,7 @@ fn test_int_block() {
 fn test_add_block() {
     #[track_caller]
     fn invoke_assert(block: &Block<dyn Fn(i32) -> i32>, expected: i32) {
-        assert_eq!(block.call((5,)), expected);
+        assert_eq!(block.call(5), expected);
         assert_eq!(unsafe { invoke_add_block(block, 5) }, expected);
     }
 
@@ -177,10 +177,7 @@ fn test_add_block() {
 fn test_add_12() {
     #[track_caller]
     fn invoke_assert(block: &Add12, expected: i32) {
-        assert_eq!(
-            block.call((1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)),
-            expected
-        );
+        assert_eq!(block.call(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), expected);
         assert_eq!(
             unsafe { invoke_add_12(block, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) },
             expected
@@ -256,7 +253,7 @@ fn test_large_struct_block() {
     let mut new_data = data;
     new_data.mutate();
 
-    assert_eq!(BLOCK.call((data,)), new_data);
+    assert_eq!(BLOCK.call(data), new_data);
     assert_eq!(unsafe { invoke_large_struct_block(&BLOCK, data) }, new_data);
 
     let block = StackBlock::new(|mut x: LargeStruct| {
@@ -591,6 +588,6 @@ fn capture_retained() {
         StackBlock::with_encoding::<Enc>(closure),
     ] {
         let rc_block = stack_block.copy();
-        assert!(rc_block.call(()).is_false());
+        assert!(rc_block.call().is_false());
     }
 }

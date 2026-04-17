@@ -1,0 +1,157 @@
+error[E0061]: this method takes 0 arguments but 1 argument was supplied
+ --> ui/block_wrong_number_args.rs
+  |
+  |     block.call(1);
+  |           ^^^^ - unexpected argument of type `{integer}`
+  |
+note: method defined here
+ --> $WORKSPACE/crates/block2/src/traits.rs
+  |
+  |             pub fn call(&self, $($a: $t),*) -> R {
+  |                    ^^^^
+...
+  | impl_traits!(0;);
+  | ---------------- in this macro invocation
+  = note: this error originates in the macro `impl_traits` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: remove the extra argument
+  |
+4 -     block.call(1);
+4 +     block.call();
+  |
+
+error[E0061]: this method takes 1 argument but 0 arguments were supplied
+ --> ui/block_wrong_number_args.rs
+  |
+  |     block.call();
+  |           ^^^^-- argument #1 of type `i32` is missing
+  |
+note: method defined here
+ --> $WORKSPACE/crates/block2/src/traits.rs
+  |
+  |             pub fn call(&self, $($a: $t),*) -> R {
+  |                    ^^^^
+...
+  | impl_traits!(1; t0: T0);
+  | ----------------------- in this macro invocation
+  = note: this error originates in the macro `impl_traits` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: provide the argument
+  |
+8 |     block.call(/* i32 */);
+  |                +++++++++
+
+error[E0061]: this method takes 1 argument but 2 arguments were supplied
+ --> ui/block_wrong_number_args.rs
+  |
+  |     block.call(1, 2);
+  |           ^^^^    - unexpected argument #2 of type `{integer}`
+  |
+note: method defined here
+ --> $WORKSPACE/crates/block2/src/traits.rs
+  |
+  |             pub fn call(&self, $($a: $t),*) -> R {
+  |                    ^^^^
+...
+  | impl_traits!(1; t0: T0);
+  | ----------------------- in this macro invocation
+  = note: this error originates in the macro `impl_traits` (in Nightly builds, run with -Z macro-backtrace for more info)
+help: remove the extra argument
+  |
+9 -     block.call(1, 2);
+9 +     block.call(1);
+  |
+
+error[E0308]: mismatched types
+ --> ui/block_wrong_number_args.rs
+  |
+  |     takes_block0(&StackBlock::new(|_x| {}));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn()>`, found `&StackBlock<'_, (_,), (), {closure@...}>`
+  |     |
+  |     arguments to this function are incorrect
+  |
+  = note: expected reference `&Block<(dyn Fn() + 'static)>`
+             found reference `&StackBlock<'_, (_,), (), {closure@$DIR/ui/block_wrong_number_args.rs:13:35: 13:39}>`
+note: function defined here
+ --> ui/block_wrong_number_args.rs
+  |
+  | fn takes_block0(block: &Block<dyn Fn()>) {
+  |    ^^^^^^^^^^^^ -----------------------
+
+error[E0308]: mismatched types
+ --> ui/block_wrong_number_args.rs
+  |
+  |     takes_block0(&RcBlock::new(|_x| {}));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn()>`, found `&RcBlock<dyn Fn(_)>`
+  |     |
+  |     arguments to this function are incorrect
+  |
+  = note: expected reference `&Block<(dyn Fn() + 'static)>`
+             found reference `&RcBlock<dyn Fn(_)>`
+note: function defined here
+ --> ui/block_wrong_number_args.rs
+  |
+  | fn takes_block0(block: &Block<dyn Fn()>) {
+  |    ^^^^^^^^^^^^ -----------------------
+
+error[E0308]: mismatched types
+ --> ui/block_wrong_number_args.rs
+  |
+  |     takes_block1(&StackBlock::new(|| {}));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&StackBlock<'_, (), (), {closure@...}>`
+  |     |
+  |     arguments to this function are incorrect
+  |
+  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
+             found reference `&StackBlock<'_, (), (), {closure@$DIR/ui/block_wrong_number_args.rs:16:35: 16:37}>`
+note: function defined here
+ --> ui/block_wrong_number_args.rs
+  |
+  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  |    ^^^^^^^^^^^^ --------------------------
+
+error[E0308]: mismatched types
+ --> ui/block_wrong_number_args.rs
+  |
+  |     takes_block1(&RcBlock::new(|| {}));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&RcBlock<dyn Fn()>`
+  |     |
+  |     arguments to this function are incorrect
+  |
+  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
+             found reference `&RcBlock<dyn Fn()>`
+note: function defined here
+ --> ui/block_wrong_number_args.rs
+  |
+  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  |    ^^^^^^^^^^^^ --------------------------
+
+error[E0308]: mismatched types
+ --> ui/block_wrong_number_args.rs
+  |
+  |     takes_block1(&StackBlock::new(|_x, _y| {}));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&StackBlock<'_, (_, _), (), ...>`
+  |     |
+  |     arguments to this function are incorrect
+  |
+  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
+             found reference `&StackBlock<'_, (_, _), (), {closure@$DIR/ui/block_wrong_number_args.rs:19:35: 19:43}>`
+note: function defined here
+ --> ui/block_wrong_number_args.rs
+  |
+  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  |    ^^^^^^^^^^^^ --------------------------
+
+error[E0308]: mismatched types
+ --> ui/block_wrong_number_args.rs
+  |
+  |     takes_block1(&RcBlock::new(|_x, _y| {}));
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&RcBlock<dyn Fn(_, _)>`
+  |     |
+  |     arguments to this function are incorrect
+  |
+  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
+             found reference `&RcBlock<dyn Fn(_, _)>`
+note: function defined here
+ --> ui/block_wrong_number_args.rs
+  |
+  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  |    ^^^^^^^^^^^^ --------------------------

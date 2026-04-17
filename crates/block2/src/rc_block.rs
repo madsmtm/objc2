@@ -177,7 +177,7 @@ impl<F: ?Sized> RcBlock<F> {
     /// let my_block = RcBlock::with_encoding::<_, _, _, MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
-    /// assert_eq!(my_block.call((core::ptr::null_mut(),)), 42);
+    /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
     /// ```
     #[inline]
     pub fn with_encoding<'f, A, R, Closure, E>(closure: Closure) -> Self
@@ -300,8 +300,8 @@ mod tests {
         }
 
         let add2 = get_adder(2);
-        assert_eq!(add2.call((5,)), 7);
-        assert_eq!(add2.call((-1,)), 1);
+        assert_eq!(add2.call(5), 7);
+        assert_eq!(add2.call(-1), 1);
     }
 
     #[test]
@@ -350,16 +350,16 @@ mod tests {
             match n {
                 0 => 0,
                 1 => 1,
-                n => captured_fibonacci.call((n - 1,)) + captured_fibonacci.call((n - 2,)),
+                n => captured_fibonacci.call(n - 1) + captured_fibonacci.call(n - 2),
             }
         };
 
         let block = block.get_or_init(|| RcBlock::new(fibonacci));
 
-        assert_eq!(block.call((0,)), 0);
-        assert_eq!(block.call((1,)), 1);
-        assert_eq!(block.call((6,)), 8);
-        assert_eq!(block.call((10,)), 55);
-        assert_eq!(block.call((19,)), 4181);
+        assert_eq!(block.call(0), 0);
+        assert_eq!(block.call(1), 1);
+        assert_eq!(block.call(6), 8);
+        assert_eq!(block.call(10), 55);
+        assert_eq!(block.call(19), 4181);
     }
 }
