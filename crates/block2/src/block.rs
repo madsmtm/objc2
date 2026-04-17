@@ -96,9 +96,11 @@ impl<F: ?Sized> Block<F> {
         unsafe { RcBlock::copy(ptr) }.unwrap_or_else(|| block_copy_fail())
     }
 
+    #[inline]
     pub(crate) fn invoke_ptr(&self) -> unsafe extern "C-unwind" fn() {
-        // TODO: Is `invoke` actually ever null?
-        self.header().invoke.unwrap_or_else(|| unreachable!())
+        // SAFETY: `invoke` is never NULL - Clang also assumes this in its
+        // codegen, and will null ptr deref if it is.
+        unsafe { self.header().invoke.unwrap_unchecked() }
     }
 }
 
