@@ -1,6 +1,7 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
 | `Accelerate` | Very C-centric, hard for us to map. |
+| `AccessoryNotifications` | Swift-only. |
 | `AccessoryTransportExtension` | Swift-only. |
 | `ActivityKit` | Swift-only. |
 | `AdAttributionKit` | Swift-only. |
@@ -13,12 +14,14 @@
 | `AppleScriptObjC` | Basically empty nowadays. |
 | `AssetsLibrary` | Deprecated, use PhotoKit instead. |
 | `Assignables` | Swift-only. |
+| `AudioAccessoryKit` | Swift-only. |
 | `AudioUnit` | Deprecated, use AudioToolbox instead. |
 | `AudioVideoBridging` | Deprecated, use AVKit/AVFoundation instead (maybe?). |
 | `AutomatedDeviceEnrollment` | Swift-only. |
 | `CalendarStore` | Very deprecated. |
 | `CarKey` | Swift-only. |
 | `Charts` | Swift-only. |
+| `ClassKitUI` | Swift-only. |
 | `Cocoa` | Basically empty nowadays, use AppKit. |
 | `Combine` | Swift-only. |
 | `ContactProvider` | Mostly Swift-only. |
@@ -45,6 +48,7 @@
 | `FinanceKitUI` | Swift-only. |
 | `ForceFeedback` | Very C-centric and old. |
 | `FoundationModels` | Swift-only. |
+| `FoveatedStreaming` | Swift-only. |
 | `GLUT` | Apple's redistribution of GLUT headers, better served by a different crate. |
 | `GSS` | Very C-centric and old. |
 | `GeoToolbox` | Swift-only. |
@@ -57,7 +61,6 @@
 | `ImmersiveMediaSupport` | Swift-only. |
 | `InstallerPlugins` | Deprecated. |
 | `InstantMessage` | Deprecated in macOS 10.9. |
-| `InterfaceBuilderKit` | TODO. Developer-only. |
 | `JavaNativeFoundation` | Basically empty. |
 | `JavaRuntimeSupport` | Probably not really interesting.. |
 | `JournalingSuggestions` | Swift-only. |
