@@ -1,6 +1,7 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
 | `Accelerate` | Very C-centric, hard for us to map. |
+| `AccessoryLiveActivities` | Swift-only. |
 | `AccessoryNotifications` | Swift-only. |
 | `AccessoryTransportExtension` | Swift-only. |
 | `ActivityKit` | Swift-only. |

@@ -25,6 +25,7 @@ vmnet = "Very C-centric and old"
 
 DriverKit = "Uses C++ classes"
 
+AccessoryLiveActivities = "Swift-only"
 AccessoryNotifications = "Swift-only"
 AccessoryTransportExtension = "Swift-only"
 ActivityKit = "Swift-only"

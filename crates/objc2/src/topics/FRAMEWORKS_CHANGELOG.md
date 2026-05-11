@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `Network` / `objc2-network`.
 
 ### Changed
-* Updated SDK from Xcode 26.0.1 to 26.4.1.
+* Updated SDK from Xcode 26.0.1 to 26.5.
 
   View the release notes to learn more details:
   - [26.1.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - [26.3](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_3-release-notes)
   - [26.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_4-release-notes)
   - [26.4.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_4_1-release-notes)
+  - [26.5](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_5-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
