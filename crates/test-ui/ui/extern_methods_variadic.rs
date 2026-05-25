@@ -10,17 +10,17 @@ extern_class!(
 impl MyObject {
     extern_methods!(
         #[unsafe(method(a:))]
-        fn variadic_class(arg: i32, arg2: ...);
+        fn variadic_class(arg: i32, vararg: ...);
     );
 
     extern_methods!(
         #[unsafe(method(a:))]
-        fn variadic_instance(&self, arg: i32, ...);
+        fn variadic_instance(&self, arg: i32, vararg: ...);
     );
 
     extern_methods!(
         #[unsafe(method(a:_))]
-        fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
+        fn variadic_error(vararg: ...) -> Result<(), Retained<NSObject>>;
     );
 }
 

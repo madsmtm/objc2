@@ -1,4 +1,4 @@
-error[E0433]: failed to resolve: use of undeclared type `MyTestDisabled`
+error[E0433]: cannot find type `MyTestDisabled` in this scope
   --> ui/extern_class_feature_flag.rs
    |
    |     let _cls = MyTestDisabled::class();

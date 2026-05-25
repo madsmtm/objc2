@@ -33,10 +33,10 @@ error[E0277]: the trait bound `bool: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `bool` to implement `EncodeArgument`
   = note: required for `(bool,)` to implement `EncodeArguments`
@@ -57,10 +57,10 @@ error[E0277]: the trait bound `bool: EncodeReturn` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `bool` to implement `EncodeReturn`
 note: required by a bound in `send_message`

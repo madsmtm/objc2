@@ -41,7 +41,7 @@ impl WKApplication {
         // here is just for show really.
         #[cfg(feature = "std")]
         {
-            std::process::exit(_ret as i32)
+            std::process::exit(_ret as _)
         }
         #[cfg(not(feature = "std"))]
         {

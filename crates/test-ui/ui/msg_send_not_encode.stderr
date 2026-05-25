@@ -9,10 +9,10 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `Vec<u8>` to implement `EncodeReturn`
   = note: required for `Vec<u8>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<1>>`
@@ -34,10 +34,10 @@ error[E0277]: the trait bound `Vec<u8>: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `Vec<u8>` to implement `EncodeArgument`
   = note: required for `Vec<u8>` to implement `objc2::__macros::ConvertArgument`
@@ -63,10 +63,10 @@ error[E0277]: the trait bound `(): Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `()` to implement `EncodeArgument`
   = note: required for `()` to implement `objc2::__macros::ConvertArgument`

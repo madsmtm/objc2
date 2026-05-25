@@ -206,11 +206,11 @@ pub use objc2::ffi::{NSInteger, NSUInteger};
 
 // Special types that are stored in `objc2`, but really belong here
 #[doc(inline)]
-#[cfg(feature = "NSZone")]
-pub use objc2::runtime::NSZone;
-#[doc(inline)]
 #[cfg(feature = "NSProxy")]
 pub use objc2::runtime::__NSProxy as NSProxy;
+#[doc(inline)]
+#[cfg(feature = "NSZone")]
+pub use objc2::runtime::NSZone;
 pub use objc2::runtime::{NSObject, NSObjectProtocol};
 #[deprecated = "Moved to `objc2::MainThreadMarker`"]
 pub use objc2::MainThreadMarker;

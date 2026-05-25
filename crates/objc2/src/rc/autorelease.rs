@@ -232,22 +232,27 @@ impl<'pool> AutoreleasePool<'pool> {
 /// We use a macro here so that the documentation is included whether the
 /// feature is enabled or not.
 #[cfg(not(feature = "unstable-autoreleasesafe"))]
-macro_rules! auto_trait {
+macro_rules! auto_trait_except_pool {
     {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
         $(#[$fn_meta])*
         $v unsafe trait AutoreleaseSafe {}
+
+        unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
     }
 }
 
 #[cfg(feature = "unstable-autoreleasesafe")]
-macro_rules! auto_trait {
+macro_rules! auto_trait_except_pool {
     {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
         $(#[$fn_meta])*
         $v unsafe auto trait AutoreleaseSafe {}
+
+        impl !AutoreleaseSafe for Pool {}
+        impl !AutoreleaseSafe for AutoreleasePool<'_> {}
     }
 }
 
-auto_trait! {
+auto_trait_except_pool! {
     /// Marks types that are safe to pass across the closure in an
     /// [`autoreleasepool`].
     ///
@@ -304,14 +309,6 @@ auto_trait! {
     /// ```
     pub unsafe trait AutoreleaseSafe {}
 }
-
-#[cfg(not(feature = "unstable-autoreleasesafe"))]
-unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
-
-#[cfg(feature = "unstable-autoreleasesafe")]
-impl !AutoreleaseSafe for Pool {}
-#[cfg(feature = "unstable-autoreleasesafe")]
-impl !AutoreleaseSafe for AutoreleasePool<'_> {}
 
 /// Execute `f` in the context of a new autorelease pool. The pool is drained
 /// after the execution of `f` completes.

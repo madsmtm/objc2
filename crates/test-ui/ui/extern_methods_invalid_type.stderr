@@ -15,10 +15,10 @@ error[E0277]: the trait bound `Box<i32>: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NSBinarySearchingOptions
           and $N others
   = note: required for `Box<i32>` to implement `EncodeArgument`
   = note: required for `Box<i32>` to implement `objc2::__macros::ConvertArgument`
@@ -47,7 +47,7 @@ error[E0277]: the trait bound `Retained<MyObject>: RefEncode` is not satisfied
             AnyClass
             AnyObject
             AnyProtocol
-            AtomicI16
+            Cell<T>
           and $N others
   = note: required for `&Retained<MyObject>` to implement `Encode`
   = note: required for `&Retained<MyObject>` to implement `EncodeReturn`
@@ -70,10 +70,10 @@ error[E0277]: the trait bound `MainThreadMarker: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NSBinarySearchingOptions
           and $N others
   = note: required for `MainThreadMarker` to implement `EncodeReturn`
   = note: required for `MainThreadMarker` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`

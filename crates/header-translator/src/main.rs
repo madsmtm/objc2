@@ -94,7 +94,7 @@ fn main() -> Result<(), BoxError> {
                 .filter(|sdk| !sdk.is_symlink() && sdk.platform() == &*platform)
                 .collect();
             if sdks.len() != 1 {
-                panic!("found multiple sdks {sdks:?} in {:?}", &*platform);
+                panic!("found multiple sdks {sdks:?} in {:?}", *platform);
             }
             sdks[0].sdk_path()
         })
@@ -845,7 +845,7 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         if let Some(cfgs) = platform_cfg.cfgs() {
             writeln!(&mut s, "#[cfg({cfgs})]",).unwrap();
         }
-        writeln!(&mut s, "pub use {}::*;", &lib.krate.replace('-', "_")).unwrap();
+        writeln!(&mut s, "pub use {}::*;", lib.krate.replace('-', "_")).unwrap();
     }
     fs::write(test_crate_dir.join("src").join("imports.rs"), s).unwrap();
 

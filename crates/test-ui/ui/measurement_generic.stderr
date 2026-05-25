@@ -1,8 +1,8 @@
-error[E0599]: the function or associated item `initWithDoubleValue_unit` exists for struct `NSMeasurement<NSObject>`, but its trait bounds were not satisfied
+error[E0599]: the associated function or constant `initWithDoubleValue_unit` exists for struct `NSMeasurement<NSObject>`, but its trait bounds were not satisfied
  --> ui/measurement_generic.rs
   |
   |     let mass = NSMeasurement::<NSObject>::initWithDoubleValue_unit(
-  |                                           ^^^^^^^^^^^^^^^^^^^^^^^^ function or associated item cannot be called on `NSMeasurement<NSObject>` due to unsatisfied trait bounds
+  |                                           ^^^^^^^^^^^^^^^^^^^^^^^^ associated function or constant cannot be called on `NSMeasurement<NSObject>` due to unsatisfied trait bounds
   |
  ::: $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
   |

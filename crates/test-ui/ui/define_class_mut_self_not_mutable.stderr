@@ -93,6 +93,26 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             *mut T
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
+  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, &mut CustomObject, objc2::__macros::KindDefined>`
+  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
+ --> ui/define_class_mut_self_not_mutable.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ the trait `MessageReceiver` is not implemented for `&mut CustomObject`
+  |
+  = help: the following other types implement trait `MessageReceiver`:
+            &T
+            &mut AnyObject
+            *const T
+            *mut T
+            NonNull<T>
+  = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, (), objc2::__macros::KindDefined>`
   = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 

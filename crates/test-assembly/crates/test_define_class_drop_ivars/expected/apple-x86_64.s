@@ -116,7 +116,7 @@ Lfunc_begin1:
 	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
-	jne	LBB2_11
+	jne	LBB2_12
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].9]
@@ -191,7 +191,7 @@ Ltmp13:
 	pop	r14
 	pop	rbp
 	ret
-LBB2_11:
+LBB2_12:
 	lea	rdi, [rip + l_anon.[ID].7]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB2_8:
@@ -203,7 +203,7 @@ LBB2_7:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
 LBB2_13:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed, 0)
-LBB2_12:
+LBB2_9:
 Ltmp14:
 	mov	rbx, rax
 	mov	rdi, qword ptr [rbp - 24]
@@ -492,7 +492,7 @@ L_anon.[ID].6:
 	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	L_anon.[ID].6
-	.asciz	"p\000\000\000\000\000\000\000\237\000\000\0002\000\000"
+	.asciz	"p\000\000\000\000\000\000\000\246\000\000\0002\000\000"
 
 	.section	__TEXT,__cstring,cstring_literals
 L_anon.[ID].8:

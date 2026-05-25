@@ -396,16 +396,12 @@ pub(crate) fn anonymous_record_name(entity: &Entity<'_>, context: &Context<'_>) 
     let mut just_found_record = false;
     let mut field_name = None;
     immediate_children(&parent, |searched, _span| match searched.get_kind() {
-        EntityKind::FieldDecl => {
-            if just_found_record {
-                field_name = Some(searched.get_name().expect("field name"));
-                just_found_record = false;
-            }
+        EntityKind::FieldDecl if just_found_record => {
+            field_name = Some(searched.get_name().expect("field name"));
+            just_found_record = false;
         }
-        EntityKind::UnionDecl | EntityKind::StructDecl => {
-            if searched == *entity {
-                just_found_record = true;
-            }
+        EntityKind::UnionDecl | EntityKind::StructDecl if searched == *entity => {
+            just_found_record = true;
         }
         _ => {}
     });

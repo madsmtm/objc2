@@ -3,7 +3,7 @@ error: variadic methods are not yet supported
   |
   | /     extern_methods!(
   | |         #[unsafe(method(a:))]
-  | |         fn variadic_class(arg: i32, arg2: ...);
+  | |         fn variadic_class(arg: i32, vararg: ...);
   | |     );
   | |_____^
   |
@@ -14,7 +14,7 @@ error: variadic methods are not yet supported
   |
   | /     extern_methods!(
   | |         #[unsafe(method(a:))]
-  | |         fn variadic_instance(&self, arg: i32, ...);
+  | |         fn variadic_instance(&self, arg: i32, vararg: ...);
   | |     );
   | |_____^
   |
@@ -25,7 +25,7 @@ error: variadic methods are not yet supported
   |
   | /     extern_methods!(
   | |         #[unsafe(method(a:_))]
-  | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
+  | |         fn variadic_error(vararg: ...) -> Result<(), Retained<NSObject>>;
   | |     );
   | |_____^
   |
@@ -34,24 +34,24 @@ error: variadic methods are not yet supported
 error: `...` is not supported for non-extern functions
  --> ui/extern_methods_variadic.rs
   |
-  |         fn variadic_class(arg: i32, arg2: ...);
-  |                                     ^^^^^^^^^
+  |         fn variadic_class(arg: i32, vararg: ...);
+  |                                     ^^^^^^^^^^^
   |
   = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
 
 error: `...` is not supported for non-extern functions
  --> ui/extern_methods_variadic.rs
   |
-  |         fn variadic_instance(&self, arg: i32, ...);
-  |                                               ^^^
+  |         fn variadic_instance(&self, arg: i32, vararg: ...);
+  |                                               ^^^^^^^^^^^
   |
   = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
 
 error: `...` is not supported for non-extern functions
  --> ui/extern_methods_variadic.rs
   |
-  |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
-  |                           ^^^^^^^^^
+  |         fn variadic_error(vararg: ...) -> Result<(), Retained<NSObject>>;
+  |                           ^^^^^^^^^^^
   |
   = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
 
@@ -60,7 +60,7 @@ error[E0658]: C-variadic functions are unstable
   |
   | /     extern_methods!(
   | |         #[unsafe(method(a:))]
-  | |         fn variadic_class(arg: i32, arg2: ...);
+  | |         fn variadic_class(arg: i32, vararg: ...);
   | |     );
   | |_____^
   |
@@ -73,7 +73,7 @@ error[E0658]: C-variadic functions are unstable
   |
   | /     extern_methods!(
   | |         #[unsafe(method(a:))]
-  | |         fn variadic_instance(&self, arg: i32, ...);
+  | |         fn variadic_instance(&self, arg: i32, vararg: ...);
   | |     );
   | |_____^
   |
@@ -86,24 +86,10 @@ error[E0658]: C-variadic functions are unstable
   |
   | /     extern_methods!(
   | |         #[unsafe(method(a:_))]
-  | |         fn variadic_error(arg2: ...) -> Result<(), Retained<NSObject>>;
+  | |         fn variadic_error(vararg: ...) -> Result<(), Retained<NSObject>>;
   | |     );
   | |_____^
   |
   = note: see issue #44930 <https://github.com/rust-lang/rust/issues/44930> for more information
   = help: add `#![feature(c_variadic)]` to the crate attributes to enable
   = note: this error originates in the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-warning: missing pattern for `...` argument
-  --> ui/extern_methods_variadic.rs
-   |
-   |         fn variadic_instance(&self, arg: i32, ...);
-   |                                               ^^^
-   |
-   = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
-   = note: for more information, see issue #145544 <https://github.com/rust-lang/rust/issues/145544>
-   = note: `#[warn(varargs_without_pattern)]` (part of `#[warn(future_incompatible)]`) on by default
-help: name the argument, or use `_` to continue ignoring it
-   |
-18 |         fn variadic_instance(&self, arg: i32, _: ...);
-   |                                               ++

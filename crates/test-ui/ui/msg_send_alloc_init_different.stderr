@@ -25,10 +25,10 @@ error[E0277]: the trait bound `Retained<AnyObject>: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `Retained<AnyObject>` to implement `EncodeReturn`
   = note: required for `Retained<AnyObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`

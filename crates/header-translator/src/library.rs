@@ -445,7 +445,7 @@ see that for related crates.", self.data.krate)?;
 
         // Emit crate features first (the "default" feature overrides in
         // `default_cargo.toml`).
-        for (feature, _) in emitted_features.clone().iter() {
+        for feature in emitted_features.clone().keys() {
             if config.try_library_from_crate(feature).is_none() {
                 continue;
             }

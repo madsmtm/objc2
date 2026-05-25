@@ -12,7 +12,7 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
             AnyClass
             AnyObject
             AnyProtocol
-            AtomicI16
+            Cell<T>
           and $N others
   = note: required for `&mut Retained<NSObject>` to implement `Encode`
   = note: required for `&mut Retained<NSObject>` to implement `EncodeReturn`
@@ -37,10 +37,10 @@ error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
             &'a mut T
             *const T
             *mut T
-            AtomicI16
-            AtomicI32
-            AtomicI64
-            AtomicI8
+            Cell<T>
+            ManuallyDrop<T>
+            MaybeUninit<T>
+            NonNull<T>
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeArgument`
   = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertArgument`
@@ -69,7 +69,7 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
             AnyClass
             AnyObject
             AnyProtocol
-            AtomicI16
+            Cell<T>
           and $N others
   = note: required for `&Retained<NSObject>` to implement `Encode`
   = note: required for `&Retained<NSObject>` to implement `EncodeArgument`
@@ -99,7 +99,7 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
             AnyClass
             AnyObject
             AnyProtocol
-            AtomicI16
+            Cell<T>
           and $N others
   = note: required for `&Retained<NSObject>` to implement `Encode`
   = note: 1 redundant requirement hidden
@@ -131,7 +131,7 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
             AnyClass
             AnyObject
             AnyProtocol
-            AtomicI16
+            Cell<T>
           and $N others
   = note: required for `*mut Retained<NSObject>` to implement `Encode`
   = note: required for `*mut Retained<NSObject>` to implement `EncodeArgument`
@@ -161,7 +161,7 @@ error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
             AnyClass
             AnyObject
             AnyProtocol
-            AtomicI16
+            Cell<T>
           and $N others
   = note: required for `&mut Retained<NSObject>` to implement `RefEncode`
   = note: required for `&mut &mut Retained<NSObject>` to implement `Encode`
