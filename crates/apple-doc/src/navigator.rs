@@ -32,9 +32,9 @@ pub type NavigatorId = u32;
 ///
 /// // Get an iterator over the root node's children.
 /// let mut children = tree.children_at([]).unwrap();
-/// assert_eq!(children.next().unwrap().name, "Swift");
-/// assert_eq!(children.next().unwrap().name, "Objective-C");
 /// assert_eq!(children.next().unwrap().name, "Data");
+/// assert_eq!(children.next().unwrap().name, "Objective-C");
+/// assert_eq!(children.next().unwrap().name, "Swift");
 /// assert_eq!(children.next().unwrap().name, "Other");
 /// assert_eq!(children.next(), None);
 ///
@@ -433,9 +433,9 @@ mod tests {
 
         assert_eq!(tree.children_at([]).unwrap().count(), 4);
 
-        assert_eq!(tree.item_at([0]).unwrap().name, "Swift");
+        assert_eq!(tree.item_at([0]).unwrap().name, "Data");
         assert_eq!(tree.item_at([1]).unwrap().name, "Objective-C");
-        assert_eq!(tree.item_at([2]).unwrap().name, "Data");
+        assert_eq!(tree.item_at([2]).unwrap().name, "Swift");
         assert_eq!(tree.item_at([3]).unwrap().name, "Other");
         assert_eq!(tree.item_at([4]), None); // Invalid index
 
