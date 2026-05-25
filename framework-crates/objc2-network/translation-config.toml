@@ -260,6 +260,10 @@ fn.nw_framer_options_copy_object_value.implementor = "Network.NWProtocolOptions"
 # Remove "create" from name.
 fn.nw_framer_message_create.renamed = "new_message"
 
+# Transform libc::sockaddr to std::net::SocketAddr
+fn.nw_endpoint_create_address.renamed = "__new_address"
+fn.nw_endpoint_get_address.renamed = "__address"
+
 ##
 ## Fixing bounds information
 ##

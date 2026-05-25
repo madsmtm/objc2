@@ -60,6 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `MTL4MachineLearningCommandEncoder::setArgumentTable` now takes a nullable argument table.
 * **BREAKING**: `MTL4RenderCommandEncoder::setArgumentTable_atStages` now takes a nullable argument table.
 * **BREAKING**: `PKAddCarKeyPassConfiguration::manufacturerIdentifier` is now nullable.
+* **BREAKING**: Methods that previously used a `libc::socketaddr` pointer now used `core::net::SocketAddr`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

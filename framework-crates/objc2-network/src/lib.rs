@@ -19,9 +19,12 @@ extern crate std;
 #[macro_use]
 mod macros;
 
+mod endpoint;
 mod generated;
 mod object;
 mod retained;
+#[cfg(feature = "libc")]
+mod sockaddr;
 
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;

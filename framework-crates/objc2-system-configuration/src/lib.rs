@@ -19,8 +19,18 @@ extern crate std;
 // TODO(breaking): Figure out `SCNetworkInterfaceRefreshConfiguration`'s ABI
 #[allow(improper_ctypes_definitions)]
 mod generated;
+#[cfg(feature = "SCNetwork")]
+mod network;
+#[cfg(feature = "SCNetworkReachability")]
+mod network_reachability;
+#[cfg(feature = "libc")]
+mod sockaddr;
+
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "SCNetwork")]
+#[allow(unused_imports, unreachable_pub)]
+pub use self::network::*;
 
 #[allow(dead_code)]
 pub(crate) type Boolean = u8; // unsigned char

@@ -8,6 +8,11 @@ ios = "2.0"
 tvos = "9.0"
 visionos = "1.0"
 
+# Transform libc::sockaddr to std::net::SocketAddr
+fn.SCNetworkCheckReachabilityByAddress.renamed = "__SCNetworkCheckReachabilityByAddress"
+fn.SCNetworkReachabilityCreateWithAddress.renamed = "__with_address"
+fn.SCNetworkReachabilityCreateWithAddressPair.renamed = "__with_address_pair"
+
 ##
 ## Set pointer bounds information.
 ##
