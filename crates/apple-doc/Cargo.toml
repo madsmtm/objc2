@@ -14,11 +14,11 @@ bytemuck = { version = "1.23.2", features = ["derive", "extern_crate_std"] }
 plist = { version = "1.7.4", features = ["serde"] }
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.143"
-rusqlite = { version = "0.38.0", features = ["bundled", "fallible_uint"] }
+rusqlite = { version = "0.39.0", features = ["bundled", "fallible_uint"] }
 hex = "0.4.3"
 apple-sdk = "0.6.0"
 base64 = "0.22.1"
-sha1 = "0.10.6"
+sha1 = "0.11.0"
 
 [package.metadata.release]
 release = false

@@ -25,7 +25,7 @@ use objc2_metal::{
     MTLTextureUsage,
 };
 use objc2_quartz_core::CAMetalDrawable;
-use rand::RngCore;
+use rand::Rng;
 
 use crate::{camera::Camera, geometry::get_managed_buffer_storage_mode, scene::Scene};
 

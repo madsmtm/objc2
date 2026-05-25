@@ -13,7 +13,7 @@ mod volume;
 /// Initialize our application.
 ///
 /// We must do this in a constructor, to make it run before `NSExtensionMain`.
-#[ctor::ctor]
+#[ctor::ctor(unsafe)]
 fn setup() {
     // Initialize tracing-oslog. We use this over stderr logging, because
     // stderr is swallowed up by FSKit when spawning our process.

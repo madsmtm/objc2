@@ -16,7 +16,7 @@ name = "fskit-example-extension"
 path = "extension/main.rs"
 
 [dependencies]
-ctor = "0.6.3"
+ctor = "1.0.3"
 tracing = "0.1.44"
 tracing-subscriber = "0.3.22"
 libc = "0.2.182"

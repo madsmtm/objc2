@@ -52,7 +52,7 @@ fn main() {
 
     // Configure the test binary as a bundle instead.
     println!("cargo:rustc-link-arg-bins=-bundle");
-    // + #![no_main] and #[ctor]
+    // + #![no_main] and #[ctor(unsafe)]
     // + maybe -bundle_loader app_under_test?
 
     // TODO: Are these necessary?

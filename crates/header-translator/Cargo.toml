@@ -12,8 +12,8 @@ license.workspace = true
 # https://github.com/KyleMayes/clang-rs/pull/62
 clang = { git = "https://github.com/madsmtm/clang-rs.git", branch = "objc2", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
-toml_edit = "0.24.0"
-toml = "0.9.5"
+toml_edit = "0.25.11"
+toml = "1.1.2"
 serde = { version = "1.0.144", features = ["derive"] }
 apple-sdk = { version = "0.6.0", default-features = false }
 tracing = { version = "0.1.37", default-features = false, features = ["std"] }

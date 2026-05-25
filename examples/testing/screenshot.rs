@@ -34,7 +34,7 @@ define_class!(
 );
 
 /// Load and initialize the class such that XCTest can see it.
-#[ctor::ctor]
+#[ctor::ctor(unsafe)]
 unsafe fn setup() {
     let _ = TestCase::class();
 }

@@ -58,7 +58,7 @@ Xcode provides templates to create app extensions (go to `File > New > Target`),
 The general setup is:
 1. Two Cargo binaries, the host application `fskit-example` and the app extension `fskit-example-extension`.
 2. A custom `build.rs` which configures `fskit-example-extension` to use `NSExtensionMain` instead of Rust's usual `fn main` as the entrypoint.
-3. A `FSUnaryFileSystem` subclass, which is registered before `NSExtensionMain` is called by using `#[ctor]`.
+3. A `FSUnaryFileSystem` subclass, which is registered before `NSExtensionMain` is called by using `#[ctor(unsafe)]`.
   - `EXExtensionPrincipalClass` is used to point to our `FSUnaryFileSystem` class (an alternative to using Swift's `UnaryFileSystemExtension`).
   - This is also what's done [by Apple's own `msdosfs`](https://github.com/apple-oss-distributions/msdosfs/blob/msdosfs-788.40.4/msdos_appex/Info.plist).
 4. Signing and bundling is done in `bundle.sh`.

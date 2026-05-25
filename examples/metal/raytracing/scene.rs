@@ -6,7 +6,7 @@ use objc2::Message;
 use objc2::{rc::Retained, runtime::ProtocolObject};
 use objc2_foundation::{ns_string, NSRange};
 use objc2_metal::{MTLBuffer, MTLDevice, MTLResource};
-use rand::Rng;
+use rand::RngExt;
 
 use super::camera::Camera;
 use super::geometry::*;
