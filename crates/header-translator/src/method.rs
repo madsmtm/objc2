@@ -9,7 +9,7 @@ use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::id::{cfg_gate_ln, ItemTree};
-use crate::name_translation::is_likely_bounds_affecting;
+use crate::name_translation::{self, is_likely_bounds_affecting};
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::thread_safety::ThreadSafety;
@@ -59,6 +59,7 @@ pub(crate) struct MethodModifiers {
     sendable: Option<bool>,
     pub(crate) mainthreadonly: bool,
     must_use: bool,
+    swift_async: Option<bool>,
 }
 
 impl MethodModifiers {
@@ -69,66 +70,38 @@ impl MethodModifiers {
             EntityKind::UnexposedAttr => {
                 if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                     match attr {
-                        UnexposedAttr::ReturnsRetained => {
-                            this.returns_retained = true;
-                        }
-                        UnexposedAttr::ReturnsNotRetained => {
-                            this.returns_not_retained = true;
-                        }
-                        UnexposedAttr::NonIsolated => {
-                            this.non_isolated = true;
-                        }
-                        UnexposedAttr::Sendable => {
-                            this.sendable = Some(true);
-                        }
-                        UnexposedAttr::NonSendable => {
-                            this.sendable = Some(false);
-                        }
-                        UnexposedAttr::UIActor => {
-                            this.mainthreadonly = true;
-                        }
-                        UnexposedAttr::NoThrow => {
-                            // TODO: Use this somehow?
-                        }
-                        UnexposedAttr::FullyUnavailable => {
-                            // Handled in Availability::parse.
-                        }
+                        UnexposedAttr::ReturnsRetained => this.returns_retained = true,
+                        UnexposedAttr::ReturnsNotRetained => this.returns_not_retained = true,
+                        UnexposedAttr::NonIsolated => this.non_isolated = true,
+                        UnexposedAttr::Sendable => this.sendable = Some(true),
+                        UnexposedAttr::NonSendable => this.sendable = Some(false),
+                        UnexposedAttr::UIActor => this.mainthreadonly = true,
+                        UnexposedAttr::SwiftAsync => this.swift_async = Some(true),
+                        UnexposedAttr::NonSwiftAsync => this.swift_async = Some(false),
+                        UnexposedAttr::NoThrow => {} // TODO: Use this somehow?
+                        UnexposedAttr::FullyUnavailable => {} // Handled in Availability::parse.
                         attr => error!(?attr, "unknown attribute on method"),
                     }
                 }
             }
-            EntityKind::ObjCReturnsInnerPointer => {
-                this.returns_inner_pointer = true;
-            }
-            EntityKind::NSConsumesSelf => {
-                this.consumes_self = true;
-            }
+            EntityKind::ObjCReturnsInnerPointer => this.returns_inner_pointer = true,
+            EntityKind::NSConsumesSelf => this.consumes_self = true,
             EntityKind::NSReturnsAutoreleased => {
                 error!("found NSReturnsAutoreleased, which requires manual handling");
             }
-            EntityKind::NSReturnsRetained => {
-                this.returns_retained = true;
-            }
-            EntityKind::NSReturnsNotRetained => {
-                this.returns_not_retained = true;
-            }
-            EntityKind::ObjCDesignatedInitializer => {
-                this.designated_initializer = true;
-            }
+            EntityKind::NSReturnsRetained => this.returns_retained = true,
+            EntityKind::NSReturnsNotRetained => this.returns_not_retained = true,
+            EntityKind::ObjCDesignatedInitializer => this.designated_initializer = true,
             EntityKind::ObjCRequiresSuper => {
                 // TODO: Can we use this for something?
                 // <https://clang.llvm.org/docs/AttributeReference.html#objc-requires-super>
             }
-            EntityKind::WarnUnusedResultAttr => {
-                this.must_use = true;
-            }
+            EntityKind::WarnUnusedResultAttr => this.must_use = true,
             EntityKind::ObjCClassRef
             | EntityKind::ObjCProtocolRef
             | EntityKind::TypeRef
             | EntityKind::ParmDecl
-            | EntityKind::ObjCNSObject => {
-                // Ignore
-            }
+            | EntityKind::ObjCNSObject => {} // Ignore
             EntityKind::IbActionAttr | EntityKind::IbOutletAttr => {
                 // TODO: Do we want to do something special here?
             }
@@ -340,7 +313,7 @@ pub struct Method {
     is_pub: bool,
     // Thread-safe, even on main-thread only (@MainActor/@UIActor) classes
     non_isolated: bool,
-    mainthreadonly: bool,
+    requires_main_thread_marker: bool,
     must_use: bool,
     encoding: String,
     documentation: Documentation,
@@ -356,47 +329,60 @@ pub struct PartialProperty<'tu> {
     pub attributes: Option<ObjCAttributes>,
 }
 
-fn mainthreadonly_override<'a>(
-    result_type: &Ty,
-    argument_types: impl IntoIterator<Item = &'a Ty>,
-    parent_is_mainthreadonly: bool,
-    is_class: bool,
-    mainthreadonly_modifier: bool,
-) -> bool {
-    let mut result_type_requires_mainthreadmarker =
-        result_type.requires_mainthreadmarker(parent_is_mainthreadonly);
+struct MainThreadInfo {
+    result_type_requires_marker: bool,
+    any_argument_provides_marker: bool,
+}
 
-    let mut any_argument_provides_mainthreadmarker = argument_types
-        .into_iter()
-        .any(|arg_ty| arg_ty.provides_mainthreadmarker(parent_is_mainthreadonly));
+impl MainThreadInfo {
+    fn new<'a>(
+        result_type: &Ty,
+        argument_types: impl IntoIterator<Item = &'a Ty>,
+        parent_is_mainthreadonly: bool,
+        is_class: bool,
+    ) -> MainThreadInfo {
+        let mut result_type_requires_marker =
+            result_type.requires_mainthreadmarker(parent_is_mainthreadonly);
 
-    if parent_is_mainthreadonly {
-        if is_class {
-            // Assume the method needs main thread if it's
-            // declared on a main thread only class.
-            result_type_requires_mainthreadmarker = true;
-        } else {
-            // Method takes `&self` or `&mut self`, or is
-            // an initialization method, all of which
-            // already require the main thread.
-            //
-            // Note: Initialization methods can be passed
-            // `None`, but in that case the return will
-            // always be NULL.
-            any_argument_provides_mainthreadmarker = true;
+        let mut any_argument_provides_marker = argument_types
+            .into_iter()
+            .any(|arg_ty| arg_ty.provides_mainthreadmarker(parent_is_mainthreadonly));
+
+        if parent_is_mainthreadonly {
+            if is_class {
+                // Assume the method needs main thread if it's
+                // declared on a main thread only class.
+                result_type_requires_marker = true;
+            } else {
+                // Method takes `&self` or `&mut self`, or is
+                // an initialization method, all of which
+                // already require the main thread.
+                //
+                // Note: Initialization methods can be passed
+                // `None`, but in that case the return will
+                // always be NULL.
+                any_argument_provides_marker = true;
+            }
+        }
+
+        Self {
+            result_type_requires_marker,
+            any_argument_provides_marker,
         }
     }
 
-    if any_argument_provides_mainthreadmarker {
-        // MainThreadMarker can be retrieved via `MainThreadOnly::mtm`
-        // inside these methods, and hence passing it is redundant.
-        false
-    } else if result_type_requires_mainthreadmarker {
-        true
-    } else {
-        // If neither, then we respect any annotation
-        // the method may have had before
-        mainthreadonly_modifier
+    fn method_requires_marker(&self, mainthreadonly_modifier: bool) -> bool {
+        if self.any_argument_provides_marker {
+            // MainThreadMarker can be retrieved via `MainThreadOnly::mtm`
+            // inside these methods, and hence passing it is redundant.
+            false
+        } else if self.result_type_requires_marker {
+            true
+        } else {
+            // If neither, then we respect any annotation
+            // the method may have had before
+            mainthreadonly_modifier
+        }
     }
 }
 
@@ -411,7 +397,7 @@ impl Method {
             && self.is_class
             && self.arguments.is_empty()
             && self.safe
-            && !self.mainthreadonly
+            && !self.requires_main_thread_marker
             && self.availability.is_available_non_deprecated()
     }
 
@@ -488,7 +474,7 @@ impl Method {
             error!("sendable on method");
         }
 
-        let arguments: Vec<_> = entity
+        let mut arguments: Vec<_> = entity
             .get_arguments()
             .expect("method arguments")
             .into_iter()
@@ -581,13 +567,60 @@ impl Method {
             selector.trim_end_matches(':').replace(':', "_")
         };
 
-        let mainthreadonly = mainthreadonly_override(
+        let main_thread_info = MainThreadInfo::new(
             &result_type,
             arguments.iter().map(|(_, ty)| ty),
             parent_thread_safety.inferred_mainthreadonly(),
             is_class,
-            modifiers.mainthreadonly,
         );
+
+        // <https://github.com/swiftlang/swift-evolution/blob/main/proposals/0297-concurrency-objc.md#asynchronous-completion-handler-methods>
+        //
+        // Determine if this ABI-wise can be an asynchronous
+        // completion-handler method. This is true if the method's last
+        // parameter is a block which returns `void`.
+        let potentially_async_completion_handler = arguments
+            .last()
+            .map(|(_, arg_ty)| arg_ty.is_block_returning_void())
+            .unwrap_or(false)
+            && result_type == Ty::VOID_RESULT;
+
+        if modifiers.swift_async.is_some() && !potentially_async_completion_handler {
+            error!(selector, "swift_async on a method without a suitable block");
+        }
+
+        // Next, determine if the naming makes it an inferred
+        let last_selector_piece = name_translation::last_selector_piece(&selector);
+        let implicitly_inferred_async_completion_handler =
+            name_translation::is_completion_handler_param_name(last_selector_piece)
+                || name_translation::strip_completion_handler_suffix(last_selector_piece).is_some()
+                || arguments
+                    .last()
+                    .map(|(arg_name, _)| {
+                        name_translation::is_completion_handler_param_name(arg_name)
+                    })
+                    .unwrap_or(false);
+
+        // And now we know whether the method is an async completion handler
+        // method.
+        //
+        // TODO: At some point, we should probably strip the completion
+        // handler and emit an `async fn`, see:
+        // https://github.com/madsmtm/objc2/issues/279.
+        let is_async = potentially_async_completion_handler
+            && modifiers
+                .swift_async
+                .unwrap_or(implicitly_inferred_async_completion_handler);
+
+        // Finally, use this to mark the block as sendable, as required by:
+        // <https://github.com/swiftlang/swift-evolution/blob/main/proposals/0463-sendable-completion-handlers.md>
+        //
+        // We only do this when the method isn't in a main thread only
+        // context, because in those cases the block is likely going to be run
+        // on the main thread too.
+        if is_async && !main_thread_info.any_argument_provides_marker && !modifiers.mainthreadonly {
+            arguments.last_mut().unwrap().1.default_block_to_sendable();
+        }
 
         let encoding = entity
             .get_objc_type_encoding()
@@ -665,7 +698,8 @@ impl Method {
                 safe,
                 is_pub,
                 non_isolated: modifiers.non_isolated,
-                mainthreadonly,
+                requires_main_thread_marker: main_thread_info
+                    .method_requires_marker(modifiers.mainthreadonly),
                 must_use: modifiers.must_use,
                 encoding,
                 documentation,
@@ -766,12 +800,11 @@ impl Method {
 
             let memory_management = MemoryManagement::new(is_class, &getter_sel, &ty, modifiers);
 
-            let mainthreadonly = mainthreadonly_override(
+            let main_thread_info = MainThreadInfo::new(
                 &ty,
                 &[],
                 parent_thread_safety.inferred_mainthreadonly(),
                 is_class,
-                modifiers.mainthreadonly,
             );
 
             let mut documentation = Documentation::from_entity(&entity, context);
@@ -845,7 +878,8 @@ impl Method {
                 safe,
                 is_pub,
                 non_isolated: modifiers.non_isolated,
-                mainthreadonly,
+                requires_main_thread_marker: main_thread_info
+                    .method_requires_marker(modifiers.mainthreadonly),
                 must_use: modifiers.must_use,
                 encoding: encoding.clone(),
                 documentation,
@@ -878,12 +912,11 @@ impl Method {
                 let memory_management =
                     MemoryManagement::new(is_class, &selector, &result_type, modifiers);
 
-                let mainthreadonly = mainthreadonly_override(
+                let main_thread_info = MainThreadInfo::new(
                     &result_type,
                     std::iter::once(&ty),
                     parent_thread_safety.inferred_mainthreadonly(),
                     is_class,
-                    modifiers.mainthreadonly,
                 );
 
                 let mut safety = ty.safety_in_fn_argument(&crate::to_snake_case(&name));
@@ -963,7 +996,8 @@ impl Method {
                     safe,
                     is_pub,
                     non_isolated: modifiers.non_isolated,
-                    mainthreadonly,
+                    requires_main_thread_marker: main_thread_info
+                        .method_requires_marker(modifiers.mainthreadonly),
                     must_use: modifiers.must_use,
                     encoding,
                     documentation,
@@ -1003,7 +1037,9 @@ impl Method {
         }
 
         // Thread-safety attributes must be equal.
-        if self.mainthreadonly != new.mainthreadonly || self.non_isolated != new.non_isolated {
+        if self.requires_main_thread_marker != new.requires_main_thread_marker
+            || self.non_isolated != new.non_isolated
+        {
             return false;
         }
 
@@ -1055,7 +1091,7 @@ impl Method {
             items.extend(arg_ty.required_items());
         }
         items.extend(self.result_type.required_items());
-        if self.mainthreadonly {
+        if self.requires_main_thread_marker {
             items.push(ItemTree::main_thread_marker());
         }
         items.into_iter()
@@ -1241,7 +1277,7 @@ impl Method {
                 let param = handle_reserved(&crate::to_snake_case(param));
                 write!(f, "{param}: {}, ", arg_ty.method_argument())?;
             }
-            if self.mainthreadonly {
+            if self.requires_main_thread_marker {
                 write!(f, "mtm: MainThreadMarker")?;
             }
             write!(f, ")")?;

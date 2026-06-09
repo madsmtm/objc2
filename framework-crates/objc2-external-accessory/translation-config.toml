@@ -7,5 +7,7 @@ ios = "3.0"
 tvos = "10.0"
 visionos = "1.0"
 
+typedef.EABluetoothAccessoryPickerCompletion.sendable = true
+
 # Needs the `UIKit` framework
 class.EAWiFiUnconfiguredAccessoryBrowser.methods."configureAccessory:withConfigurationUIOnViewController:".skipped = true

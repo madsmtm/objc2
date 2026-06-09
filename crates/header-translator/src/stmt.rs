@@ -1830,6 +1830,7 @@ impl Stmt {
                                 UnexposedAttr::NoThrow => {
                                     abi = Abi::C;
                                 }
+                                UnexposedAttr::NonSwiftAsync => {} // Unused for now
                                 _ => error!(?attr, "unknown attribute on function"),
                             }
                         }

@@ -9,6 +9,7 @@ visionos = "1.0"
 
 external.CLRegion.module = "CoreLocation.CLRegion"
 external.MTRSetupPayload.module = "Matter.MTRSetupPayload"
+typedef.HMErrorBlock.sendable = true
 
 # Set counterparts
 class.HMCalendarEvent.counterpart.mutable-subclass = "HomeKit.HMCalendarEvent.HMMutableCalendarEvent"

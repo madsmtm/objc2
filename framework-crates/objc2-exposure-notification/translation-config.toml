@@ -3,3 +3,7 @@ crate = "objc2-exposure-notification"
 required-crates = ["objc2", "objc2-foundation"]
 # maccatalyst = "13.5" # Documentation says it's available, but it seems to not be
 ios = "13.5"
+
+typedef.ENErrorHandler.sendable = true
+typedef.ENGetUserTraveledHandler.sendable = true
+typedef.ENGetDiagnosisKeysHandler.sendable = true

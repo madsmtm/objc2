@@ -10,6 +10,10 @@ watchos = "2.0"
 visionos = "1.0"
 
 external.CNPostalAddress.module = "Contacts.CNPostalAddress"
+typedef.MKDirectionsHandler.sendable = true
+typedef.MKETAHandler.sendable = true
+typedef.MKLocalSearchCompletionHandler.sendable = true
+typedef.MKMapSnapshotCompletionHandler.sendable = true
 
 # Needs proper support for iOS
 class.MKMapItemRequest.methods."initWithMapFeatureAnnotation:".skipped = true

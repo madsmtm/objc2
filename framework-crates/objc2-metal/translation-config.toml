@@ -8,6 +8,12 @@ ios = "8.0"
 tvos = "9.0"
 visionos = "1.0"
 
+typedef.MTLNewLibraryCompletionHandler.sendable = true
+typedef.MTLNewRenderPipelineStateCompletionHandler.sendable = true
+typedef.MTLNewRenderPipelineStateWithReflectionCompletionHandler.sendable = true
+typedef.MTLNewComputePipelineStateCompletionHandler.sendable = true
+typedef.MTLNewComputePipelineStateWithReflectionCompletionHandler.sendable = true
+
 # Duplicated property
 class.MTLRasterizationRateLayerDescriptor.methods.sampleCount.skipped = true
 

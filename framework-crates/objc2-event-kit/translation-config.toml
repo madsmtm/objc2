@@ -9,6 +9,7 @@ visionos = "1.0"
 
 external.NSColor.module = "AppKit.NSColor"
 external.MKMapItem.module = "MapKit.MKMapItem"
+typedef.EKEventStoreRequestAccessCompletionHandler.sendable = true
 
 # Needs the `AddressBook` framework
 class.EKParticipant.methods."ABPersonInAddressBook:".skipped = true

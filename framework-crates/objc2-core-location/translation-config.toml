@@ -11,3 +11,4 @@ watchos = "2.0"
 visionos = "1.0"
 
 external.CNPostalAddress.module = "Contacts.CNPostalAddress"
+typedef.CLGeocodeCompletionHandler.sendable = true

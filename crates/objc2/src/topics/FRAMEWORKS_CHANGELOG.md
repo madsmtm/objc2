@@ -83,6 +83,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * `NSArray`'s and `NSSet`'s `Debug` impl longer requires the `NSEnumerator` feature.
 * **BREAKING**: Type aliases now refer to the block instead of a pointer to the block.
 * **BREAKING**: Methods with blocks as type-aliases now take `&Block` instead of `*mut Block`.
+* **BREAKING**: Methods with completion handler blocks are now correctly sendable.
 
 ## [0.3.2] - 2025-10-04
 [0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2

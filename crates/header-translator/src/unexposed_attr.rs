@@ -39,6 +39,9 @@ pub enum UnexposedAttr {
     NoThrow,
 
     FullyUnavailable,
+
+    SwiftAsync,
+    NonSwiftAsync,
 }
 
 impl UnexposedAttr {
@@ -150,6 +153,25 @@ impl UnexposedAttr {
             "CF_NOESCAPE" | "DISPATCH_NOESCAPE" | "NW_NOESCAPE" | "NS_NOESCAPE"
             | "XCT_NOESCAPE" | "XCUI_NOESCAPE" => Some(Self::NoEscape),
             "DISPATCH_NOTHROW" | "NS_SWIFT_NOTHROW" => Some(Self::NoThrow),
+            // The presence of `swift_async` changes the sendability of the
+            // block, so let's check for these.
+            "WK_SWIFT_ASYNC_NAME"
+            | "WK_SWIFT_ASYNC"
+            | "NS_REFINED_FOR_SWIFT_ASYNC"
+            | "NS_SWIFT_ASYNC"
+            | "NS_SWIFT_ASYNC_NAME"
+            | "NS_SWIFT_ASYNC_THROWS_ON_FALSE" => {
+                let _ = get_arguments();
+                Some(Self::SwiftAsync)
+            }
+            "NS_SWIFT_DISABLE_ASYNC" | "NW_SWIFT_DISABLE_ASYNC" => Some(Self::NonSwiftAsync),
+            // Might be interesting in the future?
+            "CF_SWIFT_UNAVAILABLE_FROM_ASYNC"
+            | "XCT_SWIFT_UNAVAILABLE_FROM_ASYNC"
+            | "NS_SWIFT_UNAVAILABLE_FROM_ASYNC" => {
+                let _ = get_arguments();
+                None
+            }
             // TODO: We could potentially automatically elide this argument
             // from the method call, though it's rare enough that it's
             // probably not really worth the effort.
@@ -411,19 +433,10 @@ impl UnexposedAttr {
             // Might be interesting in the future
             "swift_name"
             | "CF_SWIFT_NAME"
-            | "CF_SWIFT_UNAVAILABLE_FROM_ASYNC"
-            | "XCT_SWIFT_UNAVAILABLE_FROM_ASYNC"
             | "DISPATCH_SWIFT_NAME"
             | "IOSFC_SWIFT_NAME"
             | "MPS_SWIFT_NAME"
-            | "NS_REFINED_FOR_SWIFT_ASYNC"
-            | "NS_SWIFT_ASYNC_NAME"
-            | "NS_SWIFT_ASYNC_THROWS_ON_FALSE"
-            | "NS_SWIFT_ASYNC"
             | "NS_SWIFT_NAME"
-            | "NS_SWIFT_UNAVAILABLE_FROM_ASYNC"
-            | "WK_SWIFT_ASYNC_NAME"
-            | "WK_SWIFT_ASYNC"
             | "OPENGL_SWIFT_NAME" => {
                 let _ = get_arguments();
                 None
@@ -432,8 +445,6 @@ impl UnexposedAttr {
             | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "AR_REFINED_FOR_SWIFT"
-            | "NS_SWIFT_DISABLE_ASYNC"
-            | "NW_SWIFT_DISABLE_ASYNC"
             | "CP_STRUCT_REF" => None,
             // Possibly interesting?
             "DISPATCH_COLD" => None,

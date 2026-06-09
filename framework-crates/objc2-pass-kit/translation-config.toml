@@ -12,6 +12,9 @@ ios = "6.0"
 watchos = "2.0"
 visionos = "1.0"
 
+typedef.PKInformationRequestCompletionBlock.sendable = true
+typedef.PKSignatureRequestCompletionBlock.sendable = true
+
 # Defined as `~(NSUInteger)0`, which leads header-translator to assume that `NSUInteger` is a macro.
 const.PKPassTypeAny.skipped = true
 

@@ -17,6 +17,10 @@ tvos = "9.0"
 watchos = "3.0"
 visionos = "1.0"
 
+typedef.AVAudioNodeCompletionHandler.sendable = true
+typedef.AVAudioPlayerNodeCompletionHandler.sendable = true
+typedef.AVMIDIPlayerCompletionHandler.sendable = true
+
 # AUMIDIEventListBlock not currently exported by AudioToolbox
 class.AVAudioEngine.methods."connectMIDI:to:format:eventListBlock:".skipped = true
 class.AVAudioEngine.methods."connectMIDI:toNodes:format:eventListBlock:".skipped = true

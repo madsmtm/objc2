@@ -486,9 +486,6 @@ class.NSAnimation.methods."setAnimationBlockingMode:".unsafe = true
 # May not be safe?
 class.NSProgressIndicator.methods."setUsesThreadedAnimation:".unsafe = true
 
-# Block should be marked as NS_SWIFT_SENDABLE
-class.NSColorSampler.methods."showSamplerWithSelectionHandler:".unsafe = true
-
 # SAFETY: Setting `stronglyReferencesItems` to `false` breaks lifetime safety.
 #
 # This is the default for applications linked on macOS 10.12, but that's

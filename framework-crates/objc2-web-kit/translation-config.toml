@@ -7,5 +7,7 @@ maccatalyst = "13.0"
 ios = "16.0"
 visionos = "1.0"
 
+typedef.NSAttributedStringCompletionHandler.sendable = true
+
 # Not marked as nullable, but should be.
 class.WKNavigationAction.methods.sourceFrame.return.nullability = "nullable"

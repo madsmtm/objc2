@@ -2376,6 +2376,7 @@ impl Ty {
                 let mut inner = Self::parse(inner, Lifetime::Unspecified, false, context);
 
                 let id = ItemIdentifier::new(&declaration, context);
+                let data = context.library(&id).get(&declaration);
 
                 // "Push" the typedef into an inner object pointer.
                 //
@@ -2434,16 +2435,19 @@ impl Ty {
                         }
                     }
 
+                    // Propagate sendability from typedef.
+                    if let Some(sendable_override) = data.sendable {
+                        if let Self::Pointee(PointeeTy::Block { sendable, .. }) = &mut **pointee {
+                            *sendable = Some(sendable_override);
+                        } else {
+                            error!(?id, "tried to set sendable on non-block typedef");
+                        }
+                    }
+
                     if pointee
                         .is_direct_cf_type(&id.name, bridged_to(&declaration, context).is_some())
                     {
-                        let declaration_generics = context
-                            .library(&id)
-                            .typedef_data
-                            .get(&id.name)
-                            .map(|data| data.generics.clone())
-                            .unwrap_or_default()
-                            .unwrap_or_default();
+                        let declaration_generics = data.generics.clone().unwrap_or_default();
 
                         // A bit annoying that we replace the typedef name
                         // here, as that's also what determines whether the
@@ -4385,6 +4389,49 @@ impl Ty {
             self.through_typedef(),
             Self::Primitive(Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double)
         )
+    }
+
+    pub(crate) fn is_block_returning_void(&self) -> bool {
+        matches!(
+            self.through_typedef(),
+            Self::Pointer { pointee, .. } if matches!(
+                pointee.through_typedef(),
+                Self::Pointee(pointee) if matches!(
+                    pointee.through_typedef(),
+                    PointeeTy::Block { result_type, .. } if **result_type == Ty::VOID_RESULT,
+                ),
+            ),
+        )
+    }
+
+    pub(crate) fn default_block_to_sendable(&mut self) {
+        match &mut *self {
+            Self::Pointer { pointee, .. } => match &mut **pointee {
+                Self::Pointee(pointee) => match pointee {
+                    PointeeTy::Block { sendable, .. } => {
+                        if let Some(_sendable) = sendable {
+                            // Keep explicit value
+                        } else {
+                            // Default to sendable.
+                            *sendable = Some(true);
+                        }
+                    }
+                    PointeeTy::TypeDef { id, to } => {
+                        if matches!(&**to, PointeeTy::Block { sendable: None, .. }) {
+                            error!(
+                                "making blocks sendable doesn't work through typedefs, manually mark the block as sendable!\ntypedef.{}.sendable = true",
+                                id.name,
+                            );
+                        }
+                    }
+                    _ => {}
+                },
+                Self::TypeDef { .. } => unimplemented!("block pointer pointee typedef"),
+                _ => {}
+            },
+            Self::TypeDef { .. } => unimplemented!("block pointer typedef"),
+            _ => {}
+        }
     }
 
     /// SIMD is not yet possible in FFI, see:

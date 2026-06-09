@@ -482,6 +482,44 @@ fn lowercase_words(s: &str) -> impl Iterator<Item = String> + Clone + '_ {
         .map(str::to_lowercase)
 }
 
+pub(crate) fn last_selector_piece(selector: &str) -> &str {
+    selector.rsplit(':').nth(1).unwrap_or(selector)
+}
+
+/// Part of <https://github.com/swiftlang/swift-evolution/blob/main/proposals/0297-concurrency-objc.md#:~:text=If%20the%20method%20has%20a%20single%20parameter>
+///
+/// The given parameter is the final piece of the selector.
+pub(crate) fn strip_completion_handler_suffix(s: &str) -> Option<&str> {
+    // https://github.com/swiftlang/swift/blob/swift-6.3.2-RELEASE/lib/Basic/StringExtras.cpp#L1406-L1433
+    s.strip_suffix("WithCompletion")
+        .or_else(|| s.strip_suffix("WithCompletionHandler"))
+        .or_else(|| s.strip_suffix("WithCompletionBlock"))
+        .or_else(|| s.strip_suffix("WithBlock"))
+        .or_else(|| s.strip_suffix("WithReplyTo"))
+        .or_else(|| s.strip_suffix("WithReply"))
+}
+
+/// Part of <https://github.com/swiftlang/swift-evolution/blob/main/proposals/0297-concurrency-objc.md#:~:text=If%20the%20method%20has%20more%20than%20one%20parameter>
+///
+/// The given parameter is either the final piece of the selector, or a
+/// parameter name.
+pub(crate) fn is_completion_handler_param_name(s: &str) -> bool {
+    // https://github.com/swiftlang/swift/blob/swift-6.3.2-RELEASE/lib/ClangImporter/ImportName.cpp#L1232-L1239
+    matches!(
+        s,
+        "completion"
+            | "withCompletion"
+            | "completionHandler"
+            | "withCompletionHandler"
+            | "completionBlock"
+            | "withCompletionBlock"
+            | "withReply"
+            | "withReplyTo"
+            | "reply"
+            | "replyTo"
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -708,5 +746,24 @@ mod tests {
         assert!(is_likely_bounds_affecting("index"));
         assert!(!is_likely_bounds_affecting("the_array"));
         assert!(is_likely_bounds_affecting("range"));
+    }
+
+    #[test]
+    fn test_last_selector_piece() {
+        assert_eq!(last_selector_piece("foo"), "foo");
+        assert_eq!(last_selector_piece("foo:"), "foo");
+        assert_eq!(last_selector_piece("foo:bar:"), "bar");
+        assert_eq!(last_selector_piece("foo:bar:xyz:"), "xyz");
+        assert_eq!(last_selector_piece("foo:bar::"), "");
+    }
+
+    #[test]
+    fn test_async_completion_handler_method() {
+        assert!(is_completion_handler_param_name(last_selector_piece(
+            "fetchShareParticipantWithUserRecordID:completionHandler:"
+        )));
+        assert!(is_completion_handler_param_name(last_selector_piece(
+            "signData:withSecureElementPass:completion:"
+        )));
     }
 }

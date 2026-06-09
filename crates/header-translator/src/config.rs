@@ -526,6 +526,11 @@ impl LibraryConfig {
         for data in all.clone().filter(filter_ptr(allowed_in)) {
             assert_eq!(data.nullability, Default::default());
         }
+
+        let allowed_in = self.typedef_data.values();
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.sendable, Default::default());
+        }
     }
 
     pub(crate) fn get(&self, entity: &Entity<'_>) -> &StmtData {
@@ -653,6 +658,10 @@ pub struct StmtData {
     // Typedef and statics
     #[serde(default)]
     pub nullability: Option<Nullability>,
+
+    // Typedefs to blocks only (for now)
+    #[serde(default)]
+    pub sendable: Option<bool>,
 }
 
 impl StmtData {

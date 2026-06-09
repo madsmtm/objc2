@@ -8,6 +8,8 @@ ios = "9.0"
 tvos = "9.0"
 visionos = "1.0"
 
+typedef.MPSAccelerationStructureCompletionHandler.sendable = true
+
 # Defined in both MPSCore.MPSImage and MPSCore.MPSNDArray
 typedef.MPSImageBatch.skipped = true
 

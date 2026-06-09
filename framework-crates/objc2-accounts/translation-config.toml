@@ -5,5 +5,10 @@ macos = "10.8"
 maccatalyst = "13.0"
 ios = "5.0"
 
+typedef.ACAccountStoreSaveCompletionHandler.sendable = true
+typedef.ACAccountStoreRequestAccessCompletionHandler.sendable = true
+typedef.ACAccountStoreCredentialRenewalHandler.sendable = true
+typedef.ACAccountStoreRemoveCompletionHandler.sendable = true
+
 # Both enum and typedef
 typedef.ACErrorCode.skipped = true

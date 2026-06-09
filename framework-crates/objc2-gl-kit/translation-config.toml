@@ -12,5 +12,7 @@ macos = "10.8"
 ios = "5.0"
 tvos = "9.0"
 
+typedef.GLKTextureLoaderCallback.sendable = true
+
 # Uses constants from OpenGL.
 enum.GLKTextureTarget.use-value = true
