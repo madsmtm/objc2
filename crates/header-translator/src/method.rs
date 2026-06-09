@@ -585,10 +585,6 @@ impl Method {
             .unwrap_or(false)
             && result_type == Ty::VOID_RESULT;
 
-        if modifiers.swift_async.is_some() && !potentially_async_completion_handler {
-            error!(selector, "swift_async on a method without a suitable block");
-        }
-
         // Next, determine if the naming makes it an inferred
         let last_selector_piece = name_translation::last_selector_piece(&selector);
         let implicitly_inferred_async_completion_handler =
