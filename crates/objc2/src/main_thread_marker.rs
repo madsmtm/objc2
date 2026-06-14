@@ -38,10 +38,15 @@ fn is_main_thread() -> bool {
         // > Returns non-zero if the current thread is the main thread.
         //
         // So unclear if we should be doing a comparison against 1, or a negative comparison against 0?
-        // To be safe, we compare against 1, though in reality, the current implementation can only ever
-        // return 0 or 1:
+        // We follow Apple's header ("non-zero if the current thread is the main thread") and compare
+        // against 0, NOT against 1.
+        //
+        // This matters on macOS 26 (Tahoe): during `applicationDidFinishLaunching` the main thread can
+        // be reported with `pthread_main_np() == -1` ("thread's initialization has not yet completed").
+        // The old `== 1` check then wrongly returned `false`, so `MainThreadMarker::new()` returned
+        // `None` and downstream callers (`tao`/`winit`) panicked on launch — see tauri-apps/tao#1171.
         // https://github.com/apple-oss-distributions/libpthread/blob/libpthread-535/src/pthread.c#L1084-L1089
-        unsafe { pthread_main_np() == 1 }
+        unsafe { pthread_main_np() != 0 }
     }
 
     #[cfg(not(target_vendor = "apple"))]
