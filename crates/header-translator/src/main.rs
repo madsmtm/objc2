@@ -572,6 +572,11 @@ fn get_translation_unit<'i: 'c, 'c>(
         "-fapinotes",
         "-fapinotes-modules",
         // "-fapi-notes-swift-version=6.0",
+        // Make properties that are nonatomic on iOS only be nonatomic
+        // everywhere; this is the safe default, we can consider `cfg`-gating
+        // these in the future.
+        "-D",
+        "NS_NONATOMIC_IOSONLY=nonatomic",
     ];
 
     // Add include paths for Mac Catalyst
