@@ -94,6 +94,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Improved the derived `Debug` impl for classes defined with `define_class!`.
 * Merged `#[unsafe(method(...))]` and `#[unsafe(method_id(...))]` in
   `define_class!`. `#[method_id(...)]` is now fully deprecated.
+* Removed `build.rs` at the cost of worse support for Simulator and Mac
+  Catalyst targets on older Rust versions.
 
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.
