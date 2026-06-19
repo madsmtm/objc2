@@ -10,6 +10,8 @@ resolver = "2"
 [workspace.package]
 authors = ["Mads Marquart <mads@marquart.dk>"]
 edition = "2021"
+# Requires 1.91 on Simulator and Mac Catalyst targets, these are slightly
+# broken on earlier Rust versions.
 rust-version = "1.71"
 repository = "https://github.com/madsmtm/objc2"
 

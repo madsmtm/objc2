@@ -67,13 +67,13 @@ pub(crate) const DEPLOYMENT_TARGET: OSVersion = {
         } else if cfg!(all(
             target_os = "ios",
             target_arch = "aarch64",
-            target_abi_macabi
+            target_env = "macabi",
         )) {
             (14, 0, 0)
         } else if cfg!(all(
             target_os = "ios",
             target_arch = "aarch64",
-            target_simulator
+            target_env = "sim",
         )) {
             (14, 0, 0)
         } else if cfg!(all(target_os = "tvos", target_arch = "aarch64")) {
@@ -163,7 +163,7 @@ fn version_from_sysctl() -> Option<OSVersion> {
     // This won't work in the simulator, as `kern.osproductversion` returns the host macOS version,
     // and `kern.iossupportversion` returns the host macOS' iOSSupportVersion (while you can run
     // simulators with many different iOS versions).
-    if cfg!(target_simulator) {
+    if cfg!(target_env = "sim") {
         // Fall back to `version_from_plist` on these targets.
         return None;
     }
@@ -232,7 +232,7 @@ fn version_from_sysctl() -> Option<OSVersion> {
 
         // On Mac Catalyst, if we failed looking up `iOSSupportVersion`, we don't want to
         // accidentally fall back to `ProductVersion`.
-        if cfg!(target_abi_macabi) {
+        if cfg!(target_env = "macabi") {
             return None;
         }
     }
@@ -260,7 +260,7 @@ fn version_from_sysctl() -> Option<OSVersion> {
 /// (it seems to use the plain-text "xml1" encoding/format in all versions), but that seems brittle.
 fn version_from_plist() -> OSVersion {
     // The root directory relative to where all files are located.
-    let root = if cfg!(target_simulator) {
+    let root = if cfg!(target_env = "sim") {
         PathBuf::from(env::var_os("IPHONE_SIMULATOR_ROOT").expect(
             "environment variable `IPHONE_SIMULATOR_ROOT` must be set when executing under simulator",
         ))
@@ -504,7 +504,7 @@ fn parse_version_from_plist(root: &Path, plist_buffer: &[u8]) -> OSVersion {
         }
 
         // Force Mac Catalyst to use iOSSupportVersion (do not fall back to ProductVersion).
-        if cfg!(target_abi_macabi) {
+        if cfg!(target_env = "macabi") {
             panic!("expected iOSSupportVersion in SystemVersion.plist");
         }
     }

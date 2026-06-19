@@ -17,7 +17,7 @@ mod inner {
         // aarch64-apple-*
         target_arch = "aarch64",
         // + x86_64-apple-ios (i.e. the simulator) (but not x86_64-apple-ios-macabi)
-        all(target_os = "ios", target_pointer_width = "64", not(target_abi_macabi)),
+        all(target_os = "ios", target_pointer_width = "64", not(target_env = "macabi")),
         // + x86_64-apple-tvos
         all(target_os = "tvos", target_pointer_width = "64"),
         // + *-apple-watchos
@@ -29,7 +29,11 @@ mod inner {
     // Inverse of the above
     #[cfg(not(any(
         target_arch = "aarch64",
-        all(target_os = "ios", target_pointer_width = "64", not(target_abi_macabi)),
+        all(
+            target_os = "ios",
+            target_pointer_width = "64",
+            not(target_env = "macabi")
+        ),
         all(target_os = "tvos", target_pointer_width = "64"),
         target_os = "watchos",
     )))]
