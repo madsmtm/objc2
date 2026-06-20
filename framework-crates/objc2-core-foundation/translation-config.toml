@@ -110,6 +110,23 @@ fn.CFDictionaryContainsValue.renamed = "contains_ptr_value"
 fn.CFURLCreateWithString.renamed = "__from_string"
 fn.CFURLGetString.renamed = "__string"
 
+# Various things that we'd rather have exposed on CFType.
+fn.CFGetTypeID.implementor = "CoreFoundation.CFType"
+fn.CFGetTypeID.renamed = "type_id"
+fn.CFGetRetainCount.implementor = "CoreFoundation.CFType"
+fn.CFGetRetainCount.renamed = "__retain_count" # Changed return type to usize
+fn.CFEqual.implementor = "CoreFoundation.CFType"
+fn.CFEqual.renamed = "__equal" # PartialEq::eq
+fn.CFHash.implementor = "CoreFoundation.CFType"
+fn.CFHash.renamed = "__hash" # Hash::hash
+fn.CFCopyDescription.implementor = "CoreFoundation.CFType"
+fn.CFCopyDescription.renamed = "description"
+fn.CFGetAllocator.implementor = "CoreFoundation.CFType"
+fn.CFGetAllocator.renamed = "allocator"
+
+fn.CFShowStr.implementor = "CoreFoundation.CFString.CFString"
+fn.CFShowStr.renamed = "show"
+
 ##
 ## Fixing const-ness, nullability and bounds information.
 ##

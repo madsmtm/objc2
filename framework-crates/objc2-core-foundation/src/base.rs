@@ -45,9 +45,7 @@ use core::fmt;
 use core::hash;
 use core::marker::{PhantomData, PhantomPinned};
 
-use crate::{
-    CFComparisonResult, CFEqual, CFGetRetainCount, CFGetTypeID, CFHash, CFRange, ConcreteType, Type,
-};
+use crate::{CFComparisonResult, CFRange, ConcreteType, Type};
 
 /// [Apple's documentation](https://developer.apple.com/documentation/corefoundation/cftypeid?language=objc)
 pub type CFTypeID = usize;
@@ -92,7 +90,7 @@ impl CFType {
     // Not #[inline], we call two functions here.
     #[doc(alias = "CFGetTypeID")]
     pub fn downcast_ref<T: ConcreteType>(&self) -> Option<&T> {
-        if CFGetTypeID(self) == T::type_id() {
+        if self.type_id() == T::type_id() {
             let ptr: *const Self = self;
             let ptr: *const T = ptr.cast();
             // SAFETY: Just checked that the object is a class of type `T`.
@@ -119,7 +117,7 @@ impl CFType {
     pub fn retain_count(&self) -> usize {
         // Cast is fine, if the reference count is `-1` we want to return
         // `usize::MAX` as a sentinel instead.
-        CFGetRetainCount(self) as _
+        self.__retain_count() as _
     }
 }
 
@@ -139,7 +137,7 @@ impl fmt::Debug for CFType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         #[cfg(feature = "CFString")]
         {
-            let desc = crate::CFCopyDescription(Some(self)).expect("must have description");
+            let desc = Self::description(Some(self)).expect("must have description");
             write!(f, "{desc}")
         }
         #[cfg(not(feature = "CFString"))]
@@ -161,7 +159,7 @@ impl PartialEq for CFType {
     #[inline]
     #[doc(alias = "CFEqual")]
     fn eq(&self, other: &Self) -> bool {
-        CFEqual(self, other)
+        self.__equal(other)
     }
 }
 
@@ -178,7 +176,7 @@ impl Eq for CFType {}
 impl hash::Hash for CFType {
     #[doc(alias = "CFHash")]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        CFHash(self).hash(state);
+        self.__hash().hash(state);
     }
 }
 

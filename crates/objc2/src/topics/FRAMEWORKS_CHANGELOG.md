@@ -62,7 +62,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `MTL4MachineLearningCommandEncoder::setArgumentTable` now takes a nullable argument table.
 * **BREAKING**: `MTL4RenderCommandEncoder::setArgumentTable_atStages` now takes a nullable argument table.
 * **BREAKING**: `PKAddCarKeyPassConfiguration::manufacturerIdentifier` is now nullable.
-* **BREAKING**: Methods that previously used a `libc::socketaddr` pointer now used `core::net::SocketAddr`.
+* **BREAKING**: Methods that previously used a `libc::socketaddr` pointer now use `core::net::SocketAddr`.
+* **BREAKING**: Renamed `CFGetTypeID` to `CFType::type_id`.
+* **BREAKING**: Renamed `CFCopyDescription` to `CFType::description`.
+* **BREAKING**: Renamed `CFGetAllocator` to `CFType::allocator`.
+* **BREAKING**: Renamed `CFShowStr` to `CFString::show`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.
@@ -76,6 +80,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed unavailable methods.
 * **BREAKING**: Removed `CSSearchableItemAttributeSet::moveFrom`.
 * **BREAKING**: Removed various `kUSBHostBillboardDeviceProperty*` consts.
+* **BREAKING**: Removed `CFGetRetainCount`, `CFEqual` and `CFHash`; these are now only available directly on `CFType`.
 
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.
