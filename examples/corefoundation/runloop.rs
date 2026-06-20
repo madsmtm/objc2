@@ -29,7 +29,7 @@ fn main() {
             _ => eprintln!("unknown observer activity"),
         },
     );
-    rl.add_observer(&observer, unsafe { kCFRunLoopCommonModes.unwrap() });
+    rl.add_observer(&observer, unsafe { kCFRunLoopCommonModes });
 
     // Add a simple timer.
     let iterations = Cell::new(0);
@@ -40,7 +40,7 @@ fn main() {
 
             if 10 <= iterations.get() {
                 // Remove the timer.
-                rl.remove_timer(timer, unsafe { kCFRunLoopCommonModes.unwrap() });
+                rl.remove_timer(timer, unsafe { kCFRunLoopCommonModes });
 
                 // Stop the run loop explicitly
                 // (the main run-loop won't stop otherwise).
@@ -53,7 +53,7 @@ fn main() {
     };
     // SAFETY: The timer is added to a run loop on the same thread.
     let timer = unsafe { create_timer_unchecked(0.0, 0.1, 0, callback) };
-    rl.add_timer(&timer, unsafe { kCFRunLoopCommonModes.unwrap() });
+    rl.add_timer(&timer, unsafe { kCFRunLoopCommonModes });
 
     // Add a single-shot timer.
     let fire_date = CFAbsoluteTimeGetCurrent() + 0.5;
@@ -62,7 +62,7 @@ fn main() {
         // Still runs on the main thread.
         assert_eq!(CFRunLoop::current().unwrap(), CFRunLoop::main().unwrap());
     });
-    rl.add_timer(&timer, unsafe { kCFRunLoopCommonModes.unwrap() });
+    rl.add_timer(&timer, unsafe { kCFRunLoopCommonModes });
 
     // Add an external source.
     let source = create_source(0, |data| match data {
@@ -72,7 +72,7 @@ fn main() {
             println!("source removed from runloop mode {mode}")
         }
     });
-    rl.add_source(&source, unsafe { kCFRunLoopCommonModes.unwrap() });
+    rl.add_source(&source, unsafe { kCFRunLoopCommonModes });
 
     // Add a thread that signals the source.
     let source = {

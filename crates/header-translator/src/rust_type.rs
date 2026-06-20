@@ -3672,10 +3672,29 @@ impl Ty {
                 pointee,
             } if pointee.is_object_like() => {
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer(allow_generic_param));
-                if *nullability == Nullability::NonNull {
-                    write!(f, "&'static {pointee}")
-                } else {
-                    write!(f, "Option<&'static {pointee}>")
+                match *nullability {
+                    Nullability::NonNull => write!(f, "&'static {pointee}"),
+                    // NOTE: The sound option here would be to emit these as
+                    // `Option<&T>`, since we don't know the nullability.
+                    //
+                    // In practice though, it's much very common that statics
+                    // don't have a nullability applied (especially in CF),
+                    // and we want to emit these as non-null too whenever we
+                    // can.
+                    //
+                    // We test that all non-null statics are actually non-null
+                    // in `test-frameworks` with `check_static_nonnull`, so
+                    // there shouldn't be any danger from doing this
+                    //
+                    // (I guess the value of a static changes from one OS
+                    // version to another to become nullable, but that'd be an
+                    // observable change, so I strongly doubt it will happen).
+                    //
+                    // Swift seems to do a similar thing, e.g.
+                    // `NSExtensionJavaScriptPreprocessingResultsKey` is
+                    // mapped as `String`, not `String!`.
+                    Nullability::Unspecified => write!(f, "&'static {pointee}"),
+                    Nullability::Nullable => write!(f, "Option<&'static {pointee}>"),
                 }
             }
             _ => write!(f, "{}", self.behind_pointer(allow_generic_param)),
@@ -4494,7 +4513,8 @@ impl Ty {
                 let type_name = cf_no_ref(&id.name);
                 // We don't ever want to mark these as non-NULL, as they have NULL
                 // statics (`kCFAllocatorDefault` and `kODSessionDefault`).
-                if fn_name.contains(type_name) && !matches!(type_name, "ODSession" | "CFAllocator")
+                if fn_name.contains(type_name)
+                    && !matches!(type_name, "ODSession" | "ODSessionRef" | "CFAllocator")
                 {
                     // Is likely a getter, so let's mark it as non-null (CF will
                     // usually crash if given an unexpected NULL pointer, but

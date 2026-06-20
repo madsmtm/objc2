@@ -67,6 +67,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `CFCopyDescription` to `CFType::description`.
 * **BREAKING**: Renamed `CFGetAllocator` to `CFType::allocator`.
 * **BREAKING**: Renamed `CFShowStr` to `CFString::show`.
+* **BREAKING**: A bunch of statics are now emitted as `&T` instead of `Option<&T>` when they don't actually contain NULL.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

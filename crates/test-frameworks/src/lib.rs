@@ -31,6 +31,7 @@ pub use objc2::runtime::{
     AnyClass, AnyObject, AnyProtocol, Bool, Imp, NSObject, NSObjectProtocol, ProtocolObject, Sel,
 };
 pub use objc2::{available, sel, ClassType, MainThreadMarker};
+use std::hint::black_box;
 
 // Fix kODAuthenticationTypeClearTextReadOnly linking
 #[link(name = "odmodule", kind = "dylib")]
@@ -122,7 +123,7 @@ pub fn check_method<Arguments: EncodeArguments, Return: EncodeReturn>(
 
 #[track_caller]
 pub fn check_static_nonnull<T: ?Sized>(var: &T) {
-    let ptr: *const T = var;
+    let ptr: *const T = black_box(var);
     if ptr.is_null() {
         panic!("static was marked as NonNull, so it must not be NULL");
     }

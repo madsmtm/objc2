@@ -22,3 +22,6 @@ typedef.ODSessionRef.renamed = "ODSessionRef"
 # Conflicts with each other, and it's not clear if one is preferred.
 fn.ODNodeCreateRecord.renamed = "create_record"
 fn.ODNodeCopyRecord.renamed = "copy_record"
+
+# Ensure this is emitted as `Option<&T>`, it's NULL.
+static.kODSessionDefault.nullability = "nullable"

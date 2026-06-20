@@ -6,9 +6,9 @@ use crate::{kCFBooleanFalse, kCFBooleanTrue, CFBoolean, CFNumber, CFNumberType, 
 impl CFBoolean {
     pub fn new(value: bool) -> &'static CFBoolean {
         if value {
-            unsafe { kCFBooleanTrue }.unwrap()
+            unsafe { kCFBooleanTrue }
         } else {
-            unsafe { kCFBooleanFalse }.unwrap()
+            unsafe { kCFBooleanFalse }
         }
     }
 
