@@ -59,8 +59,8 @@ pub trait RetainedIntoIterator {
 //
 // Here, you're expected to write `xs.iter()` or `&**xs` instead, which is
 // fairly acceptable, since usually people don't wrap things in boxes so much;
-// but in Objective-C, _everything_ is wrapped in an `Retained`, and hence we should
-// attempt to make that common case easier:
+// but in Objective-C, _everything_ is wrapped in a `Retained`, and hence we
+// should attempt to make that common case easier:
 //
 // ```
 // let obj = NSArray::new(); // `Retained<NSArray<_>>`
@@ -101,7 +101,7 @@ where
 /// implementing `FromIterator` for your type normally.
 #[doc(alias = "IdFromIterator")] // Previous name
 pub trait RetainedFromIterator<T>: Sized {
-    /// Creates an `Retained` from an iterator.
+    /// Creates an `Retained` object from an iterator.
     fn retained_from_iter<I>(iter: I) -> Retained<Self>
     where
         I: IntoIterator<Item = T>;
@@ -113,6 +113,29 @@ impl<T, U: RetainedFromIterator<T>> FromIterator<T> for Retained<U> {
         U::retained_from_iter(iter)
     }
 }
+
+// Possible further traits we could've added, but didn't:
+//
+// - `FromRetained<T>`/`IntoRetained<T>`, but this isn't really possible, see
+//   https://github.com/madsmtm/objc2/issues/39, and we'd rather have the
+//   various `&T` -> `Retained<T>` impls anyhow.
+//
+// - `RetainedIntoFuture`, doesn't really make sense, we don't have anything
+//   in Objective-C that acts like a future, apart from maybe completion
+//   handlers (and those need different handling anyhow).
+//
+// - `RetainedFromStr` could make sense but would need usage to be
+//   `<Retained<NSString>>::from_str("foo")`, and that's just a lot uglier
+//   than `NSString::from_str("foo")`, even if we loose the ability to do
+//   `let s: Retained<NSString> = "foo".parse()`.
+//
+// - `Index` might be nice, but it requires that we first figure out
+//   https://github.com/madsmtm/objc2/issues/810.
+//
+// - Various arithmetic operations in `std::ops`. You might think e.g. `Add`
+//   would make sense, but even `NSNumber` doesn't expose a way to add them
+//   together (because it encapsulates different kinds of numbers), so such
+//   things is probably better served by distinct methods.
 
 #[cfg(test)]
 mod tests {
