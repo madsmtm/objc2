@@ -38,6 +38,7 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFDate",
     "CFDictionary",
     "CFRunLoop",
+    "CFString",
     "CFURL",
     "objc2",
 ] }
