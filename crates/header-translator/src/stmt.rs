@@ -3076,6 +3076,12 @@ impl Stmt {
                             write!(f, "{availability}")?;
                             writeln!(f, "        const {pretty_name} = {expr};")?;
                         }
+
+                        // Set externally defined flags, since ABI-wise there
+                        // might be further flags in the future.
+                        // https://docs.rs/bitflags/latest/bitflags/#externally-defined-flags
+                        writeln!(f, "        const _ = !0;")?;
+
                         writeln!(f, "    }}")?;
                         writeln!(f, "}}")?;
                         writeln!(f)?;

@@ -28,6 +28,7 @@ bitflags::bitflags! {
         const Right = 1<<3;
         #[doc(alias = "UIRectEdgeAll")]
         const All = UIRectEdge::Top.0|UIRectEdge::Left.0|UIRectEdge::Bottom.0|UIRectEdge::Right.0;
+        const _ = !0;
     }
 }
 
@@ -54,6 +55,7 @@ bitflags::bitflags! {
         const Vertical = 1<<1;
         #[doc(alias = "UIAxisBoth")]
         const Both = UIAxis::Horizontal.0|UIAxis::Vertical.0;
+        const _ = !0;
     }
 }
 

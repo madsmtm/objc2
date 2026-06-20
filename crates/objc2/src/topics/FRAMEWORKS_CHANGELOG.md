@@ -85,6 +85,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Methods with blocks as type-aliases now take `&Block` instead of `*mut Block`.
 * **BREAKING**: Methods with completion handler blocks are now correctly sendable.
 * Fixed thread-safety of some properties that are only thread-unsafe on iOS.
+* Fixed bitflags implementations to set externally defined flags.
 
 ## [0.3.2] - 2025-10-04
 [0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2

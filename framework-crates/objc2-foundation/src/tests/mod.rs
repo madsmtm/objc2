@@ -1,6 +1,7 @@
 mod array;
 mod attributed_string;
 mod auto_traits;
+mod bitflags;
 mod bundle;
 mod data;
 mod decimal_number;
