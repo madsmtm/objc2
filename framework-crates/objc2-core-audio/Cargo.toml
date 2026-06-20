@@ -72,7 +72,10 @@ objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-foundation = ["dep:objc2-foundation"]
 unstable-darwin-objc = []
 
-AudioHardware = ["objc2-core-foundation/CFDictionary"]
+AudioHardware = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFString",
+]
 AudioHardwareDeprecated = ["objc2-core-foundation/CFRunLoop"]
 AudioServerPlugIn = []
 HostTime = []

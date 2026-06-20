@@ -21,3 +21,67 @@ typedef.AudioServerPlugInDriverRef.skipped = true
 # not included, which is an ABI mismatch.
 struct.AudioServerPlugInIOCycleInfo.skipped = true
 typedef.AudioServerPlugInIOCycleInfo.skipped = true
+
+##
+## Fixing bounds information.
+##
+
+fn.AudioObjectHasProperty.arguments.1.bounds = "single"
+fn.AudioObjectIsPropertySettable.arguments.1.bounds = "single"
+fn.AudioObjectIsPropertySettable.arguments.2.bounds = "single"
+fn.AudioObjectGetPropertyDataSize.arguments.1.bounds = "single"
+fn.AudioObjectGetPropertyDataSize.arguments.3.bounds.sized-by = "in_qualifier_data_size"
+fn.AudioObjectGetPropertyDataSize.arguments.4.bounds = "single"
+fn.AudioObjectGetPropertyData.arguments.1.bounds = "single"
+fn.AudioObjectGetPropertyData.arguments.3.bounds.sized-by = "in_qualifier_data_size"
+fn.AudioObjectGetPropertyData.arguments.4.bounds = "single"
+fn.AudioObjectGetPropertyData.arguments.5.bounds.sized-by = "*io_data_size"
+fn.AudioObjectSetPropertyData.arguments.1.bounds = "single"
+fn.AudioObjectSetPropertyData.arguments.3.bounds.sized-by = "in_qualifier_data_size"
+fn.AudioObjectSetPropertyData.arguments.5.bounds.sized-by = "in_data_size"
+fn.AudioObjectAddPropertyListener.arguments.1.bounds = "single"
+fn.AudioObjectAddPropertyListener.arguments.3.bounds = "unsafe" # *mut c_void passed to fn
+fn.AudioObjectRemovePropertyListener.arguments.1.bounds = "single"
+fn.AudioObjectRemovePropertyListener.arguments.3.bounds = "unsafe" # *mut c_void passed to fn
+fn.AudioObjectAddPropertyListenerBlock.arguments.1.bounds = "single"
+fn.AudioObjectRemovePropertyListenerBlock.arguments.1.bounds = "single"
+fn.AudioHardwareCreateAggregateDevice.arguments.1.bounds = "single"
+fn.AudioDeviceCreateIOProcID.arguments.2.bounds = "unsafe" # *mut c_void passed to fn
+fn.AudioDeviceCreateIOProcID.arguments.3.bounds = "single"
+fn.AudioDeviceCreateIOProcIDWithBlock.arguments.0.bounds = "single"
+fn.AudioDeviceStartAtTime.arguments.2.bounds = "single"
+fn.AudioDeviceGetCurrentTime.arguments.1.bounds = "single"
+fn.AudioDeviceTranslateTime.arguments.1.bounds = "single"
+fn.AudioDeviceTranslateTime.arguments.2.bounds = "single"
+fn.AudioDeviceGetNearestStartTime.arguments.1.bounds = "single"
+fn.AudioHardwareCreateProcessTap.arguments.1.bounds = "single"
+
+fn.AudioHardwareGetPropertyInfo.arguments.1.bounds = "single"
+fn.AudioHardwareGetPropertyInfo.arguments.2.bounds = "single"
+fn.AudioHardwareGetProperty.arguments.1.bounds = "single"
+fn.AudioHardwareGetProperty.arguments.2.bounds.sized-by = "*io_property_data_size"
+fn.AudioHardwareSetProperty.arguments.2.bounds.sized-by = "in_property_data_size"
+fn.AudioHardwareAddPropertyListener.arguments.2.bounds = "unsafe" # *mut c_void passed to fn
+fn.AudioDeviceAddIOProc.arguments.2.bounds = "unsafe" # *mut c_void passed to fn
+fn.AudioDeviceRead.arguments.1.bounds = "single"
+fn.AudioDeviceRead.arguments.2.bounds = "single"
+fn.AudioDeviceGetPropertyInfo.arguments.4.bounds = "single"
+fn.AudioDeviceGetPropertyInfo.arguments.5.bounds = "single"
+fn.AudioDeviceGetProperty.arguments.4.bounds = "single"
+fn.AudioDeviceGetProperty.arguments.5.bounds.sized-by = "*io_property_data_size"
+fn.AudioDeviceSetProperty.arguments.1.bounds = "single"
+fn.AudioDeviceSetProperty.arguments.6.bounds.sized-by = "in_property_data_size"
+fn.AudioDeviceAddPropertyListener.arguments.5.bounds = "unsafe" # *mut c_void passed to fn
+fn.AudioStreamGetPropertyInfo.arguments.3.bounds = "single"
+fn.AudioStreamGetPropertyInfo.arguments.4.bounds = "single"
+fn.AudioStreamGetProperty.arguments.3.bounds = "single"
+fn.AudioStreamGetProperty.arguments.4.bounds.sized-by = "*io_property_data_size"
+fn.AudioStreamSetProperty.arguments.1.bounds = "single"
+fn.AudioStreamGetProperty.arguments.5.bounds.sized-by = "in_property_data_size"
+fn.AudioStreamAddPropertyListener.arguments.4.bounds = "unsafe" # *mut c_void passed to fn
+
+##
+## Fixing generics.
+##
+
+fn.AudioHardwareCreateAggregateDevice.arguments.0.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
