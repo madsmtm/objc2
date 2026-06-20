@@ -5,10 +5,11 @@
 #![cfg(target_vendor = "apple")]
 #![cfg(feature = "exception")] // For `should_panic` to work
 
-use core::{panic::AssertUnwindSafe, ptr::NonNull};
+use core::panic::AssertUnwindSafe;
 use std::string::ToString;
 
 use objc2::AnyThread;
+use objc2_core_foundation::{CFArray, CFNumber};
 use objc2_foundation::{
     NSArray, NSAttributedString, NSDictionary, NSException, NSIndexSet, NSMethodSignature,
     NSMutableArray, NSNotFound, NSObject, NSOrderedSet, NSPointerArray, NSRange, NSString,
@@ -64,6 +65,24 @@ fn array() {
 }
 
 #[test]
+// FIXME: Encoding checks shouldn't be this strict.
+#[cfg_attr(
+    debug_assertions,
+    ignore = "type encoding is apparently... ^{__CFNumber=}"
+)]
+fn cf_array_toll_free_bridged() {
+    let arr = CFArray::from_retained_objects(&[CFNumber::new_i32(42), CFNumber::new_f32(64.0)]);
+    let arr: &NSArray<CFNumber> = arr.as_ref();
+
+    let _ = arr.objectAtIndex(0);
+    let _ = arr.objectAtIndex(1);
+
+    assert_throws("index 100 beyond bounds [0 .. 1]", || {
+        arr.objectAtIndex(100)
+    });
+}
+
+#[test]
 fn attributed_string() {
     let arr = unsafe {
         NSAttributedString::initWithString_attributes(
@@ -90,7 +109,7 @@ fn index_set() {
 #[test]
 fn method_signature() {
     let sig = c"c@:@";
-    let sig = unsafe { NSMethodSignature::signatureWithObjCTypes(sig) }.unwrap();
+    let sig = NSMethodSignature::signatureWithObjCTypes(sig).unwrap();
     assert_throws("index (100) out of bounds [0, 2]", || {
         sig.getArgumentTypeAtIndex(100)
     });

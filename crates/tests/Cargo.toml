@@ -28,6 +28,7 @@ block2 = { workspace = true, features = ["std"] }
 objc2 = { workspace = true, features = ["std", "relax-void-encoding"] }
 objc2-foundation = { workspace = true, features = [
     "std",
+    "objc2-core-foundation",
     "NSArray",
     "NSAttributedString",
     "NSDecimalNumber",
@@ -47,6 +48,12 @@ objc2-foundation = { workspace = true, features = [
     "NSString",
     "NSThread",
     "NSValue",
+] }
+objc2-core-foundation = { workspace = true, features = [
+    "std",
+    "objc2",
+    "CFArray",
+    "CFNumber",
 ] }
 rustc-demangle = "0.1.26"
 # Unbreak CI until this gets a new release:
