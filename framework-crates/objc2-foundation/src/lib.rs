@@ -120,7 +120,7 @@ extern crate alloc;
 extern crate std;
 
 #[doc(hidden)]
-pub mod __ns_macro_helpers;
+pub mod __ns_macros;
 #[cfg(feature = "NSEnumerator")]
 #[macro_use]
 mod iter;
@@ -151,7 +151,6 @@ mod fast_enumeration_state;
 mod generated;
 #[cfg(feature = "NSGeometry")]
 mod geometry;
-mod macros;
 mod ns_consumed;
 #[cfg(feature = "NSValue")]
 mod number;
