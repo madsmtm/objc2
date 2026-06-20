@@ -54,6 +54,8 @@ fn.AudioDeviceGetCurrentTime.arguments.1.bounds = "single"
 fn.AudioDeviceTranslateTime.arguments.1.bounds = "single"
 fn.AudioDeviceTranslateTime.arguments.2.bounds = "single"
 fn.AudioDeviceGetNearestStartTime.arguments.1.bounds = "single"
+fn.AudioHardwareCreateProcessTap.arguments.0.nullability = "nonnull"
+fn.AudioHardwareCreateProcessTap.arguments.1.nullability = "nonnull"
 fn.AudioHardwareCreateProcessTap.arguments.1.bounds = "single"
 
 fn.AudioHardwareGetPropertyInfo.arguments.1.bounds = "single"

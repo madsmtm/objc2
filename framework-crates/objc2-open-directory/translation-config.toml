@@ -23,5 +23,15 @@ typedef.ODSessionRef.renamed = "ODSessionRef"
 fn.ODNodeCreateRecord.renamed = "create_record"
 fn.ODNodeCopyRecord.renamed = "copy_record"
 
+##
+## Nullability and pointer bounds.
+##
+
 # Ensure this is emitted as `Option<&T>`, it's NULL.
 static.kODSessionDefault.nullability = "nullable"
+
+fn.ODSessionCopyNodeNames.arguments.1.nullability = "nullable"
+
+fn.ODNodeCreateCopy.arguments.1.nullability = "nonnull"
+
+fn.ODRecordCopyPasswordPolicy.arguments.1.nullability = "nonnull"

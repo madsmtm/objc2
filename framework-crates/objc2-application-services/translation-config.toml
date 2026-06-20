@@ -120,6 +120,15 @@ fn.HIShapeCreateUnion.renamed = "create_union"
 fn.HIShapeCreateXor.renamed = "create_xor"
 
 ##
+## Nullability and pointer bounds.
+##
+
+fn.HIShapeSetEmpty.arguments.0.nullability = "nonnull"
+fn.HIShapeOffset.arguments.0.nullability = "nonnull"
+fn.HIShapeInset.arguments.0.nullability = "nonnull"
+fn.HIShapeUnionWithRect.arguments.0.nullability = "nonnull"
+
+##
 ## Safety
 ##
 

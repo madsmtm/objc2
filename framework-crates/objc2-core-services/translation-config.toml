@@ -89,4 +89,18 @@ const.typeLongFloat.skipped = true
 const.typeExtended.skipped = true
 const.typeFSS.skipped = true
 
+##
+## Nullability and pointer bounds.
+##
+
+fn.MDQueryCreateSubset.arguments.1.nullability = "nonnull"
+
+fn.CSIdentityCreateCopy.arguments.1.nullability = "nonnull"
+fn.CSIdentityCreatePersistentReference.arguments.1.nullability = "nonnull"
+fn.CSIdentityCreateGroupMembershipQuery.arguments.1.nullability = "nonnull"
+
+##
+## Safety.
+##
+
 fn.SKDocumentGetTypeID.unsafe = false

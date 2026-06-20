@@ -178,3 +178,11 @@ typedef.SSLCipherSuite.skipped = true
 
 # Has an extra field on TARGET_OS_IPHONE.
 struct.CSSM_TP_APPLE_EVIDENCE_INFO.skipped = true
+
+##
+## Fixing nullability and pointer bounds.
+##
+
+fn.SecureDownloadCreateWithTicket.arguments.0.nullability = "nonnull"
+fn.SecureDownloadUpdateWithData.arguments.1.nullability = "nonnull"
+fn.SecureDownloadCopyTicketLocation.arguments.0.nullability = "nonnull"
