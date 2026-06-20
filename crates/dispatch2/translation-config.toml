@@ -50,6 +50,9 @@ fn.dispatch_main.skipped = true
 # on unwinding.
 typedef.dispatch_function_t.skipped = true
 
+# Is documented as being able to return NULL, but it actually can't.
+# fn.dispatch_group_create.return.nullability = "nullable"
+
 # The libc definition is unsound (?)
 typedef.dispatch_qos_class_t.skipped = true
 

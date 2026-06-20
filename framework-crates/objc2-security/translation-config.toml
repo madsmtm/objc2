@@ -186,3 +186,10 @@ struct.CSSM_TP_APPLE_EVIDENCE_INFO.skipped = true
 fn.SecureDownloadCreateWithTicket.arguments.0.nullability = "nonnull"
 fn.SecureDownloadUpdateWithData.arguments.1.nullability = "nonnull"
 fn.SecureDownloadCopyTicketLocation.arguments.0.nullability = "nonnull"
+
+fn.SecDigestTransformCreate.return.nullability = "nullable"
+
+fn.SecEncryptTransformCreate.return.nullability = "nullable"
+fn.SecDecryptTransformCreate.return.nullability = "nullable"
+
+fn.SecTransformExecute.return.nullability = "nullable"

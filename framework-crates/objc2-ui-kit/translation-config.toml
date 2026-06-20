@@ -145,6 +145,11 @@ fn.UIApplicationMain.renamed = "__main"
 # TODO: Is it actually allowed to reset the view to NULL?
 class.UIViewController.methods."setView:".arguments.0.nullability = "nullable"
 
+# This returns NULL before `UIApplicationMain` runs, which is usually not
+# something Objective-C / Swift apps care about, but we do, because a lot of
+# Rust code is often run before `UIApplicationMain`.
+class.UIApplication.methods.sharedApplication.return.nullability = "nullable"
+
 ###
 ### Fixing pointer bounds.
 ###

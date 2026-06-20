@@ -15,8 +15,7 @@ const PATH_MAX: usize = 1024;
 
 /// [`Path`] conversion.
 impl NSURL {
-    // FIXME(breaking): Make this private.
-    pub fn from_path(
+    fn from_path(
         path: &Path,
         is_directory: bool,
         // TODO: Expose this?
@@ -25,23 +24,14 @@ impl NSURL {
         // See comments in `CFURL::from_path`.
         let bytes = path.as_os_str().as_bytes();
 
-        if bytes.is_empty() {
-            // `initFileURLWithFileSystemRepresentation:isDirectory:relativeToURL:`,
-            // checks this, but that's marked as non-null, so we'd get a panic
-            // if we didn't implement the check manually ourselves.
-            return None;
-        }
-
         // TODO: Should we strip trailing \0 to fully match CoreFoundation?
         let cstr = CString::new(bytes).ok()?;
 
-        Some(
-            Self::initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL(
-                Self::alloc(),
-                &cstr,
-                is_directory,
-                base_url,
-            ),
+        Self::initFileURLWithFileSystemRepresentation_isDirectory_relativeToURL(
+            Self::alloc(),
+            &cstr,
+            is_directory,
+            base_url,
         )
     }
 

@@ -29,3 +29,6 @@ class.WKInterfaceSKScene.methods."textureFromNode:crop:".skipped = true
 
 # Custom-defined.
 fn.WKApplicationMain.renamed = "__main"
+
+# Same as for UIApplication::sharedApplication
+class.WKApplication.methods.sharedApplication.return.nullability = "nullable"
