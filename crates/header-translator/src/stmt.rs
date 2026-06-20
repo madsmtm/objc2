@@ -2576,22 +2576,34 @@ impl Stmt {
                     write!(f, "{availability}")?;
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
-                    writeln!(
+                    write!(
                         f,
                         "impl{} {}{} {{",
                         GenericParamsHelper(cls_generics, "Message"),
                         cls.path(),
                         generic_ty(cls_generics),
                     )?;
-                    writeln!(f, "    extern_methods!(")?;
-                    for method in methods {
-                        writeln!(
-                            f,
-                            "{}",
-                            method.fmt(self.required_items(), self.location(), config)
-                        )?;
+
+                    // Chunk macro invocations to avoid hitting the recursion
+                    // limit (note that it's not entirely possible to avoid
+                    // this, because `extern_protocol!` cannot be chunked).
+                    //
+                    // 50 is chosen here arbitrarily, a better limit would be
+                    // to roughly calculate how much each method "contributes"
+                    // (for example by how many lines of comments it has), but
+                    // this is fine for now.
+                    for methods_chunk in methods.chunks(50) {
+                        writeln!(f)?;
+                        writeln!(f, "    extern_methods!(")?;
+                        for method in methods_chunk {
+                            writeln!(
+                                f,
+                                "{}",
+                                method.fmt(self.required_items(), self.location(), config)
+                            )?;
+                        }
+                        writeln!(f, "    );")?;
                     }
-                    writeln!(f, "    );")?;
                     writeln!(f, "}}")?;
 
                     if let Some(method) = methods

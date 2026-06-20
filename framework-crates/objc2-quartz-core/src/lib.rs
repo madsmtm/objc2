@@ -7,7 +7,6 @@
 //!
 //! This actually lives in the `QuartzCore` framework, but `CoreAnimation` is
 //! the name that people use to refer to it.
-#![recursion_limit = "256"]
 #![no_std]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(docsrs, feature(doc_cfg))]

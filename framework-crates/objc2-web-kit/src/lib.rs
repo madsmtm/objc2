@@ -4,8 +4,6 @@
 //!
 //! [apple-doc]: https://developer.apple.com/documentation/webkit/
 //! [framework-crates]: https://docs.rs/objc2/latest/objc2/topics/about_generated/index.html
-#![recursion_limit = "512"]
-#![allow(non_snake_case)]
 #![no_std]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
