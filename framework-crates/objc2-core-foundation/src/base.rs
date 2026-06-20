@@ -92,7 +92,7 @@ impl CFType {
     // Not #[inline], we call two functions here.
     #[doc(alias = "CFGetTypeID")]
     pub fn downcast_ref<T: ConcreteType>(&self) -> Option<&T> {
-        if CFGetTypeID(Some(self)) == T::type_id() {
+        if CFGetTypeID(self) == T::type_id() {
             let ptr: *const Self = self;
             let ptr: *const T = ptr.cast();
             // SAFETY: Just checked that the object is a class of type `T`.
@@ -119,7 +119,7 @@ impl CFType {
     pub fn retain_count(&self) -> usize {
         // Cast is fine, if the reference count is `-1` we want to return
         // `usize::MAX` as a sentinel instead.
-        CFGetRetainCount(Some(self)) as _
+        CFGetRetainCount(self) as _
     }
 }
 
@@ -161,7 +161,7 @@ impl PartialEq for CFType {
     #[inline]
     #[doc(alias = "CFEqual")]
     fn eq(&self, other: &Self) -> bool {
-        CFEqual(Some(self), Some(other))
+        CFEqual(self, other)
     }
 }
 
@@ -178,7 +178,7 @@ impl Eq for CFType {}
 impl hash::Hash for CFType {
     #[doc(alias = "CFHash")]
     fn hash<H: hash::Hasher>(&self, state: &mut H) {
-        CFHash(Some(self)).hash(state);
+        CFHash(self).hash(state);
     }
 }
 

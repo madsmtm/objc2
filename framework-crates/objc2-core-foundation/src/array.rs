@@ -311,7 +311,7 @@ impl<T> CFMutableArray<T> {
     pub fn append(&self, obj: &T) {
         let ptr: *const T = obj;
         // SAFETY: The pointer is valid.
-        unsafe { Self::append_value(Some(self), ptr) }
+        unsafe { self.append_value(ptr) }
     }
 
     /// Insert an object into the array at the given index.
@@ -327,7 +327,7 @@ impl<T> CFMutableArray<T> {
             let ptr: *const T = obj;
             // SAFETY: The pointer is valid, and just checked that the index
             // is in bounds.
-            unsafe { Self::insert_value_at_index(Some(self), index as CFIndex, ptr) }
+            unsafe { self.insert_value_at_index(index as CFIndex, ptr) }
         } else {
             panic!(
                 "insertion index (is {}) should be <= len (is {})",

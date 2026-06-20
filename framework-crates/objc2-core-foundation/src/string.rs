@@ -203,7 +203,7 @@ impl Ord for CFString {
     fn cmp(&self, other: &Self) -> Ordering {
         // Request standard lexiographical ordering.
         let flags = CFStringCompareFlags::empty();
-        self.compare(Some(other), flags).into()
+        self.compare(other, flags).into()
     }
 }
 

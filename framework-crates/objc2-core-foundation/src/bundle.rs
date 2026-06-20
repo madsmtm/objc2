@@ -26,7 +26,7 @@ mod tests {
     #[test]
     fn safari_executable_url() {
         let path = url_from_str("/Applications/Safari.app", true);
-        let bundle = CFBundle::new(None, Some(&path)).expect("Safari not present");
+        let bundle = CFBundle::new(None, &path).expect("Safari not present");
         let executable = CFBundle::executable_url(&bundle).unwrap();
         assert_eq!(
             CFURL::file_system_path(
@@ -42,7 +42,7 @@ mod tests {
     #[test]
     fn safari_private_frameworks_url() {
         let path = url_from_str("/Applications/Safari.app", true);
-        let bundle = CFBundle::new(None, Some(&path)).expect("Safari not present");
+        let bundle = CFBundle::new(None, &path).expect("Safari not present");
         let frameworks = CFBundle::private_frameworks_url(&bundle).unwrap();
         assert_eq!(
             CFURL::file_system_path(
@@ -58,6 +58,6 @@ mod tests {
     #[test]
     fn non_existent_bundle() {
         let path = url_from_str("/usr/local/non_existent", true);
-        assert_eq!(CFBundle::new(None, Some(&path)), None);
+        assert_eq!(CFBundle::new(None, &path), None);
     }
 }
