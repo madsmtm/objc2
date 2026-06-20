@@ -303,7 +303,10 @@ fn.CFCharacterSetCreateCopy.arguments.1.nullability = "nonnull"
 fn.CFCharacterSetCreateMutableCopy.arguments.1.nullability = "nonnull"
 fn.CFCharacterSetCreateBitmapRepresentation.arguments.1.nullability = "nonnull"
 fn.CFCharacterSetAddCharactersInRange.arguments.0.nullability = "nonnull"
+fn.CFCharacterSetRemoveCharactersInRange.arguments.0.nullability = "nonnull"
+fn.CFCharacterSetAddCharactersInString.arguments.0.nullability = "nonnull"
 fn.CFCharacterSetAddCharactersInString.arguments.1.nullability = "nonnull"
+fn.CFCharacterSetRemoveCharactersInString.arguments.0.nullability = "nonnull"
 fn.CFCharacterSetRemoveCharactersInString.arguments.1.nullability = "nonnull"
 fn.CFCharacterSetUnion.arguments.0.nullability = "nonnull"
 fn.CFCharacterSetUnion.arguments.1.nullability = "nonnull"
@@ -342,7 +345,10 @@ fn.CFDateFormatterCreateDateFormatFromTemplate.arguments.1.nullability = "nonnul
 fn.CFDateFormatterCreateDateFormatFromTemplate.arguments.3.nullability = "nonnull"
 fn.CFDateFormatterCreate.arguments.1.nullability = "nonnull"
 fn.CFDateFormatterSetFormat.arguments.1.nullability = "nonnull"
+fn.CFDateFormatterCreateStringWithDate.arguments.1.nullability = "nonnull"
 fn.CFDateFormatterCreateStringWithDate.arguments.2.nullability = "nonnull"
+fn.CFDateFormatterCreateStringWithAbsoluteTime.arguments.1.nullability = "nonnull"
+fn.CFDateFormatterCreateDateFromString.arguments.1.nullability = "nonnull"
 fn.CFDateFormatterCreateDateFromString.arguments.2.nullability = "nonnull"
 fn.CFDateFormatterCreateDateFromString.arguments.3.nullability = "nullable"
 fn.CFDateFormatterCreateDateFromString.arguments.3.bounds = "single"
@@ -365,15 +371,21 @@ fn.CFDictionaryCreate.arguments.4.nullability = "nullable"
 fn.CFDictionaryCreate.arguments.4.bounds = "single"
 fn.CFDictionaryCreate.arguments.5.nullability = "nullable"
 fn.CFDictionaryCreate.arguments.5.bounds = "single"
+fn.CFDictionaryCreateCopy.arguments.1.nullability = "nonnull"
 fn.CFDictionaryCreateMutable.arguments.2.nullability = "nullable"
 fn.CFDictionaryCreateMutable.arguments.2.bounds = "single"
 fn.CFDictionaryCreateMutable.arguments.3.nullability = "nullable"
 fn.CFDictionaryCreateMutable.arguments.3.bounds = "single"
-fn.CFDictionaryCreateMutableCopy.arguments.3.nullability = "nonnull"
+fn.CFDictionaryCreateMutableCopy.arguments.2.nullability = "nonnull"
 fn.CFDictionaryGetValueIfPresent.arguments.2.nullability = "nullable"
 fn.CFDictionaryGetValueIfPresent.arguments.2.bounds = "single"
 fn.CFDictionaryGetKeysAndValues.arguments.1.bounds.counted-by = "self.count()"
 fn.CFDictionaryGetKeysAndValues.arguments.2.bounds.counted-by = "self.count()"
+fn.CFDictionaryAddValue.arguments.0.nullability = "nonnull"
+fn.CFDictionarySetValue.arguments.0.nullability = "nonnull"
+fn.CFDictionaryReplaceValue.arguments.0.nullability = "nonnull"
+fn.CFDictionaryRemoveValue.arguments.0.nullability = "nonnull"
+fn.CFDictionaryRemoveAllValues.arguments.0.nullability = "nonnull"
 
 fn.CFErrorCreate.arguments.1.nullability = "nonnull"
 fn.CFErrorCreate.arguments.3.nullability = "nullable"
@@ -385,10 +397,14 @@ fn.CFFileDescriptorCreate.arguments.4.nullability = "nullable" # Probably
 fn.CFFileDescriptorCreate.arguments.4.bounds = "single"
 fn.CFFileDescriptorGetContext.arguments.1.nullability = "nonnull"
 fn.CFFileDescriptorGetContext.arguments.1.bounds = "single"
+fn.CFFileDescriptorCreateRunLoopSource.arguments.1.nullability = "nonnull"
 
+fn.CFFileSecurityCreateCopy.arguments.1.nullability = "nonnull"
 fn.CFFileSecurityCopyOwnerUUID.arguments.1.nullability = "nonnull"
 fn.CFFileSecurityCopyOwnerUUID.arguments.1.bounds = "single"
+fn.CFFileSecuritySetOwnerUUID.arguments.1.nullability = "nonnull"
 fn.CFFileSecurityCopyGroupUUID.arguments.1.nullability = "nonnull"
+fn.CFFileSecuritySetGroupUUID.arguments.1.nullability = "nonnull"
 fn.CFFileSecurityCopyGroupUUID.arguments.1.bounds = "single"
 fn.CFFileSecurityGetOwner.arguments.1.nullability = "nonnull"
 fn.CFFileSecurityGetOwner.arguments.1.bounds = "single"
@@ -397,7 +413,18 @@ fn.CFFileSecurityGetGroup.arguments.1.bounds = "single"
 fn.CFFileSecurityGetMode.arguments.1.nullability = "nonnull"
 fn.CFFileSecurityGetMode.arguments.1.bounds = "single"
 
+fn.CFLocaleCreateCanonicalLanguageIdentifierFromString.arguments.1.nullability = "nonnull"
+fn.CFLocaleCreateCanonicalLocaleIdentifierFromString.arguments.1.nullability = "nonnull"
+fn.CFLocaleGetWindowsLocaleCodeFromLocaleIdentifier.arguments.0.nullability = "nonnull"
+fn.CFLocaleGetLanguageCharacterDirection.arguments.0.nullability = "nonnull"
+fn.CFLocaleGetLanguageLineDirection.arguments.0.nullability = "nonnull"
+fn.CFLocaleCreateComponentsFromLocaleIdentifier.arguments.1.nullability = "nonnull"
 fn.CFLocaleCreateLocaleIdentifierFromComponents.arguments.1.nullability = "nonnull"
+fn.CFLocaleCreate.arguments.1.nullability = "nonnull"
+fn.CFLocaleCreateCopy.arguments.1.nullability = "nonnull"
+fn.CFLocaleGetValue.arguments.1.nullability = "nonnull"
+fn.CFLocaleCopyDisplayNameForPropertyValue.arguments.1.nullability = "nonnull"
+fn.CFLocaleCopyDisplayNameForPropertyValue.arguments.2.nullability = "nonnull"
 
 fn.CFMachPortCreate.arguments.2.written = false
 fn.CFMachPortCreate.arguments.2.nullability = "nullable" # Probably
@@ -411,62 +438,139 @@ fn.CFMachPortCreateWithPort.arguments.4.nullability = "nullable"
 fn.CFMachPortCreateWithPort.arguments.4.bounds = "single"
 fn.CFMachPortGetContext.arguments.1.nullability = "nonnull"
 fn.CFMachPortGetContext.arguments.1.bounds = "single"
+fn.CFMachPortCreateRunLoopSource.arguments.1.nullability = "nonnull"
 
+fn.CFMessagePortCreateLocal.arguments.1.nullability = "nullable"
 fn.CFMessagePortCreateLocal.arguments.3.written = false
 fn.CFMessagePortCreateLocal.arguments.3.nullability = "nullable" # Probably
 fn.CFMessagePortCreateLocal.arguments.3.bounds = "single"
 fn.CFMessagePortCreateLocal.arguments.4.nullability = "nullable"
 fn.CFMessagePortCreateLocal.arguments.4.bounds = "single"
+fn.CFMessagePortCreateRemote.arguments.1.nullability = "nonnull"
+fn.CFMessagePortSetName.arguments.1.nullability = "nullable" # Maybe?
 fn.CFMessagePortGetContext.arguments.1.nullability = "nonnull"
 fn.CFMessagePortGetContext.arguments.1.bounds = "single"
 fn.CFMessagePortSendRequest.arguments.2.nullability = "nonnull"
 fn.CFMessagePortSendRequest.arguments.5.nullability = "nullable"
 fn.CFMessagePortSendRequest.arguments.6.nullability = "nonnull"
 fn.CFMessagePortSendRequest.arguments.6.bounds = "single"
+fn.CFMessagePortCreateRunLoopSource.arguments.1.nullability = "nullable"
 fn.CFMessagePortSetDispatchQueue.arguments.1.nullability = "nullable" # Maybe?
+
+fn.CFNotificationCenterAddObserver.arguments.3.nullability = "nullable"
+fn.CFNotificationCenterRemoveObserver.arguments.2.nullability = "nullable"
+fn.CFNotificationCenterPostNotification.arguments.1.nullability = "nonnull"
+fn.CFNotificationCenterPostNotification.arguments.2.nullability = "nullable"
+fn.CFNotificationCenterPostNotification.arguments.3.nullability = "nullable"
+fn.CFNotificationCenterPostNotificationWithOptions.arguments.1.nullability = "nonnull"
+fn.CFNotificationCenterPostNotificationWithOptions.arguments.2.nullability = "nullable"
+fn.CFNotificationCenterPostNotificationWithOptions.arguments.3.nullability = "nullable"
 
 fn.CFNumberCompare.arguments.1.nullability = "nonnull"
 
 fn.CFNumberFormatterCreate.arguments.1.nullability = "nonnull"
 fn.CFNumberFormatterSetFormat.arguments.1.nullability = "nonnull"
+fn.CFNumberFormatterCreateStringWithNumber.arguments.1.nullability = "nonnull"
 fn.CFNumberFormatterCreateStringWithNumber.arguments.2.nullability = "nonnull"
+fn.CFNumberFormatterCreateStringWithValue.arguments.1.nullability = "nonnull"
+fn.CFNumberFormatterCreateStringWithValue.arguments.3.nullability = "nonnull"
+fn.CFNumberFormatterCreateStringWithValue.arguments.3.bounds.counted-by = "number_type.size()"
+fn.CFNumberFormatterCreateNumberFromString.arguments.1.nullability = "nonnull"
 fn.CFNumberFormatterCreateNumberFromString.arguments.2.nullability = "nonnull"
 fn.CFNumberFormatterCreateNumberFromString.arguments.3.nullability = "nonnull"
 fn.CFNumberFormatterCreateNumberFromString.arguments.3.bounds = "single"
 fn.CFNumberFormatterGetValueFromString.arguments.1.nullability = "nonnull"
+fn.CFNumberFormatterGetValueFromString.arguments.2.nullability = "nonnull"
 fn.CFNumberFormatterGetValueFromString.arguments.2.bounds.sized-by = "number_type.size()"
 fn.CFNumberFormatterSetProperty.arguments.1.nullability = "nonnull"
 fn.CFNumberFormatterSetProperty.arguments.2.nullability = "nullable"
-fn.CFNumberFormatterCopyProperty.arguments.2.nullability = "nonnull"
+fn.CFNumberFormatterCopyProperty.arguments.1.nullability = "nonnull"
 fn.CFNumberFormatterGetDecimalInfoForCurrencyCode.arguments.0.nullability = "nonnull"
 fn.CFNumberFormatterGetDecimalInfoForCurrencyCode.arguments.1.nullability = "nonnull"
 fn.CFNumberFormatterGetDecimalInfoForCurrencyCode.arguments.1.bounds = "single"
 fn.CFNumberFormatterGetDecimalInfoForCurrencyCode.arguments.2.nullability = "nonnull"
 fn.CFNumberFormatterGetDecimalInfoForCurrencyCode.arguments.2.bounds = "single"
 
+# typedef.CFPlugInInstanceGetInterfaceFunction.arguments.2.bounds = "single"
+fn.CFPlugInCreate.arguments.1.nullability = "nonnull"
+fn.CFPlugInFindFactoriesForPlugInType.arguments.0.nullability = "nonnull"
+fn.CFPlugInFindFactoriesForPlugInTypeInPlugIn.arguments.0.nullability = "nonnull"
+fn.CFPlugInFindFactoriesForPlugInTypeInPlugIn.arguments.1.nullability = "nonnull"
+fn.CFPlugInInstanceCreate.arguments.1.nullability = "nonnull"
+fn.CFPlugInInstanceCreate.arguments.2.nullability = "nonnull"
+fn.CFPlugInRegisterFactoryFunction.arguments.0.nullability = "nonnull"
+fn.CFPlugInRegisterFactoryFunctionByName.arguments.0.nullability = "nonnull"
+fn.CFPlugInRegisterFactoryFunctionByName.arguments.1.nullability = "nonnull"
+fn.CFPlugInRegisterFactoryFunctionByName.arguments.2.nullability = "nonnull"
+fn.CFPlugInUnregisterFactory.arguments.0.nullability = "nonnull"
+fn.CFPlugInRegisterPlugInType.arguments.0.nullability = "nonnull"
+fn.CFPlugInRegisterPlugInType.arguments.1.nullability = "nonnull"
+fn.CFPlugInUnregisterPlugInType.arguments.0.nullability = "nonnull"
+fn.CFPlugInUnregisterPlugInType.arguments.1.nullability = "nonnull"
+fn.CFPlugInAddInstanceForFactory.arguments.0.nullability = "nonnull"
+fn.CFPlugInRemoveInstanceForFactory.arguments.0.nullability = "nonnull"
 fn.CFPlugInInstanceGetInterfaceFunctionTable.arguments.1.nullability = "nonnull"
 fn.CFPlugInInstanceGetInterfaceFunctionTable.arguments.2.nullability = "nonnull"
+fn.CFPlugInInstanceGetInterfaceFunctionTable.arguments.2.bounds = "single"
 fn.CFPlugInInstanceCreateWithInstanceDataSize.arguments.3.nullability = "nonnull"
 
 fn.CFPreferencesGetAppBooleanValue.arguments.2.bounds = "single"
 fn.CFPreferencesGetAppIntegerValue.arguments.2.bounds = "single"
 
-# typedef.CFPlugInInstanceGetInterfaceFunction.arguments.2.bounds = "single"
-fn.CFPlugInInstanceGetInterfaceFunctionTable.arguments.2.bounds = "single"
-
+fn.CFPropertyListCreateFromXMLData.arguments.1.nullability = "nonnull"
+fn.CFPropertyListCreateFromXMLData.arguments.3.nullability = "nullable"
 fn.CFPropertyListCreateFromXMLData.arguments.3.bounds = "single"
+fn.CFPropertyListCreateXMLData.arguments.1.nullability = "nonnull"
+fn.CFPropertyListCreateDeepCopy.arguments.1.nullability = "nonnull"
+fn.CFPropertyListWriteToStream.arguments.1.nullability = "nonnull"
+fn.CFPropertyListWriteToStream.arguments.3.nullability = "nullable"
 fn.CFPropertyListWriteToStream.arguments.3.bounds = "single"
+fn.CFPropertyListCreateFromStream.arguments.1.nullability = "nonnull"
+fn.CFPropertyListCreateFromStream.arguments.4.nullability = "nullable"
 fn.CFPropertyListCreateFromStream.arguments.4.bounds = "single"
+fn.CFPropertyListCreateFromStream.arguments.5.nullability = "nullable"
 fn.CFPropertyListCreateFromStream.arguments.5.bounds = "single"
+fn.CFPropertyListCreateWithData.arguments.1.nullability = "nonnull"
+fn.CFPropertyListCreateWithData.arguments.3.nullability = "nullable"
 fn.CFPropertyListCreateWithData.arguments.3.bounds = "single"
+fn.CFPropertyListCreateWithData.arguments.4.nullability = "nullable"
 fn.CFPropertyListCreateWithData.arguments.4.bounds = "single"
+fn.CFPropertyListCreateWithStream.arguments.1.nullability = "nullable"
+fn.CFPropertyListCreateWithStream.arguments.4.nullability = "nullable"
 fn.CFPropertyListCreateWithStream.arguments.4.bounds = "single"
+fn.CFPropertyListCreateWithStream.arguments.5.nullability = "nullable"
 fn.CFPropertyListCreateWithStream.arguments.5.bounds = "single"
+fn.CFPropertyListWrite.arguments.1.nullability = "nonnull"
+fn.CFPropertyListWrite.arguments.4.nullability = "nullable"
 fn.CFPropertyListWrite.arguments.4.bounds = "single"
+fn.CFPropertyListCreateData.arguments.1.nullability = "nonnull"
+fn.CFPropertyListCreateData.arguments.4.nullability = "nullable"
 fn.CFPropertyListCreateData.arguments.4.bounds = "single"
 
+fn.CFRunLoopCopyAllModes.return.nullability = "nonnull"
+fn.CFRunLoopAddCommonMode.arguments.1.nullability = "nonnull"
+fn.CFRunLoopGetNextTimerFireDate.arguments.1.nullability = "nonnull"
+fn.CFRunLoopRunInMode.arguments.0.nullability = "nonnull"
 fn.CFRunLoopPerformBlock.arguments.1.nullability = "nonnull"
 fn.CFRunLoopPerformBlock.arguments.2.nullability = "nonnull"
+fn.CFRunLoopContainsSource.arguments.1.nullability = "nonnull"
+fn.CFRunLoopContainsSource.arguments.2.nullability = "nonnull"
+fn.CFRunLoopAddSource.arguments.1.nullability = "nonnull"
+fn.CFRunLoopAddSource.arguments.2.nullability = "nonnull"
+fn.CFRunLoopRemoveSource.arguments.1.nullability = "nonnull"
+fn.CFRunLoopRemoveSource.arguments.2.nullability = "nonnull"
+fn.CFRunLoopContainsObserver.arguments.1.nullability = "nonnull"
+fn.CFRunLoopContainsObserver.arguments.2.nullability = "nonnull"
+fn.CFRunLoopAddObserver.arguments.1.nullability = "nonnull"
+fn.CFRunLoopAddObserver.arguments.2.nullability = "nonnull"
+fn.CFRunLoopRemoveObserver.arguments.1.nullability = "nonnull"
+fn.CFRunLoopRemoveObserver.arguments.2.nullability = "nonnull"
+fn.CFRunLoopContainsTimer.arguments.1.nullability = "nonnull"
+fn.CFRunLoopContainsTimer.arguments.2.nullability = "nonnull"
+fn.CFRunLoopAddTimer.arguments.1.nullability = "nonnull"
+fn.CFRunLoopAddTimer.arguments.2.nullability = "nonnull"
+fn.CFRunLoopRemoveTimer.arguments.1.nullability = "nonnull"
+fn.CFRunLoopRemoveTimer.arguments.2.nullability = "nonnull"
 fn.CFRunLoopSourceCreate.arguments.2.written = false
 fn.CFRunLoopSourceCreate.arguments.2.nullability = "nonnull"
 fn.CFRunLoopSourceCreate.arguments.2.bounds = "single"
@@ -475,20 +579,30 @@ fn.CFRunLoopSourceGetContext.arguments.1.bounds = "single"
 fn.CFRunLoopObserverCreate.arguments.5.written = false
 fn.CFRunLoopObserverCreate.arguments.5.nullability = "nullable"
 fn.CFRunLoopObserverCreate.arguments.5.bounds = "single"
+fn.CFRunLoopObserverCreateWithHandler.arguments.4.nullability = "nullable"
 fn.CFRunLoopObserverGetContext.arguments.1.nullability = "nonnull"
 fn.CFRunLoopObserverGetContext.arguments.1.bounds = "single"
 fn.CFRunLoopTimerCreate.arguments.6.written = false
 fn.CFRunLoopTimerCreate.arguments.6.nullability = "nullable"
 fn.CFRunLoopTimerCreate.arguments.6.bounds = "single"
+fn.CFRunLoopTimerCreateWithHandler.arguments.5.nullability = "nullable"
 fn.CFRunLoopTimerGetContext.arguments.1.nullability = "nonnull"
 fn.CFRunLoopTimerGetContext.arguments.1.bounds = "single"
 
 fn.CFSetCreate.arguments.1.bounds.counted-by = "num_values"
+fn.CFSetCreate.arguments.3.nullability = "nullable"
 fn.CFSetCreate.arguments.3.bounds = "single"
+fn.CFSetCreateCopy.arguments.1.nullability = "nonnull"
+fn.CFSetCreateMutable.arguments.2.nullability = "nullable"
 fn.CFSetCreateMutable.arguments.2.bounds = "single"
+fn.CFSetCreateMutableCopy.arguments.2.nullability = "nonnull"
 fn.CFSetGetValueIfPresent.arguments.2.nullability = "nullable"
 fn.CFSetGetValueIfPresent.arguments.2.bounds = "single"
 fn.CFSetGetValues.arguments.1.bounds.counted-by = "self.count()"
+fn.CFSetAddValue.arguments.0.nullability = "nonnull"
+fn.CFSetReplaceValue.arguments.0.nullability = "nonnull"
+fn.CFSetSetValue.arguments.0.nullability = "nonnull"
+fn.CFSetRemoveValue.arguments.0.nullability = "nonnull"
 
 fn.CFSocketCreate.arguments.6.bounds = "single"
 fn.CFSocketCreateWithNative.arguments.4.bounds = "single"
@@ -652,11 +766,20 @@ fn.CFStringGetSurrogatePairForLongCharacter.arguments.1.bounds.counted-by = "2"
 fn.CFShow.arguments.0.nullability = "nullable" # used for debugging
 fn.CFShowStr.arguments.0.nullability = "nullable" # used for debugging
 
+fn.CFStringTokenizerCreate.arguments.1.nullability = "nonnull"
+fn.CFStringTokenizerCreate.arguments.4.nullability = "nullable"
+fn.CFStringTokenizerSetString.arguments.1.nullability = "nonnull"
 fn.CFStringTokenizerGetCurrentSubTokens.arguments.1.bounds.counted-by = "max_range_length"
+fn.CFStringTokenizerGetCurrentSubTokens.arguments.3.nullability = "nullable"
 
+fn.CFTreeCreate.arguments.1.nullability = "nonnull"
 fn.CFTreeCreate.arguments.1.bounds = "single"
 fn.CFTreeGetContext.arguments.1.nullability = "nonnull"
 fn.CFTreeGetContext.arguments.1.bounds = "single"
+fn.CFTreeSetContext.arguments.1.nullability = "nonnull"
+fn.CFTreePrependChild.arguments.1.nullability = "nonnull"
+fn.CFTreeAppendChild.arguments.1.nullability = "nonnull"
+fn.CFTreeInsertSibling.arguments.1.nullability = "nonnull"
 fn.CFTreeGetChildren.arguments.1.bounds.counted-by = "self.child_count()"
 fn.CFTreeSetContext.arguments.1.bounds = "single"
 
@@ -904,70 +1027,29 @@ fn.CFDictionaryRemoveAllValues.unsafe = false
 
 # CFFileDescriptor
 fn.CFFileDescriptorCreate.unsafe = true # Callout / context must be sendable
-fn.CFFileDescriptorGetNativeDescriptor.unsafe = false
-fn.CFFileDescriptorCreateRunLoopSource.unsafe = false
-
-# CFFileSecurity
-fn.CFFileSecurityCreate.unsafe = false
-fn.CFFileSecurityCreateCopy.unsafe = false
-fn.CFFileSecuritySetOwnerUUID.unsafe = false
-fn.CFFileSecuritySetGroupUUID.unsafe = false
-
-# CFLocale
-fn.CFLocaleCreateCanonicalLanguageIdentifierFromString.unsafe = false
-fn.CFLocaleCreateCanonicalLocaleIdentifierFromString.unsafe = false
-fn.CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes.unsafe = false
-fn.CFLocaleCreateLocaleIdentifierFromWindowsLocaleCode.unsafe = false
-fn.CFLocaleGetWindowsLocaleCodeFromLocaleIdentifier.unsafe = false
-fn.CFLocaleGetLanguageCharacterDirection.unsafe = false
-fn.CFLocaleGetLanguageLineDirection.unsafe = false
-fn.CFLocaleCreateComponentsFromLocaleIdentifier.unsafe = false
-fn.CFLocaleCreate.unsafe = false
-fn.CFLocaleCreateCopy.unsafe = false
-fn.CFLocaleGetValue.unsafe = false
-fn.CFLocaleCopyDisplayNameForPropertyValue.unsafe = false
 
 # CFMachPort
 fn.CFMachPortSetInvalidationCallBack.unsafe = true # Callback must be sendable
-fn.CFMachPortCreateRunLoopSource.unsafe = false
 
 # CFMessagePort
-fn.CFMessagePortCreateRemote.unsafe = false
-fn.CFMessagePortSetName.unsafe = false
 fn.CFMessagePortSetInvalidationCallBack.unsafe = true # Callback must be sendable
-fn.CFMessagePortCreateRunLoopSource.unsafe = false
+
+# CFNumberFormatter
+fn.CFNumberFormatterCreateNumberFromString.unsafe = true # Unsure if range out of bounds is UB
 
 # CFPlugIn
-fn.CFPlugInCreate.unsafe = false
-fn.CFPlugInGetBundle.unsafe = false
-fn.CFPlugInSetLoadOnDemand.unsafe = false
-fn.CFPlugInIsLoadOnDemand.unsafe = false
-fn.CFPlugInFindFactoriesForPlugInType.unsafe = false
-fn.CFPlugInFindFactoriesForPlugInTypeInPlugIn.unsafe = false
-fn.CFPlugInInstanceCreate.unsafe = false
 fn.CFPlugInRegisterFactoryFunction.unsafe = false # TODO(breaking): Make this unsafe
-fn.CFPlugInRegisterFactoryFunctionByName.unsafe = false
-fn.CFPlugInUnregisterFactory.unsafe = false
-fn.CFPlugInRegisterPlugInType.unsafe = false
-fn.CFPlugInUnregisterPlugInType.unsafe = false
-fn.CFPlugInAddInstanceForFactory.unsafe = false
-fn.CFPlugInRemoveInstanceForFactory.unsafe = false
-fn.CFPlugInInstanceGetFactoryName.unsafe = false
-fn.CFPlugInInstanceGetInstanceData.unsafe = false
 fn.CFPlugInInstanceCreateWithInstanceDataSize.unsafe = true # Callbacks, must be sendable?
 
 # TODO(breaking): Maybe mark this as `unsafe`?
 fn.CFPreferencesCopyMultiple.unsafe = false
 
 # CFRunLoop
-fn.CFRunLoopGetCurrent.unsafe = false
-fn.CFRunLoopGetMain.unsafe = false
 fn.CFRunLoopCopyCurrentMode.unsafe = false
 fn.CFRunLoopCopyAllModes.unsafe = false
 fn.CFRunLoopAddCommonMode.unsafe = false
 fn.CFRunLoopGetNextTimerFireDate.unsafe = false
 fn.CFRunLoopRun.unsafe = false # Can be run recursively
-fn.CFRunLoopRunInMode.unsafe = false
 fn.CFRunLoopIsWaiting.unsafe = false
 fn.CFRunLoopWakeUp.unsafe = false
 fn.CFRunLoopStop.unsafe = false
@@ -982,27 +1064,10 @@ fn.CFRunLoopContainsTimer.unsafe = false
 fn.CFRunLoopAddTimer.unsafe = false
 fn.CFRunLoopRemoveTimer.unsafe = false
 fn.CFRunLoopSourceCreate.unsafe = true # Context must be sendable
-fn.CFRunLoopSourceGetOrder.unsafe = false
-fn.CFRunLoopSourceInvalidate.unsafe = false
-fn.CFRunLoopSourceIsValid.unsafe = false
-fn.CFRunLoopSourceSignal.unsafe = false
 fn.CFRunLoopObserverCreate.unsafe = true # Callout / context must be sendable
 fn.CFRunLoopObserverCreateWithHandler.unsafe = true # Handler must be sendable
-fn.CFRunLoopObserverGetActivities.unsafe = false
-fn.CFRunLoopObserverDoesRepeat.unsafe = false
-fn.CFRunLoopObserverGetOrder.unsafe = false
-fn.CFRunLoopObserverInvalidate.unsafe = false
-fn.CFRunLoopObserverIsValid.unsafe = false
 fn.CFRunLoopTimerCreate.unsafe = true # Callout / context must be sendable
 fn.CFRunLoopTimerCreateWithHandler.unsafe = true # Handler must be sendable
-fn.CFRunLoopTimerGetNextFireDate.unsafe = false
-fn.CFRunLoopTimerSetNextFireDate.unsafe = false
-fn.CFRunLoopTimerGetInterval.unsafe = false
-fn.CFRunLoopTimerDoesRepeat.unsafe = false
-fn.CFRunLoopTimerGetOrder.unsafe = false
-fn.CFRunLoopTimerInvalidate.unsafe = false
-fn.CFRunLoopTimerIsValid.unsafe = false
-fn.CFRunLoopTimerGetTolerance.unsafe = false
 fn.CFRunLoopTimerSetTolerance.unsafe = true # Not thread safe?
 
 # CFSet
@@ -1060,9 +1125,18 @@ fn.CFStringTransform.unsafe = true # Unsure if range out of bounds is UB
 fn.CFStringIsEncodingAvailable.unsafe = false # Encoding is safe here
 fn.CFStringGetNameOfEncoding.unsafe = false # Encoding is safe here
 
+# CFStringTokenizer
+fn.CFStringTokenizerCreate.unsafe = true # Unsure if range out of bounds is UB
+fn.CFStringTokenizerSetString.unsafe = true # Unsure if range out of bounds is UB
+
 # CFTimeZone
 fn.CFTimeZoneCreate.unsafe = true # Unsure
 fn.CFTimeZoneSetAbbreviationDictionary.unsafe = true # Unknown thread-safety? Probably fine though, it uses a lock
+
+# CFTree
+fn.CFTreePrependChild.unsafe = true # UB if already child
+fn.CFTreeAppendChild.unsafe = true # UB if already child
+fn.CFTreeInsertSibling.unsafe = true # UB if already child
 
 # CFURL
 fn.CFURLCreateData.unsafe = false

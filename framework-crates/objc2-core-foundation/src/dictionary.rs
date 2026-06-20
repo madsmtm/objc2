@@ -275,7 +275,7 @@ impl<K, V> CFMutableDictionary<K, V> {
         K: Type + Sized + PartialEq + Hash,
         V: Type + Sized,
     {
-        unsafe { CFMutableDictionary::add_value(Some(self), key, value) }
+        unsafe { self.add_value(key, value) }
     }
 
     /// Set the value of the key in the dictionary.
@@ -286,7 +286,7 @@ impl<K, V> CFMutableDictionary<K, V> {
         K: Type + Sized + PartialEq + Hash,
         V: Type + Sized,
     {
-        unsafe { CFMutableDictionary::set_value(Some(self), key, value) }
+        unsafe { self.set_value(key, value) }
     }
 
     /// Replace the value of the key in the dictionary.
@@ -297,7 +297,7 @@ impl<K, V> CFMutableDictionary<K, V> {
         K: Type + Sized + PartialEq + Hash,
         V: Type + Sized,
     {
-        unsafe { CFMutableDictionary::replace_value(Some(self), key, value) }
+        unsafe { self.replace_value(key, value) }
     }
 
     /// Remove the value from the dictionary associated with the key.
@@ -307,14 +307,14 @@ impl<K, V> CFMutableDictionary<K, V> {
     where
         K: Type + Sized + PartialEq + Hash,
     {
-        unsafe { CFMutableDictionary::remove_value(Some(self), key) }
+        unsafe { self.remove_value(key) }
     }
 
     /// Remove all keys and values from the dictionary.
     #[inline]
     #[doc(alias = "CFDictionaryRemoveAllValues")]
     pub fn clear(&self) {
-        CFMutableDictionary::remove_all_values(Some(self))
+        self.remove_all_values()
     }
 }
 
