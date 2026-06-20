@@ -231,7 +231,7 @@ impl CFURL {
         url_string: &crate::CFString,
         base_url: Option<&CFURL>,
     ) -> Option<CFRetained<Self>> {
-        Self::__from_string(allocator, Some(url_string), base_url)
+        Self::__from_string(allocator, url_string, base_url)
     }
 
     /// Create an URL from a string without checking it for validity.
@@ -274,9 +274,7 @@ impl CFURL {
     /// [`from_string`][Self::from_string].
     #[doc(alias = "CFURLGetString")]
     pub fn string(&self) -> CFRetained<crate::CFString> {
-        // URLs contain valid UTF-8, so this should only fail on allocation
-        // error.
-        self.__string().expect("failed getting string from CFURL")
+        self.__string()
     }
 }
 

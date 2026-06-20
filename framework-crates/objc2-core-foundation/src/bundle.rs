@@ -16,7 +16,7 @@ mod tests {
     fn url_from_str(s: &str, is_dir: bool) -> CFRetained<CFURL> {
         CFURL::with_file_system_path(
             None,
-            Some(&CFString::from_str(s)),
+            &CFString::from_str(s),
             CFURLPathStyle::CFURLPOSIXPathStyle,
             is_dir as _,
         )
