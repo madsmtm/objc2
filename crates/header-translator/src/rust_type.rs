@@ -3309,10 +3309,15 @@ impl Ty {
         self.method_return()
     }
 
+    /// The return type if it can be converted to a `Result<T, Retained<NSError>>`.
     pub(crate) fn method_return_with_error(&self) -> Option<impl fmt::Display + '_> {
+        // We allow return values with unspecified nullability, because that's
+        // what Swift seems to do as well. Note that non-null return values
+        // cannot be mapped as `Result<T, E>`, because the return value `T`
+        // would always be present.
         let display_closure: Box<dyn Fn(&mut fmt::Formatter<'_>) -> _> = match self {
             Self::Pointer {
-                nullability: Nullability::Nullable,
+                nullability: Nullability::Nullable | Nullability::Unspecified,
                 lifetime: Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
@@ -3329,7 +3334,7 @@ impl Ty {
                 })
             }
             Self::Pointer {
-                nullability: Nullability::Nullable,
+                nullability: Nullability::Nullable | Nullability::Unspecified,
                 lifetime: Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
