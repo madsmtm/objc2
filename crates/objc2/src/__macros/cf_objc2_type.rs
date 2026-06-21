@@ -3,13 +3,21 @@
 #[doc(hidden)] // For now, though still a breaking change to modify
 #[macro_export]
 macro_rules! cf_objc2_type {
+    (unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? RefEncode<void> for $ty:ty {}) => {
+        $crate::cf_objc2_type! {
+            unsafe impl $(<$($generic : ?$sized),*>)? RefEncode($crate::encode::Encoding::Void) for $ty {}
+        }
+    };
     (unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? RefEncode<$encoding_name:literal> for $ty:ty {}) => {
+        $crate::cf_objc2_type! {
+            unsafe impl $(<$($generic : ?$sized),*>)? RefEncode($crate::encode::Encoding::Struct($encoding_name, &[])) for $ty {}
+        }
+    };
+    (unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? RefEncode($encoding:expr) for $ty:ty {}) => {
         // SAFETY: Caller upholds that the struct is a ZST type, and
         // represents a C struct with the given encoding.
         unsafe impl $(<$($generic : ?$sized),*>)? $crate::encode::RefEncode for $ty {
-            const ENCODING_REF: $crate::encode::Encoding = $crate::encode::Encoding::Pointer(
-                &$crate::encode::Encoding::Struct($encoding_name, &[]),
-            );
+            const ENCODING_REF: $crate::encode::Encoding = $crate::encode::Encoding::Pointer(&$encoding);
         }
 
         // SAFETY: CF types are message-able in the Objective-C runtime.
@@ -40,8 +48,5 @@ macro_rules! cf_objc2_type {
         //
         // This also means that casting etc. must be implemented differently
         // for CoreFoundation objects (compare).
-
-        // NOTE: Make sure to keep objc2-core-foundation/src/base.rs up to
-        // date with changes in here.
     };
 }

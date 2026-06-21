@@ -469,6 +469,12 @@ impl Abi {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Encoding {
+    Void,
+    Struct { name: String },
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
@@ -684,10 +690,24 @@ pub enum Stmt {
     /// 3. `typedef struct CF_BRIDGED_MUTABLE_TYPE(NSMutableArray) __CFArray * CFMutableArrayRef;`
     ///
     ///    A mutable bridged type. This gets `CFArray` as a superclass.
+    ///
+    /// 4. `typedef CF_BRIDGED_TYPE(id) CFTypeRef CFPropertyListRef;`
+    ///    `typedef CFTypeRef SecTransformAttributeRef;`
+    ///
+    ///    A typedef to `CFTypeRef`. These are handled mostly the same way as
+    ///    normal bridged types, except that they have a different encoding.
+    ///    (`CFXMLNodeRef` is also bridged here since it's in CFDatabase.def).
+    ///
+    /// 5. `typedef CF_BRIDGED_TYPE(id) CFStringRef TheoreticalStringSubclass;`
+    ///    `typedef CFTreeRef CFXMLTreeRef;`
+    ///
+    ///    A typedef to another CF type. This is handled as a "subclass" of
+    ///    the underlying CF type. (`CFXMLTreeRef` is also bridged here since
+    ///    it's in CFDatabase.def).
     CFDecl {
         id: ItemIdentifier,
         generics: Vec<GenericWithBound>,
-        encoding_name: String,
+        encoding: Encoding,
         availability: Availability,
         documentation: Documentation,
         sendable: Option<bool>,
@@ -1259,12 +1279,31 @@ impl Stmt {
                 let id = id.require_name();
                 let c_name = c_name.unwrap();
 
-                let mut alias_kind = None;
-                let mut inner_entity = None;
-                let mut sendable = None;
+                let ty = entity
+                    .get_typedef_underlying_type()
+                    .expect("typedef underlying type");
+                let mut ty = Ty::parse_typedef(ty, context);
 
-                immediate_children(entity, |entity, _span| match entity.get_kind() {
-                    EntityKind::UnexposedAttr => {
+                if let Some(nullability) = data.nullability {
+                    ty.change_nullability(nullability.into());
+                }
+
+                if ty.needs_simd() {
+                    debug!("simd types are not yet possible in typedefs");
+                    return vec![];
+                }
+
+                // No need to output a typedef if it'll just point to the same thing.
+                //
+                // TODO: We're discarding a slight bit of availability data this way.
+                if ty.is_enum(&c_name) || ty.is_record(&c_name) {
+                    return vec![];
+                }
+
+                let mut alias_kind = None;
+                let mut sendable = None;
+                immediate_children(entity, |entity, _span| {
+                    if entity.get_kind() == EntityKind::UnexposedAttr {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
                             match attr {
                                 UnexposedAttr::Sendable => sendable = Some(true),
@@ -1287,137 +1326,99 @@ impl Stmt {
                             }
                         }
                     }
-                    EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {
-                        if inner_entity.is_some() {
-                            error!(?inner_entity, ?entity, "already set");
-                        }
-                        inner_entity = Some(entity.get_reference().expect("ref to have reference"));
-                    }
-                    EntityKind::StructDecl => {
-                        if inner_entity.is_some() {
-                            error!(?inner_entity, ?entity, "already set");
-                        }
-                        inner_entity = Some(entity);
-                    }
-                    EntityKind::ParmDecl
-                    | EntityKind::UnionDecl
-                    | EntityKind::EnumDecl
-                    | EntityKind::ObjCClassRef
-                    | EntityKind::IntegerLiteral
-                    | EntityKind::BinaryOperator
-                    | EntityKind::DeclRefExpr
-                    | EntityKind::ParenExpr => {}
-                    EntityKind::ObjCIndependentClass => {
-                        // TODO: Might be interesting?
-                    }
-                    _ => error!(?entity, "unknown typedef child"),
                 });
 
-                let ty = entity
-                    .get_typedef_underlying_type()
-                    .expect("typedef underlying type");
-                let mut ty = Ty::parse_typedef(ty, context);
+                let mut stmts = Vec::new();
+                immediate_children(entity, |entity, _span| match entity.get_kind() {
+                    EntityKind::ObjCProtocolRef => {
+                        let entity = entity.get_reference().expect("ref to have reference");
 
-                if let Some(nullability) = data.nullability {
-                    ty.change_nullability(nullability.into());
-                }
+                        // Handle OS_OBJECT_DECL
+                        if entity.get_name().unwrap().starts_with("OS_") {
+                            let macro_invocation = entity
+                                .get_location()
+                                .expect("itemref location")
+                                .get_entity()
+                                .expect("itemref entity");
 
-                if ty.needs_simd() {
-                    debug!("simd types are not yet possible in typedefs");
-                    return vec![];
-                }
+                            assert_eq!(macro_invocation.get_kind(), EntityKind::MacroExpansion);
 
-                // No need to output a typedef if it'll just point to the same thing.
-                //
-                // TODO: We're discarding a slight bit of availability data this way.
-                if ty.is_enum(&c_name) || ty.is_record(&c_name) {
-                    return vec![];
-                }
+                            let macro_name = macro_invocation.get_name().unwrap();
+                            let mut is_dispatch = true;
 
-                if let Some(inner_entity) = inner_entity {
-                    match inner_entity.get_kind() {
-                        EntityKind::ObjCProtocolDecl => {
-                            // Handle OS_OBJECT_DECL
-                            if inner_entity.get_name().unwrap().starts_with("OS_") {
-                                let macro_invocation = inner_entity
-                                    .get_location()
-                                    .expect("itemref location")
-                                    .get_entity()
-                                    .expect("itemref entity");
-
-                                assert_eq!(macro_invocation.get_kind(), EntityKind::MacroExpansion);
-
-                                let macro_name = macro_invocation.get_name().unwrap();
-                                let mut is_dispatch = true;
-
-                                match &*macro_name {
-                                    // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
-                                    // which marks the type `OS_OBJECT_SWIFT_SENDABLE`.
-                                    "DISPATCH_DECL"
-                                    | "DISPATCH_DECL_SWIFT"
-                                    | "DISPATCH_SOURCE_DECL_SWIFT" => {
-                                        sendable = Some(true);
-                                    }
-                                    // Delegates to `DISPATCH_DECL_SWIFT`
-                                    "DISPATCH_DECL_FACTORY_CLASS_SWIFT" => {
-                                        sendable = Some(true);
-                                        // TODO: OS_OBJECT_SWIFT_HAS_MISSING_DESIGNATED_INIT?
-                                    }
-                                    "DISPATCH_DECL_SERIAL_EXECUTOR_SWIFT" => {
-                                        sendable = Some(true);
-                                        // TODO: superclass?
-                                    }
-                                    // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
-                                    // but actually isn't `Send + Sync` because it
-                                    // can contain `NSData`.
-                                    "DISPATCH_DATA_DECL_SWIFT" => {
-                                        sendable = Some(false);
-                                    }
-                                    // Delegates to `OS_OBJECT_DECL`.
-                                    "NW_OBJECT_DECL" => {
-                                        is_dispatch = false;
-                                    }
-                                    // Delegates to `NW_SWIFT_SENDABLE` + `NW_OBJECT_DECL`.
-                                    "NW_SENDABLE_OBJECT_DECL" => {
-                                        sendable = Some(true);
-                                        is_dispatch = false;
-                                    }
-                                    _ => error!(macro_name, "unknown OS protocol macro"),
+                            match &*macro_name {
+                                // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
+                                // which marks the type `OS_OBJECT_SWIFT_SENDABLE`.
+                                "DISPATCH_DECL"
+                                | "DISPATCH_DECL_SWIFT"
+                                | "DISPATCH_SOURCE_DECL_SWIFT" => {
+                                    sendable = Some(true);
                                 }
-
-                                let id = context.replace_typedef_name(id, false);
-
-                                if id.name != c_name {
-                                    documentation.set_alias(c_name);
+                                // Delegates to `DISPATCH_DECL_SWIFT`
+                                "DISPATCH_DECL_FACTORY_CLASS_SWIFT" => {
+                                    sendable = Some(true);
+                                    // TODO: OS_OBJECT_SWIFT_HAS_MISSING_DESIGNATED_INIT?
                                 }
+                                "DISPATCH_DECL_SERIAL_EXECUTOR_SWIFT" => {
+                                    sendable = Some(true);
+                                    // TODO: superclass?
+                                }
+                                // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
+                                // but actually isn't `Send + Sync` because it
+                                // can contain `NSData`.
+                                "DISPATCH_DATA_DECL_SWIFT" => {
+                                    sendable = Some(false);
+                                }
+                                // Delegates to `OS_OBJECT_DECL`.
+                                "NW_OBJECT_DECL" => {
+                                    is_dispatch = false;
+                                }
+                                // Delegates to `NW_SWIFT_SENDABLE` + `NW_OBJECT_DECL`.
+                                "NW_SENDABLE_OBJECT_DECL" => {
+                                    sendable = Some(true);
+                                    is_dispatch = false;
+                                }
+                                _ => error!(macro_name, "unknown OS protocol macro"),
+                            }
 
-                                return vec![if is_dispatch {
-                                    // TODO: Implement `Deref` on Dispatch objects when we have a
-                                    // super protocol?
-                                    Self::DispatchDecl {
-                                        id,
-                                        availability,
-                                        documentation,
-                                        sendable,
-                                    }
-                                } else {
-                                    Self::NetworkDecl {
-                                        id,
-                                        availability,
-                                        documentation,
-                                        sendable,
-                                    }
-                                }];
+                            let id = context.replace_typedef_name(id.clone(), false);
+
+                            if id.name != c_name {
+                                documentation.set_alias(c_name.clone());
+                            }
+
+                            if is_dispatch {
+                                // TODO: Implement `Deref` on Dispatch objects when we have a
+                                // super protocol?
+                                stmts.push(Self::DispatchDecl {
+                                    id,
+                                    availability: availability.clone(),
+                                    documentation: documentation.clone(),
+                                    sendable,
+                                });
+                            } else {
+                                stmts.push(Self::NetworkDecl {
+                                    id,
+                                    availability: availability.clone(),
+                                    documentation: documentation.clone(),
+                                    sendable,
+                                });
                             }
                         }
-                        EntityKind::StructDecl => {
-                            let mut bridged = bridged_to(&inner_entity, context);
+                    }
+                    EntityKind::TypeRef => {
+                        let entity = entity.get_reference().expect("ref to have reference");
 
-                            if ty.is_cf_type_typedef(&id.name, bridged.is_some()) {
-                                let id = context.replace_typedef_name(id, true);
+                        let mut bridged = bridged_to(&entity, context);
+
+                        match entity.get_kind() {
+                            EntityKind::StructDecl
+                                if ty.is_cf_type_typedef(&id.name, bridged.is_some()) =>
+                            {
+                                let id = context.replace_typedef_name(id.clone(), true);
 
                                 if id.name != c_name {
-                                    documentation.set_alias(c_name);
+                                    documentation.set_alias(c_name.clone());
                                 }
 
                                 // If the class name contains the word "Mutable"
@@ -1460,73 +1461,137 @@ impl Stmt {
                                     ));
                                 }
 
-                                return vec![Self::CFDecl {
+                                stmts.push(Self::CFDecl {
                                     id,
-                                    encoding_name: inner_entity.get_name().unwrap().to_string(),
+                                    encoding: Encoding::Struct {
+                                        name: entity.get_name().unwrap().to_string(),
+                                    },
                                     generics: data
                                         .generics
                                         .iter()
                                         .flatten()
                                         .map(|generic| (generic.clone(), None))
                                         .collect(),
-                                    availability,
-                                    documentation,
+                                    availability: availability.clone(),
+                                    documentation: documentation.clone(),
                                     sendable,
                                     bridged: bridged.flatten(),
                                     superclass,
-                                }];
+                                });
                             }
-
-                            // Handle structs without fields as opaque decls.
-                            let mut has_fields = false;
-                            immediate_children(&inner_entity, |entity, _span| {
-                                if entity.get_kind() == EntityKind::FieldDecl {
-                                    has_fields = true;
-                                }
-                            });
-                            if !has_fields {
-                                return vec![
-                                    Self::OpaqueDecl {
-                                        id: ItemIdentifier::new(&inner_entity, context),
-                                        encoding_name: inner_entity.get_name().unwrap().to_string(),
-                                        availability: Availability::parse(&inner_entity, context),
-                                        documentation: Documentation::from_entity(
-                                            &inner_entity,
-                                            context,
-                                        ),
+                            EntityKind::StructDecl => {
+                                // Handle structs without fields as opaque decls.
+                                let mut has_fields = false;
+                                immediate_children(&entity, |entity, _span| {
+                                    if entity.get_kind() == EntityKind::FieldDecl {
+                                        has_fields = true;
+                                    }
+                                });
+                                if !has_fields {
+                                    stmts.push(Self::OpaqueDecl {
+                                        id: ItemIdentifier::new(&entity, context),
+                                        encoding_name: entity.get_name().unwrap().to_string(),
+                                        availability: Availability::parse(&entity, context),
+                                        documentation: Documentation::from_entity(&entity, context),
                                         sendable,
-                                    },
-                                    Self::AliasDecl {
-                                        id,
-                                        availability,
-                                        ty,
-                                        kind: alias_kind,
-                                        documentation,
-                                    },
-                                ];
+                                    });
+                                    stmts.push(Self::AliasDecl {
+                                        id: id.clone(),
+                                        availability: availability.clone(),
+                                        ty: ty.clone(),
+                                        kind: alias_kind.clone(),
+                                        documentation: documentation.clone(),
+                                    });
+                                }
                             }
+                            EntityKind::TypedefDecl
+                                if ty.is_cf_type_typedef(&id.name, bridged.is_some()) =>
+                            {
+                                let id = context.replace_typedef_name(id.clone(), true);
+
+                                if id.name != c_name {
+                                    documentation.set_alias(c_name.clone());
+                                }
+
+                                let superclass = ItemIdentifier::new(&entity, context);
+                                let superclass = if superclass.is_cftype() {
+                                    None
+                                } else {
+                                    Some(context.replace_typedef_name(superclass, true))
+                                };
+
+                                /// Recurse through typedef decls looking for
+                                /// the inner struct name (or a void*).
+                                ///
+                                /// This is neither optimal nor pretty...
+                                fn find_encoding(entity: &Entity<'_>) -> Encoding {
+                                    let mut encoding = None;
+                                    immediate_children(entity, |entity, _span| {
+                                        match entity.get_kind() {
+                                            EntityKind::StructDecl => {
+                                                encoding = Some(Encoding::Struct {
+                                                    name: entity.get_name().unwrap(),
+                                                });
+                                            }
+                                            EntityKind::TypeRef => {
+                                                let entity = entity
+                                                    .get_reference()
+                                                    .expect("ref to have reference");
+                                                encoding = Some(find_encoding(&entity));
+                                            }
+                                            _ => {}
+                                        }
+                                    });
+                                    encoding.unwrap_or(Encoding::Void)
+                                }
+
+                                stmts.push(Self::CFDecl {
+                                    id,
+                                    encoding: find_encoding(&entity),
+                                    generics: Vec::new(),
+                                    availability: availability.clone(),
+                                    documentation: documentation.clone(),
+                                    sendable,
+                                    bridged: bridged.flatten(),
+                                    superclass,
+                                });
+                            }
+                            _ => {}
                         }
-                        _ => {}
                     }
+                    EntityKind::ParmDecl
+                    | EntityKind::UnionDecl
+                    | EntityKind::StructDecl
+                    | EntityKind::EnumDecl
+                    | EntityKind::ObjCClassRef
+                    | EntityKind::IntegerLiteral
+                    | EntityKind::BinaryOperator
+                    | EntityKind::DeclRefExpr
+                    | EntityKind::ParenExpr
+                    | EntityKind::UnexposedAttr => {}
+                    EntityKind::ObjCIndependentClass => {
+                        // TODO: Might be interesting?
+                    }
+                    _ => error!(?entity, "unknown typedef child"),
+                });
+
+                if stmts.is_empty() {
+                    let id = context.replace_typedef_name(id, ty.is_cf_type_ptr());
+
+                    if id.name != c_name {
+                        documentation.set_alias(c_name);
+                    }
+
+                    stmts.push(Self::AliasDecl {
+                        id,
+                        availability,
+                        ty,
+                        kind: alias_kind,
+                        documentation,
+                    });
                 }
 
-                if sendable.is_some() {
-                    warn!(name = ?id.name, ?sendable, "unhandled sendability attribute on typedef");
-                }
-
-                let id = context.replace_typedef_name(id, ty.is_cf_type_ptr());
-
-                if id.name != c_name {
-                    documentation.set_alias(c_name);
-                }
-
-                vec![Self::AliasDecl {
-                    id,
-                    availability,
-                    ty,
-                    kind: alias_kind,
-                    documentation,
-                }]
+                stmts
             }
             EntityKind::StructDecl | EntityKind::UnionDecl => {
                 let is_union = entity.get_kind() == EntityKind::UnionDecl;
@@ -3525,7 +3590,7 @@ impl Stmt {
                 Self::CFDecl {
                     id,
                     generics,
-                    encoding_name,
+                    encoding,
                     availability,
                     documentation,
                     sendable,
@@ -3597,13 +3662,26 @@ impl Stmt {
                     write!(f, "{cfg_objc2}")?;
                     writeln!(f, "cf_objc2_type!(")?;
                     // SAFETY: The type is a CoreFoundation type.
-                    writeln!(
-                        f,
-                        "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
-                        GenericParamsHelper(generics, "?Sized"),
-                        id.name,
-                        generic_ty(generics),
-                    )?;
+                    match encoding {
+                        Encoding::Void => {
+                            writeln!(
+                                f,
+                                "    unsafe impl{} RefEncode<void> for {}{} {{}}",
+                                GenericParamsHelper(generics, "?Sized"),
+                                id.name,
+                                generic_ty(generics),
+                            )?;
+                        }
+                        Encoding::Struct { name } => {
+                            writeln!(
+                                f,
+                                "    unsafe impl{} RefEncode<{name:?}> for {}{} {{}}",
+                                GenericParamsHelper(generics, "?Sized"),
+                                id.name,
+                                generic_ty(generics),
+                            )?;
+                        }
+                    }
                     writeln!(f, ");")?;
 
                     if let Some(true) = sendable {

@@ -728,6 +728,8 @@ pub enum PointeeTy {
         id: ItemIdentifier,
         generics: Vec<PointeeTy>,
         num_declaration_generics: usize,
+        /// The superclass of this CF type. Must point to another `CFTypeDef`.
+        to: Option<Box<PointeeTy>>,
     },
     CFOpaque,
     DispatchTypeDef {
@@ -851,9 +853,14 @@ impl PointeeTy {
                 .chain(result_type.required_items())
                 .chain(arguments.iter().flat_map(|arg| arg.required_items()))
                 .collect(),
-            Self::CFTypeDef { id, generics, .. } => iter::once(ItemTree::from_id(id.clone()))
-                .chain(generics.iter().flat_map(|generic| generic.required_items()))
-                .collect(),
+            Self::CFTypeDef {
+                id, generics, to, ..
+            } => iter::once(ItemTree::new(
+                id.clone(),
+                to.iter().flat_map(|to| to.required_items()),
+            ))
+            .chain(generics.iter().flat_map(|generic| generic.required_items()))
+            .collect(),
             Self::DispatchTypeDef { id } => {
                 vec![ItemTree::from_id(id.clone())]
             }
@@ -1283,6 +1290,7 @@ impl PointeeTy {
                 id,
                 generics,
                 num_declaration_generics,
+                to: _,
             } => {
                 let mut safety = if id.is_cftype() {
                     // `CFType`, like `AnyObject`, is not known to be safe.
@@ -1394,10 +1402,13 @@ impl PointeeTy {
 
     pub(crate) fn implementable(&self) -> Option<ItemTree> {
         match self {
-            Self::CFTypeDef { id, .. }
-            | Self::Class { id, .. }
-            | Self::DispatchTypeDef { id }
-            | Self::NetworkTypeDef { id } => Some(ItemTree::from_id(id.clone())),
+            Self::CFTypeDef { id, to, .. } => Some(ItemTree::new(
+                id.clone(),
+                to.iter().flat_map(|to| to.implementable()),
+            )),
+            Self::Class { id, .. } | Self::DispatchTypeDef { id } | Self::NetworkTypeDef { id } => {
+                Some(ItemTree::from_id(id.clone()))
+            }
             // We shouldn't encounter this here, since `Self` is only on
             // Objective-C methods, but if we do, it's very unclear how we
             // should translate it.
@@ -2446,6 +2457,13 @@ impl Ty {
                         .is_direct_cf_type(&id.name, bridged_to(&declaration, context).is_some())
                     {
                         let declaration_generics = data.generics.clone().unwrap_or_default();
+                        let to = if let Self::Pointee(pointee @ PointeeTy::CFTypeDef { .. }) =
+                            &**pointee
+                        {
+                            Some(Box::new(pointee.clone()))
+                        } else {
+                            None
+                        };
 
                         // A bit annoying that we replace the typedef name
                         // here, as that's also what determines whether the
@@ -2456,6 +2474,7 @@ impl Ty {
                             id,
                             generics: vec![],
                             num_declaration_generics: declaration_generics.len(),
+                            to,
                         });
                         return inner;
                     } else if pointee.is_object_like() {
@@ -3012,6 +3031,29 @@ impl Ty {
             // Typedefs to void* are CF types if the typedef is
             // bridged, or in pre-defined list.
             Self::Primitive(Primitive::Void) => {
+                typedef_is_bridged || KNOWN_CF_TYPES.contains(&typedef_name)
+            }
+            // Typedefs to other CF types are themselves CF types.
+            // Example: `CFPropertyList` is a typedef to CFType, but we want
+            // it to be it's own type. Similar for `SecTransformRef`.
+            Self::Pointee(PointeeTy::CFTypeDef { .. }) => {
+                // We don't want these two types to be newtypes quite yet though.
+                if matches!(
+                    typedef_name,
+                    "CMClockOrTimebaseRef" | "SecTransformStringOrAttributeRef"
+                ) {
+                    return false;
+                }
+                // Also unsure if we should do this (at least yet), see:
+                // https://github.com/madsmtm/objc2/issues/735
+                if typedef_name == "CFPropertyListRef" {
+                    return false;
+                }
+                // For these, we kinda wanna make them superclasses of the
+                // thing they represent? Unsure yet.
+                if matches!(typedef_name, "CMBufferRef" | "VTSessionRef") {
+                    return false;
+                }
                 typedef_is_bridged || KNOWN_CF_TYPES.contains(&typedef_name)
             }
             _ => false,
@@ -4488,6 +4530,7 @@ impl Ty {
                 id: ItemIdentifier::cf_string(),
                 generics: vec![],
                 num_declaration_generics: 0,
+                to: None,
             })),
         }
     }
@@ -4521,6 +4564,7 @@ impl Ty {
                 id: ItemIdentifier::cf_uuid(),
                 generics: vec![],
                 num_declaration_generics: 0,
+                to: None,
             })),
         }
     }
@@ -4555,6 +4599,8 @@ impl Ty {
                 generics: generic.generics.iter().map(to_cf).collect(),
                 // TODO: How would we get this information correctly?
                 num_declaration_generics: generic.generics.len(),
+                // TODO: How would we get this information correctly?
+                to: None,
             }
         }
 

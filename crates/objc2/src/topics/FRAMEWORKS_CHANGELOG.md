@@ -68,6 +68,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `CFGetAllocator` to `CFType::allocator`.
 * **BREAKING**: Renamed `CFShowStr` to `CFString::show`.
 * **BREAKING**: A bunch of statics are now emitted as `&T` instead of `Option<&T>` when they don't actually contain NULL.
+* **BREAKING**: Made various CF types that were previously type aliases now be proper types:
+  - `CFXMLTree`.
+  - `CMAttachmentBearer` and `CM*FormatDescription`.
+  - `SKDocument`.
+  - `CVImageBuffer`, `CVPixelBuffer`, `CVOpenGLBuffer`, `CVOpenGLTexture` and `CVMetalTexture`.
+  - `SecTransform` and `SecTransformAttribute`.
+  - `SCBondInterface` and `SCVLANInterface`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.
