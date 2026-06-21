@@ -1,6 +1,6 @@
 framework = "AudioToolbox"
 crate = "objc2-audio-toolbox"
-required-crates = ["objc2", "objc2-foundation"]
+required-crates = []
 custom-lib-rs = true
 flags = [
     # Make AudioToolbox less dependent on CoreServices

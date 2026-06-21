@@ -18,20 +18,11 @@ workspace = true
 [dependencies]
 bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
-dispatch2 = { workspace = true, optional = true, features = [
-    "alloc",
-    "objc2",
-] }
+dispatch2 = { workspace = true, optional = true, features = ["alloc"] }
 libc = { workspace = true, optional = true }
-objc2 = { workspace = true, features = ["std"] }
-objc2-core-audio = { workspace = true, optional = true, features = [
-    "AudioHardware",
-    "objc2",
-] }
-objc2-core-audio-types = { workspace = true, optional = true, features = [
-    "CoreAudioBaseTypes",
-    "objc2",
-] }
+objc2 = { workspace = true, optional = true, features = ["std"] }
+objc2-core-audio = { workspace = true, optional = true, features = ["AudioHardware"] }
+objc2-core-audio-types = { workspace = true, optional = true, features = ["CoreAudioBaseTypes"] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFArray",
     "CFData",
@@ -40,7 +31,6 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFRunLoop",
     "CFString",
     "CFURL",
-    "objc2",
 ] }
 objc2-core-midi = { workspace = true, optional = true, features = [
     "MIDICapabilityInquiry",
@@ -48,7 +38,19 @@ objc2-core-midi = { workspace = true, optional = true, features = [
     "MIDIServices",
     "objc2",
 ] }
-objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-foundation = { workspace = true, optional = true, features = [
+    "NSArray",
+    "NSDate",
+    "NSDictionary",
+    "NSEnumerator",
+    "NSError",
+    "NSExtensionRequestHandling",
+    "NSKeyValueObserving",
+    "NSObject",
+    "NSString",
+    "NSValue",
+    "alloc",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -98,9 +100,11 @@ default = [
     "block2",
     "dispatch2",
     "libc",
+    "objc2",
     "objc2-core-audio",
     "objc2-core-audio-types",
     "objc2-core-foundation",
+    "objc2-foundation",
 ]
 std = ["alloc"]
 alloc = []
@@ -108,40 +112,27 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
+objc2 = [
+    "dep:objc2",
+    "dispatch2?/objc2",
+    "objc2-core-audio-types?/objc2",
+    "objc2-core-audio?/objc2",
+    "objc2-core-foundation?/objc2",
+    "objc2-core-midi?/objc2",
+]
 objc2-core-audio = ["dep:objc2-core-audio"]
 objc2-core-audio-types = ["dep:objc2-core-audio-types"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-midi = ["dep:objc2-core-midi"]
+objc2-foundation = ["dep:objc2-foundation"]
 unstable-darwin-objc = []
 
-AUAudioUnit = [
-    "bitflags",
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSDate",
-    "objc2-foundation/NSDictionary",
-    "objc2-foundation/NSEnumerator",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSKeyValueObserving",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-]
-AUAudioUnitImplementation = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSError",
-    "objc2-foundation/NSExtensionRequestHandling",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-]
+AUAudioUnit = ["bitflags"]
+AUAudioUnitImplementation = []
 AUCocoaUIView = []
 AUComponent = ["bitflags"]
 AUGraph = []
-AUParameters = [
-    "objc2-foundation/NSArray",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/NSString",
-    "objc2-foundation/NSValue",
-]
+AUParameters = []
 AudioCodec = ["bitflags"]
 AudioComponent = ["bitflags"]
 AudioConverter = ["bitflags"]
