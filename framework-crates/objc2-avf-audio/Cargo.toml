@@ -41,6 +41,7 @@ objc2-audio-toolbox = { workspace = true, optional = true, features = [
     "AudioUnitProperties",
     "MusicPlayer",
     "block2",
+    "objc2",
 ] }
 
 [package.metadata.docs.rs]

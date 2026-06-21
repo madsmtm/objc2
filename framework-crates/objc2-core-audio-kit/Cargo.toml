@@ -23,6 +23,7 @@ objc2-audio-toolbox = { workspace = true, optional = true, features = [
     "AUAudioUnit",
     "AUComponent",
     "AudioComponent",
+    "objc2",
 ] }
 objc2-core-foundation = { workspace = true, optional = true, features = [
     "CFCGTypes",
