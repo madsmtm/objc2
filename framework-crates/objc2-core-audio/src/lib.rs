@@ -25,3 +25,8 @@ pub use self::generated::*;
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type OSStatus = i32;
+
+#[allow(non_upper_case_globals)]
+#[cfg(feature = "AudioHardware")]
+/// [Apple's documentation](https://developer.apple.com/documentation/coreaudio/kaudioobjectsystemobject?language=objc)
+pub const kAudioObjectSystemObject: AudioObjectID = 1;

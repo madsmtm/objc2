@@ -22,6 +22,9 @@ typedef.AudioServerPlugInDriverRef.skipped = true
 struct.AudioServerPlugInIOCycleInfo.skipped = true
 typedef.AudioServerPlugInIOCycleInfo.skipped = true
 
+# Badly typed, should have type `AudioObjectID` (so manually defined for now).
+const.kAudioObjectSystemObject.skipped = true
+
 ##
 ## Fixing bounds information.
 ##
