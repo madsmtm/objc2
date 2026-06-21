@@ -3385,13 +3385,6 @@ impl Stmt {
 
                     let (ret, return_converter) = result_type.fn_return(*returns_retained);
 
-                    let needs_wrapper = *safe
-                        || return_converter.is_some()
-                        || arguments
-                            .iter()
-                            .any(|(_, arg)| arg.fn_argument_converter().is_some())
-                        || abi.rust_outer();
-
                     let raw_fn_decl = |f: &mut fmt::Formatter<'_>, vis| {
                         if c_name != link_name {
                             if id.library_name() == "Dispatch" {
@@ -3424,106 +3417,91 @@ impl Stmt {
                         "pub"
                     };
 
-                    if needs_wrapper {
-                        write!(f, "{}", documentation.fmt(None))?;
-                        write!(f, "{}", self.cfg_gate_ln(config))?;
-                        write!(f, "{availability}")?;
-                        if *must_use {
-                            writeln!(f, "#[must_use]")?;
-                        }
-                        writeln!(f, "#[inline]")?;
-                        let unsafe_ = if *safe { "" } else { "unsafe " };
-                        let fn_name = handle_reserved(&id.name);
-                        write!(f, "{vis} {unsafe_}{}fn {fn_name}(", abi.extern_outer())?;
-
-                        // Emit self-argument first.
-                        if let Some(arg_is_self) = arg_is_self {
-                            let (_, arg_ty) = arguments.get(*arg_is_self).unwrap();
-                            // Might not be completely correct, but typeck
-                            // should figure out for us when calling the
-                            // inner function if the argument type isn't
-                            // the same type this one.
-                            if arg_ty.is_object_like_ptr() {
-                                write!(f, "&self, ")?;
-                            } else {
-                                write!(f, "self, ")?;
-                            }
-                        }
-
-                        // Emit rest of arguments.
-                        for (i, (param, arg_ty)) in arguments.iter().enumerate() {
-                            if arg_is_self.unwrap_or(usize::MAX) == i {
-                                // Emitted above.
-                                continue;
-                            }
-
-                            let param = handle_reserved(&crate::to_snake_case(param));
-                            write!(f, "{param}: ")?;
-
-                            if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
-                                write!(f, "{converted_ty}")?;
-                            } else {
-                                write!(f, "{}", arg_ty.fn_argument(true))?;
-                            }
-
-                            write!(f, ",")?;
-                        }
-
-                        write!(f, ")")?;
-                        if let Some((ty, _, _)) = &return_converter {
-                            write!(f, "{ty}")?;
-                        } else {
-                            write!(f, "{ret}")?;
-                        }
-                        writeln!(f, " {{")?;
-
-                        // Emit raw
-                        writeln!(f, "    {}{{", abi.extern_inner())?;
-                        raw_fn_decl(f, "")?;
-                        writeln!(f, "    }}")?;
-
-                        // Call raw
-                        write!(f, "    ")?;
-                        if let Some((_, converter_start, _)) = &return_converter {
-                            write!(f, "{converter_start}")?;
-                        }
-                        write!(f, "unsafe {{ {c_name}(")?;
-                        for (i, (param, ty)) in arguments.iter().enumerate() {
-                            let param = if arg_is_self.unwrap_or(usize::MAX) == i {
-                                "self".to_string()
-                            } else {
-                                handle_reserved(&crate::to_snake_case(param))
-                            };
-                            if let Some((_, converter_start, converter_end)) =
-                                ty.fn_argument_converter()
-                            {
-                                write!(f, "{converter_start}{param}{converter_end}")?;
-                            } else {
-                                write!(f, "{param}")?;
-                            }
-                            write!(f, ",")?;
-                        }
-                        write!(f, ") }}")?;
-                        if let Some((_, _, converter_end)) = &return_converter {
-                            write!(f, "{converter_end}")?;
-                        }
-                        writeln!(f)?;
-
-                        writeln!(f, "}}")?;
-                    } else {
-                        writeln!(f, "{}{{", abi.extern_outer())?;
-
-                        write!(f, "{}", documentation.fmt(None))?;
-                        write!(f, "    {}", self.cfg_gate_ln(config))?;
-                        write!(f, "    {availability}")?;
-                        if *must_use {
-                            writeln!(f, "    #[must_use]")?;
-                        }
-
-                        raw_fn_decl(f, &format!("{vis} "))?;
-
-                        writeln!(f, "}}")?;
+                    write!(f, "{}", documentation.fmt(None))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    if *must_use {
+                        writeln!(f, "#[must_use]")?;
                     }
+                    writeln!(f, "#[inline]")?;
+                    let unsafe_ = if *safe { "" } else { "unsafe " };
+                    let fn_name = handle_reserved(&id.name);
+                    write!(f, "{vis} {unsafe_}{}fn {fn_name}(", abi.extern_outer())?;
+
+                    // Emit self-argument first.
+                    if let Some(arg_is_self) = arg_is_self {
+                        let (_, arg_ty) = arguments.get(*arg_is_self).unwrap();
+                        // Might not be completely correct, but typeck
+                        // should figure out for us when calling the
+                        // inner function if the argument type isn't
+                        // the same type this one.
+                        if arg_ty.is_object_like_ptr() {
+                            write!(f, "&self, ")?;
+                        } else {
+                            write!(f, "self, ")?;
+                        }
+                    }
+
+                    // Emit rest of arguments.
+                    for (i, (param, arg_ty)) in arguments.iter().enumerate() {
+                        if arg_is_self.unwrap_or(usize::MAX) == i {
+                            // Emitted above.
+                            continue;
+                        }
+
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: ")?;
+
+                        if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
+                            write!(f, "{converted_ty}")?;
+                        } else {
+                            write!(f, "{}", arg_ty.fn_argument(true))?;
+                        }
+
+                        write!(f, ",")?;
+                    }
+
+                    write!(f, ")")?;
+                    if let Some((ty, _, _)) = &return_converter {
+                        write!(f, "{ty}")?;
+                    } else {
+                        write!(f, "{ret}")?;
+                    }
+                    writeln!(f, " {{")?;
+
+                    // Emit raw
+                    writeln!(f, "    {}{{", abi.extern_inner())?;
+                    raw_fn_decl(f, "")?;
+                    writeln!(f, "    }}")?;
+
+                    // Call raw
+                    write!(f, "    ")?;
+                    if let Some((_, converter_start, _)) = &return_converter {
+                        write!(f, "{converter_start}")?;
+                    }
+                    write!(f, "unsafe {{ {c_name}(")?;
+                    for (i, (param, ty)) in arguments.iter().enumerate() {
+                        let param = if arg_is_self.unwrap_or(usize::MAX) == i {
+                            "self".to_string()
+                        } else {
+                            handle_reserved(&crate::to_snake_case(param))
+                        };
+                        if let Some((_, converter_start, converter_end)) =
+                            ty.fn_argument_converter()
+                        {
+                            write!(f, "{converter_start}{param}{converter_end}")?;
+                        } else {
+                            write!(f, "{param}")?;
+                        }
+                        write!(f, ",")?;
+                    }
+                    write!(f, ") }}")?;
+                    if let Some((_, _, converter_end)) = &return_converter {
+                        write!(f, "{converter_end}")?;
+                    }
+                    writeln!(f)?;
+
+                    writeln!(f, "}}")?;
                 }
                 Self::FnGetTypeId {
                     id,
