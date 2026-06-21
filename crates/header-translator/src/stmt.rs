@@ -437,35 +437,13 @@ where
 pub enum Abi {
     C,
     CUnwind,
-    OuterRustInnerC,
-    OuterRustInnerCUnwind,
 }
 
 impl Abi {
     fn extern_inner(&self) -> &'static str {
         match self {
-            Self::OuterRustInnerC | Self::C => "extern \"C\" ",
-            Self::OuterRustInnerCUnwind | Self::CUnwind => "extern \"C-unwind\" ",
-        }
-    }
-
-    fn extern_outer(&self) -> &'static str {
-        if self.rust_outer() {
-            ""
-        } else {
-            self.extern_inner()
-        }
-    }
-
-    fn rust_outer(&self) -> bool {
-        matches!(self, Self::OuterRustInnerC | Self::OuterRustInnerCUnwind)
-    }
-
-    pub(crate) fn as_rust_outer(&self) -> Self {
-        match self {
-            Self::C => Self::OuterRustInnerC,
-            Self::CUnwind => Self::OuterRustInnerCUnwind,
-            Self::OuterRustInnerC | Self::OuterRustInnerCUnwind => panic!("already Rust outer"),
+            Self::C => "extern \"C\" ",
+            Self::CUnwind => "extern \"C-unwind\" ",
         }
     }
 }
@@ -3401,6 +3379,7 @@ impl Stmt {
                             }
                         }
 
+                        // Wrappers have normal Rust ABI to unclutter docs.
                         write!(f, "{vis}fn {c_name}(")?;
                         for (param, arg_ty) in arguments {
                             let param = handle_reserved(&crate::to_snake_case(param));
@@ -3426,7 +3405,7 @@ impl Stmt {
                     writeln!(f, "#[inline]")?;
                     let unsafe_ = if *safe { "" } else { "unsafe " };
                     let fn_name = handle_reserved(&id.name);
-                    write!(f, "{vis} {unsafe_}{}fn {fn_name}(", abi.extern_outer())?;
+                    write!(f, "{vis} {unsafe_}fn {fn_name}(")?;
 
                     // Emit self-argument first.
                     if let Some(arg_is_self) = arg_is_self {
@@ -3523,7 +3502,7 @@ impl Stmt {
 
                     write!(f, "{}", documentation.fmt(None))?;
                     writeln!(f, "    #[inline]")?;
-                    writeln!(f, "    {}fn {}(){ret} {{", abi.extern_outer(), id.name)?;
+                    writeln!(f, "    fn {}(){ret} {{", id.name)?;
 
                     writeln!(f, "        {}{{", abi.extern_inner())?;
                     writeln!(f, "            fn {link_name}(){ret};")?;

@@ -23,7 +23,7 @@ fn consume(matching: Option<CFRetained<CFDictionary>>) -> *mut CFDictionary {
 /// Parameter `matching`: A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching.
 ///
 /// Returns: The first service matched is returned on success. The service must be released by the caller.
-pub unsafe extern "C-unwind" fn IOServiceGetMatchingService(
+pub unsafe fn IOServiceGetMatchingService(
     main_port: libc::mach_port_t,
     matching: Option<CFRetained<CFDictionary>>,
 ) -> io_service_t {
@@ -48,7 +48,7 @@ pub unsafe extern "C-unwind" fn IOServiceGetMatchingService(
 /// Parameter `existing`: An iterator handle, or NULL, is returned on success, and should be released by the caller when the iteration is finished. If NULL is returned, the iteration was successful but found no matching services.
 ///
 /// Returns: A kern_return_t error code.
-pub unsafe extern "C-unwind" fn IOServiceGetMatchingServices(
+pub unsafe fn IOServiceGetMatchingServices(
     main_port: libc::mach_port_t,
     matching: Option<CFRetained<CFDictionary>>,
     existing: *mut io_iterator_t,
@@ -91,7 +91,7 @@ pub unsafe extern "C-unwind" fn IOServiceGetMatchingServices(
 /// Parameter `notification`: An iterator handle is returned on success, and should be released by the caller when the notification is to be destroyed. The notification is armed when the iterator is emptied by calls to IOIteratorNext - when no more objects are returned, the notification is armed. Note the notification is not armed when first created.
 ///
 /// Returns: A kern_return_t error code.
-pub unsafe extern "C-unwind" fn IOServiceAddMatchingNotification(
+pub unsafe fn IOServiceAddMatchingNotification(
     notify_port: IONotificationPortRef,
     notification_type: *mut io_name_t,
     matching: Option<CFRetained<CFDictionary>>,

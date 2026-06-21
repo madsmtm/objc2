@@ -154,9 +154,6 @@ fn update_module(
 
                 documentation.set_alias(c_name.clone());
 
-                // Wrappers have normal Rust ABI (mostly to unclutter docs).
-                *abi = abi.as_rust_outer();
-
                 let generics = implementable_mapping
                     .get(&parent_item)
                     .cloned()

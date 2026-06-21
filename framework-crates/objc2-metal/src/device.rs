@@ -14,7 +14,7 @@ use objc2_foundation::NSArray;
 /// array if it would have failed.
 #[inline]
 #[allow(unexpected_cfgs)]
-pub extern "C-unwind" fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<dyn MTLDevice>>> {
+pub fn MTLCopyAllDevices() -> Retained<NSArray<ProtocolObject<dyn MTLDevice>>> {
     // MTLCopyAllDevices is always available on macOS and Mac Catalyst, but
     // only available recently on iOS 18.0 / tvOS 18.0 / visionOS 2.0.
     //

@@ -476,22 +476,3 @@ impl CLLocation {
         pub unsafe fn new() -> Retained<Self>;
     );
 }
-
-#[deprecated = "renamed to `CLLocationCoordinate2D::is_valid`"]
-#[inline]
-pub unsafe extern "C-unwind" fn CLLocationCoordinate2DIsValid(
-    coord: CLLocationCoordinate2D,
-) -> bool {
-    extern "C-unwind" {
-        fn CLLocationCoordinate2DIsValid(coord: CLLocationCoordinate2D) -> Bool;
-    }
-    unsafe { CLLocationCoordinate2DIsValid(coord) }.as_bool()
-}
-
-extern "C-unwind" {
-    #[deprecated = "renamed to `CLLocationCoordinate2D::new`"]
-    pub fn CLLocationCoordinate2DMake(
-        latitude: CLLocationDegrees,
-        longitude: CLLocationDegrees,
-    ) -> CLLocationCoordinate2D;
-}
