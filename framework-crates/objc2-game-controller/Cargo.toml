@@ -176,7 +176,6 @@ GCDualSenseGamepad = []
 GCDualShockGamepad = []
 GCEventViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 GCExtendedGamepad = []

@@ -202,7 +202,6 @@ CKFetchWebAuthTokenOperation = [
     "objc2-foundation/NSString",
 ]
 CKLocationSortDescriptor = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObjCRuntime",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSortDescriptor",
@@ -242,13 +241,11 @@ CKOperation = [
     "objc2-foundation/NSString",
 ]
 CKOperationGroup = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 CKQuery = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSSortDescriptor",
@@ -287,7 +284,6 @@ CKReference = ["objc2-foundation/NSObject"]
 CKServerChangeToken = ["objc2-foundation/NSObject"]
 CKShare = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
@@ -312,7 +308,6 @@ CKShareRequestAccessOperation = [
 CKSubscription = [
     "bitflags",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSString",

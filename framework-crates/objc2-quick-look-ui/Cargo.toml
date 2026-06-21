@@ -88,7 +88,6 @@ QLPreviewItem = [
     "objc2-foundation/NSURL",
 ]
 QLPreviewPanel = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -103,7 +102,6 @@ QLPreviewReply = [
     "objc2-foundation/NSURL",
 ]
 QLPreviewView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",

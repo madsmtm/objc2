@@ -59,7 +59,6 @@ objc2-quartz-core = ["dep:objc2-quartz-core"]
 unstable-darwin-objc = []
 
 HKActivityRingView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-ui-kit/UIAppearance",
     "objc2-ui-kit/UIDynamicBehavior",

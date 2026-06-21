@@ -108,7 +108,6 @@ unstable-darwin-objc = []
 
 PHContentEditingController = []
 PHLivePhotoView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",

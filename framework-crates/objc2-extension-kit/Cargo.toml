@@ -57,12 +57,10 @@ unstable-darwin-objc = []
 
 EXAppExtensionBrowserViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 EXHostViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSXPCConnection",

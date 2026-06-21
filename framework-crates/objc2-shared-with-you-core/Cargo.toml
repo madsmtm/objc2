@@ -81,7 +81,6 @@ SWCollaborationOptionsPickerGroup = [
 ]
 SWCollaborationShareOptions = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

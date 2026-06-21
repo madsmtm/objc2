@@ -428,6 +428,7 @@ impl Method {
         data: MethodData,
         parent_thread_safety: &ThreadSafety,
         is_pub: bool,
+        is_protocol: bool,
         context: &Context<'_>,
     ) -> Option<(bool, Method)> {
         let selector = entity.get_name().expect("method selector");
@@ -456,6 +457,13 @@ impl Method {
             }
             // Available via `Retained` (and disallowed by ARC).
             "retain" | "release" | "autorelease" | "dealloc" if !is_class => {
+                return None;
+            }
+            // Skip inherent `initWithCoder:` methods, these are already
+            // present in `NSCoding`.
+            "initWithCoder:" if !is_protocol => {
+                // NOTE: `UIGestureRecognizer` has this method but doesn't
+                // implement `NSCoding`, have filed FB23297847 for it.
                 return None;
             }
             _ => {}

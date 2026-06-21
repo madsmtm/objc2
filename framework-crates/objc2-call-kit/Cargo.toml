@@ -75,13 +75,11 @@ objc2-avf-audio = ["dep:objc2-avf-audio"]
 unstable-darwin-objc = []
 
 CXAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
 CXAnswerCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
@@ -89,7 +87,6 @@ CXAnswerCallAction = [
 CXBase = []
 CXCall = ["objc2-foundation/NSUUID"]
 CXCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
@@ -117,7 +114,6 @@ CXCallUpdate = [
     "objc2-foundation/NSString",
 ]
 CXEndCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
@@ -131,7 +127,6 @@ CXHandle = [
     "objc2-foundation/NSString",
 ]
 CXPlayDTMFCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
@@ -151,22 +146,18 @@ CXProviderConfiguration = [
     "objc2-foundation/NSValue",
 ]
 CXSetGroupCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
 CXSetHeldCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
 CXSetMutedCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
 CXStartCallAction = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

@@ -105,12 +105,10 @@ AMWorkflow = [
     "objc2-foundation/NSURL",
 ]
 AMWorkflowController = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]
 AMWorkflowView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",

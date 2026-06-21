@@ -101,7 +101,6 @@ MSMessageTemplateLayout = [
 ]
 MSMessagesAppViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -111,19 +110,14 @@ MSSticker = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-MSStickerBrowserView = [
-    "objc2-foundation/NSCoder",
-    "objc2-foundation/NSObject",
-]
+MSStickerBrowserView = ["objc2-foundation/NSObject"]
 MSStickerBrowserViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 MSStickerBrowserViewDataSource = []
 MSStickerView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
 ]

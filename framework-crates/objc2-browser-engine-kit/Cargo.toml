@@ -149,7 +149,6 @@ BELayerHierarchyHostingTransactionCoordinator = [
     "objc2-ui-kit/UIView",
 ]
 BELayerHierarchyHostingView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-ui-kit/UIAppearance",
     "objc2-ui-kit/UIDynamicBehavior",
@@ -169,7 +168,6 @@ BERenderingProcess = [
     "objc2-ui-kit/UIInteraction",
 ]
 BEScrollView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-ui-kit/UIAppearance",

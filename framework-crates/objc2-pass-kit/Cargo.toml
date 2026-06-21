@@ -289,7 +289,6 @@ PKPaymentAuthorizationController = [
 PKPaymentAuthorizationViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -298,7 +297,6 @@ PKPaymentAuthorizationViewControllerDelegate = [
     "objc2-foundation/NSString",
 ]
 PKPaymentButton = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

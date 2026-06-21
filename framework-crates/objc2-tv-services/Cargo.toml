@@ -75,14 +75,12 @@ TVAppProfileDescriptor = [
     "objc2-foundation/NSString",
 ]
 TVContentIdentifier = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 TVContentItem = [
     "bitflags",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

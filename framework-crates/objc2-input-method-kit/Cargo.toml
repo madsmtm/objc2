@@ -48,7 +48,6 @@ unstable-darwin-objc = []
 IMKCandidates = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",

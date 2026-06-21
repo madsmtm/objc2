@@ -37,7 +37,6 @@ objc2-core-video = { workspace = true, optional = true, features = [
 objc2-foundation = { workspace = true, optional = true, features = [
     "NSArray",
     "NSBundle",
-    "NSCoder",
     "NSData",
     "NSDate",
     "NSDictionary",

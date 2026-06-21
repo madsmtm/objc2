@@ -64,7 +64,6 @@ FPUIActionExtensionViewController = [
     "objc2-file-provider/NSFileProviderItem",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSExtensionContext",
     "objc2-foundation/NSObject",

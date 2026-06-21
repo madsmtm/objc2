@@ -223,6 +223,7 @@ fn parse_methods(
     get_data: impl Fn(&str) -> MethodData,
     thread_safety: &ThreadSafety,
     is_pub: bool,
+    is_protocol: bool,
     context: &Context<'_>,
 ) -> (Vec<Method>, Vec<String>) {
     let mut methods = Vec::new();
@@ -236,7 +237,7 @@ fn parse_methods(
                 let data = get_data(&selector);
 
                 if let Some((designated_initializer, method)) =
-                    Method::parse_method(entity, data, thread_safety, is_pub, context)
+                    Method::parse_method(entity, data, thread_safety, is_pub, is_protocol, context)
                 {
                     if designated_initializer {
                         designated_initializers.push(method.selector.clone());
@@ -831,6 +832,7 @@ impl Stmt {
                     |name| data.method(name),
                     &thread_safety,
                     true,
+                    false,
                     context,
                 );
 
@@ -878,6 +880,7 @@ impl Stmt {
                             },
                             &thread_safety,
                             true,
+                            false,
                             context,
                         );
                         methods.retain(|superclass_method| {
@@ -1076,6 +1079,7 @@ impl Stmt {
                         |name| cls_data.method(name),
                         &cls_thread_safety,
                         true,
+                        false,
                         context,
                     );
 
@@ -1105,6 +1109,7 @@ impl Stmt {
                             },
                             &cls_thread_safety,
                             true,
+                            false,
                             context,
                         );
                         methods.retain(|method| method.emit_on_subclasses());
@@ -1195,6 +1200,7 @@ impl Stmt {
                         |name| cls_data.method(name),
                         &cls_thread_safety,
                         false,
+                        false,
                         context,
                     );
 
@@ -1254,6 +1260,7 @@ impl Stmt {
                     |name| data.method(name),
                     &thread_safety,
                     false,
+                    true,
                     context,
                 );
 

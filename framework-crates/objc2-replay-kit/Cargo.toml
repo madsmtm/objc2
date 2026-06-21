@@ -95,7 +95,6 @@ RPBroadcastExtension = [
 RPError = ["objc2-foundation/NSString"]
 RPPreviewViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",

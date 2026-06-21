@@ -68,7 +68,6 @@ MCAdvertiserAssistant = [
 ]
 MCBrowserViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

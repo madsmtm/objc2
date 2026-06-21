@@ -79,17 +79,14 @@ unstable-darwin-objc = []
 
 INImage_IntentsUI = []
 INUIAddVoiceShortcutButton = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 INUIAddVoiceShortcutViewController = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]
 INUIEditVoiceShortcutViewController = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",

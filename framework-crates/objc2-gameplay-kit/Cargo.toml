@@ -196,7 +196,6 @@ GKRTree = []
 GKRandomDistribution = []
 GKRandomSource = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
 ]

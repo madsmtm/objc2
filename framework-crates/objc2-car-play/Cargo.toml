@@ -387,7 +387,4 @@ CPVoiceControlTemplate = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-CPWindow = [
-    "objc2-foundation/NSCoder",
-    "objc2-foundation/NSObject",
-]
+CPWindow = ["objc2-foundation/NSObject"]

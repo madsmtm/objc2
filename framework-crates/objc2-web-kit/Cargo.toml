@@ -880,7 +880,6 @@ WKWebExtensionWindowConfiguration = [
 WKWebView = [
     "bitflags",
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -963,7 +962,6 @@ WebFrameLoadDelegate = [
     "objc2-foundation/NSURL",
 ]
 WebFrameView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
@@ -1036,7 +1034,6 @@ WebUIDelegate = [
 ]
 WebView = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",

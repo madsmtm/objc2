@@ -154,7 +154,6 @@ objc2-metal = ["dep:objc2-metal"]
 unstable-darwin-objc = []
 
 SK3DNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -173,7 +172,6 @@ SKAttribute = [
     "objc2-foundation/NSString",
 ]
 SKAudioNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -182,7 +180,6 @@ SKAudioNode = [
     "objc2-foundation/NSURL",
 ]
 SKCameraNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -190,14 +187,12 @@ SKCameraNode = [
 ]
 SKConstraint = ["objc2-foundation/NSObject"]
 SKCropNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
 SKEffectNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -205,7 +200,6 @@ SKEffectNode = [
     "objc2-foundation/NSString",
 ]
 SKEmitterNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
@@ -214,7 +208,6 @@ SKEmitterNode = [
     "objc2-foundation/NSString",
 ]
 SKFieldNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -222,20 +215,17 @@ SKFieldNode = [
 ]
 SKKeyframeSequence = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
 ]
 SKLabelNode = [
     "objc2-foundation/NSAttributedString",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
 SKLightNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -248,7 +238,6 @@ SKMutableTexture = [
 ]
 SKNode = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -268,7 +257,6 @@ SKPhysicsJoint = ["objc2-foundation/NSObject"]
 SKPhysicsWorld = ["objc2-foundation/NSObject"]
 SKReachConstraints = ["objc2-foundation/NSObject"]
 SKReferenceNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -278,7 +266,6 @@ SKReferenceNode = [
 SKRegion = ["objc2-foundation/NSObject"]
 SKRenderer = ["objc2-foundation/NSDate"]
 SKScene = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -291,7 +278,6 @@ SKShader = [
     "objc2-foundation/NSString",
 ]
 SKShapeNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -299,7 +285,6 @@ SKShapeNode = [
     "objc2-foundation/NSString",
 ]
 SKSpriteNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -327,7 +312,6 @@ SKTileDefinition = [
 ]
 SKTileMapNode = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -342,7 +326,6 @@ SKTileSet = [
     "objc2-foundation/NSURL",
 ]
 SKTransformNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -358,7 +341,6 @@ SKUniform = [
 ]
 SKVersion = []
 SKVideoNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -366,7 +348,6 @@ SKVideoNode = [
     "objc2-foundation/NSURL",
 ]
 SKView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -374,7 +355,6 @@ SKView = [
 ]
 SKWarpGeometry = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",

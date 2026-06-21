@@ -298,7 +298,6 @@ PDFSelection = [
 ]
 PDFThumbnailView = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -306,7 +305,6 @@ PDFThumbnailView = [
 ]
 PDFView = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSNotification",
     "objc2-foundation/NSObject",

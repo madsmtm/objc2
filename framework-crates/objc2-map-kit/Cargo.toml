@@ -180,7 +180,6 @@ MKAddressFilter = [
 MKAddressRepresentations = ["objc2-foundation/NSString"]
 MKAnnotation = ["objc2-foundation/NSString"]
 MKAnnotationView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -193,7 +192,6 @@ MKClusterAnnotation = [
     "objc2-foundation/NSString",
 ]
 MKCompassButton = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
@@ -258,15 +256,11 @@ MKLookAroundSnapshotOptions = []
 MKLookAroundSnapshotter = ["objc2-foundation/NSError"]
 MKLookAroundViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
 MKMapCamera = ["objc2-foundation/NSObject"]
-MKMapCameraBoundary = [
-    "objc2-foundation/NSCoder",
-    "objc2-foundation/NSObject",
-]
+MKMapCameraBoundary = ["objc2-foundation/NSObject"]
 MKMapCameraZoomRange = ["objc2-foundation/NSObject"]
 MKMapConfiguration = ["objc2-foundation/NSObject"]
 MKMapItem = [
@@ -281,7 +275,6 @@ MKMapItem = [
 MKMapItemAnnotation = []
 MKMapItemDetailViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 MKMapItemIdentifier = [
@@ -301,7 +294,6 @@ MKMapSnapshotOptions = [
 MKMapSnapshotter = ["objc2-foundation/NSError"]
 MKMapView = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -310,7 +302,6 @@ MKMapView = [
     "objc2-foundation/objc2-core-foundation",
 ]
 MKMarkerAnnotationView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -333,14 +324,12 @@ MKOverlayPathRenderer = [
 ]
 MKOverlayRenderer = []
 MKPinAnnotationView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
 MKPitchControl = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
@@ -379,14 +368,12 @@ MKTileOverlayRenderer = []
 MKTypes = ["objc2-foundation/NSString"]
 MKUserLocation = ["objc2-foundation/NSString"]
 MKUserLocationView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
 MKZoomControl = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",

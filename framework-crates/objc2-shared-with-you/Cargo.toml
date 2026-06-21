@@ -96,7 +96,6 @@ unstable-darwin-objc = []
 NSItemProvider_SWCollaborationMetadata = ["objc2-foundation/NSString"]
 NSPasteboardItem_SWCollaborationMetadata = []
 SWAttributionView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -108,7 +107,6 @@ SWCollaborationHighlight = [
     "objc2-foundation/NSString",
 ]
 SWCollaborationView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",

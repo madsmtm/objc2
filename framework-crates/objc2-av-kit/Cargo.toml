@@ -104,7 +104,6 @@ objc2-core-media = ["dep:objc2-core-media"]
 unstable-darwin-objc = []
 
 AVCaptureView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
@@ -124,7 +123,6 @@ AVPlaybackSpeed = [
 ]
 AVPlayerView = [
     "objc2-foundation/NSArray",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -132,7 +130,6 @@ AVPlayerView = [
     "objc2-foundation/objc2-core-foundation",
 ]
 AVRoutePickerView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",

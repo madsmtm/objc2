@@ -304,7 +304,6 @@ SCNPhysicsWorld = [
     "objc2-foundation/NSString",
 ]
 SCNReferenceNode = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSURL",
 ]
@@ -354,7 +353,6 @@ SCNTechnique = [
 ]
 SCNTransaction = ["objc2-foundation/NSString"]
 SCNView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",

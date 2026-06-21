@@ -119,7 +119,6 @@ SKCloudServiceController = [
 ]
 SKCloudServiceSetupViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -188,7 +187,6 @@ SKReceiptRefreshRequest = [
 SKRequest = ["objc2-foundation/NSError"]
 SKStoreProductViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",

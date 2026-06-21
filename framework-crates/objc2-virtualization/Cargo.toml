@@ -394,7 +394,6 @@ VZVirtualMachineConfiguration = [
 VZVirtualMachineDelegate = ["objc2-foundation/NSError"]
 VZVirtualMachineStartOptions = []
 VZVirtualMachineView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",

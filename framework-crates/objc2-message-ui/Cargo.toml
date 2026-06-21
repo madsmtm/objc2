@@ -63,7 +63,6 @@ MFMailComposeControllerDeferredAction = []
 MFMailComposeViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSItemProvider",
@@ -73,7 +72,6 @@ MFMailComposeViewController = [
 MFMessageComposeViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSData",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSItemProvider",

@@ -131,7 +131,6 @@ GKAchievementDescription = [
 ]
 GKAchievementViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 GKBasePlayer = [
@@ -154,7 +153,6 @@ GKChallengeDefinition = [
 GKChallengeEventHandler = []
 GKChallengesViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 GKCloudPlayer = [
@@ -166,16 +164,12 @@ GKDefines = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
 ]
-GKDialogController = [
-    "objc2-foundation/NSCoder",
-    "objc2-foundation/NSObject",
-]
+GKDialogController = ["objc2-foundation/NSObject"]
 GKError = ["objc2-foundation/NSString"]
 GKEventListener = []
 GKFriendRequestComposeViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -201,7 +195,6 @@ GKGameActivityPlayStyle = []
 GKGameActivityState = []
 GKGameCenterViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -240,7 +233,6 @@ GKLeaderboardSet = [
 ]
 GKLeaderboardViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -269,7 +261,6 @@ GKMatchmaker = [
 GKMatchmakerViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
@@ -327,7 +318,6 @@ GKTurnBasedMatch = [
 ]
 GKTurnBasedMatchmakerViewController = [
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]

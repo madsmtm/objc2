@@ -73,7 +73,6 @@ OSAScriptController = [
     "objc2-app-kit/NSText",
     "objc2-app-kit/NSTextView",
     "objc2-app-kit/NSView",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 OSAScriptView = [
@@ -95,7 +94,6 @@ OSAScriptView = [
     "objc2-app-kit/NSUserInterfaceItemIdentification",
     "objc2-app-kit/NSUserInterfaceValidation",
     "objc2-app-kit/NSView",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",

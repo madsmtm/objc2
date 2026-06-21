@@ -55,7 +55,6 @@ ScreenSaverDefaults = [
     "objc2-foundation/NSUserDefaults",
 ]
 ScreenSaverView = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",

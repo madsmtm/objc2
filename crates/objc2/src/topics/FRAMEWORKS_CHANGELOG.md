@@ -89,6 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `CSSearchableItemAttributeSet::moveFrom`.
 * **BREAKING**: Removed various `kUSBHostBillboardDeviceProperty*` consts.
 * **BREAKING**: Removed `CFGetRetainCount`, `CFEqual` and `CFHash`; these are now only available directly on `CFType`.
+* **BREAKING**: Remove inherent `initWithCoder:` methods, these are available on `NSCoding`.
 
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.

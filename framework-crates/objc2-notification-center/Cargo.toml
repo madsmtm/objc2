@@ -60,7 +60,6 @@ NCWidgetController = ["objc2-foundation/NSString"]
 NCWidgetListViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
 ]
 NCWidgetProviding = [
@@ -71,7 +70,6 @@ NCWidgetProviding = [
 NCWidgetSearchViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

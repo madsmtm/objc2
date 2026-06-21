@@ -187,10 +187,7 @@ HMCameraSnapshotControl = ["objc2-foundation/NSError"]
 HMCameraSource = []
 HMCameraStream = ["objc2-foundation/NSError"]
 HMCameraStreamControl = ["objc2-foundation/NSError"]
-HMCameraView = [
-    "objc2-foundation/NSCoder",
-    "objc2-foundation/NSObject",
-]
+HMCameraView = ["objc2-foundation/NSObject"]
 HMCharacteristic = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSData",

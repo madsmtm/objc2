@@ -228,7 +228,6 @@ NSFetchRequest = [
     "objc2-foundation/NSValue",
 ]
 NSFetchRequestExpression = [
-    "objc2-foundation/NSCoder",
     "objc2-foundation/NSExpression",
     "objc2-foundation/NSObject",
 ]
