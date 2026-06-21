@@ -10,9 +10,7 @@ use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
-use crate::stmt::{
-    anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound, OpaqueKind,
-};
+use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -1286,7 +1284,7 @@ impl PointeeTy {
                 generics,
                 num_declaration_generics,
             } => {
-                let mut safety = if matches!(&*id.name, "CFType" | "CFTypeRef") {
+                let mut safety = if id.is_cftype() {
                     // `CFType`, like `AnyObject`, is not known to be safe.
                     TypeSafety::unknown_in_argument("should be of the correct type")
                 } else {
@@ -3020,6 +3018,14 @@ impl Ty {
         }
     }
 
+    pub(crate) fn is_cf_type_typedef(&self, typedef_name: &str, typedef_is_bridged: bool) -> bool {
+        if let Self::Pointer { pointee, .. } = self {
+            pointee.is_direct_cf_type(typedef_name, typedef_is_bridged)
+        } else {
+            false
+        }
+    }
+
     pub(crate) fn is_cf_type_ptr(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
             pointee.is_cf_type()
@@ -4149,93 +4155,6 @@ impl Ty {
 
     pub(crate) fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Self {
         Self::parse(ty, Lifetime::Unspecified, false, context)
-    }
-
-    fn pointee_dispatch_type_protocol(&self, typedef_name: &str) -> Option<&ProtocolRef> {
-        if !typedef_name.starts_with("dispatch_") {
-            return None;
-        }
-
-        // Should point to a `NSObject<OS_dispatch_*>`.
-        if let Self::Pointee(PointeeTy::Class { id, protocols, .. }) = self {
-            if id.name == "NSObject" {
-                if let Some((protocol, _)) = protocols.first() {
-                    if protocol.id.name.starts_with("OS_dispatch_") {
-                        return Some(protocol);
-                    }
-                }
-            }
-        }
-
-        None
-    }
-
-    fn pointee_network_type_protocol(&self, typedef_name: &str) -> Option<&ProtocolRef> {
-        if !typedef_name.starts_with("nw_") {
-            return None;
-        }
-
-        // Should point to a `NSObject<OS_nw_*>`.
-        if let Self::Pointee(PointeeTy::Class { id, protocols, .. }) = self {
-            if id.name == "NSObject" {
-                if let Some((protocol, _)) = protocols.first() {
-                    if protocol.id.name.starts_with("OS_nw_") {
-                        return Some(protocol);
-                    }
-                }
-            }
-        }
-
-        None
-    }
-
-    pub(crate) fn pointer_to_opaque(
-        &self,
-        typedef_name: &str,
-        typedef_is_bridged: bool,
-    ) -> Option<(OpaqueKind, Option<&str>)> {
-        if let Self::Pointer {
-            pointee,
-            read: _,
-            written: _, // const-ness doesn't matter when defining the type
-            nullability,
-            bounds: _,
-            lifetime,
-        } = self
-        {
-            if let Some(protocol) = pointee.pointee_dispatch_type_protocol(typedef_name) {
-                // TODO: Implement `Deref` on Dispatch objects when we have a
-                // super protocol?
-                return Some((OpaqueKind::Dispatch, Some(&protocol.id.name)));
-            }
-
-            if let Some(protocol) = pointee.pointee_network_type_protocol(typedef_name) {
-                return Some((OpaqueKind::Network, Some(&protocol.id.name)));
-            }
-
-            let kind = if pointee.is_direct_cf_type(typedef_name, typedef_is_bridged) {
-                OpaqueKind::CoreFoundation
-            } else {
-                OpaqueKind::Normal
-            };
-            if let Self::Struct { id, fields, .. } = &**pointee {
-                if fields.is_empty() {
-                    // Extra checks to ensure we don't loose information
-                    if *nullability != Nullability::Unspecified {
-                        error!(?id, ?nullability, "opaque pointer had nullability");
-                    }
-                    if *lifetime != Lifetime::Unspecified {
-                        error!(?id, ?lifetime, "opaque pointer had lifetime");
-                    }
-
-                    return Some((kind, Some(&id.name)));
-                }
-            }
-            if let Self::Primitive(Primitive::Void) = &**pointee {
-                return Some((kind, None));
-            }
-        }
-        None
     }
 
     pub(crate) fn parse_property_getter(

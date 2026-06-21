@@ -395,15 +395,17 @@ pub(crate) fn anonymous_record_name(entity: &Entity<'_>, context: &Context<'_>) 
     // UnionDecl/StructDecl comes first, then the matching FieldDecl.
     let mut just_found_record = false;
     let mut field_name = None;
-    immediate_children(&parent, |searched, _span| match searched.get_kind() {
-        EntityKind::FieldDecl if just_found_record => {
-            field_name = Some(searched.get_name().expect("field name"));
-            just_found_record = false;
+    immediate_children(&parent, |searched: Entity<'_>, _span| {
+        match searched.get_kind() {
+            EntityKind::FieldDecl if just_found_record => {
+                field_name = Some(searched.get_name().expect("field name"));
+                just_found_record = false;
+            }
+            EntityKind::UnionDecl | EntityKind::StructDecl if searched == *entity => {
+                just_found_record = true;
+            }
+            _ => {}
         }
-        EntityKind::UnionDecl | EntityKind::StructDecl if searched == *entity => {
-            just_found_record = true;
-        }
-        _ => {}
     });
 
     let field_name = field_name?;
@@ -465,14 +467,6 @@ impl Abi {
             Self::OuterRustInnerC | Self::OuterRustInnerCUnwind => panic!("already Rust outer"),
         }
     }
-}
-
-#[derive(Debug, Clone, PartialEq)]
-pub enum OpaqueKind {
-    Normal,
-    CoreFoundation,
-    Dispatch,
-    Network,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -669,19 +663,62 @@ pub enum Stmt {
         kind: Option<UnexposedAttr>,
         documentation: Documentation,
     },
-    /// typedef struct CF_BRIDGED_TYPE(id) CGColorSpace *CGColorSpaceRef;
-    /// Dispatch objects.
-    /// NW_OBJECT_DECL and NW_SENDABLE_OBJECT_DECL.
-    OpaqueDecl {
+    /// A CF Type.
+    ///
+    /// Can be declared in a few different ways:
+    ///
+    /// 1. `typedef const CF_BRIDGED_TYPE(id) void * CFTypeRef;`
+    ///    Not handled, we define this one manually.
+    ///
+    /// 2. `typedef const struct CF_BRIDGED_TYPE(id) __CFAllocator * CFAllocatorRef;`
+    ///    `typedef const struct CF_BRIDGED_TYPE(NSArray) __CFArray * CFArrayRef;`
+    ///    `typedef struct CF_BRIDGED_MUTABLE_TYPE(id) __CFDateFormatter *CFDateFormatterRef;`
+    ///    `typedef const struct CF_RELATED_TYPE(NSParagraphStyle,,) __CTParagraphStyle * CTParagraphStyleRef;`
+    ///    `typedef const struct __CFXMLNode * CFXMLNodeRef;`
+    ///    `typedef void *ABRecordRef;`
+    ///
+    ///    A normal bridged type, i.e. a pointer to an opaque struct.
+    ///    (`CFXMLNodeRef` and `ABRecordRef` are also bridged here since
+    ///    they're in CFDatabase.def).
+    ///
+    /// 3. `typedef struct CF_BRIDGED_MUTABLE_TYPE(NSMutableArray) __CFArray * CFMutableArrayRef;`
+    ///
+    ///    A mutable bridged type. This gets `CFArray` as a superclass.
+    CFDecl {
         id: ItemIdentifier,
         generics: Vec<GenericWithBound>,
         encoding_name: String,
         availability: Availability,
         documentation: Documentation,
-        kind: OpaqueKind,
         sendable: Option<bool>,
         bridged: Option<String>,
         superclass: Option<ItemIdentifier>,
+    },
+    /// A dispatch object.
+    DispatchDecl {
+        id: ItemIdentifier,
+        availability: Availability,
+        documentation: Documentation,
+        sendable: Option<bool>,
+    },
+    /// A Network.framework type.
+    ///
+    /// NW_OBJECT_DECL and NW_SENDABLE_OBJECT_DECL.
+    NetworkDecl {
+        id: ItemIdentifier,
+        availability: Availability,
+        documentation: Documentation,
+        sendable: Option<bool>,
+    },
+    /// An opaque type.
+    ///
+    /// typedef struct _CGDisplayConfigRef *CGDisplayConfigRef;
+    OpaqueDecl {
+        id: ItemIdentifier,
+        encoding_name: String,
+        availability: Availability,
+        documentation: Documentation,
+        sendable: Option<bool>,
     },
     GeneralImpl {
         location: Location,
@@ -1223,7 +1260,7 @@ impl Stmt {
                 let c_name = c_name.unwrap();
 
                 let mut alias_kind = None;
-                let mut inner_item = None;
+                let mut inner_entity = None;
                 let mut sendable = None;
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
@@ -1250,67 +1287,22 @@ impl Stmt {
                             }
                         }
                     }
-                    EntityKind::TypeRef => {
-                        inner_item =
-                            Some(entity.get_reference().expect("typeref to have reference"));
-                    }
-                    EntityKind::ObjCProtocolRef => {
-                        let declaration =
-                            entity.get_reference().expect("typeref to have reference");
-
-                        // Handle OS_OBJECT_DECL
-                        let protocol_name = entity.get_name().unwrap();
-                        if protocol_name.starts_with("OS_") {
-                            let macro_invocation = declaration
-                                .get_location()
-                                .expect("itemref location")
-                                .get_entity()
-                                .expect("itemref entity");
-
-                            assert_eq!(macro_invocation.get_kind(), EntityKind::MacroExpansion);
-
-                            let macro_name = macro_invocation.get_name().unwrap();
-
-                            match &*macro_name {
-                                // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
-                                // which marks the type `OS_OBJECT_SWIFT_SENDABLE`.
-                                "DISPATCH_DECL"
-                                | "DISPATCH_DECL_SWIFT"
-                                | "DISPATCH_SOURCE_DECL_SWIFT" => {
-                                    sendable = Some(true);
-                                }
-                                // Delegates to `DISPATCH_DECL_SWIFT`
-                                "DISPATCH_DECL_FACTORY_CLASS_SWIFT" => {
-                                    sendable = Some(true);
-                                    // TODO: OS_OBJECT_SWIFT_HAS_MISSING_DESIGNATED_INIT?
-                                }
-                                "DISPATCH_DECL_SERIAL_EXECUTOR_SWIFT" => {
-                                    sendable = Some(true);
-                                    // TODO: superclass?
-                                }
-                                // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
-                                // but actually isn't `Send + Sync` because it
-                                // can contain `NSData`.
-                                "DISPATCH_DATA_DECL_SWIFT" => {
-                                    sendable = Some(false);
-                                }
-                                // Delegates to `OS_OBJECT_DECL`.
-                                "NW_OBJECT_DECL" => {}
-                                // Delegates to `NW_SWIFT_SENDABLE` + `NW_OBJECT_DECL`.
-                                "NW_SENDABLE_OBJECT_DECL" => {
-                                    sendable = Some(true);
-                                }
-                                _ => error!(macro_name, "unknown OS protocol macro"),
-                            }
+                    EntityKind::TypeRef | EntityKind::ObjCProtocolRef => {
+                        if inner_entity.is_some() {
+                            error!(?inner_entity, ?entity, "already set");
                         }
-
-                        inner_item = Some(declaration);
+                        inner_entity = Some(entity.get_reference().expect("ref to have reference"));
                     }
-                    EntityKind::StructDecl
+                    EntityKind::StructDecl => {
+                        if inner_entity.is_some() {
+                            error!(?inner_entity, ?entity, "already set");
+                        }
+                        inner_entity = Some(entity);
+                    }
+                    EntityKind::ParmDecl
                     | EntityKind::UnionDecl
-                    | EntityKind::ObjCClassRef
-                    | EntityKind::ParmDecl
                     | EntityKind::EnumDecl
+                    | EntityKind::ObjCClassRef
                     | EntityKind::IntegerLiteral
                     | EntityKind::BinaryOperator
                     | EntityKind::DeclRefExpr
@@ -1342,119 +1334,179 @@ impl Stmt {
                     return vec![];
                 }
 
-                let mut bridged = if let Some(inner_item) = &inner_item {
-                    bridged_to(inner_item, context)
-                } else {
-                    bridged_to(entity, context)
-                };
+                if let Some(inner_entity) = inner_entity {
+                    match inner_entity.get_kind() {
+                        EntityKind::ObjCProtocolDecl => {
+                            // Handle OS_OBJECT_DECL
+                            if inner_entity.get_name().unwrap().starts_with("OS_") {
+                                let macro_invocation = inner_entity
+                                    .get_location()
+                                    .expect("itemref location")
+                                    .get_entity()
+                                    .expect("itemref entity");
 
-                if let Some((opaque_kind, encoding_name)) =
-                    ty.pointer_to_opaque(&c_name, bridged.is_some())
-                {
-                    if alias_kind.is_some() {
-                        error!(?alias_kind, "unknown kind on opaque type");
-                    }
+                                assert_eq!(macro_invocation.get_kind(), EntityKind::MacroExpansion);
 
-                    assert_eq!(
-                        inner_item
-                            .as_ref()
-                            .map(|entity| entity.get_name().unwrap())
-                            .as_deref(),
-                        encoding_name,
-                        "inner item must be the same that `pointer_to_opaque` found",
-                    );
+                                let macro_name = macro_invocation.get_name().unwrap();
+                                let mut is_dispatch = true;
 
-                    if !matches!(opaque_kind, OpaqueKind::Normal) {
-                        let id = context.replace_typedef_name(
-                            id,
-                            matches!(opaque_kind, OpaqueKind::CoreFoundation),
-                        );
-
-                        if id.name != c_name {
-                            documentation.set_alias(c_name);
-                        }
-
-                        // If the class name contains the word "Mutable"
-                        // exactly once per the usual word-boundary rules, a
-                        // corresponding class name without the word "Mutable"
-                        // will be used as the superclass if present.
-                        // Otherwise, the CF type is taken to be a root object.
-                        let is_mutable = split_words(&id.name)
-                            .filter(|word| *word == "Mutable")
-                            .count()
-                            == 1;
-                        let superclass = if is_mutable {
-                            // Assume that class pairs are declared in the same file.
-                            Some(id.clone().map_name(|name| name.replace("Mutable", "")))
-                        } else {
-                            None
-                        };
-
-                        // Mutable typedefs have the same underlying struct
-                        // name as their non-mutable counterparts, so clang
-                        // unifies them, and we don't get the correct bridging
-                        // name. So try to fix that here.
-                        if is_mutable {
-                            if let Some(Some(bridged_name)) = &bridged {
-                                let mut class_iter = split_words(&id.name);
-                                let mut res_name = String::new();
-                                for bridged_word in split_words(bridged_name) {
-                                    if class_iter.next() == Some("Mutable") {
-                                        res_name.push_str("Mutable");
+                                match &*macro_name {
+                                    // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
+                                    // which marks the type `OS_OBJECT_SWIFT_SENDABLE`.
+                                    "DISPATCH_DECL"
+                                    | "DISPATCH_DECL_SWIFT"
+                                    | "DISPATCH_SOURCE_DECL_SWIFT" => {
+                                        sendable = Some(true);
                                     }
-                                    res_name.push_str(bridged_word);
+                                    // Delegates to `DISPATCH_DECL_SWIFT`
+                                    "DISPATCH_DECL_FACTORY_CLASS_SWIFT" => {
+                                        sendable = Some(true);
+                                        // TODO: OS_OBJECT_SWIFT_HAS_MISSING_DESIGNATED_INIT?
+                                    }
+                                    "DISPATCH_DECL_SERIAL_EXECUTOR_SWIFT" => {
+                                        sendable = Some(true);
+                                        // TODO: superclass?
+                                    }
+                                    // Delegates to `OS_OBJECT_DECL_SENDABLE_SWIFT`,
+                                    // but actually isn't `Send + Sync` because it
+                                    // can contain `NSData`.
+                                    "DISPATCH_DATA_DECL_SWIFT" => {
+                                        sendable = Some(false);
+                                    }
+                                    // Delegates to `OS_OBJECT_DECL`.
+                                    "NW_OBJECT_DECL" => {
+                                        is_dispatch = false;
+                                    }
+                                    // Delegates to `NW_SWIFT_SENDABLE` + `NW_OBJECT_DECL`.
+                                    "NW_SENDABLE_OBJECT_DECL" => {
+                                        sendable = Some(true);
+                                        is_dispatch = false;
+                                    }
+                                    _ => error!(macro_name, "unknown OS protocol macro"),
                                 }
-                                bridged = Some(Some(res_name));
+
+                                let id = context.replace_typedef_name(id, false);
+
+                                if id.name != c_name {
+                                    documentation.set_alias(c_name);
+                                }
+
+                                return vec![if is_dispatch {
+                                    // TODO: Implement `Deref` on Dispatch objects when we have a
+                                    // super protocol?
+                                    Self::DispatchDecl {
+                                        id,
+                                        availability,
+                                        documentation,
+                                        sendable,
+                                    }
+                                } else {
+                                    Self::NetworkDecl {
+                                        id,
+                                        availability,
+                                        documentation,
+                                        sendable,
+                                    }
+                                }];
                             }
                         }
+                        EntityKind::StructDecl => {
+                            let mut bridged = bridged_to(&inner_entity, context);
 
-                        if let Some(Some(bridged)) = &bridged {
-                            documentation
-                                .add(format!("This is toll-free bridged with `{bridged}`."));
+                            if ty.is_cf_type_typedef(&id.name, bridged.is_some()) {
+                                let id = context.replace_typedef_name(id, true);
+
+                                if id.name != c_name {
+                                    documentation.set_alias(c_name);
+                                }
+
+                                // If the class name contains the word "Mutable"
+                                // exactly once per the usual word-boundary rules, a
+                                // corresponding class name without the word "Mutable"
+                                // will be used as the superclass if present.
+                                // Otherwise, the CF type is taken to be a root object.
+                                let is_mutable = split_words(&id.name)
+                                    .filter(|word| *word == "Mutable")
+                                    .count()
+                                    == 1;
+                                let superclass = if is_mutable {
+                                    // Assume that class pairs are declared in the same file.
+                                    Some(id.clone().map_name(|name| name.replace("Mutable", "")))
+                                } else {
+                                    None
+                                };
+
+                                // Mutable typedefs have the same underlying struct
+                                // name as their non-mutable counterparts, so clang
+                                // unifies them, and we don't get the correct bridging
+                                // name. So try to fix that here.
+                                if is_mutable {
+                                    if let Some(Some(bridged_name)) = &bridged {
+                                        let mut class_iter = split_words(&id.name);
+                                        let mut res_name = String::new();
+                                        for bridged_word in split_words(bridged_name) {
+                                            if class_iter.next() == Some("Mutable") {
+                                                res_name.push_str("Mutable");
+                                            }
+                                            res_name.push_str(bridged_word);
+                                        }
+                                        bridged = Some(Some(res_name));
+                                    }
+                                }
+
+                                if let Some(Some(bridged)) = &bridged {
+                                    documentation.add(format!(
+                                        "This is toll-free bridged with `{bridged}`."
+                                    ));
+                                }
+
+                                return vec![Self::CFDecl {
+                                    id,
+                                    encoding_name: inner_entity.get_name().unwrap().to_string(),
+                                    generics: data
+                                        .generics
+                                        .iter()
+                                        .flatten()
+                                        .map(|generic| (generic.clone(), None))
+                                        .collect(),
+                                    availability,
+                                    documentation,
+                                    sendable,
+                                    bridged: bridged.flatten(),
+                                    superclass,
+                                }];
+                            }
+
+                            // Handle structs without fields as opaque decls.
+                            let mut has_fields = false;
+                            immediate_children(&inner_entity, |entity, _span| {
+                                if entity.get_kind() == EntityKind::FieldDecl {
+                                    has_fields = true;
+                                }
+                            });
+                            if !has_fields {
+                                return vec![
+                                    Self::OpaqueDecl {
+                                        id: ItemIdentifier::new(&inner_entity, context),
+                                        encoding_name: inner_entity.get_name().unwrap().to_string(),
+                                        availability: Availability::parse(&inner_entity, context),
+                                        documentation: Documentation::from_entity(
+                                            &inner_entity,
+                                            context,
+                                        ),
+                                        sendable,
+                                    },
+                                    Self::AliasDecl {
+                                        id,
+                                        availability,
+                                        ty,
+                                        kind: alias_kind,
+                                        documentation,
+                                    },
+                                ];
+                            }
                         }
-
-                        return vec![Self::OpaqueDecl {
-                            id,
-                            encoding_name: encoding_name.unwrap().to_string(),
-                            generics: data
-                                .generics
-                                .iter()
-                                .flatten()
-                                .map(|generic| (generic.clone(), None))
-                                .collect(),
-                            availability,
-                            documentation,
-                            kind: opaque_kind,
-                            sendable,
-                            bridged: bridged.flatten(),
-                            superclass,
-                        }];
-                    } else if let Some(entity) = inner_item {
-                        return vec![
-                            Self::OpaqueDecl {
-                                id: ItemIdentifier::new(&entity, context),
-                                encoding_name: encoding_name.unwrap().to_string(),
-                                generics: data
-                                    .generics
-                                    .iter()
-                                    .flatten()
-                                    .map(|generic| (generic.clone(), None))
-                                    .collect(),
-                                availability: Availability::parse(&entity, context),
-                                documentation: Documentation::from_entity(&entity, context),
-                                kind: opaque_kind,
-                                sendable,
-                                bridged: bridged.flatten(),
-                                superclass: None,
-                            },
-                            Self::AliasDecl {
-                                id,
-                                availability,
-                                ty,
-                                kind: alias_kind,
-                                documentation,
-                            },
-                        ];
+                        _ => {}
                     }
                 }
 
@@ -2129,6 +2181,9 @@ impl Stmt {
             Self::FnDecl { body: Some(_), .. } => None,
             Self::FnGetTypeId { .. } => None, // Emits a trait impl
             Self::AliasDecl { id, .. } => Some(id.clone()),
+            Self::CFDecl { id, .. } => Some(id.clone()),
+            Self::DispatchDecl { id, .. } => Some(id.clone()),
+            Self::NetworkDecl { id, .. } => Some(id.clone()),
             Self::OpaqueDecl { id, .. } => Some(id.clone()),
             Self::GeneralImpl { .. } => None,
         }
@@ -2143,7 +2198,10 @@ impl Stmt {
                 ..
             } => Some(generics.clone()),
             Self::RecordDecl { .. } | Self::EnumDecl { .. } => Some(Vec::new()),
-            Self::OpaqueDecl { generics, .. } => Some(generics.clone()),
+            Self::CFDecl { generics, .. } => Some(generics.clone()),
+            Self::DispatchDecl { .. } | Self::NetworkDecl { .. } | Self::OpaqueDecl { .. } => {
+                Some(Vec::new())
+            }
             _ => None,
         }
     }
@@ -2162,6 +2220,9 @@ impl Stmt {
             Self::FnDecl { id, .. } => id.location(),
             Self::FnGetTypeId { id, .. } => id.location(),
             Self::AliasDecl { id, .. } => id.location(),
+            Self::CFDecl { id, .. } => id.location(),
+            Self::DispatchDecl { id, .. } => id.location(),
+            Self::NetworkDecl { id, .. } => id.location(),
             Self::OpaqueDecl { id, .. } => id.location(),
             Self::GeneralImpl { location, .. } => location,
         }
@@ -2281,7 +2342,7 @@ impl Stmt {
                 items
             }
             Self::AliasDecl { ty, .. } => ty.required_items().collect(),
-            Self::OpaqueDecl {
+            Self::CFDecl {
                 generics,
                 superclass,
                 ..
@@ -2301,9 +2362,10 @@ impl Stmt {
                 );
                 items
             }
-            Self::GeneralImpl { item, .. } => {
-                vec![item.clone()]
-            }
+            Self::DispatchDecl { .. } => vec![ItemTree::unsafecell(), ItemTree::phantoms()],
+            Self::NetworkDecl { .. } => vec![ItemTree::unsafecell(), ItemTree::phantoms()],
+            Self::OpaqueDecl { .. } => vec![ItemTree::unsafecell(), ItemTree::phantoms()],
+            Self::GeneralImpl { item, .. } => vec![item.clone()],
         };
 
         items.into_iter()
@@ -2350,14 +2412,10 @@ impl Stmt {
                 items.push(ItemTree::objc("Encoding"));
                 items
             }
-            Self::OpaqueDecl { kind, .. } => match kind {
-                OpaqueKind::Normal => vec![ItemTree::objc("Encoding")],
-                OpaqueKind::CoreFoundation => {
-                    vec![ItemTree::cf("cf_type"), ItemTree::objc("cf_objc2_type")]
-                }
-                OpaqueKind::Dispatch => vec![ItemTree::dispatch("dispatch_object")],
-                OpaqueKind::Network => vec![ItemTree::network("nw_object")],
-            },
+            Self::CFDecl { .. } => vec![ItemTree::cf("cf_type"), ItemTree::objc("cf_objc2_type")],
+            Self::DispatchDecl { .. } => vec![ItemTree::dispatch("dispatch_object")],
+            Self::NetworkDecl { .. } => vec![ItemTree::network("nw_object")],
+            Self::OpaqueDecl { .. } => vec![ItemTree::objc("Encoding")],
             Self::GeneralImpl { stmts, .. } => stmts
                 .iter()
                 .flat_map(|stmt| stmt.required_items().chain(stmt.required_items_inner()))
@@ -3464,13 +3522,12 @@ impl Stmt {
                         }
                     }
                 }
-                Self::OpaqueDecl {
+                Self::CFDecl {
                     id,
                     generics,
                     encoding_name,
                     availability,
                     documentation,
-                    kind,
                     sendable,
                     bridged: _,
                     superclass,
@@ -3479,10 +3536,6 @@ impl Stmt {
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     write!(f, "{availability}")?;
                     writeln!(f, "#[repr(C)]")?;
-                    if matches!(kind, OpaqueKind::Normal) {
-                        // To avoid warnings, though mostly useless.
-                        writeln!(f, "#[derive(Debug)]")?;
-                    }
                     // Default generics to `Opaque` helper type.
                     writeln!(
                         f,
@@ -3509,89 +3562,49 @@ impl Stmt {
 
                     writeln!(f)?;
 
-                    // Similar to the output of extern_class!
-                    match kind {
-                        OpaqueKind::Normal => {
-                            let required_items = self
-                                .required_items()
-                                .chain(iter::once(ItemTree::objc("Encoding")));
-                            let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
-                            // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
-                            write!(f, "{cfg_encoding}")?;
-                            writeln!(
-                                f,
-                                "unsafe impl{} RefEncode for {}{} {{",
-                                GenericParamsHelper(generics, "UnknownBound"),
-                                id.name,
-                                generic_ty(generics)
-                            )?;
-                            write!(f, "    const ENCODING_REF: Encoding = ")?;
-                            writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
-                            writeln!(f, "        {encoding_name:?},")?;
-                            writeln!(f, "        &[],")?;
-                            writeln!(f, "    ));")?;
-                            writeln!(f, "}}")?;
-                        }
-                        OpaqueKind::CoreFoundation => {
-                            let required_items = self
-                                .required_items()
-                                .chain(iter::once(ItemTree::cf("cf_type")));
-                            let cfg_cf = self.cfg_gate_ln_for(required_items, config);
-                            write!(f, "{cfg_cf}")?;
-                            // SAFETY: The type is a CoreFoundation type, and
-                            // correctly declared as a #[repr(C)] ZST.
-                            writeln!(f, "cf_type!(")?;
+                    let required_items = self
+                        .required_items()
+                        .chain(iter::once(ItemTree::cf("cf_type")));
+                    let cfg_cf = self.cfg_gate_ln_for(required_items, config);
+                    write!(f, "{cfg_cf}")?;
+                    // SAFETY: The type is a CoreFoundation type, and
+                    // correctly declared as a #[repr(C)] ZST.
+                    writeln!(f, "cf_type!(")?;
 
-                            // SAFETY: It's fine to implement helper traits for
-                            // all generics (e.g. all of `CFArray<u32>`,
-                            // `CFArray<CFString>` and `CFArray<Box<String>>`),
-                            // since unlike e.g. `NSArray<u32>`, these are all
-                            // perfectly valid types (their correct construction
-                            // is controlled with CFArrayCallBacks).
-                            write!(
-                                f,
-                                "    unsafe impl{} {}{}",
-                                GenericParamsHelper(generics, "?Sized"),
-                                id.name,
-                                generic_ty(generics),
-                            )?;
-                            if let Some(superclass) = superclass {
-                                write!(f, ": {}{}", superclass.name, generic_ty(generics))?;
-                            }
-                            writeln!(f, " {{}}")?;
-                            writeln!(f, ");")?;
-
-                            let required_items = self
-                                .required_items()
-                                .chain(iter::once(ItemTree::objc("cf_objc2_type")));
-                            let cfg_objc2 = self.cfg_gate_ln_for(required_items, config);
-                            write!(f, "{cfg_objc2}")?;
-                            writeln!(f, "cf_objc2_type!(")?;
-                            // SAFETY: The type is a CoreFoundation type.
-                            writeln!(
-                                f,
-                                "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
-                                GenericParamsHelper(generics, "?Sized"),
-                                id.name,
-                                generic_ty(generics),
-                            )?;
-                            writeln!(f, ");")?
-                        }
-                        OpaqueKind::Dispatch => {
-                            // SAFETY: The type is a Dispatch object and
-                            // correctly declared as a #[repr(C)] ZST.
-                            writeln!(f, "dispatch_object!(")?;
-                            writeln!(f, "    unsafe impl {} {{}}", id.name)?;
-                            writeln!(f, ");")?;
-                        }
-                        OpaqueKind::Network => {
-                            // SAFETY: The type is a Network object and
-                            // correctly declared as a #[repr(C)] ZST.
-                            writeln!(f, "nw_object!(")?;
-                            writeln!(f, "    unsafe impl {} {{}}", id.name)?;
-                            writeln!(f, ");")?;
-                        }
+                    // SAFETY: It's fine to implement helper traits for
+                    // all generics (e.g. all of `CFArray<u32>`,
+                    // `CFArray<CFString>` and `CFArray<Box<String>>`),
+                    // since unlike e.g. `NSArray<u32>`, these are all
+                    // perfectly valid types (their correct construction
+                    // is controlled with CFArrayCallBacks).
+                    write!(
+                        f,
+                        "    unsafe impl{} {}{}",
+                        GenericParamsHelper(generics, "?Sized"),
+                        id.name,
+                        generic_ty(generics),
+                    )?;
+                    if let Some(superclass) = superclass {
+                        write!(f, ": {}{}", superclass.name, generic_ty(generics))?;
                     }
+                    writeln!(f, " {{}}")?;
+                    writeln!(f, ");")?;
+
+                    let required_items = self
+                        .required_items()
+                        .chain(iter::once(ItemTree::objc("cf_objc2_type")));
+                    let cfg_objc2 = self.cfg_gate_ln_for(required_items, config);
+                    write!(f, "{cfg_objc2}")?;
+                    writeln!(f, "cf_objc2_type!(")?;
+                    // SAFETY: The type is a CoreFoundation type.
+                    writeln!(
+                        f,
+                        "    unsafe impl{} RefEncode<{encoding_name:?}> for {}{} {{}}",
+                        GenericParamsHelper(generics, "?Sized"),
+                        id.name,
+                        generic_ty(generics),
+                    )?;
+                    writeln!(f, ");")?;
 
                     if let Some(true) = sendable {
                         writeln!(f)?;
@@ -3608,6 +3621,131 @@ impl Stmt {
                         writeln!(f)?;
                         write!(f, "{}", self.cfg_gate_ln(config))?;
                         add_generic_cast_helpers(f, id, generics, true)?;
+                    }
+                }
+                Self::DispatchDecl {
+                    id,
+                    availability,
+                    documentation,
+                    sendable,
+                } => {
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    writeln!(f, "#[repr(C)]")?;
+                    writeln!(f, "pub struct {} {{", id.name)?;
+                    // Make the type be considered FFI-safe.
+                    writeln!(f, "    inner: [u8; 0],")?;
+                    // Same as objc2::ffi::OpaqueData, almost equivalent to using `extern type`.
+                    writeln!(
+                        f,
+                        "    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,"
+                    )?;
+                    writeln!(f, "}}")?;
+
+                    writeln!(f)?;
+
+                    // SAFETY: The type is a Dispatch object and
+                    // correctly declared as a #[repr(C)] ZST.
+                    writeln!(f, "dispatch_object!(")?;
+                    writeln!(f, "    unsafe impl {} {{}}", id.name)?;
+                    writeln!(f, ");")?;
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    }
+                }
+                Self::NetworkDecl {
+                    id,
+                    availability,
+                    documentation,
+                    sendable,
+                } => {
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    writeln!(f, "#[repr(C)]")?;
+                    writeln!(f, "pub struct {} {{", id.name)?;
+                    // Make the type be considered FFI-safe.
+                    writeln!(f, "    inner: [u8; 0],")?;
+                    // Same as objc2::ffi::OpaqueData, almost equivalent to using `extern type`.
+                    writeln!(
+                        f,
+                        "    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,"
+                    )?;
+                    writeln!(f, "}}")?;
+
+                    writeln!(f)?;
+
+                    // SAFETY: The type is a Network type and
+                    // correctly declared as a #[repr(C)] ZST.
+                    writeln!(f, "nw_object!(")?;
+                    writeln!(f, "    unsafe impl {} {{}}", id.name)?;
+                    writeln!(f, ");")?;
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
+                    }
+                }
+                Self::OpaqueDecl {
+                    id,
+                    encoding_name,
+                    availability,
+                    documentation,
+                    sendable,
+                } => {
+                    write!(f, "{}", documentation.fmt(Some(id)))?;
+                    write!(f, "{}", self.cfg_gate_ln(config))?;
+                    write!(f, "{availability}")?;
+                    writeln!(f, "#[repr(C)]")?;
+                    // To avoid warnings, though mostly useless.
+                    writeln!(f, "#[derive(Debug)]")?;
+                    writeln!(f, "pub struct {} {{", id.name)?;
+                    // Make the type be considered FFI-safe.
+                    writeln!(f, "    inner: [u8; 0],")?;
+                    // Same as objc2::ffi::OpaqueData, almost equivalent to using `extern type`.
+                    writeln!(
+                        f,
+                        "    _p: UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>,"
+                    )?;
+                    writeln!(f, "}}")?;
+
+                    writeln!(f)?;
+
+                    let required_items = self
+                        .required_items()
+                        .chain(iter::once(ItemTree::objc("Encoding")));
+                    let cfg_encoding = self.cfg_gate_ln_for(required_items, config);
+                    // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
+                    write!(f, "{cfg_encoding}")?;
+                    writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
+                    write!(f, "    const ENCODING_REF: Encoding = ")?;
+                    writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
+                    writeln!(f, "        {encoding_name:?},")?;
+                    writeln!(f, "        &[],")?;
+                    writeln!(f, "    ));")?;
+                    writeln!(f, "}}")?;
+
+                    if let Some(true) = sendable {
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Send for {} {{}}", id.name)?;
+
+                        writeln!(f)?;
+                        write!(f, "{}", self.cfg_gate_ln(config))?;
+                        writeln!(f, "unsafe impl Sync for {} {{}}", id.name)?;
                     }
                 }
                 Self::GeneralImpl {

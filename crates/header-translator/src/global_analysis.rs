@@ -408,7 +408,7 @@ fn update_module(
 
     // Check bridged types.
     for stmt in &module.stmts {
-        if let Stmt::OpaqueDecl {
+        if let Stmt::CFDecl {
             id,
             bridged: Some(bridged_class),
             ..
