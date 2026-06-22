@@ -6,9 +6,7 @@
 use std::ptr::{self, NonNull};
 
 use objc2_core_foundation::CFRetained;
-use objc2_core_video::{
-    kCVPixelFormatType_32BGRA, kCVReturnSuccess, CVOpenGLBuffer, CVPixelBuffer,
-};
+use objc2_core_video::{kCVPixelFormatType_32BGRA, kCVReturnSuccess, CVPixelBuffer};
 
 fn new_buffer() -> CFRetained<CVPixelBuffer> {
     let mut buffer = ptr::null_mut();
@@ -36,6 +34,8 @@ fn new_buffer() -> CFRetained<CVPixelBuffer> {
 #[cfg(target_os = "macos")]
 #[test]
 fn invalid_type() {
+    use objc2_core_video::CVOpenGLBuffer;
+
     let buffer = new_buffer();
     // Using a pixel buffer as a Metal / OpenGL buffer just returns `None`.
     //
