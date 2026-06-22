@@ -200,6 +200,9 @@ fn.dispatch_once.renamed = "once_with_block"
 fn.dispatch_once_f.implementor = "Dispatch.DispatchOnce"
 fn.dispatch_once_f.renamed = "once_f"
 
+# Used in various ways, most of them either not or dubiously thread-safe.
+typedef.dispatch_block_t.sendable = true
+
 ##
 ## Bounds information
 ##

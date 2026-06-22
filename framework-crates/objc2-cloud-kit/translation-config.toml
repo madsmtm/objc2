@@ -9,6 +9,7 @@ tvos = "9.0"
 watchos = "3.0"
 visionos = "1.0"
 
+# All usage has (NS_SWIFT_SENDABLE CKApplicationPermissionBlock)
 typedef.CKApplicationPermissionBlock.sendable = true
 
 external.CNContact.module = "Contacts.CNContact"

@@ -17,6 +17,9 @@ class.XCTMutableIssue.counterpart.immutable-superclass = "XCTest.XCTIssue"
 # Uses va_list
 class.XCTestLog.methods."testLogWithFormat:arguments:".skipped = true
 
+# All usage has (XCT_SWIFT_SENDABLE XCWaitCompletionHandler)
+typedef.XCWaitCompletionHandler.sendable = true
+
 ##
 ## Safety
 ##

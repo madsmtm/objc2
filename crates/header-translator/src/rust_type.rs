@@ -686,6 +686,18 @@ fn pad_generics<'a>(
     generics.iter().chain(iter::repeat_n(pad_with, missing))
 }
 
+/// Only allow `*SENDABLE` attributes, not `*NON_SENDABLE`.
+fn only_positive_sendable(sendable: Option<bool>) -> bool {
+    match sendable {
+        Some(true) => true,
+        Some(false) => {
+            error!("unexpected non-sendable marker");
+            false
+        }
+        None => false,
+    }
+}
+
 /// Types that are only valid behind pointers.
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PointeeTy {
@@ -696,6 +708,8 @@ pub enum PointeeTy {
         generics: Vec<PointeeTy>,
         declaration_generics: Vec<GenericWithBound>,
         protocols: Vec<(ProtocolRef, ThreadSafety)>,
+        /// Whether there's a *SENDABLE requirement on the type.
+        sendable: bool,
     },
     GenericParam {
         /// Whether the generic parameter is guaranteed to be an object type.
@@ -706,6 +720,8 @@ pub enum PointeeTy {
     },
     AnyObject {
         protocols: Vec<(ProtocolRef, ThreadSafety)>,
+        /// Whether there's a *SENDABLE requirement on the type.
+        sendable: bool,
     },
     AnyProtocol,
     AnyClass {
@@ -785,7 +801,7 @@ impl PointeeTy {
     }
 
     pub(crate) fn is_plain_anyobject(&self) -> bool {
-        matches!(self, Self::AnyObject { protocols } if protocols.is_empty())
+        matches!(self, Self::AnyObject { protocols, sendable: false } if protocols.is_empty())
     }
 
     pub(crate) fn required_items(&self) -> impl Iterator<Item = ItemTree> {
@@ -797,6 +813,7 @@ impl PointeeTy {
                 generics,
                 declaration_generics,
                 protocols,
+                sendable: _,
             } => {
                 let superclasses = superclasses_required_items(superclasses.iter().cloned());
                 let protocols = protocols
@@ -814,7 +831,7 @@ impl PointeeTy {
                     .collect()
             }
             Self::GenericParam { .. } => vec![],
-            Self::AnyObject { protocols } => {
+            Self::AnyObject { protocols, .. } => {
                 let protocols = protocols
                     .iter()
                     .flat_map(|(protocol, _)| protocol.required_items());
@@ -884,6 +901,7 @@ impl PointeeTy {
                 generics,
                 declaration_generics: _,
                 protocols,
+                sendable: _,
             } => {
                 thread_safety.inferred_mainthreadonly()
                     || generics
@@ -894,7 +912,7 @@ impl PointeeTy {
                         .any(|(_, thread_safety)| thread_safety.inferred_mainthreadonly())
             }
             Self::GenericParam { .. } => false,
-            Self::AnyObject { protocols } => protocols
+            Self::AnyObject { protocols, .. } => protocols
                 .iter()
                 .any(|(_, thread_safety)| thread_safety.inferred_mainthreadonly()),
             Self::AnyProtocol => false,
@@ -936,7 +954,7 @@ impl PointeeTy {
         // optional things like `Option<&NSView>` or `&NSArray<NSView>`.
         match self {
             Self::Class { thread_safety, .. } => thread_safety.inferred_mainthreadonly(),
-            Self::AnyObject { protocols } => {
+            Self::AnyObject { protocols, .. } => {
                 match &**protocols {
                     [] => false,
                     [(_, thread_safety)] => thread_safety.inferred_mainthreadonly(),
@@ -959,6 +977,7 @@ impl PointeeTy {
                 generics,
                 declaration_generics: _,
                 protocols: _,
+                sendable: _,
             } => {
                 write!(f, "{}", id.path())?;
                 if !generics.is_empty() {
@@ -980,7 +999,11 @@ impl PointeeTy {
                     write!(f, "c_void")
                 }
             }
-            Self::AnyObject { protocols } => match &**protocols {
+            Self::AnyObject {
+                protocols,
+                // TODO: Emit as `Object<dyn Any + Send + Sync>`?
+                sendable: _,
+            } => match &**protocols {
                 [] => write!(f, "AnyObject"),
                 [(protocol, _)] => write!(f, "ProtocolObject<dyn {}>", protocol.id.path()),
                 // TODO: Handle this better
@@ -1048,7 +1071,7 @@ impl PointeeTy {
     }
 
     pub(crate) fn add_protocol(&mut self, entity: Entity<'_>, context: &Context<'_>) {
-        let Self::AnyObject { protocols } = self else {
+        let Self::AnyObject { protocols, .. } = self else {
             error!(?self, "invalid type to add protocols to");
             return;
         };
@@ -1058,7 +1081,10 @@ impl PointeeTy {
 
     pub(crate) fn generic_bound(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Class { .. } => {
+            Self::Class {
+                sendable: false, // TODO
+                ..
+            } => {
                 // HACK: Use `AsRef<Bound>`.
                 //
                 // This is not perfect, since `AsRef` can be implemented for
@@ -1067,7 +1093,10 @@ impl PointeeTy {
                 // nothing.
                 write!(f, "AsRef<{}>", self.behind_pointer(true))
             }
-            Self::AnyObject { protocols } => match &**protocols {
+            Self::AnyObject {
+                protocols,
+                sendable: false, // TODO
+            } => match &**protocols {
                 // Should be avoided by `is_plain_anyobject` above
                 [] => write!(f, "InvalidAnyObjectAsBound"),
                 [(first, _), rest @ ..] => {
@@ -1111,10 +1140,12 @@ impl PointeeTy {
             // allowed as references.
             Self::Class {
                 id,
+                thread_safety: _,
+                superclasses: _,
                 generics,
                 declaration_generics,
                 protocols,
-                ..
+                sendable,
             } => {
                 // Check that the inner generics are safe to use.
                 // TODO: NSMutableArray and variance?
@@ -1177,104 +1208,119 @@ impl PointeeTy {
                     };
                 }
 
+                if *sendable {
+                    safety = safety.merge(TypeSafety::unsafe_in_argument("must be thread-safe"));
+                }
+
                 safety
             }
-            Self::AnyObject { protocols } => match &**protocols {
-                // Make `AnyObject` conservatively disallowed as argument,
-                // see https://github.com/madsmtm/objc2/issues/562.
-                //
-                // Returning it is fine though, since if you actually
-                // want to do anything with the type, you have to downcast it,
-                // and `objc2` checks that at runtime.
-                [] => TypeSafety::unknown_in_argument("should be of the correct type"),
-                // Certain protocols are not descriptive enough, and often
-                // essentially amount to `AnyObject`.
-                [(protocol, _)]
-                    if matches!(
-                        &*protocol.id.name,
-                        "NSObjectProtocol"
-                            | "NSCoding"
-                            | "NSSecureCoding"
-                            | "NSCopying"
-                            | "NSMutableCopying"
-                            | "NSFastEnumeration"
-                    ) =>
-                {
-                    TypeSafety::unknown_in_argument("should be of the correct type")
-                }
-                // Passing `MTLFunction` is spiritually similar to passing an
-                // `unsafe` function pointer; we can't know without inspecting
-                // the function (or it's documentation) whether it has special
-                // safety requirements. Example:
-                //
-                // ```metal
-                // constant float data[5] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
-                //
-                // // Safety: Must not be called with an index < 5.
-                // kernel void add_static(
-                //     device const float* input,
-                //     device float* result,
-                //     uint index [[thread_position_in_grid]]
-                // ) {
-                //     if (5 <= index) {
-                //         // For illustration purposes.
-                //         __builtin_unreachable();
-                //     }
-                //     result[index] = input[index] + data[index];
-                // }
-                // ```
-                [(protocol, _)]
-                    if protocol.is_subprotocol_of("MTLFunction")
-                        || protocol.is_subprotocol_of("MTLFunctionHandle") =>
-                {
-                    TypeSafety::unknown_in_argument("must be safe to call").merge(
-                        TypeSafety::unknown_in_argument(
-                            "must have the correct argument and return types",
-                        ),
-                    )
-                }
-                // Access to the contents of a resource has to be manually
-                // synchronized using things like `didModifyRange:` (CPU side)
-                // or `synchronizeResource:`, `useResource:usage:` and
-                // `MTLFence` (GPU side).
-                [(protocol, _)] if protocol.is_subprotocol_of("MTLResource") => {
-                    let safety = TypeSafety::unknown_in_argument("may need to be synchronized");
-
-                    // Additionally, resources in a command buffer must be
-                    // kept alive by the application for as long as they're
-                    // used. If this is not done, it is possible to encounter
-                    // use-after-frees with:
-                    // - `MTLCommandBufferDescriptor::setRetainedReferences(false)`.
-                    // - `MTLCommandQueue::commandBufferWithUnretainedReferences()`.
-                    // - All `MTL4CommandBuffer`s.
-                    let safety = safety.merge(TypeSafety::unknown_in_argument(
-                        "may be unretained, you must ensure it is kept alive while in use",
-                    ));
-
-                    // TODO: Should we also document the requirement for
-                    // resources to be properly bound? What exactly are the
-                    // requirements though, and when does Metal automatically
-                    // bind resources?
-
-                    // `MTLBuffer` is effectively a `Box<[u8]>` stored on the
-                    // GPU (and depending on the storage mode, optionally also
-                    // on the CPU). Type-safety of the contents is left
-                    // completely up to the user.
-                    if protocol.id.name == "MTLBuffer" {
-                        safety.merge(TypeSafety::unknown_in_argument(
-                            "contents should be of the correct type",
-                        ))
-                    } else {
-                        safety
+            Self::AnyObject {
+                protocols,
+                sendable,
+            } => {
+                let mut safety = match &**protocols {
+                    // Make `AnyObject` conservatively disallowed as argument,
+                    // see https://github.com/madsmtm/objc2/issues/562.
+                    //
+                    // Returning it is fine though, since if you actually
+                    // want to do anything with the type, you have to downcast it,
+                    // and `objc2` checks that at runtime.
+                    [] => TypeSafety::unknown_in_argument("should be of the correct type"),
+                    // Certain protocols are not descriptive enough, and often
+                    // essentially amount to `AnyObject`.
+                    [(protocol, _)]
+                        if matches!(
+                            &*protocol.id.name,
+                            "NSObjectProtocol"
+                                | "NSCoding"
+                                | "NSSecureCoding"
+                                | "NSCopying"
+                                | "NSMutableCopying"
+                                | "NSFastEnumeration"
+                        ) =>
+                    {
+                        TypeSafety::unknown_in_argument("should be of the correct type")
                     }
+                    // Passing `MTLFunction` is spiritually similar to passing an
+                    // `unsafe` function pointer; we can't know without inspecting
+                    // the function (or it's documentation) whether it has special
+                    // safety requirements. Example:
+                    //
+                    // ```metal
+                    // constant float data[5] = { 1.0, 2.0, 3.0, 4.0, 5.0 };
+                    //
+                    // // Safety: Must not be called with an index < 5.
+                    // kernel void add_static(
+                    //     device const float* input,
+                    //     device float* result,
+                    //     uint index [[thread_position_in_grid]]
+                    // ) {
+                    //     if (5 <= index) {
+                    //         // For illustration purposes.
+                    //         __builtin_unreachable();
+                    //     }
+                    //     result[index] = input[index] + data[index];
+                    // }
+                    // ```
+                    [(protocol, _)]
+                        if protocol.is_subprotocol_of("MTLFunction")
+                            || protocol.is_subprotocol_of("MTLFunctionHandle") =>
+                    {
+                        TypeSafety::unknown_in_argument("must be safe to call").merge(
+                            TypeSafety::unknown_in_argument(
+                                "must have the correct argument and return types",
+                            ),
+                        )
+                    }
+                    // Access to the contents of a resource has to be manually
+                    // synchronized using things like `didModifyRange:` (CPU side)
+                    // or `synchronizeResource:`, `useResource:usage:` and
+                    // `MTLFence` (GPU side).
+                    [(protocol, _)] if protocol.is_subprotocol_of("MTLResource") => {
+                        let safety = TypeSafety::unknown_in_argument("may need to be synchronized");
+
+                        // Additionally, resources in a command buffer must be
+                        // kept alive by the application for as long as they're
+                        // used. If this is not done, it is possible to encounter
+                        // use-after-frees with:
+                        // - `MTLCommandBufferDescriptor::setRetainedReferences(false)`.
+                        // - `MTLCommandQueue::commandBufferWithUnretainedReferences()`.
+                        // - All `MTL4CommandBuffer`s.
+                        let safety = safety.merge(TypeSafety::unknown_in_argument(
+                            "may be unretained, you must ensure it is kept alive while in use",
+                        ));
+
+                        // TODO: Should we also document the requirement for
+                        // resources to be properly bound? What exactly are the
+                        // requirements though, and when does Metal automatically
+                        // bind resources?
+
+                        // `MTLBuffer` is effectively a `Box<[u8]>` stored on the
+                        // GPU (and depending on the storage mode, optionally also
+                        // on the CPU). Type-safety of the contents is left
+                        // completely up to the user.
+                        if protocol.id.name == "MTLBuffer" {
+                            safety.merge(TypeSafety::unknown_in_argument(
+                                "contents should be of the correct type",
+                            ))
+                        } else {
+                            safety
+                        }
+                    }
+                    // Other `ProtocolObject<dyn MyProtocol>`s are treated as
+                    // proper types. (An example here is delegate protocols).
+                    [_] => TypeSafety::SAFE,
+                    // FIXME: Only a single protocol is properly supported,
+                    // multiple protocol restrictions are currently `AnyObject`.
+                    _ => TypeSafety::unknown_in_argument("should be of the correct type"),
+                };
+
+                if *sendable {
+                    safety = safety.merge(TypeSafety::unsafe_in_argument("must be thread-safe"));
                 }
-                // Other `ProtocolObject<dyn MyProtocol>`s are treated as
-                // proper types. (An example here is delegate protocols).
-                [_] => TypeSafety::SAFE,
-                // FIXME: Only a single protocol is properly supported,
-                // multiple protocol restrictions are currently `AnyObject`.
-                _ => TypeSafety::unknown_in_argument("should be of the correct type"),
-            },
+
+                safety
+            }
             // Object generic parameters are safe.
             // TODO: NSDictionary's KeyType perhaps isn't really?
             Self::GenericParam {
@@ -1478,6 +1524,7 @@ impl PointeeTy {
                     generics,
                     declaration_generics,
                     protocols,
+                    sendable,
                 },
                 Self::Class {
                     id: other_id,
@@ -1486,6 +1533,7 @@ impl PointeeTy {
                     generics: other_generics,
                     declaration_generics: other_declaration_generics,
                     protocols: other_protocols,
+                    sendable: other_sendable,
                 },
             ) => {
                 // Inexhaustive list of types with __covariant generics.
@@ -1498,7 +1546,10 @@ impl PointeeTy {
                         .max(other_generics.len())
                         .max(declaration_generics.len())
                         .max(other_declaration_generics.len());
-                    const ANYOBJECT: PointeeTy = PointeeTy::AnyObject { protocols: vec![] };
+                    const ANYOBJECT: PointeeTy = PointeeTy::AnyObject {
+                        protocols: vec![],
+                        sendable: false,
+                    };
                     pad_generics(generics, &ANYOBJECT, len)
                         .zip(pad_generics(other_generics, &ANYOBJECT, len))
                         .all(|(this, other)| this.is_subtype_of(other))
@@ -1508,23 +1559,37 @@ impl PointeeTy {
 
                 generics_are_subtypes
                     && protocols_is_subtype_of(protocols, other_protocols)
-                    && id == other_id
-                    || superclasses.contains(other_id)
+                    && (id == other_id || superclasses.contains(other_id))
+                    && *sendable == *other_sendable
             }
 
             // All classes are subtypes of a plain `AnyObject`.
             //
             // TODO: Handle classes with `protocols` set.
-            (Self::Class { .. }, Self::AnyObject { protocols }) if protocols.is_empty() => true,
+            (
+                Self::Class {
+                    sendable: false, ..
+                },
+                Self::AnyObject {
+                    protocols,
+                    sendable: false,
+                },
+            ) if protocols.is_empty() => true,
 
             // Protocol objects are subtypes of protocol objects with fewer
             // requirements.
             (
-                Self::AnyObject { protocols },
+                Self::AnyObject {
+                    protocols,
+                    sendable,
+                },
                 Self::AnyObject {
                     protocols: other_protocols,
+                    sendable: other_sendable,
                 },
-            ) => protocols_is_subtype_of(protocols, other_protocols),
+            ) => {
+                protocols_is_subtype_of(protocols, other_protocols) && *sendable == *other_sendable
+            }
 
             // TODO: Track the type of `Self` instead!
             (Self::Self_, _) | (_, Self::Self_) => true,
@@ -1695,6 +1760,20 @@ impl Ty {
             }
         };
 
+        if sendable.is_some()
+            && !matches!(
+                ty.get_kind(),
+                TypeKind::BlockPointer
+                    | TypeKind::ObjCObjectPointer
+                    | TypeKind::ObjCId
+                    | TypeKind::ObjCObject
+                    | TypeKind::ObjCInterface
+                    | TypeKind::Typedef
+            )
+        {
+            error!(?ty, sendable, "unused sendable marker on type");
+        }
+
         match ty.get_kind() {
             TypeKind::Void => Self::Primitive(Primitive::Void),
             TypeKind::Bool => Self::Primitive(Primitive::C99Bool),
@@ -1821,7 +1900,10 @@ impl Ty {
                     written: !is_const,
                     lifetime,
                     bounds: PointerBounds::Single,
-                    pointee: Box::new(Self::Pointee(PointeeTy::AnyObject { protocols: vec![] })),
+                    pointee: Box::new(Self::Pointee(PointeeTy::AnyObject {
+                        protocols: vec![],
+                        sendable: only_positive_sendable(sendable),
+                    })),
                 }
             }
             TypeKind::ObjCClass => {
@@ -1875,6 +1957,7 @@ impl Ty {
                         protocols: vec![],
                         generics: vec![],
                         declaration_generics,
+                        sendable: only_positive_sendable(sendable),
                     })
                 }
             }
@@ -1916,7 +1999,10 @@ impl Ty {
                             panic!("generics not empty: {ty:?}, {generics:?}");
                         }
 
-                        PointeeTy::AnyObject { protocols }
+                        PointeeTy::AnyObject {
+                            protocols,
+                            sendable: only_positive_sendable(sendable),
+                        }
                     }
                     TypeKind::ObjCInterface => {
                         let declaration = base_ty
@@ -1945,6 +2031,7 @@ impl Ty {
                             generics,
                             declaration_generics,
                             protocols,
+                            sendable: only_positive_sendable(sendable),
                         }
                     }
                     TypeKind::ObjCClass => {
@@ -2103,13 +2190,23 @@ impl Ty {
                     ty = ty.get_elaborated_type().expect("elaborated");
                 }
 
+                let mut pointee = Self::parse(ty, lifetime, false, context);
+
+                if only_positive_sendable(sendable) {
+                    if let Self::Pointee(PointeeTy::Class { sendable, .. }) = &mut pointee {
+                        *sendable = true;
+                    } else {
+                        error!(?ty, "unused sendable marker on object pointer");
+                    }
+                }
+
                 Self::Pointer {
                     nullability,
                     read: true,
                     written: !is_const,
                     lifetime,
                     bounds: PointerBounds::Single,
-                    pointee: Box::new(Self::parse(ty, lifetime, false, context)),
+                    pointee: Box::new(pointee),
                 }
             }
             TypeKind::Typedef => {
@@ -2385,6 +2482,12 @@ impl Ty {
 
                 let id = ItemIdentifier::new(&declaration, context);
                 let data = context.library(&id).get(&declaration);
+
+                if let Some(sendable) = sendable {
+                    if data.sendable != Some(sendable) {
+                        error!(?ty, "mismatch between sendable attributes on typedef");
+                    }
+                }
 
                 // "Push" the typedef into an inner object pointer.
                 //
@@ -4136,6 +4239,13 @@ impl Ty {
                     *no_escape = param_no_escape;
                     param_no_escape = false;
                 }
+                Self::Pointee(
+                    PointeeTy::Class { sendable, .. } | PointeeTy::AnyObject { sendable, .. },
+                ) => {
+                    if only_positive_sendable(param_sendable.take()) {
+                        *sendable = true;
+                    }
+                }
                 Self::Pointee(PointeeTy::Fn { no_escape, .. }) => {
                     *no_escape = param_no_escape;
                     param_no_escape = false;
@@ -4460,7 +4570,11 @@ impl Ty {
 
     pub(crate) fn try_fix_related_result_type(&mut self) {
         if let Self::Pointer { pointee, .. } = self {
-            if let Self::Pointee(PointeeTy::AnyObject { protocols }) = &**pointee {
+            if let Self::Pointee(PointeeTy::AnyObject {
+                protocols,
+                sendable: false,
+            }) = &**pointee
+            {
                 if !protocols.is_empty() {
                     warn!(?pointee, "related result type with protocols");
                     return;
@@ -4561,6 +4675,7 @@ impl Ty {
                 generics: vec![],
                 declaration_generics: vec![],
                 protocols: vec![],
+                sendable: false,
             })),
         }
     }
@@ -5037,6 +5152,7 @@ mod tests {
                 generics: vec![],
                 declaration_generics: vec![],
                 protocols: vec![],
+                sendable: false,
             }
         }
 
@@ -5064,6 +5180,7 @@ mod tests {
                 generics: vec![generic],
                 declaration_generics: vec![("ObjectType".to_string(), None)],
                 protocols: vec![],
+                sendable: false,
             }
         }
 
@@ -5104,14 +5221,20 @@ mod tests {
 
         let text_field_delegate = PointeeTy::AnyObject {
             protocols: vec![(text_field_delegate, ThreadSafety::dummy())],
+            sendable: false,
         };
         let search_field_delegate = PointeeTy::AnyObject {
             protocols: vec![(search_field_delegate, ThreadSafety::dummy())],
+            sendable: false,
         };
         let nsobject_protocol = PointeeTy::AnyObject {
             protocols: vec![(nsobject_protocol, ThreadSafety::dummy())],
+            sendable: false,
         };
-        let anyobject = PointeeTy::AnyObject { protocols: vec![] };
+        let anyobject = PointeeTy::AnyObject {
+            protocols: vec![],
+            sendable: false,
+        };
 
         // Protocol objects are subtypes one way, but not the other.
         assert!(search_field_delegate.is_subtype_of(&text_field_delegate));
