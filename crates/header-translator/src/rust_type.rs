@@ -1639,17 +1639,16 @@ impl Ty {
                 Some(UnexposedAttr::NonIsolated | UnexposedAttr::UIActor) => {
                     // Ignored for now.
                 }
-                Some(UnexposedAttr::ReturnsRetained) => {
-                    lifetime = Lifetime::Strong;
-                }
-                Some(UnexposedAttr::ReturnsNotRetained) => {
-                    lifetime = Lifetime::Autoreleasing;
-                }
                 Some(UnexposedAttr::NoEscape) => {
                     no_escape = true;
                 }
                 Some(UnexposedAttr::FullyUnavailable) => {
                     // Irrelevant on types.
+                }
+                Some(UnexposedAttr::ReturnsRetained | UnexposedAttr::ReturnsNotRetained) => {
+                    // A `CF_RETURNS_RETAINED` or similar that is known by
+                    // Clang to be part of the type is also converted properly
+                    // into `__strong`. So we don't need to do anything here.
                 }
                 Some(attr) => error!(?attr, "unknown attribute on type"),
                 None => {}
@@ -4094,52 +4093,85 @@ impl Ty {
 
     pub(crate) const VOID_RESULT: Self = Self::Primitive(Primitive::Void);
 
-    pub(crate) fn parse_method_argument(
+    pub(crate) fn parse_function_argument(
         ty: Type<'_>,
         _qualifier: Option<MethodArgumentQualifier>,
-        mut arg_sendable: Option<bool>,
-        mut arg_no_escape: bool,
+        mut param_sendable: Option<bool>,
+        mut param_no_escape: bool,
+        mut param_out_pointer_retained: Option<bool>,
         context: &Context<'_>,
     ) -> Self {
         let mut ty = Self::parse(ty, Lifetime::Unspecified, true, context);
 
         match &mut ty {
             Self::Pointer { pointee, .. } => match &mut **pointee {
+                Self::Pointer { lifetime, .. } => {
+                    // Sometimes, if the `CF_RETURNS_RETAINED` is put in the
+                    // wrong location, Clang doesn't know (or at least doesn't
+                    // act like it knows) where to add the lifetime specifier,
+                    // instead the attribute ends up on the `ParmDecl`. So we
+                    // have to pass it through here.
+                    //
+                    // E.g. `CF_RETURNS_RETAINED CFStringRef * foo` doesn't
+                    // get a `__strong` modifier automatically by Clang, while
+                    // `CFStringRef * CF_RETURNS_RETAINED foo` does.
+                    //
+                    // (This is probably a bug in libClang).
+                    if let Some(out_pointer_retained) = param_out_pointer_retained.take() {
+                        *lifetime = if out_pointer_retained {
+                            Lifetime::Strong
+                        } else {
+                            Lifetime::Autoreleasing
+                        };
+                    }
+                }
                 Self::Pointee(PointeeTy::Block {
                     sendable,
                     no_escape,
                     ..
                 }) => {
-                    if let Some(arg_sendable) = arg_sendable.take() {
-                        *sendable = Some(arg_sendable);
+                    if let Some(param_sendable) = param_sendable.take() {
+                        *sendable = Some(param_sendable);
                     }
-                    *no_escape = arg_no_escape;
-                    arg_no_escape = false;
+                    *no_escape = param_no_escape;
+                    param_no_escape = false;
                 }
                 Self::Pointee(PointeeTy::Fn { no_escape, .. }) => {
-                    *no_escape = arg_no_escape;
-                    arg_no_escape = false;
+                    *no_escape = param_no_escape;
+                    param_no_escape = false;
                 }
-                // Ignore `arg_no_escape` on typedefs for now.
+                // Ignore `param_no_escape` on typedefs for now.
                 Self::Pointee(PointeeTy::TypeDef { .. }) => {
-                    arg_no_escape = false;
+                    param_no_escape = false;
+                }
+                // Hacky fix for `out_pointer_retained` in `SSLGetConnection`,
+                // we would want to assign this to the `SSLConnectionRef`, but
+                // that can't work yet because `SSLConnectionRef` is a `void*`
+                // typedef.
+                Self::TypeDef { id, .. } if id.name == "SSLConnectionRef" => {
+                    param_out_pointer_retained = None;
                 }
                 _ => {}
             },
-            // Ignore `arg_no_escape` on typedefs for now.
+            // Ignore `param_no_escape` on typedefs for now.
             Self::TypeDef { .. } => {
-                arg_no_escape = false;
+                param_no_escape = false;
             }
             _ => {}
         }
 
-        if arg_sendable.is_some() {
+        if param_sendable.is_some() {
             // Important for soundness.
             error!(?ty, "did not consume sendable in argument");
         }
 
-        if arg_no_escape {
+        if param_no_escape {
             warn!(?ty, "did not consume no_escape in argument");
+        }
+
+        if param_out_pointer_retained.is_some() {
+            // Important for soundness.
+            error!(?ty, "did not consume out_pointer_retained in argument");
         }
 
         // TODO: Is the qualifier useful for anything?
@@ -4169,26 +4201,6 @@ impl Ty {
         }
 
         ty
-    }
-
-    pub(crate) fn parse_function_argument(
-        ty: Type<'_>,
-        attr: Option<UnexposedAttr>,
-        context: &Context<'_>,
-    ) -> Self {
-        match attr {
-            Some(UnexposedAttr::NoEscape) => {
-                // TODO: Use this if mapping `fn + context ptr` to closure.
-            }
-            Some(UnexposedAttr::ReturnsRetained | UnexposedAttr::ReturnsNotRetained) => {
-                // TODO: Massage this into a lifetime
-            }
-            Some(attr) => {
-                error!(?attr, "unknown attribute in function argument");
-            }
-            None => {}
-        }
-        Self::parse_method_argument(ty, None, None, false, context)
     }
 
     pub(crate) fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {

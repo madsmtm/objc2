@@ -433,6 +433,47 @@ where
         .chain(iter::once(ItemTree::objc("__macros__")))
 }
 
+/// Parse children of `ParamDecl`.
+pub(crate) fn parse_param_children(
+    parent: &Entity<'_>,
+    context: &Context<'_>,
+) -> (Option<bool>, bool, Option<bool>) {
+    let mut sendable = None;
+    let mut no_escape = false;
+    let mut out_pointer_retained = None;
+
+    immediate_children(parent, |entity, _span| match entity.get_kind() {
+        EntityKind::UnexposedAttr => {
+            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
+                match attr {
+                    UnexposedAttr::Sendable => sendable = Some(true),
+                    UnexposedAttr::NonSendable => sendable = Some(false),
+                    UnexposedAttr::NoEscape => no_escape = true,
+                    UnexposedAttr::ReturnsRetained => out_pointer_retained = Some(true),
+                    UnexposedAttr::ReturnsNotRetained => out_pointer_retained = Some(false),
+                    attr => error!(?attr, "unknown attribute on method argument"),
+                }
+            }
+        }
+        // `ns_consumed`, `cf_consumed` and `os_consumed`
+        EntityKind::NSConsumed => {
+            error!("found NSConsumed, which requires manual handling");
+        }
+        // For some reason we recurse into array types
+        EntityKind::IntegerLiteral => {}
+        EntityKind::ObjCClassRef
+        | EntityKind::ObjCProtocolRef
+        | EntityKind::TypeRef
+        | EntityKind::ParmDecl
+        | EntityKind::DeclRefExpr => {
+            // Ignore
+        }
+        kind => error!(?parent, ?kind, "unknown ParamDecl child"),
+    });
+
+    (sendable, no_escape, out_pointer_retained)
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Abi {
     C,
@@ -725,33 +766,6 @@ pub enum Stmt {
         generics: Vec<GenericWithBound>,
         stmts: Vec<Self>,
     },
-}
-
-fn parse_fn_param_children(parent: &Entity<'_>, context: &Context<'_>) -> Option<UnexposedAttr> {
-    let mut ret = None;
-
-    immediate_children(parent, |entity, _span| match entity.get_kind() {
-        EntityKind::UnexposedAttr => {
-            if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                if ret.is_some() {
-                    error!("found multiple attributes {ret:?} and {attr:?} on fn param");
-                }
-                ret = Some(attr);
-            }
-        }
-        EntityKind::ObjCClassRef
-        | EntityKind::TypeRef
-        | EntityKind::ObjCProtocolRef
-        | EntityKind::ParmDecl => {}
-        EntityKind::NSConsumed => {
-            error!("found NSConsumed, which requires manual handling");
-        }
-        // For some reason we recurse into array types
-        EntityKind::IntegerLiteral => {}
-        kind => error!(?parent, ?kind, "unknown"),
-    });
-
-    ret
 }
 
 impl Stmt {
@@ -1941,11 +1955,19 @@ impl Stmt {
                     | EntityKind::TypeRef
                     | EntityKind::ObjCProtocolRef => {}
                     EntityKind::ParmDecl => {
-                        let attr = parse_fn_param_children(&entity, context);
+                        let (sendable, no_escape, out_pointer_retained) =
+                            parse_param_children(&entity, context);
                         // Could also be retrieved via `get_arguments`
                         let name = entity.get_name().unwrap_or_else(|| "_".into());
                         let ty = entity.get_type().expect("function argument type");
-                        let mut ty = Ty::parse_function_argument(ty, attr, context);
+                        let mut ty = Ty::parse_function_argument(
+                            ty,
+                            None,
+                            sendable,
+                            no_escape,
+                            out_pointer_retained,
+                            context,
+                        );
                         if let Some(override_) = data.arguments.get(&arguments.len()) {
                             ty.apply_override(override_);
                         }

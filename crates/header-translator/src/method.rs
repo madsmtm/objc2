@@ -12,6 +12,7 @@ use crate::id::{cfg_gate_ln, ItemTree};
 use crate::name_translation::{self, is_likely_bounds_affecting};
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
+use crate::stmt::parse_param_children;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
 use crate::{immediate_children, Config, Location};
@@ -493,37 +494,19 @@ impl Method {
                 let qualifier = entity
                     .get_objc_qualifiers()
                     .map(MethodArgumentQualifier::parse);
-                let mut sendable = None;
-                let mut no_escape = false;
 
-                immediate_children(&entity, |entity, _span| match entity.get_kind() {
-                    EntityKind::ObjCClassRef
-                    | EntityKind::ObjCProtocolRef
-                    | EntityKind::TypeRef
-                    | EntityKind::ParmDecl => {
-                        // Ignore
-                    }
-                    // `ns_consumed`, `cf_consumed` and `os_consumed`
-                    EntityKind::NSConsumed => {
-                        error!("found NSConsumed, which requires manual handling");
-                    }
-                    EntityKind::UnexposedAttr => {
-                        if let Some(attr) = UnexposedAttr::parse(&entity, context) {
-                            match attr {
-                                UnexposedAttr::Sendable => sendable = Some(true),
-                                UnexposedAttr::NonSendable => sendable = Some(false),
-                                UnexposedAttr::NoEscape => no_escape = true,
-                                attr => error!(?attr, "unknown attribute on method argument"),
-                            }
-                        }
-                    }
-                    // For some reason we recurse into array types
-                    EntityKind::IntegerLiteral => {}
-                    _ => error!("unknown"),
-                });
+                let (sendable, no_escape, out_pointer_retained) =
+                    parse_param_children(&entity, context);
 
                 let ty = entity.get_type().expect("argument type");
-                let mut ty = Ty::parse_method_argument(ty, qualifier, sendable, no_escape, context);
+                let mut ty = Ty::parse_function_argument(
+                    ty,
+                    qualifier,
+                    sendable,
+                    no_escape,
+                    out_pointer_retained,
+                    context,
+                );
 
                 if let Some(ty_or) = data.arguments.get(&index) {
                     ty.apply_override(ty_or);
