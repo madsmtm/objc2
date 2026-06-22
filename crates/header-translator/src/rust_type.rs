@@ -1731,16 +1731,18 @@ impl Ty {
                 break;
             }
         }
-
         let _span = debug_span!("ty after unexposed/attributed", ?ty).entered();
 
+        // We generally don't care about whether a type is elaborated or not.
+        // (Elaborated means the `struct` or `enum` qualifier in a type such
+        // as `struct Foo*`).
         let elaborated_ty = ty;
-
-        if let Some(true) = ty.is_elaborated() {
+        let _span = if let Some(true) = ty.is_elaborated() {
             ty = ty.get_elaborated_type().expect("elaborated");
-        }
-
-        let _span = debug_span!("ty after elaborated", ?ty).entered();
+            Some(debug_span!("ty after elaborated", ?ty).entered())
+        } else {
+            None
+        };
 
         let get_is_const = |new: bool| {
             if new {
@@ -2184,11 +2186,6 @@ impl Ty {
                     parser.set_inner_pointer();
                 }
                 drop(parser);
-
-                // TODO: Maybe do something with the information in the elaborated type?
-                if let Some(true) = ty.is_elaborated() {
-                    ty = ty.get_elaborated_type().expect("elaborated");
-                }
 
                 let mut pointee = Self::parse(ty, lifetime, false, context);
 
