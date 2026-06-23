@@ -180,7 +180,7 @@ typedef.SSLCipherSuite.skipped = true
 struct.CSSM_TP_APPLE_EVIDENCE_INFO.skipped = true
 
 ##
-## Fixing nullability and pointer bounds.
+## Fixing nullability, lifetime and pointer bounds.
 ##
 
 fn.SecureDownloadCreateWithTicket.arguments.0.nullability = "nonnull"
@@ -191,5 +191,8 @@ fn.SecDigestTransformCreate.return.nullability = "nullable"
 
 fn.SecEncryptTransformCreate.return.nullability = "nullable"
 fn.SecDecryptTransformCreate.return.nullability = "nullable"
+
+# Docs say: call the CFRelease function to free the key’s memory
+fn.SecKeyUnwrapSymmetric.arguments.0.lifetime = "out-pointer-retained"
 
 fn.SecTransformExecute.return.nullability = "nullable"

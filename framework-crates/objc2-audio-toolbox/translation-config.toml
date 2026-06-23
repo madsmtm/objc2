@@ -507,6 +507,7 @@ fn.MusicEventIteratorHasPreviousEvent.arguments.1.bounds = "single"
 fn.MusicEventIteratorHasNextEvent.arguments.1.bounds = "single"
 fn.MusicEventIteratorHasCurrentEvent.arguments.1.bounds = "single"
 fn.MusicSequenceSaveSMFData.arguments.1.bounds = "single"
+fn.MusicSequenceSaveSMFData.arguments.1.lifetime = "out-pointer-retained" # Likely
 fn.NewMusicTrackFrom.arguments.3.bounds = "single"
 fn.MusicTrackNewExtendedControlEvent.arguments.2.bounds = "single"
 

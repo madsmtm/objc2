@@ -14,3 +14,18 @@ visionos = "1.0"
 # Wrongly renamed (Swift's renaming algorithm is insufficient)
 const.kMIDIProtocol_1_0.renamed = "Protocol_1_0"
 const.kMIDIProtocol_2_0.renamed = "Protocol_2_0"
+
+# Probably this:
+fn.MIDIObjectGetStringProperty.arguments.2.lifetime = "out-pointer-not-retained"
+fn.MIDIObjectGetDataProperty.arguments.2.lifetime = "out-pointer-not-retained"
+fn.MIDIObjectGetDictionaryProperty.arguments.2.lifetime = "out-pointer-not-retained"
+fn.MIDIObjectGetProperties.arguments.1.lifetime = "out-pointer-not-retained"
+# Probably? It seems likely that this would allocate a new array.
+fn.MIDIEventPacketSysexBytesForGroup.arguments.2.lifetime = "out-pointer-retained"
+
+# Docs say: The client is responsible for releasing this CFData object when done with it.
+fn.MIDISetupToData.arguments.1.lifetime = "out-pointer-retained"
+# Probably:
+fn.MIDIGetSerialPortOwner.arguments.1.lifetime = "out-pointer-not-retained"
+# Docs say: The array should be released by the caller.
+fn.MIDIGetSerialPortDrivers.arguments.0.lifetime = "out-pointer-retained"

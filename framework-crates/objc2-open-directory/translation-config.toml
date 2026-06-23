@@ -24,7 +24,7 @@ fn.ODNodeCreateRecord.renamed = "create_record"
 fn.ODNodeCopyRecord.renamed = "copy_record"
 
 ##
-## Nullability and pointer bounds.
+## Nullability, lifetime and pointer bounds.
 ##
 
 # Ensure this is emitted as `Option<&T>`, it's NULL.
@@ -35,3 +35,12 @@ fn.ODSessionCopyNodeNames.arguments.1.nullability = "nullable"
 fn.ODNodeCreateCopy.arguments.1.nullability = "nonnull"
 
 fn.ODRecordCopyPasswordPolicy.arguments.1.nullability = "nonnull"
+
+# Prooobably needs to be released by us?
+# Quite unsure, but should segfault if wrong, so then we'll know.
+fn.ODNodeSetCredentialsExtended.arguments.4.lifetime = "out-pointer-retained"
+fn.ODNodeSetCredentialsExtended.arguments.5.lifetime = "out-pointer-retained"
+fn.ODRecordSetNodeCredentialsExtended.arguments.4.lifetime = "out-pointer-retained"
+fn.ODRecordSetNodeCredentialsExtended.arguments.5.lifetime = "out-pointer-retained"
+fn.ODRecordVerifyPasswordExtended.arguments.3.lifetime = "out-pointer-retained"
+fn.ODRecordVerifyPasswordExtended.arguments.4.lifetime = "out-pointer-retained"

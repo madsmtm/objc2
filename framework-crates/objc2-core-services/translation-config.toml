@@ -99,9 +99,18 @@ fn.CSIdentityCreateCopy.arguments.1.nullability = "nonnull"
 fn.CSIdentityCreatePersistentReference.arguments.1.nullability = "nonnull"
 fn.CSIdentityCreateGroupMembershipQuery.arguments.1.nullability = "nonnull"
 
-fn.SKIndexCopyInfoForDocumentIDs.arguments.3.lifetime = "out-pointer-unsafe"
-fn.SKIndexCopyDocumentRefsForDocumentIDs.arguments.3.lifetime = "out-pointer-unsafe"
-fn.SKIndexCopyDocumentURLsForDocumentIDs.arguments.3.lifetime = "out-pointer-unsafe"
+# These seem to be arrays?
+fn.SKIndexCopyInfoForDocumentIDs.arguments.3.bounds = "unsafe"
+fn.SKIndexCopyDocumentRefsForDocumentIDs.arguments.3.bounds = "unsafe"
+fn.SKIndexCopyDocumentURLsForDocumentIDs.arguments.3.bounds = "unsafe"
+fn.SKSearchResultsGetInfoInRange.arguments.2.bounds = "unsafe"
+
+# Docs says: Despite the absence of the word Copy [...] you are responsible for releasing this object.
+fn.LSOpenCFURLRef.arguments.1.lifetime = "out-pointer-retained"
+fn.LSOpenFromURLSpec.arguments.1.lifetime = "out-pointer-retained"
+
+# Header says: Returned values has to be released with CFRelease().
+fn.LSSharedFileListItemResolve.arguments.2.lifetime = "out-pointer-retained"
 
 ##
 ## Safety.

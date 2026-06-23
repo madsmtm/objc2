@@ -243,6 +243,15 @@ const.kIONetworkLinkActive.use-value = true
 const.kIONetworkLinkNoNetworkChange.use-value = true
 
 ##
+## Lifetime
+##
+
+# Probably create-rule, these are error strings.
+fn.IOCFUnserialize.arguments.3.lifetime = "out-pointer-retained"
+fn.IOCFUnserializeBinary.arguments.4.lifetime = "out-pointer-retained"
+fn.IOCFUnserializeWithSize.arguments.4.lifetime = "out-pointer-retained"
+
+##
 ## Safety
 ##
 

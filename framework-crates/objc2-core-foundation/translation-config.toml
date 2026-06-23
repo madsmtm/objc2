@@ -1138,6 +1138,16 @@ fn.CFXMLCreateStringByEscapingEntities.arguments.2.generics = []
 fn.CFXMLCreateStringByUnescapingEntities.arguments.2.generics = []
 
 ##
+## Lifetime fixes.
+##
+
+fn.CFMessagePortSendRequest.arguments.6.lifetime = "out-pointer-retained"
+
+fn.CFPropertyListWriteToStream.arguments.3.lifetime = "out-pointer-retained"
+
+fn.CFURLEnumeratorGetNextURL.arguments.1.lifetime = "out-pointer-not-retained"
+
+##
 ## Safety
 ##
 

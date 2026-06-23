@@ -194,8 +194,17 @@ fn.CTTextTabGetOptions.return.generics = ["CoreFoundation.CFString.CFString", "C
 # `kCTTypesetter*`
 fn.CTTypesetterCreateWithAttributedStringAndOptions.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 
-fn.CTFontCopyLocalizedName.arguments.2.lifetime = "out-pointer-unsafe" # Unsure
-fn.CTFontDescriptorCopyLocalizedAttribute.arguments.2.lifetime = "out-pointer-unsafe" # Unsure
+##
+## Lifetime fixes.
+##
+
+# Disassembly reveals that these are retained.
+fn.CTFontCopyLocalizedName.arguments.2.lifetime = "out-pointer-retained"
+fn.CTFontDescriptorCopyLocalizedAttribute.arguments.2.lifetime = "out-pointer-retained"
+
+# Header says: Must be released by caller.
+fn.CTFontManagerRegisterFontsForURLs.arguments.2.lifetime = "out-pointer-retained"
+fn.CTFontManagerUnregisterFontsForURLs.arguments.2.lifetime = "out-pointer-retained"
 
 ##
 ## Safety

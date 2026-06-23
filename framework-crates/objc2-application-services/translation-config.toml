@@ -120,13 +120,33 @@ fn.HIShapeCreateUnion.renamed = "create_union"
 fn.HIShapeCreateXor.renamed = "create_xor"
 
 ##
-## Nullability and pointer bounds.
+## Nullability, lifetime and pointer bounds.
 ##
 
 fn.HIShapeSetEmpty.arguments.0.nullability = "nonnull"
 fn.HIShapeOffset.arguments.0.nullability = "nonnull"
 fn.HIShapeInset.arguments.0.nullability = "nonnull"
 fn.HIShapeUnionWithRect.arguments.0.nullability = "nonnull"
+
+# Most of these are documented with "You should not release the * without first retaining it".
+fn.PMSessionGetCGGraphicsContext.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPageFormatGetPrinterID.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPrintSettingsGetJobName.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPrinterGetMakeAndModelName.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPrinterGetMimeTypes.arguments.2.lifetime = "out-pointer-not-retained"
+fn.PMPrinterGetPaperList.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPresetGetAttributes.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPaperGetID.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPaperGetPPDPaperName.arguments.1.lifetime = "out-pointer-not-retained"
+fn.PMPaperGetPrinterID.arguments.1.lifetime = "out-pointer-not-retained"
+# Except for these two, they don't document memory management.
+# I find it likely that it uses the same scheme though.
+fn.PMSessionGetDataFromSession.arguments.2.lifetime = "out-pointer-not-retained"
+fn.PMPrintSettingsGetValue.arguments.2.lifetime = "out-pointer-not-retained"
+
+# I have a hard time calling these functions, I'm guessing they're retained.
+fn.TranslationPerformForData.arguments.2.lifetime = "out-pointer-retained"
+fn.TranslationPerformForURL.arguments.3.lifetime = "out-pointer-retained"
 
 ##
 ## Safety
