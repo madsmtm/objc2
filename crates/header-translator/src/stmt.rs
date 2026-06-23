@@ -2008,7 +2008,7 @@ impl Stmt {
                 }
 
                 for (_, arg_ty) in &mut arguments {
-                    arg_ty.set_default_retained_out_param();
+                    arg_ty.set_default_retained_out_param(follows_create_rule(&c_name));
                 }
 
                 // Don't map `CFRetain`, `CFRelease`, `CFAutorelease`, as well

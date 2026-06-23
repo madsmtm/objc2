@@ -99,6 +99,10 @@ fn.CSIdentityCreateCopy.arguments.1.nullability = "nonnull"
 fn.CSIdentityCreatePersistentReference.arguments.1.nullability = "nonnull"
 fn.CSIdentityCreateGroupMembershipQuery.arguments.1.nullability = "nonnull"
 
+fn.SKIndexCopyInfoForDocumentIDs.arguments.3.lifetime = "out-pointer-unsafe"
+fn.SKIndexCopyDocumentRefsForDocumentIDs.arguments.3.lifetime = "out-pointer-unsafe"
+fn.SKIndexCopyDocumentURLsForDocumentIDs.arguments.3.lifetime = "out-pointer-unsafe"
+
 ##
 ## Safety.
 ##

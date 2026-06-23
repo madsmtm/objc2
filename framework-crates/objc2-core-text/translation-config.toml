@@ -194,6 +194,9 @@ fn.CTTextTabGetOptions.return.generics = ["CoreFoundation.CFString.CFString", "C
 # `kCTTypesetter*`
 fn.CTTypesetterCreateWithAttributedStringAndOptions.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 
+fn.CTFontCopyLocalizedName.arguments.2.lifetime = "out-pointer-unsafe" # Unsure
+fn.CTFontDescriptorCopyLocalizedAttribute.arguments.2.lifetime = "out-pointer-unsafe" # Unsure
+
 ##
 ## Safety
 ##

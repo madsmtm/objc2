@@ -6,7 +6,7 @@ use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 use regex::Regex;
 
-use crate::config::{ItemGeneric, PointerBounds, StmtData, TypeOverride};
+use crate::config::{ItemGeneric, PointerBounds, PointerLifetime, StmtData, TypeOverride};
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
@@ -4123,7 +4123,7 @@ impl Ty {
     /// Apply various heuristics to out parameter retained-ness.
     ///
     /// These aren't perfect, but they should be good enough to get started.
-    pub(crate) fn set_default_retained_out_param(&mut self) {
+    pub(crate) fn set_default_retained_out_param(&mut self, follows_create_rule: bool) {
         if let Self::Pointer { pointee, .. } = self {
             if let Self::Pointer {
                 lifetime, pointee, ..
@@ -4139,6 +4139,9 @@ impl Ty {
                         }
                         Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() => {
                             // Unsure
+                        }
+                        _ if pointee.retain_wrapper().is_some() && follows_create_rule => {
+                            *lifetime = Lifetime::Strong;
                         }
                         _ => {}
                     }
@@ -4791,6 +4794,29 @@ impl Ty {
                 }
                 ty => error!(?ty, "unexpected type for bounds attribute"),
             }
+        }
+        match &override_.lifetime {
+            PointerLifetime::Unspecified => {}
+            new_lifetime @ (PointerLifetime::OutPointerUnsafe
+            | PointerLifetime::OutPointerRetained
+            | PointerLifetime::OutPointerNotRetained) => match &mut *self {
+                Ty::Pointer { pointee, .. } => match &mut **pointee {
+                    Ty::Pointer { lifetime, .. } => {
+                        let new_lifetime = match *new_lifetime {
+                            PointerLifetime::OutPointerUnsafe => Lifetime::Unretained,
+                            PointerLifetime::OutPointerRetained => Lifetime::Strong,
+                            PointerLifetime::OutPointerNotRetained => Lifetime::Autoreleasing,
+                            _ => unreachable!(),
+                        };
+                        if *lifetime == new_lifetime {
+                            warn!(?lifetime, new = ?override_.lifetime, "lifetime already set");
+                        }
+                        *lifetime = new_lifetime;
+                    }
+                    ty => error!(?ty, "unexpected inner type for lifetime attribute"),
+                },
+                ty => error!(?ty, "unexpected type for lifetime attribute"),
+            },
         }
         if let Some(new) = override_.read {
             match &mut *self {

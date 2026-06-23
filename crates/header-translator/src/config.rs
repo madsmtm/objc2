@@ -732,6 +732,26 @@ pub enum PointerBounds {
     EndedBy(String),
 }
 
+/// The lifetime of a raw pointer.
+///
+/// TODO: Use more of <https://clang.llvm.org/docs/LifetimeSafety.html>.
+#[derive(Deserialize, Debug, Clone, PartialEq, Eq, Hash, Default)]
+#[serde(deny_unknown_fields)]
+pub enum PointerLifetime {
+    #[default]
+    #[serde(skip)]
+    Unspecified,
+    // TODO: For returning `&'static T` instead of `&T`.
+    // #[serde(rename = "static")]
+    // Static,
+    #[serde(rename = "out-pointer-unsafe")]
+    OutPointerUnsafe,
+    #[serde(rename = "out-pointer-retained")]
+    OutPointerRetained,
+    #[serde(rename = "out-pointer-not-retained")]
+    OutPointerNotRetained,
+}
+
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct TypeOverride {
@@ -741,6 +761,8 @@ pub struct TypeOverride {
     pub generics: Option<Vec<ItemGeneric>>,
     #[serde(default)]
     pub bounds: PointerBounds,
+    #[serde(default)]
+    pub lifetime: PointerLifetime,
     /// Override whether this pointer is read from.
     ///
     /// By default, this is assumed for all pointers, but if we set this to
@@ -765,6 +787,11 @@ impl TypeOverride {
                 self.bounds
             } else {
                 superclass.bounds
+            },
+            lifetime: if self.lifetime != PointerLifetime::Unspecified {
+                self.lifetime
+            } else {
+                superclass.lifetime
             },
             read: self.read.or(superclass.read),
             written: self.written.or(superclass.written),
