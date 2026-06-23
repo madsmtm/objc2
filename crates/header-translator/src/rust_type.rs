@@ -4120,6 +4120,33 @@ impl Ty {
         }
     }
 
+    /// Apply various heuristics to out parameter retained-ness.
+    ///
+    /// These aren't perfect, but they should be good enough to get started.
+    pub(crate) fn set_default_retained_out_param(&mut self) {
+        if let Self::Pointer { pointee, .. } = self {
+            if let Self::Pointer {
+                lifetime, pointee, ..
+            } = &mut **pointee
+            {
+                if *lifetime == Lifetime::Unspecified {
+                    match pointee.through_typedef() {
+                        // Error params usually follow the create rule (they
+                        // aren't attached to anything, so they can't really
+                        // be returned in any other way).
+                        Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) if id.is_cferror() => {
+                            *lifetime = Lifetime::Strong;
+                        }
+                        Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() => {
+                            // Unsure
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+    }
+
     pub(crate) fn method_argument_encoding_type(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),

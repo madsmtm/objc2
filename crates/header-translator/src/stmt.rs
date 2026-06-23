@@ -2007,6 +2007,10 @@ impl Stmt {
                     first_ty.fix_fn_first_argument_cf_nullability(&c_name);
                 }
 
+                for (_, arg_ty) in &mut arguments {
+                    arg_ty.set_default_retained_out_param();
+                }
+
                 // Don't map `CFRetain`, `CFRelease`, `CFAutorelease`, as well
                 // as custom ones like as `CGColorRelease`, but not things
                 // like `CMBufferQueueDequeueAndRetain`.
