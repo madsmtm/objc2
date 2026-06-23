@@ -3460,16 +3460,32 @@ impl Stmt {
 
                     writeln!(f, "    }}")?;
 
+                    // Perform argument conversion.
+                    for (i, (param, ty)) in arguments.iter().enumerate() {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        let param_or_self = if arg_is_self.unwrap_or(usize::MAX) == i {
+                            "self"
+                        } else {
+                            &param
+                        };
+                        write!(f, "{}", ty.fn_argument_converter(param_or_self, &param))?;
+                    }
+
                     // Call raw
                     let fn_call = FormatterFn(|f| {
                         write!(f, "unsafe {{ {c_name}(")?;
                         for (i, (param, ty)) in arguments.iter().enumerate() {
-                            let param = if arg_is_self.unwrap_or(usize::MAX) == i {
-                                "self".to_string()
+                            let param = handle_reserved(&crate::to_snake_case(param));
+                            if arg_is_self.unwrap_or(usize::MAX) == i {
+                                let converter = ty.fn_argument_converter("self", &param);
+                                if converter.to_string().is_empty() {
+                                    write!(f, "self,")?;
+                                } else {
+                                    write!(f, "{param},")?;
+                                }
                             } else {
-                                handle_reserved(&crate::to_snake_case(param))
-                            };
-                            write!(f, "{},", ty.fn_argument_converter(param))?;
+                                write!(f, "{param},")?;
+                            }
                         }
                         write!(f, ") }}")?;
                         Ok(())

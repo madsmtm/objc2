@@ -2733,48 +2733,27 @@ impl Ty {
 
     pub(crate) fn safety_in_method_argument(&self, arg_name: &str) -> SafetyProperty {
         // Out pointers
-        if let Self::Pointer {
-            nullability,
-            read: _,
-            written: true,
-            lifetime: Lifetime::Unspecified,
-            bounds: PointerBounds::Unspecified, // TODO: Is this correct?
-            pointee,
-        } = self
-        {
-            if let Self::Pointer {
-                nullability: inner_nullability,
-                read: _,
-                written: _,
-                lifetime: Lifetime::Autoreleasing,
-                bounds: PointerBounds::Single,
-                pointee,
-            } = &**pointee
+        if let Some((nullability, pointee, inner_nullability)) = self.out_pointer_data() {
+            let safety = pointee.safety();
+
+            // Out pointers are both inputs and outputs, and thus they
+            // have requirements in both directions.
+            //
+            // TODO: Actual usage is often for outputs only, so we might
+            // be able to relax this? Maybe just allow
+            // `SafetyProperty::Unknown` in arguments?
+            let mut safety = safety.in_argument.merge(safety.in_return);
+
+            if nullability == Nullability::Unspecified
+                || inner_nullability == Nullability::Unspecified
             {
-                debug_assert!(self.fmt_out_pointer(true).is_some());
-
-                let safety = pointee.safety();
-
-                // Out pointers are both inputs and outputs, and thus they
-                // have requirements in both directions.
-                //
-                // TODO: Actual usage is often for outputs only, so we might
-                // be able to relax this? Maybe just allow
-                // `SafetyProperty::Unknown` in arguments?
-                let mut safety = safety.in_argument.merge(safety.in_return);
-
-                if *nullability == Nullability::Unspecified
-                    || *inner_nullability == Nullability::Unspecified
-                {
-                    safety = safety.merge(SafetyProperty::new_unknown("might not allow `None`"));
-                }
-
-                return safety.preface(format!("`{arg_name}`"));
+                safety = safety.merge(SafetyProperty::new_unknown("might not allow `None`"));
             }
-        }
-        debug_assert!(self.fmt_out_pointer(true).is_none());
 
-        self.safety_in_fn_argument(arg_name)
+            safety.preface(format!("`{arg_name}`"))
+        } else {
+            self.safety_in_fn_argument(arg_name)
+        }
     }
 
     pub(crate) fn safety_in_fn_argument(&self, arg_name: &str) -> SafetyProperty {
@@ -3772,19 +3751,19 @@ impl Ty {
                     write!(f, "Option<&CStr>")
                 }
             }
-            // TODO: Support out / autoreleasing pointers?
             _ => write!(f, "{}", self.fn_argument(true)),
         })
     }
 
     pub(crate) fn fn_argument_converter<'s: 'r, 'a: 'r, 'r>(
         &'s self,
-        arg: impl fmt::Display + 'a,
+        arg: &'a str,
+        arg_to: &'a str,
     ) -> impl fmt::Display + 'r {
         FormatterFn(move |f| match self {
-            _ if self.is_objc_bool() => write!(f, "Bool::new({arg})"),
+            _ if self.is_objc_bool() => writeln!(f, "let {arg_to} = Bool::new({arg});"),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                write!(f, "{arg} as _")
+                writeln!(f, "let {arg_to} = {arg} as _;")
             }
             Self::Pointer {
                 nullability,
@@ -3795,13 +3774,16 @@ impl Ty {
                 pointee,
             } if pointee.is_pointee_cstr() => {
                 if *nullability == Nullability::NonNull {
-                    write!(f, "NonNull::new({arg}.as_ptr().cast_mut()).unwrap()")
-                } else if *written {
-                    write!(f, "{arg}.map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut)")
-                } else {
-                    write!(
+                    writeln!(
                         f,
-                        "{arg}.map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null)"
+                        "let {arg_to} = NonNull::new({arg}.as_ptr().cast_mut()).unwrap();"
+                    )
+                } else if *written {
+                    writeln!(f, "let {arg_to} = {arg}.map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut);")
+                } else {
+                    writeln!(
+                        f,
+                        "let {arg_to} = {arg}.map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null);"
                     )
                 }
             }
@@ -3819,15 +3801,18 @@ impl Ty {
                 {
                     if *nullability == Nullability::NonNull {
                         if *bounds == PointerBounds::Single {
-                            write!(f, "core::mem::transmute({arg})")
+                            writeln!(
+                                f,
+                                "let {arg_to} = unsafe {{ core::mem::transmute({arg}) }};"
+                            )
                         } else {
-                            write!(f, "{arg}.map(|x| x.cast())")
+                            writeln!(f, "let {arg_to} = {arg}.map(|x| x.cast());")
                         }
                     } else {
                         if *bounds == PointerBounds::Single {
-                            write!(f, "{arg}.map(|x| core::mem::transmute(x))")
+                            writeln!(f, "let {arg_to} = {arg}.map(|x| unsafe {{ core::mem::transmute(x) }});")
                         } else {
-                            write!(f, "{arg}.cast()")
+                            writeln!(f, "let {arg_to} = {arg}.cast();")
                         }
                     }
                 } else if let Self::Pointee(PointeeTy::CFTypeDef { generics, .. }) = &**pointee {
@@ -3836,66 +3821,47 @@ impl Ty {
                         .any(|generic| matches!(generic, PointeeTy::GenericParam { .. }))
                     {
                         if *nullability == Nullability::NonNull {
-                            write!(f, "{arg}.as_opaque()")
+                            writeln!(f, "let {arg_to} = {arg}.as_opaque();")
                         } else {
-                            write!(f, "{arg}.map(|obj| obj.as_opaque())")
+                            writeln!(f, "let {arg_to} = {arg}.map(|obj| obj.as_opaque());")
                         }
                     } else {
-                        write!(f, "{arg}")
+                        Ok(())
                     }
                 } else {
-                    write!(f, "{arg}")
+                    Ok(())
                 }
             }
-            // TODO: Support out / autoreleasing pointers?
-            _ => write!(f, "{arg}"),
+            _ => Ok(()),
         })
     }
 
-    fn fmt_out_pointer(&self, allow_generic_param: bool) -> Option<impl fmt::Display + '_> {
+    fn out_pointer_data(&self) -> Option<(Nullability, &Ty, Nullability)> {
         match self {
             Self::Pointer {
                 nullability,
                 read,
                 written: true,
                 lifetime: Lifetime::Unspecified,
-                bounds: PointerBounds::Unspecified, // TODO: Is this correct?
+                // TODO: Is this correct?
+                bounds: PointerBounds::Unspecified | PointerBounds::Single,
                 pointee,
             } => match &**pointee {
                 Self::Pointer {
                     nullability: inner_nullability,
-                    // Don't care about the const-ness of the id.
+                    // Don't care about the const-ness of the inner type.
                     read: _,
                     written: _,
                     lifetime: Lifetime::Autoreleasing,
                     bounds: PointerBounds::Single,
                     pointee,
-                } => Some(FormatterFn(move |f| {
+                } if pointee.retain_wrapper().is_some() => {
                     if !read {
                         // We don't (yet) support `&mut MaybeUninit<Retained<T>>`.
                         error!("out pointers must currently be readable");
                     }
-                    let inner = FormatterFn(|f| {
-                        if *inner_nullability == Nullability::NonNull {
-                            write!(
-                                f,
-                                "Retained<{}>",
-                                pointee.behind_pointer(allow_generic_param)
-                            )
-                        } else {
-                            write!(
-                                f,
-                                "Option<Retained<{}>>",
-                                pointee.behind_pointer(allow_generic_param)
-                            )
-                        }
-                    });
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "&mut {inner}")
-                    } else {
-                        write!(f, "Option<&mut {inner}>")
-                    }
-                })),
+                    Some((*nullability, pointee, *inner_nullability))
+                }
                 _ => None,
             },
             _ => None,
@@ -3925,13 +3891,21 @@ impl Ty {
                     write!(f, "Option<&CStr>")
                 }
             }
-            _ => {
-                if let Some(fmt) = self.fmt_out_pointer(true) {
-                    write!(f, "{fmt}")
+            _ if let Some((nullability, pointee, inner_nullability)) = self.out_pointer_data() => {
+                let inner = FormatterFn(|f| {
+                    if inner_nullability == Nullability::NonNull {
+                        write!(f, "Retained<{}>", pointee.behind_pointer(true))
+                    } else {
+                        write!(f, "Option<Retained<{}>>", pointee.behind_pointer(true))
+                    }
+                });
+                if nullability == Nullability::NonNull {
+                    write!(f, "&mut {inner}")
                 } else {
-                    write!(f, "{}", self.fn_argument(true))
+                    write!(f, "Option<&mut {inner}>")
                 }
             }
+            _ => write!(f, "{}", self.fn_argument(true)),
         })
     }
 
