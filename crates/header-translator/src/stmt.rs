@@ -3347,7 +3347,6 @@ impl Stmt {
                     arguments,
                     result_type,
                     body: Some(_),
-                    returns_retained,
                     ..
                 } => {
                     write!(f, "// TODO: ")?;
@@ -3356,8 +3355,7 @@ impl Stmt {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument(true))?;
                     }
-                    let (ret, _) = result_type.fn_return(*returns_retained);
-                    writeln!(f, "){ret};")?;
+                    writeln!(f, "){};", result_type.fn_return())?;
                 }
                 Self::FnDecl {
                     id,
@@ -3383,35 +3381,6 @@ impl Stmt {
                         return Ok(());
                     }
 
-                    let (ret, return_converter) = result_type.fn_return(*returns_retained);
-
-                    let raw_fn_decl = |f: &mut fmt::Formatter<'_>, vis| {
-                        if c_name != link_name {
-                            if id.library_name() == "Dispatch" {
-                                // HACK: Currently only used in libdispatch on Apple targets.
-                                writeln!(f, "#[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]")?;
-                            } else if link_name.contains("$LEGACYMAC") {
-                                // HACK: Security needs this only on macOS.
-                                writeln!(
-                                    f,
-                                    "#[cfg_attr(target_os = \"macos\", link_name = {link_name:?})]"
-                                )?;
-                            } else {
-                                writeln!(f, "#[link_name = {link_name:?}]")?;
-                            }
-                        }
-
-                        // Wrappers have normal Rust ABI to unclutter docs.
-                        write!(f, "{vis}fn {c_name}(")?;
-                        for (param, arg_ty) in arguments {
-                            let param = handle_reserved(&crate::to_snake_case(param));
-                            write!(f, "{param}: {},", arg_ty.fn_argument(false))?;
-                        }
-                        writeln!(f, "){ret};")?;
-
-                        Ok(())
-                    };
-
                     let vis = if id.name.starts_with("_") {
                         "pub(crate)"
                     } else {
@@ -3427,6 +3396,7 @@ impl Stmt {
                     writeln!(f, "#[inline]")?;
                     let unsafe_ = if *safe { "" } else { "unsafe " };
                     let fn_name = handle_reserved(&id.name);
+                    // Wrappers have normal Rust ABI to unclutter docs.
                     write!(f, "{vis} {unsafe_}fn {fn_name}(")?;
 
                     // Emit self-argument first.
@@ -3451,56 +3421,64 @@ impl Stmt {
                         }
 
                         let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: ")?;
-
-                        if let Some((converted_ty, _, _)) = arg_ty.fn_argument_converter() {
-                            write!(f, "{converted_ty}")?;
-                        } else {
-                            write!(f, "{}", arg_ty.fn_argument(true))?;
-                        }
-
-                        write!(f, ",")?;
+                        write!(f, "{param}: {},", arg_ty.fn_argument_converted())?;
                     }
 
-                    write!(f, ")")?;
-                    if let Some((ty, _, _)) = &return_converter {
-                        write!(f, "{ty}")?;
-                    } else {
-                        write!(f, "{ret}")?;
-                    }
-                    writeln!(f, " {{")?;
+                    write!(
+                        f,
+                        "){} {{",
+                        result_type.fn_return_converted(*returns_retained)
+                    )?;
 
                     // Emit raw
                     writeln!(f, "    {}{{", abi.extern_inner())?;
-                    raw_fn_decl(f, "")?;
+
+                    if c_name != link_name {
+                        if id.library_name() == "Dispatch" {
+                            // HACK: Currently only used in libdispatch on Apple targets.
+                            writeln!(
+                                f,
+                                "#[cfg_attr(target_vendor = \"apple\", link_name = {link_name:?})]"
+                            )?;
+                        } else if link_name.contains("$LEGACYMAC") {
+                            // HACK: Security needs this only on macOS.
+                            writeln!(
+                                f,
+                                "#[cfg_attr(target_os = \"macos\", link_name = {link_name:?})]"
+                            )?;
+                        } else {
+                            writeln!(f, "#[link_name = {link_name:?}]")?;
+                        }
+                    }
+
+                    write!(f, "fn {c_name}(")?;
+                    for (param, arg_ty) in arguments {
+                        let param = handle_reserved(&crate::to_snake_case(param));
+                        write!(f, "{param}: {},", arg_ty.fn_argument(false))?;
+                    }
+                    writeln!(f, "){};", result_type.fn_return())?;
+
                     writeln!(f, "    }}")?;
 
                     // Call raw
-                    write!(f, "    ")?;
-                    if let Some((_, converter_start, _)) = &return_converter {
-                        write!(f, "{converter_start}")?;
-                    }
-                    write!(f, "unsafe {{ {c_name}(")?;
-                    for (i, (param, ty)) in arguments.iter().enumerate() {
-                        let param = if arg_is_self.unwrap_or(usize::MAX) == i {
-                            "self".to_string()
-                        } else {
-                            handle_reserved(&crate::to_snake_case(param))
-                        };
-                        if let Some((_, converter_start, converter_end)) =
-                            ty.fn_argument_converter()
-                        {
-                            write!(f, "{converter_start}{param}{converter_end}")?;
-                        } else {
-                            write!(f, "{param}")?;
+                    let fn_call = FormatterFn(|f| {
+                        write!(f, "unsafe {{ {c_name}(")?;
+                        for (i, (param, ty)) in arguments.iter().enumerate() {
+                            let param = if arg_is_self.unwrap_or(usize::MAX) == i {
+                                "self".to_string()
+                            } else {
+                                handle_reserved(&crate::to_snake_case(param))
+                            };
+                            write!(f, "{},", ty.fn_argument_converter(param))?;
                         }
-                        write!(f, ",")?;
-                    }
-                    write!(f, ") }}")?;
-                    if let Some((_, _, converter_end)) = &return_converter {
-                        write!(f, "{converter_end}")?;
-                    }
-                    writeln!(f)?;
+                        write!(f, ") }}")?;
+                        Ok(())
+                    });
+                    writeln!(
+                        f,
+                        "    {}",
+                        result_type.fn_return_converter(*returns_retained, fn_call)
+                    )?;
 
                     writeln!(f, "}}")?;
                 }
@@ -3513,7 +3491,7 @@ impl Stmt {
                     abi,
                     documentation,
                 } => {
-                    let (ret, _) = result_type.fn_return(false);
+                    let ret = result_type.fn_return();
 
                     // Only emit for base types, not for mutable subclasses,
                     // as it's unclear whether it's safe to downcast to

@@ -135,9 +135,6 @@ fn update_module(
                     }
                 }
 
-                let omit_memory_management_words =
-                    result_type.fn_return(*returns_retained).1.is_some();
-
                 let name = if id.name != *c_name {
                     // Has been renamed already
                     id.name.clone()
@@ -146,7 +143,7 @@ fn update_module(
                         c_name,
                         &parent_item.id().name,
                         arg_is_self.is_some(),
-                        omit_memory_management_words,
+                        result_type.omit_memory_management_words(),
                     )
                 };
 

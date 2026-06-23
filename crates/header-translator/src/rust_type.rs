@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::VecDeque;
 use std::fmt::Debug;
 use std::{fmt, fmt::Display, iter, mem, str::FromStr, sync::LazyLock};
@@ -3360,6 +3359,20 @@ impl Ty {
         })
     }
 
+    fn retain_wrapper(&self) -> Option<RetainWrapper> {
+        if self.is_objc_type() && !self.is_static_object() {
+            Some(RetainWrapper::Retained)
+        } else if self.is_cf_type() {
+            Some(RetainWrapper::CFRetained)
+        } else if self.is_dispatch_type() {
+            Some(RetainWrapper::DispatchRetained)
+        } else if self.is_network_type() {
+            Some(RetainWrapper::NWRetained)
+        } else {
+            None
+        }
+    }
+
     pub(crate) fn fn_return_required_items(&self) -> impl Iterator<Item = ItemTree> {
         let mut items: Vec<_> = self.required_items().collect();
         match self {
@@ -3367,102 +3380,30 @@ impl Ty {
                 bounds: PointerBounds::Single,
                 pointee,
                 ..
-            } if pointee.is_cf_type() => {
-                items.push(ItemTree::cf("CFRetained"));
-                items.push(ItemTree::core_ptr_nonnull());
-            }
-            Self::Pointer {
-                bounds: PointerBounds::Single,
-                pointee,
-                ..
-            } if pointee.is_objc_type() && !pointee.is_static_object() => {
-                items.push(ItemTree::objc("Retained"));
-            }
-            Self::Pointer {
-                bounds: PointerBounds::Single,
-                pointee,
-                ..
-            } if pointee.is_dispatch_type() => {
-                items.push(ItemTree::dispatch("DispatchRetained"));
-            }
-            Self::Pointer {
-                bounds: PointerBounds::Single,
-                pointee,
-                ..
-            } if pointee.is_network_type() => {
-                items.push(ItemTree::network("NWRetained"));
+            } if let Some(wrapper) = pointee.retain_wrapper() => {
+                items.push(wrapper.item());
+                if pointee.is_cf_type() {
+                    items.push(ItemTree::core_ptr_nonnull());
+                }
             }
             _ => {}
         }
         items.into_iter()
     }
 
-    pub(crate) fn fn_return(
-        &self,
-        returns_retained: bool,
-    ) -> (
-        impl fmt::Display + '_,
-        Option<(
-            impl fmt::Display + '_,
-            impl fmt::Display + '_,
-            impl fmt::Display + '_,
-        )>,
-    ) {
-        let start = "let ret = ";
-        // SAFETY: The function is marked with the correct retain semantics,
-        // otherwise it'd be invalid to use from Obj-C with ARC and Swift too.
-        let end_cf = |nullability| {
-            match (nullability, returns_retained) {
-                // TODO: Avoid NULL check, and let CFRetain do that instead?
-                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::from_raw(ret) }",
-                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::retain(ret) }",
-                // CFRetain aborts on NULL pointers, so there's not really a more
-                // efficient way to do this (except if we were to use e.g.
-                // `CGColorRetain`/`CVOpenGLBufferRetain`/..., but that's a huge
-                // hassle).
-                (_, true) => ";\nret.map(|ret| unsafe { CFRetained::from_raw(ret) })",
-                (_, false) => ";\nret.map(|ret| unsafe { CFRetained::retain(ret) })",
-            }
-        };
-        // HACK to support CFArray<T>.
-        let end_cf_with_cast = |nullability| {
-            match (nullability, returns_retained) {
-                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::from_raw(ret.cast()) }",
-                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CFRetained::retain(ret.cast()) }",
-                (_, true) => ";\nret.map(|ret| unsafe { CFRetained::from_raw(ret.cast()) })",
-                (_, false) => ";\nret.map(|ret| unsafe { CFRetained::retain(ret.cast()) })",
-            }
-        };
-        let end_dispatch = |nullability| {
-            match (nullability, returns_retained) {
-                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { DispatchRetained::from_raw(ret) }",
-                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { DispatchRetained::retain(ret) }",
-                (_, true) => ";\nret.map(|ret| unsafe { DispatchRetained::from_raw(ret) })",
-                (_, false) => ";\nret.map(|ret| unsafe { DispatchRetained::retain(ret) })",
-            }
-        };
-        let end_network = |nullability| {
-            match (nullability, returns_retained) {
-                (Nullability::NonNull, true) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { NWRetained::from_raw(ret) }",
-                (Nullability::NonNull, false) => ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { NWRetained::retain(ret) }",
-                (_, true) => ";\nret.map(|ret| unsafe { NWRetained::from_raw(ret) })",
-                (_, false) => ";\nret.map(|ret| unsafe { NWRetained::retain(ret) })",
-            }
-        };
-        let end_objc = |nullability| {
-            match (nullability, returns_retained) {
-                (Nullability::NonNull, true) => {
-                    ";\nunsafe { Retained::from_raw(ret) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
-                }
-                (Nullability::NonNull, false) => {
-                    ";\nunsafe { Retained::retain_autoreleased(ret) }.expect(\"function was marked as returning non-null, but actually returned NULL\")"
-                }
-                (_, true) => ";\nunsafe { Retained::from_raw(ret) }",
-                (_, false) => ";\nunsafe { Retained::retain_autoreleased(ret) }",
-            }
-        };
+    pub(crate) fn omit_memory_management_words(&self) -> bool {
+        matches!(
+            self,
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_object_like()
+        )
+    }
 
-        let ret = FormatterFn(move |f| match self {
+    pub(crate) fn fn_return(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
             // Don't output anything here.
             Self::Primitive(Primitive::Void) => Ok(()),
             Self::Pointer {
@@ -3470,7 +3411,7 @@ impl Ty {
                 read,
                 written,
                 lifetime: _,
-                bounds: _,
+                bounds,
                 pointee,
             } => {
                 // Ignore nullability, always emit a nullable pointer. We will
@@ -3478,136 +3419,195 @@ impl Ty {
                 //
                 // This is required because nullability attributes in Clang
                 // are a hint, and not an ABI stable promise.
-                if pointee.is_static_object() {
-                    write!(f, "-> Option<&'static {}>", pointee.behind_pointer(false))
-                } else if pointee.is_cf_type()
-                    || pointee.is_dispatch_type()
-                    || pointee.is_network_type()
-                {
-                    write!(f, "-> Option<NonNull<{}>>", pointee.behind_pointer(false))
-                } else if pointee.is_objc_type() {
-                    write!(f, "-> *mut {}", pointee.behind_pointer(false))
-                } else {
-                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer(false));
-                    if *nullability == Nullability::NonNull {
-                        write!(f, "-> Option<NonNull<{pointee}>>",)
-                    } else if *written {
-                        write!(f, " -> *mut {pointee}")
-                    } else {
-                        write!(f, " -> *const {pointee}",)
+                if *bounds == PointerBounds::Single {
+                    if pointee.is_static_object() {
+                        return write!(f, "-> Option<&'static {}>", pointee.behind_pointer(false));
+                    } else if let Some(wrapper) = pointee.retain_wrapper() {
+                        if wrapper == RetainWrapper::Retained {
+                            return write!(f, "-> *mut {}", pointee.behind_pointer(false));
+                        } else {
+                            return write!(
+                                f,
+                                "-> Option<NonNull<{}>>",
+                                pointee.behind_pointer(false)
+                            );
+                        }
                     }
+                }
+
+                let pointee = maybemaybeuninit(*read, pointee.behind_pointer(false));
+                if *nullability == Nullability::NonNull {
+                    write!(f, "-> Option<NonNull<{pointee}>>",)
+                } else if *written {
+                    write!(f, " -> *mut {pointee}")
+                } else {
+                    write!(f, " -> *const {pointee}",)
                 }
             }
             _ => write!(f, " -> {}", self.plain(false)),
-        });
-        let converter = match self {
-            _ if self.is_objc_bool() => Some((" -> bool".to_string(), "", ".as_bool()")),
+        })
+    }
+
+    pub(crate) fn fn_return_converted(&self, returns_retained: bool) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            _ if self.is_objc_bool() => write!(f, " -> bool"),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                Some((" -> bool".to_string(), start, ";\nret != 0"))
+                write!(f, " -> bool")
+            }
+            Self::Pointer {
+                // Null-check only necessary here
+                nullability: Nullability::NonNull,
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if pointee.is_static_object() => {
+                write!(f, " -> &'static {}", pointee.behind_pointer(true))
             }
             Self::Pointer {
                 nullability,
-                read,
-                written,
-                lifetime,
-                bounds,
+                bounds: PointerBounds::Single,
                 pointee,
-            } => {
-                match lifetime {
-                    Lifetime::Autoreleasing if !returns_retained => {}
-                    Lifetime::Strong if returns_retained => {}
-                    Lifetime::Unspecified => {}
-                    _ => error!(?lifetime, returns_retained, "invalid lifetime"),
-                }
-
-                if pointee.is_static_object() && *bounds == PointerBounds::Single {
-                    if *nullability == Nullability::NonNull {
-                        let res = format!(" -> &'static {}", pointee.behind_pointer(true));
-                        Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
-                    } else {
-                        // No conversion necessary
-                        None
-                    }
-                } else if pointee.is_cf_type() && *bounds == PointerBounds::Single {
-                    let res = if *nullability == Nullability::NonNull {
-                        format!(" -> CFRetained<{}>", pointee.behind_pointer(true))
-                    } else {
-                        format!(" -> Option<CFRetained<{}>>", pointee.behind_pointer(true))
-                    };
-                    if matches!(&**pointee, Self::Pointee(PointeeTy::CFTypeDef { generics, .. }) if generics
-                            .iter()
-                            .any(|generic| matches!(generic, PointeeTy::GenericParam { .. })))
-                    {
-                        Some((res, start, end_cf_with_cast(*nullability)))
-                    } else {
-                        Some((res, start, end_cf(*nullability)))
-                    }
-                } else if pointee.is_dispatch_type() && *bounds == PointerBounds::Single {
-                    let res = if *nullability == Nullability::NonNull {
-                        format!(" -> DispatchRetained<{}>", pointee.behind_pointer(true))
-                    } else {
-                        format!(
-                            " -> Option<DispatchRetained<{}>>",
-                            pointee.behind_pointer(true)
-                        )
-                    };
-                    Some((res, start, end_dispatch(*nullability)))
-                } else if pointee.is_network_type() && *bounds == PointerBounds::Single {
-                    let res = if *nullability == Nullability::NonNull {
-                        format!(" -> NWRetained<{}>", pointee.behind_pointer(true))
-                    } else {
-                        format!(" -> Option<NWRetained<{}>>", pointee.behind_pointer(true))
-                    };
-                    Some((res, start, end_network(*nullability)))
-                } else if pointee.is_objc_type()
-                    && !pointee.is_static_object()
-                    && *bounds == PointerBounds::Single
-                {
-                    let res = if *nullability == Nullability::NonNull {
-                        format!(" -> Retained<{}>", pointee.behind_pointer(true))
-                    } else {
-                        format!(" -> Option<Retained<{}>>", pointee.behind_pointer(true))
-                    };
-                    Some((res, start, end_objc(*nullability)))
-                } else if pointee.is_pointee_cstr()
-                    && *bounds == PointerBounds::NullTerminated
-                    && !returns_retained
-                {
-                    // TODO: Return `Box<CStr, std::alloc::System>` when `returns_retained`.
-
-                    // TODO: Use `'static` here when specified.
-                    if *nullability == Nullability::NonNull {
-                        Some((" -> &CStr".to_string(), start, ";\nlet ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");\nunsafe { CStr::from_ptr(ret.as_ptr()) }"))
-                    } else {
-                        Some((
-                            " -> Option<&CStr>".to_string(),
-                            start,
-                            if *written {
-                                ";\nNonNull::new(ret).map(|ret| unsafe { CStr::from_ptr(ret.as_ptr()) })"
-                            } else {
-                                ";\nNonNull::new(ret.cast_mut()).map(|ret| unsafe { CStr::from_ptr(ret.as_ptr()) })"
-                            },
-                        ))
-                    }
-                } else if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
-                    || matches!(&**pointee, Self::Pointer { pointee, .. }
-                        if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
+                ..
+            } if let Some(wrapper) = pointee.retain_wrapper() => {
+                if *nullability == Nullability::NonNull {
+                    write!(
+                        f,
+                        " -> {}<{}>",
+                        wrapper.name(),
+                        pointee.behind_pointer(true)
                     )
-                {
-                    Some((format!(" -> {}", self.plain(true)), "", ".cast()"))
                 } else {
-                    let pointee = maybemaybeuninit(*read, pointee.behind_pointer(true));
-                    if *nullability == Nullability::NonNull {
-                        let res = format!(" -> NonNull<{pointee}>");
-                        Some((res, start, ";\nret.expect(\"function was marked as returning non-null, but actually returned NULL\")"))
-                    } else {
-                        None
-                    }
+                    write!(
+                        f,
+                        " -> Option<{}<{}>>",
+                        wrapper.name(),
+                        pointee.behind_pointer(true)
+                    )
                 }
             }
-            _ => None,
-        };
-        (ret, converter)
+            Self::Pointer {
+                nullability,
+                bounds: PointerBounds::NullTerminated,
+                pointee,
+                ..
+            } if pointee.is_pointee_cstr() && !returns_retained => {
+                // TODO: Return `Box<CStr, std::alloc::System>` when `returns_retained`.
+
+                // TODO: Use `'static` here when specified.
+                if *nullability == Nullability::NonNull {
+                    write!(f, " -> &CStr")
+                } else {
+                    write!(f, " -> Option<&CStr>")
+                }
+            }
+            Self::Pointer { pointee, .. }
+                if pointee.is_generic_param()
+                    || matches!(&**pointee, Self::Pointer { pointee, .. } if pointee.is_generic_param()) =>
+            {
+                write!(f, " -> {}", self.plain(true))
+            }
+            Self::Pointer {
+                nullability: Nullability::NonNull,
+                read,
+                pointee,
+                ..
+            } => {
+                let pointee = maybemaybeuninit(*read, pointee.behind_pointer(true));
+                write!(f, " -> NonNull<{pointee}>")
+            }
+            _ => write!(f, "{}", self.fn_return()),
+        })
+    }
+
+    pub(crate) fn fn_return_converter<'s: 'r, 'a: 'r, 'r>(
+        &'s self,
+        returns_retained: bool,
+        fn_call: impl fmt::Display + 'a,
+    ) -> impl fmt::Display + 'r {
+        FormatterFn(move |f| {
+            match self {
+                _ if self.is_objc_bool() => write!(f, "{fn_call}.as_bool()"),
+                Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
+                    write!(f, "let ret = {fn_call};\nret != 0")
+                }
+                Self::Pointer {
+                    // Null-check only necessary here
+                    nullability: Nullability::NonNull,
+                    bounds: PointerBounds::Single,
+                    pointee,
+                    ..
+                } if pointee.is_static_object() => {
+                    write!(f, "let ret = {fn_call};")?;
+                    write!(f, "ret.expect(\"function was marked as returning non-null, but actually returned NULL\")")?;
+                    Ok(())
+                }
+                Self::Pointer {
+                    nullability,
+                    lifetime,
+                    bounds: PointerBounds::Single,
+                    pointee,
+                    ..
+                } if let Some(wrapper) = pointee.retain_wrapper() => {
+                    match lifetime {
+                        Lifetime::Autoreleasing if !returns_retained => {}
+                        Lifetime::Strong if returns_retained => {}
+                        Lifetime::Unspecified => {}
+                        _ => error!(?lifetime, returns_retained, "invalid lifetime"),
+                    }
+
+                    let needs_cast = matches!(
+                        &**pointee,
+                        Self::Pointee(PointeeTy::CFTypeDef { generics, .. })
+                            if generics.iter().any(|generic| matches!(generic, PointeeTy::GenericParam { .. })
+                        )
+                    );
+
+                    write!(
+                        f,
+                        "{}",
+                        wrapper.fn_return(*nullability, returns_retained, needs_cast, &fn_call)
+                    )?;
+
+                    Ok(())
+                }
+                Self::Pointer {
+                    nullability,
+                    written,
+                    bounds: PointerBounds::NullTerminated,
+                    pointee,
+                    ..
+                } if pointee.is_pointee_cstr() && !returns_retained => {
+                    writeln!(f, "let ret = {fn_call};")?;
+
+                    if *nullability == Nullability::NonNull {
+                        writeln!(f, "let ret = ret.expect(\"function was marked as returning non-null, but actually returned NULL\");")?;
+                        writeln!(f, "unsafe {{ CStr::from_ptr(ret.as_ptr()) }}")?;
+                    } else {
+                        if *written {
+                            writeln!(f, "NonNull::new(ret).map(|ret| unsafe {{ CStr::from_ptr(ret.as_ptr()) }})")?;
+                        } else {
+                            writeln!(f, "NonNull::new(ret.cast_mut()).map(|ret| unsafe {{ CStr::from_ptr(ret.as_ptr()) }})")?;
+                        }
+                    }
+                    Ok(())
+                }
+                Self::Pointer { pointee, .. }
+                    if pointee.is_generic_param()
+                        || matches!(&**pointee, Self::Pointer { pointee, .. } if pointee.is_generic_param()) =>
+                {
+                    write!(f, "{fn_call}.cast()")
+                }
+                Self::Pointer {
+                    nullability: Nullability::NonNull,
+                    ..
+                } => {
+                    writeln!(f, "let ret = {fn_call};")?;
+                    write!(f, "ret.expect(\"function was marked as returning non-null, but actually returned NULL\")")?;
+                    Ok(())
+                }
+                _ => write!(f, "{fn_call}"),
+            }
+        })
     }
 
     pub(crate) fn var(&self) -> impl fmt::Display + '_ {
@@ -3751,43 +3751,58 @@ impl Ty {
         })
     }
 
-    pub(crate) fn fn_argument_converter(
-        &self,
-    ) -> Option<(
-        impl fmt::Display + '_,
-        impl fmt::Display + '_,
-        impl fmt::Display + '_,
-    )> {
-        match self {
-            _ if self.is_objc_bool() => Some((Cow::Borrowed("bool"), "Bool::new(", ")")),
+    pub(crate) fn fn_argument_converted(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            _ if self.is_objc_bool() => write!(f, "bool"),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                Some((Cow::Borrowed("bool"), "", " as _"))
+                write!(f, "bool")
             }
             Self::Pointer {
                 nullability,
                 read: _,
                 // Map both `const` and non-`const` to `&CStr`.
+                written: _,
+                lifetime: Lifetime::Unspecified, // TODO
+                bounds: PointerBounds::NullTerminated,
+                pointee,
+            } if pointee.is_pointee_cstr() => {
+                if *nullability == Nullability::NonNull {
+                    write!(f, "&CStr")
+                } else {
+                    write!(f, "Option<&CStr>")
+                }
+            }
+            // TODO: Support out / autoreleasing pointers?
+            _ => write!(f, "{}", self.fn_argument(true)),
+        })
+    }
+
+    pub(crate) fn fn_argument_converter<'s: 'r, 'a: 'r, 'r>(
+        &'s self,
+        arg: impl fmt::Display + 'a,
+    ) -> impl fmt::Display + 'r {
+        FormatterFn(move |f| match self {
+            _ if self.is_objc_bool() => write!(f, "Bool::new({arg})"),
+            Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
+                write!(f, "{arg} as _")
+            }
+            Self::Pointer {
+                nullability,
+                read: _,
                 written,
                 lifetime: Lifetime::Unspecified, // TODO
                 bounds: PointerBounds::NullTerminated,
                 pointee,
             } if pointee.is_pointee_cstr() => {
                 if *nullability == Nullability::NonNull {
-                    Some((
-                        Cow::Borrowed("&CStr"),
-                        "NonNull::new(",
-                        ".as_ptr().cast_mut()).unwrap()",
-                    ))
+                    write!(f, "NonNull::new({arg}.as_ptr().cast_mut()).unwrap()")
+                } else if *written {
+                    write!(f, "{arg}.map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut)")
                 } else {
-                    Some((
-                        Cow::Borrowed("Option<&CStr>"),
-                        "",
-                        if *written {
-                            ".map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut)"
-                        } else {
-                            ".map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null)"
-                        },
-                    ))
+                    write!(
+                        f,
+                        "{arg}.map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null)"
+                    )
                 }
             }
             // HACK to support CFArray<T>.
@@ -3802,18 +3817,17 @@ impl Ty {
                         if matches!(&**pointee, Self::Pointee(PointeeTy::GenericParam { .. }))
                     )
                 {
-                    let true_type = Cow::Owned(self.fn_argument(true).to_string());
                     if *nullability == Nullability::NonNull {
                         if *bounds == PointerBounds::Single {
-                            Some((true_type, "core::mem::transmute(", ")"))
+                            write!(f, "core::mem::transmute({arg})")
                         } else {
-                            Some((true_type, "", ".map(|x| x.cast())"))
+                            write!(f, "{arg}.map(|x| x.cast())")
                         }
                     } else {
                         if *bounds == PointerBounds::Single {
-                            Some((true_type, "", ".map(|x| core::mem::transmute(x))"))
+                            write!(f, "{arg}.map(|x| core::mem::transmute(x))")
                         } else {
-                            Some((true_type, "", ".cast()"))
+                            write!(f, "{arg}.cast()")
                         }
                     }
                 } else if let Self::Pointee(PointeeTy::CFTypeDef { generics, .. }) = &**pointee {
@@ -3821,22 +3835,21 @@ impl Ty {
                         .iter()
                         .any(|generic| matches!(generic, PointeeTy::GenericParam { .. }))
                     {
-                        let true_type = Cow::Owned(self.fn_argument(true).to_string());
                         if *nullability == Nullability::NonNull {
-                            Some((true_type, "", ".as_opaque()"))
+                            write!(f, "{arg}.as_opaque()")
                         } else {
-                            Some((true_type, "", ".map(|obj| obj.as_opaque())"))
+                            write!(f, "{arg}.map(|obj| obj.as_opaque())")
                         }
                     } else {
-                        None
+                        write!(f, "{arg}")
                     }
                 } else {
-                    None
+                    write!(f, "{arg}")
                 }
             }
             // TODO: Support out / autoreleasing pointers?
-            _ => None,
-        }
+            _ => write!(f, "{arg}"),
+        })
     }
 
     fn fmt_out_pointer(&self, allow_generic_param: bool) -> Option<impl fmt::Display + '_> {
@@ -4285,6 +4298,10 @@ impl Ty {
 
     pub(crate) fn is_record(&self, s: &str) -> bool {
         matches!(self, Self::Struct { id, .. } | Self::Union { id, .. } if id.name == s)
+    }
+
+    fn is_generic_param(&self) -> bool {
+        matches!(self, Self::Pointee(PointeeTy::GenericParam { .. }))
     }
 
     pub(crate) fn is_enum_through_typedef(&self) -> bool {
@@ -4844,6 +4861,85 @@ fn separate_with_comma_and<T: Display>(items: impl IntoIterator<Item = T> + Clon
 
         Ok(())
     })
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+enum RetainWrapper {
+    Retained,
+    CFRetained,
+    DispatchRetained,
+    NWRetained,
+}
+
+impl RetainWrapper {
+    fn name(self) -> &'static str {
+        match self {
+            Self::Retained => "Retained",
+            Self::CFRetained => "CFRetained",
+            Self::DispatchRetained => "DispatchRetained",
+            Self::NWRetained => "NWRetained",
+        }
+    }
+
+    fn item(self) -> ItemTree {
+        match self {
+            Self::Retained => ItemTree::objc("Retained"),
+            Self::CFRetained => ItemTree::cf("CFRetained"),
+            Self::DispatchRetained => ItemTree::dispatch("DispatchRetained"),
+            Self::NWRetained => ItemTree::network("NWRetained"),
+        }
+    }
+
+    fn fn_return<'a>(
+        self,
+        nullability: Nullability,
+        returns_retained: bool,
+        needs_cast: bool,
+        fn_call: impl Display + 'a,
+    ) -> impl Display + 'a {
+        FormatterFn(move |f| {
+            writeln!(f, "let ret = {fn_call};")?;
+
+            let cast = if needs_cast { ".cast()" } else { "" };
+
+            let expect = ".expect(\"function was marked as returning non-null, but actually returned NULL\")";
+
+            // SAFETY: The function is marked with the correct retain
+            // semantics, otherwise it'd be invalid to use from Swift and
+            // Obj-C with ARC too.
+            if self == Self::Retained {
+                if returns_retained {
+                    write!(f, "unsafe {{ Retained::from_raw(ret{cast}) }}")?;
+                } else {
+                    write!(f, "unsafe {{ Retained::retain_autoreleased(ret{cast}) }}")?;
+                }
+                if nullability == Nullability::NonNull {
+                    write!(f, "{expect}")?;
+                }
+            } else {
+                if nullability == Nullability::NonNull {
+                    // TODO: Avoid NULL check, and let CFRetain do that instead?
+                    writeln!(f, "let ret = ret{expect};")?;
+                } else {
+                    write!(f, "ret.map(|ret| ")?;
+                }
+                // CFRetain aborts on NULL pointers, so there's not really a more
+                // efficient way to do this (except if we were to use e.g.
+                // `CGColorRetain`/`CVOpenGLBufferRetain`/..., but that's a huge
+                // hassle).
+                if returns_retained {
+                    write!(f, "unsafe {{ {}::from_raw(ret{cast}) }}", self.name())?;
+                } else {
+                    write!(f, "unsafe {{ {}::retain(ret{cast}) }}", self.name())?;
+                }
+                if nullability != Nullability::NonNull {
+                    write!(f, ")")?;
+                }
+            }
+
+            Ok(())
+        })
+    }
 }
 
 #[cfg(test)]
