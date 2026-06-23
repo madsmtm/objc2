@@ -152,13 +152,11 @@ impl AttributeParser<'_, '_> {
             Some(Nullability::NonNull)
         } else if self.strip("_Null_unspecified", position) {
             Some(Nullability::Unspecified)
+        } else if self.strip("_Nullable_result", position) {
+            Some(Nullability::NullableResult)
         } else {
             None
         }
-    }
-
-    fn nullable_result(&mut self, position: ParsePosition) -> bool {
-        self.strip("_Nullable_result", position)
     }
 
     fn sending(&mut self, position: ParsePosition) -> bool {
@@ -1884,9 +1882,6 @@ impl Ty {
                 let is_const = get_is_const(parser.is_const(ParsePosition::Suffix));
                 lifetime.update(parser.lifetime(ParsePosition::Suffix));
 
-                // TODO: Use _Nullable_result
-                let _nullable_result = parser.nullable_result(ParsePosition::Suffix);
-
                 let nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
                 } else {
@@ -2125,9 +2120,6 @@ impl Ty {
 
                 let is_const = parser.is_const(ParsePosition::Suffix) || ty.is_const_qualified();
                 let mut lifetime = parser.lifetime(ParsePosition::Suffix);
-
-                // TODO: Use _Nullable_result
-                let _nullable_result = parser.nullable_result(ParsePosition::Suffix);
 
                 let mut nullability = if let Some(nullability) = unexposed_nullability {
                     nullability
@@ -2844,7 +2836,10 @@ impl Ty {
                 pointee,
                 ..
             } => {
-                let reason = if *nullability == Nullability::Nullable {
+                let reason = if matches!(
+                    *nullability,
+                    Nullability::Nullable | Nullability::NullableResult
+                ) {
                     "must be a valid pointer or null"
                 } else {
                     "must be a valid pointer"
@@ -3246,14 +3241,14 @@ impl Ty {
             Self::Primitive(_) => true,
             Self::Simd { .. } => true,
             Self::Sel {
-                nullability: Nullability::Nullable,
+                nullability: Nullability::Nullable | Nullability::NullableResult,
             } => true,
             Self::Pointer {
                 // Conservative, we could add `Nullability::Unspecified` here
                 // too, but not emitting a `Default` impl for those makes it
                 // less of a breaking change if we change the fields to be
                 // `NonNull` in the future.
-                nullability: Nullability::Nullable,
+                nullability: Nullability::Nullable | Nullability::NullableResult,
                 pointee,
                 ..
                 // TODO: Return `true` here always once MSRV is 1.88, that's
@@ -3461,7 +3456,8 @@ impl Ty {
         // would always be present.
         let display_closure: Box<dyn Fn(&mut fmt::Formatter<'_>) -> _> = match self {
             Self::Pointer {
-                nullability: Nullability::Nullable | Nullability::Unspecified,
+                nullability:
+                    Nullability::Nullable | Nullability::NullableResult | Nullability::Unspecified,
                 lifetime: Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
@@ -3478,7 +3474,8 @@ impl Ty {
                 })
             }
             Self::Pointer {
-                nullability: Nullability::Nullable | Nullability::Unspecified,
+                nullability:
+                    Nullability::Nullable | Nullability::NullableResult | Nullability::Unspecified,
                 lifetime: Lifetime::Unspecified,
                 bounds: PointerBounds::Single,
                 pointee,
@@ -3843,7 +3840,9 @@ impl Ty {
                     // `NSExtensionJavaScriptPreprocessingResultsKey` is
                     // mapped as `String`, not `String!`.
                     Nullability::Unspecified => write!(f, "&'static {pointee}"),
-                    Nullability::Nullable => write!(f, "Option<&'static {pointee}>"),
+                    Nullability::Nullable | Nullability::NullableResult => {
+                        write!(f, "Option<&'static {pointee}>")
+                    }
                 }
             }
             _ => write!(f, "{}", self.behind_pointer(allow_generic_param)),

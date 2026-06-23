@@ -322,7 +322,7 @@ dependencies = [
 [[package]]
 name = "clang"
 version = "2.0.0"
-source = "git+https://github.com/madsmtm/clang-rs.git?branch=objc2#62c495ca6050bd93d654f330c04a71368ab67d47"
+source = "git+https://github.com/madsmtm/clang-rs.git?branch=objc2#89eb928e616c411395cf8eaf682d2b586720a198"
 dependencies = [
  "clang-sys",
  "libc",

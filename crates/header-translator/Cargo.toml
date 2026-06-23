@@ -10,6 +10,8 @@ license.workspace = true
 # https://github.com/KyleMayes/clang-rs/pull/58
 # https://github.com/KyleMayes/clang-rs/pull/60
 # https://github.com/KyleMayes/clang-rs/pull/62
+# + _Nullable_result
+# + TypeKind::NotImplemented
 clang = { git = "https://github.com/madsmtm/clang-rs.git", branch = "objc2", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
 toml_edit = "0.25.11"
