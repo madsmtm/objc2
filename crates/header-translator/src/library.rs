@@ -510,6 +510,8 @@ see that for related crates.", self.data.krate)?;
             writeln!(f, "#![allow(clippy::too_many_arguments)]")?;
             // We have no control over how complex a type is.
             writeln!(f, "#![allow(clippy::type_complexity)]")?;
+            // Some new methods use out parameters (currently).
+            writeln!(f, "#![allow(clippy::new_ret_no_self)]")?;
             // Apple's naming scheme allows this.
             writeln!(f, "#![allow(clippy::upper_case_acronyms)]")?;
             // Headers often use `x << 0` for clarity.
