@@ -2733,7 +2733,9 @@ impl Ty {
 
     pub(crate) fn safety_in_method_argument(&self, arg_name: &str) -> SafetyProperty {
         // Out pointers
-        if let Some((nullability, pointee, inner_nullability)) = self.out_pointer_data() {
+        if let Some((nullability, pointee, inner_nullability, Lifetime::Autoreleasing)) =
+            self.out_pointer_data()
+        {
             let safety = pointee.safety();
 
             // Out pointers are both inputs and outputs, and thus they
@@ -2744,6 +2746,8 @@ impl Ty {
             // `SafetyProperty::Unknown` in arguments?
             let mut safety = safety.in_argument.merge(safety.in_return);
 
+            // TODO: Remove the `inner_nullability` check, it's probably not
+            // necessary? Basically all out pointers allow a value of `None`.
             if nullability == Nullability::Unspecified
                 || inner_nullability == Nullability::Unspecified
             {
@@ -2752,14 +2756,35 @@ impl Ty {
 
             safety.preface(format!("`{arg_name}`"))
         } else {
-            self.safety_in_fn_argument(arg_name)
+            self.safety_in_fn()
+                .in_argument
+                .preface(format!("`{arg_name}`"))
         }
     }
 
     pub(crate) fn safety_in_fn_argument(&self, arg_name: &str) -> SafetyProperty {
-        self.safety_in_fn()
-            .in_argument
-            .preface(format!("`{arg_name}`"))
+        // Out pointers, see `fn_argument_converter`.
+        if let Some((
+            nullability,
+            pointee,
+            Nullability::Unspecified | Nullability::Nullable | Nullability::NullableResult,
+            Lifetime::Autoreleasing | Lifetime::Strong,
+        )) = self.out_pointer_data()
+        {
+            // Contrary to methods, functions only allow `None` as input, so
+            // there we don't need to ensure that the input is correct.
+            let mut safety = pointee.safety().in_return;
+
+            if nullability == Nullability::Unspecified {
+                safety = safety.merge(SafetyProperty::new_unknown("might not allow `None`"));
+            }
+
+            safety.preface(format!("`{arg_name}`"))
+        } else {
+            self.safety_in_fn()
+                .in_argument
+                .preface(format!("`{arg_name}`"))
+        }
     }
 
     pub(crate) fn safety_in_fn_return(&self) -> SafetyProperty {
@@ -3352,32 +3377,14 @@ impl Ty {
         }
     }
 
-    pub(crate) fn fn_return_required_items(&self) -> impl Iterator<Item = ItemTree> {
-        let mut items: Vec<_> = self.required_items().collect();
-        match self {
-            Self::Pointer {
-                bounds: PointerBounds::Single,
-                pointee,
-                ..
-            } if let Some(wrapper) = pointee.retain_wrapper() => {
-                items.push(wrapper.item());
-                if pointee.is_cf_type() {
-                    items.push(ItemTree::core_ptr_nonnull());
-                }
-            }
-            _ => {}
-        }
-        items.into_iter()
-    }
-
-    pub(crate) fn omit_memory_management_words(&self) -> bool {
+    pub(crate) fn is_retained_return(&self) -> bool {
         matches!(
             self,
             Self::Pointer {
                 bounds: PointerBounds::Single,
                 pointee,
                 ..
-            } if pointee.is_object_like()
+            } if pointee.retain_wrapper().is_some()
         )
     }
 
@@ -3496,6 +3503,24 @@ impl Ty {
             }
             _ => write!(f, "{}", self.fn_return()),
         })
+    }
+
+    pub(crate) fn fn_return_required_items(&self) -> impl Iterator<Item = ItemTree> {
+        let mut items: Vec<_> = self.required_items().collect();
+        match self {
+            Self::Pointer {
+                bounds: PointerBounds::Single,
+                pointee,
+                ..
+            } if let Some(wrapper) = pointee.retain_wrapper() => {
+                items.push(wrapper.item());
+                if pointee.is_cf_type() {
+                    items.push(ItemTree::core_ptr_nonnull());
+                }
+            }
+            _ => {}
+        }
+        items.into_iter()
     }
 
     pub(crate) fn fn_return_converter<'s: 'r, 'a: 'r, 'r>(
@@ -3730,11 +3755,51 @@ impl Ty {
         })
     }
 
+    pub(crate) fn fn_argument_unconverted(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            _ if let Some((
+                nullability,
+                pointee,
+                Nullability::Unspecified | Nullability::Nullable | Nullability::NullableResult,
+                Lifetime::Autoreleasing | Lifetime::Strong,
+            )) = self.out_pointer_data() =>
+            {
+                // Emitting signatures with incomplete semantics like this for
+                // FFI functions is a bit of a cardinal sin, but it'll be
+                // fiiine, everything here is behind a pointer, so there's no
+                // risk of the compiler asserting anything.
+                let name = pointee.retain_wrapper().unwrap().name();
+                let behind_pointer = pointee.behind_pointer(true);
+                if nullability == Nullability::NonNull {
+                    write!(f, "&mut Option<{name}<{behind_pointer}>>")
+                } else {
+                    write!(f, "Option<&mut Option<{name}<{behind_pointer}>>>")
+                }
+            }
+            _ => write!(f, "{}", self.fn_argument(false)),
+        })
+    }
+
     pub(crate) fn fn_argument_converted(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             _ if self.is_objc_bool() => write!(f, "bool"),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
                 write!(f, "bool")
+            }
+            _ if let Some((
+                nullability,
+                pointee,
+                Nullability::Unspecified | Nullability::Nullable | Nullability::NullableResult,
+                Lifetime::Autoreleasing | Lifetime::Strong,
+            )) = self.out_pointer_data() =>
+            {
+                let name = pointee.retain_wrapper().unwrap().name();
+                let behind_pointer = pointee.behind_pointer(true);
+                if nullability == Nullability::NonNull {
+                    write!(f, "&mut Option<{name}<{behind_pointer}>>")
+                } else {
+                    write!(f, "Option<&mut Option<{name}<{behind_pointer}>>>")
+                }
             }
             Self::Pointer {
                 nullability,
@@ -3755,6 +3820,24 @@ impl Ty {
         })
     }
 
+    pub(crate) fn fn_argument_required_items(&self) -> impl Iterator<Item = ItemTree> {
+        let mut items: Vec<_> = self.required_items().collect();
+        match self {
+            _ if let Some((
+                _,
+                pointee,
+                Nullability::Unspecified | Nullability::Nullable | Nullability::NullableResult,
+                Lifetime::Autoreleasing | Lifetime::Strong,
+            )) = self.out_pointer_data() =>
+            {
+                let wrapper = pointee.retain_wrapper().unwrap();
+                items.push(wrapper.item());
+            }
+            _ => {}
+        }
+        items.into_iter()
+    }
+
     pub(crate) fn fn_argument_converter<'s: 'r, 'a: 'r, 'r>(
         &'s self,
         arg: &'a str,
@@ -3764,6 +3847,113 @@ impl Ty {
             _ if self.is_objc_bool() => writeln!(f, "let {arg_to} = Bool::new({arg});"),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
                 writeln!(f, "let {arg_to} = {arg} as _;")
+            }
+            _ if let Some((
+                nullability,
+                pointee,
+                // The inner type has to be nullable, see below.
+                Nullability::Unspecified | Nullability::Nullable | Nullability::NullableResult,
+                lifetime @ (Lifetime::Autoreleasing | Lifetime::Strong),
+            )) = self.out_pointer_data() =>
+            {
+                assert_eq!(arg, arg_to);
+                let wrapper = pointee.retain_wrapper().unwrap();
+                let name = wrapper.name();
+
+                // Both `CF_RETURNS_RETAINED` and `CF_RETURNS_NOT_RETAINED`
+                // work similarly: If the given pointer is nullable they check
+                // it, and then they write the return value to the pointer.
+                //
+                // I.e. basically `if (ptr) *ptr = CreateOrGetValue();`.
+                //
+                // When the value is not retained (autoreleased), we need to
+                // retain it ourselves after the function returns (if a value
+                // was set).
+                //
+                // Unfortunately, callees don't check if there's a value
+                // already in `ptr` and release that, which is counter to how
+                // `&mut Option<CFRetained<T>>` works (and I don't know of a
+                // better way to describe it)?
+                //
+                // This means that we can only support input values that are
+                // `None`, and is why we require the inner type is nullable.
+
+                // Assert that the given inner value is `NULL`; it is invalid
+                // usage of the API to pass anything else, because that value
+                // will get leaked, see above.
+                let assert_is_null = |f: &mut fmt::Formatter<'_>| {
+                    writeln!(f, "assert!({arg}.is_none(), \"parameter `{arg}` must point to `None` on entry\");")
+                };
+
+                // Retain at the end of the function.
+                //
+                // "Autoreleasing" is a bit of a misnomer here, it's
+                // not actually autorelease semantics, it's rather "getter",
+                // where the lifetime is tied to the object we're getting from
+                // (which we don't know in general, thus we must retain).
+                if lifetime == Lifetime::Autoreleasing {
+                    let retain_on_drop = format!(
+                        "Retain{}OnDrop",
+                        heck::ToUpperCamelCase::to_upper_camel_case(arg)
+                    );
+
+                    // We retain inside `Drop` to support functions that
+                    // unwind after setting the out pointer.
+                    let t = pointee.behind_pointer(true);
+                    writeln!(
+                        f,
+                        "struct {retain_on_drop}<'a>(&'a mut Option<{name}<{t}>>);"
+                    )?;
+                    writeln!(f, "impl Drop for {retain_on_drop}<'_> {{")?;
+                    writeln!(f, "    #[inline]")?;
+                    writeln!(f, "    fn drop(&mut self) {{")?;
+                    // Read the pointer and retain it if it was set. Don't
+                    // release it; this will be done in the user's frame.
+                    //
+                    // Note: We rely on `Option<T>: Clone` here. It would be a
+                    // bit more efficient for Objective-C types to use
+                    // `Retained::retain`, but it's miniscule, so we won't
+                    // bother.
+                    writeln!(f, "        let _ = core::mem::ManuallyDrop::<Option<_>>::new(self.0.clone());")?;
+                    writeln!(f, "    }}")?;
+                    writeln!(f, "}}")?;
+
+                    if nullability == Nullability::NonNull {
+                        assert_is_null(f)?;
+
+                        // Get and reborrow.
+                        writeln!(f, "let {arg} = &mut *{retain_on_drop}({arg}).0;")?;
+
+                        // Retains at end of function.
+                    } else {
+                        writeln!(f, "let mut {arg} = if let Some({arg}) = {arg} {{")?;
+                        assert_is_null(f)?;
+                        writeln!(f, "    Some({retain_on_drop}({arg}))")?;
+                        writeln!(f, "}} else {{")?;
+                        writeln!(f, "    None")?;
+                        writeln!(f, "}};")?;
+
+                        // Reborrow.
+                        writeln!(f, "let {arg} = {arg}.as_mut().map(|arg| &mut *arg.0);")?;
+
+                        // Retains at end of function after checking drop flag.
+                    }
+                } else {
+                    if nullability == Nullability::NonNull {
+                        assert_is_null(f)?;
+                    } else {
+                        writeln!(f, "if let Some({arg}) = {arg}.as_ref() {{")?;
+                        assert_is_null(f)?;
+                        writeln!(f, "}};")?;
+                    }
+
+                    // We don't need to do anything else for functions with
+                    // `CF_RETURNS_RETAINED`; we're given ownership over the
+                    // returned value, which is the same as we'd expect with
+                    // `&mut Option<CFRetained<T>>`.
+                }
+
+                Ok(())
             }
             Self::Pointer {
                 nullability,
@@ -3836,7 +4026,7 @@ impl Ty {
         })
     }
 
-    fn out_pointer_data(&self) -> Option<(Nullability, &Ty, Nullability)> {
+    fn out_pointer_data(&self) -> Option<(Nullability, &Ty, Nullability, Lifetime)> {
         match self {
             Self::Pointer {
                 nullability,
@@ -3852,7 +4042,7 @@ impl Ty {
                     // Don't care about the const-ness of the inner type.
                     read: _,
                     written: _,
-                    lifetime: Lifetime::Autoreleasing,
+                    lifetime,
                     bounds: PointerBounds::Single,
                     pointee,
                 } if pointee.retain_wrapper().is_some() => {
@@ -3860,7 +4050,7 @@ impl Ty {
                         // We don't (yet) support `&mut MaybeUninit<Retained<T>>`.
                         error!("out pointers must currently be readable");
                     }
-                    Some((*nullability, pointee, *inner_nullability))
+                    Some((*nullability, pointee, *inner_nullability, *lifetime))
                 }
                 _ => None,
             },
@@ -3891,7 +4081,9 @@ impl Ty {
                     write!(f, "Option<&CStr>")
                 }
             }
-            _ if let Some((nullability, pointee, inner_nullability)) = self.out_pointer_data() => {
+            _ if let Some((nullability, pointee, inner_nullability, Lifetime::Autoreleasing)) =
+                self.out_pointer_data() =>
+            {
                 let inner = FormatterFn(|f| {
                     if inner_nullability == Nullability::NonNull {
                         write!(f, "Retained<{}>", pointee.behind_pointer(true))
@@ -3907,6 +4099,25 @@ impl Ty {
             }
             _ => write!(f, "{}", self.fn_argument(true)),
         })
+    }
+
+    /// Is this a function out parameter to a non-error (CFError/NSError) type?
+    pub(crate) fn is_fn_out_param_nonerror(&self) -> bool {
+        if let Some((
+            _,
+            pointee,
+            Nullability::Unspecified | Nullability::Nullable | Nullability::NullableResult,
+            Lifetime::Autoreleasing | Lifetime::Strong,
+        )) = self.out_pointer_data()
+        {
+            match pointee.through_typedef() {
+                Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) if id.is_cferror() => false,
+                Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() => false,
+                _ => true,
+            }
+        } else {
+            false
+        }
     }
 
     pub(crate) fn method_argument_encoding_type(&self) -> impl fmt::Display + '_ {

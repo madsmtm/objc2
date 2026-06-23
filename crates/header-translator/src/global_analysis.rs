@@ -139,11 +139,15 @@ fn update_module(
                     // Has been renamed already
                     id.name.clone()
                 } else {
+                    let omit_memory_management_words = result_type.is_retained_return()
+                        || arguments
+                            .iter()
+                            .any(|(_, arg_ty)| arg_ty.is_fn_out_param_nonerror());
                     shorten_name_when_on_parent(
                         c_name,
                         &parent_item.id().name,
                         arg_is_self.is_some(),
-                        result_type.omit_memory_management_words(),
+                        omit_memory_management_words,
                     )
                 };
 

@@ -1,6 +1,6 @@
 //! Regression test for <https://github.com/madsmtm/objc2/issues/758>.
 #![cfg(feature = "CMBlockBuffer")]
-use objc2_core_foundation::{kCFAllocatorDefault, kCFAllocatorNull, CFRetained};
+use objc2_core_foundation::{kCFAllocatorDefault, kCFAllocatorNull};
 use objc2_core_media::{
     kCMBlockBufferCustomBlockSourceVersion, kCMBlockBufferNoErr, CMBlockBuffer,
     CMBlockBufferCustomBlockSource,
@@ -31,9 +31,9 @@ fn main() {
     let ref_data: *mut i32 = &mut ref_data;
     source.refCon = ref_data.cast::<c_void>();
 
-    let mut block_buffer: *mut CMBlockBuffer = std::ptr::null_mut();
+    let mut block_buffer = None;
     let status = unsafe {
-        CMBlockBuffer::create_with_memory_block(
+        CMBlockBuffer::with_memory_block(
             kCFAllocatorDefault,
             data.as_mut_ptr().cast(),
             data_size,
@@ -42,10 +42,10 @@ fn main() {
             0,
             data_size,
             0,
-            NonNull::from(&mut block_buffer),
+            &mut block_buffer,
         )
     };
     assert_eq!(status, kCMBlockBufferNoErr); // fail to create block buffer
-    let block_buffer = unsafe { CFRetained::from_raw(NonNull::new(block_buffer).unwrap()) };
+    let block_buffer = block_buffer.unwrap();
     assert_eq!(block_buffer.retain_count(), 1);
 }

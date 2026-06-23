@@ -2397,7 +2397,7 @@ impl Stmt {
             } => {
                 let mut items = Vec::new();
                 for (_, arg_ty) in arguments {
-                    items.extend(arg_ty.required_items());
+                    items.extend(arg_ty.fn_argument_required_items());
                 }
                 items.extend(result_type.fn_return_required_items());
                 items
@@ -3353,7 +3353,7 @@ impl Stmt {
                     write!(f, "pub fn {c_name}(")?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: {},", arg_ty.fn_argument(true))?;
+                        write!(f, "{param}: {},", arg_ty.fn_argument_converted())?;
                     }
                     writeln!(f, "){};", result_type.fn_return())?;
                 }
@@ -3454,7 +3454,7 @@ impl Stmt {
                     write!(f, "fn {c_name}(")?;
                     for (param, arg_ty) in arguments {
                         let param = handle_reserved(&crate::to_snake_case(param));
-                        write!(f, "{param}: {},", arg_ty.fn_argument(false))?;
+                        write!(f, "{param}: {},", arg_ty.fn_argument_unconverted())?;
                     }
                     writeln!(f, "){};", result_type.fn_return())?;
 

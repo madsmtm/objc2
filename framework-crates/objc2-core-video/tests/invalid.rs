@@ -3,25 +3,16 @@
 #![cfg(feature = "CVMetalBuffer")]
 #![cfg(feature = "CVOpenGLBuffer")]
 #![allow(deprecated)]
-use std::ptr::{self, NonNull};
 
 use objc2_core_foundation::CFRetained;
 use objc2_core_video::{kCVPixelFormatType_32BGRA, kCVReturnSuccess, CVPixelBuffer};
 
 fn new_buffer() -> CFRetained<CVPixelBuffer> {
-    let mut buffer = ptr::null_mut();
-    let res = unsafe {
-        CVPixelBuffer::create(
-            None,
-            100,
-            100,
-            kCVPixelFormatType_32BGRA,
-            None,
-            NonNull::from(&mut buffer),
-        )
-    };
+    let mut buffer = None;
+    let res =
+        unsafe { CVPixelBuffer::new(None, 100, 100, kCVPixelFormatType_32BGRA, None, &mut buffer) };
     assert_eq!(res, kCVReturnSuccess);
-    unsafe { CFRetained::from_raw(NonNull::new(buffer).unwrap()) }
+    buffer.unwrap()
 }
 
 /// Test that using a buffer method on a buffer not of that type is sound
@@ -52,4 +43,11 @@ fn invalid_type() {
 fn invalid_plane_index() {
     let buffer = new_buffer();
     assert_eq!(buffer.width_of_plane(100), 0);
+}
+
+#[test]
+#[should_panic = "parameter `pixel_buffer_out` must point to `None` on entry"]
+fn new_buffer_with_existing() {
+    let mut buffer = Some(new_buffer());
+    unsafe { CVPixelBuffer::new(None, 100, 100, kCVPixelFormatType_32BGRA, None, &mut buffer) };
 }

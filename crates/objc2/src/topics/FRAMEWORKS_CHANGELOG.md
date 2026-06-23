@@ -27,6 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SecurityUI` / `objc2-security-ui`.
   - `TouchController` / `objc2-touch-controller`.
   - `Network` / `objc2-network`.
+* **BREAKING**: Added support for out parameters in functions. This means that some functions now take `&mut Option<CFRetained<T>>` instead of `*mut *mut T`.
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 26.5.
