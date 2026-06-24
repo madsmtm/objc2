@@ -15,6 +15,7 @@
 //! - [Soundness analysis][frameworks_soundness].
 //! - [How `Deref` is used][frameworks_deref].
 //! - [How to reduce compile-times][frameworks_cargo_features].
+//! - [About deprecations][frameworks_deprecations].
 //! - [The changelog][frameworks_changelog].
 //!
 //! ## Cocoa development
@@ -71,3 +72,5 @@ pub mod frameworks_deref {}
 pub mod frameworks_changelog {}
 #[doc = include_str!("frameworks_soundness.md")]
 pub mod frameworks_soundness {}
+#[doc = include_str!("frameworks_deprecations.md")]
+pub mod frameworks_deprecations {}
