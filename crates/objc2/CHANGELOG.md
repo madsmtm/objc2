@@ -97,6 +97,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Removed `build.rs` at the cost of worse support for Simulator and Mac
   Catalyst targets on older Rust versions.
 
+## Removed
+* Removed `rc::AutoreleaseSafe`, it relies on unstable language features that
+  are unlikely to be stabilized (auto traits) and it's not sufficient for
+  making autorelease pools safe anyhow.
+
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.
 * Fixed encoding check when using decaying arrays in signatures.

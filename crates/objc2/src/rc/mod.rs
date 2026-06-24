@@ -59,9 +59,7 @@ mod test_object;
 mod weak;
 
 pub use self::allocated_partial_init::{Allocated, PartialInit};
-pub use self::autorelease::{
-    autoreleasepool, autoreleasepool_leaking, AutoreleasePool, AutoreleaseSafe,
-};
+pub use self::autorelease::{autoreleasepool, autoreleasepool_leaking, AutoreleasePool};
 // Re-export `Id` for backwards compatibility, but still mark it as deprecated.
 #[allow(deprecated)]
 pub use self::retained::Id;

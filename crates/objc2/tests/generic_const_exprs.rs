@@ -4,7 +4,6 @@
 // the nightly compiler).
 #![cfg(any(
     feature = "unstable-darwin-objc",
-    feature = "unstable-autoreleasesafe",
     feature = "unstable-arbitrary-self-types",
     feature = "unstable-coerce-pointee",
 ))]

@@ -104,10 +104,6 @@
 #![no_std]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 #![cfg_attr(
-    feature = "unstable-autoreleasesafe",
-    feature(negative_impls, auto_traits)
-)]
-#![cfg_attr(
     feature = "unstable-arbitrary-self-types",
     feature(arbitrary_self_types)
 )]

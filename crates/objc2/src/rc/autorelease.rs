@@ -1,7 +1,7 @@
 use core::ffi::c_void;
-#[cfg(not(all(debug_assertions, not(feature = "unstable-autoreleasesafe"))))]
+#[cfg(not(all(feature = "std", debug_assertions)))]
 use core::marker::PhantomData;
-#[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+#[cfg(all(feature = "std", debug_assertions))]
 use std::{cell::RefCell, thread_local, vec::Vec};
 
 use crate::ffi;
@@ -35,7 +35,7 @@ impl Pool {
     #[inline]
     unsafe fn new() -> Self {
         let context = unsafe { ffi::objc_autoreleasePoolPush() };
-        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+        #[cfg(all(feature = "std", debug_assertions))]
         POOLS.with(|c| c.borrow_mut().push(context));
         Self { context }
     }
@@ -70,7 +70,7 @@ impl Pool {
 impl Drop for Pool {
     #[inline]
     fn drop(&mut self) {
-        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+        #[cfg(all(feature = "std", debug_assertions))]
         POOLS.with(|c| {
             assert_eq!(
                 c.borrow_mut().pop(),
@@ -87,15 +87,16 @@ impl Drop for Pool {
     }
 }
 
-/// An Objective-C autorelease pool.
+/// A marker for an active Objective-C autorelease pool.
 ///
 /// Autorelease pools are a way to store objects in a certain thread-local
-/// scope, such that they are only released at the end of said scope.
+/// scope, such that they are only released at the end of said scope. This
+/// type can help bound lifetimes to this scope.
 ///
 /// See [`autoreleasepool`] and [`autoreleasepool_leaking`] for how to create
-/// this.
+/// this, including details on safety.
 ///
-/// This is not [`Send`] nor [`Sync`], since you can only autorelease a
+/// This is neither [`Send`] nor [`Sync`], since you can only autorelease a
 /// reference to a pool on the current thread.
 ///
 ///
@@ -110,7 +111,7 @@ impl Drop for Pool {
 ///
 /// unsafe fn needs_lifetime_from_pool<'p>(pool: AutoreleasePool<'p>) -> &'p NSObject {
 ///     let obj = NSObject::new();
-///     // Do action that returns an autoreleased object
+///     // Do something that returns an autoreleased object
 ///     let description: *mut NSObject = unsafe { msg_send![&obj, description] };
 ///     // Bound the lifetime of the reference to that of the pool.
 ///     //
@@ -159,14 +160,14 @@ pub struct AutoreleasePool<'pool> {
     ///
     /// Hence assuming `typed-arena` is sound, having covariance here should
     /// also be sound.
-    #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+    #[cfg(all(feature = "std", debug_assertions))]
     inner: Option<&'pool Pool>,
     /// We use `PhantomData` here to make `AutoreleasePool` a ZST.
-    #[cfg(not(all(debug_assertions, not(feature = "unstable-autoreleasesafe"))))]
+    #[cfg(not(all(feature = "std", debug_assertions)))]
     inner: PhantomData<&'pool Pool>,
 }
 
-#[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+#[cfg(all(feature = "std", debug_assertions))]
 thread_local! {
     /// We track the thread's pools to verify that object lifetimes are only
     /// taken from the innermost pool.
@@ -174,18 +175,19 @@ thread_local! {
 }
 
 impl<'pool> AutoreleasePool<'pool> {
+    #[inline]
     fn new(_inner: Option<&'pool Pool>) -> Self {
         Self {
-            #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+            #[cfg(all(feature = "std", debug_assertions))]
             inner: _inner,
-            #[cfg(not(all(debug_assertions, not(feature = "unstable-autoreleasesafe"))))]
+            #[cfg(not(all(feature = "std", debug_assertions)))]
             inner: PhantomData,
         }
     }
 
     #[inline]
     pub(crate) fn __verify_is_inner(self) {
-        #[cfg(all(debug_assertions, not(feature = "unstable-autoreleasesafe")))]
+        #[cfg(all(feature = "std", debug_assertions))]
         if let Some(pool) = &self.inner {
             POOLS.with(|c| {
                 assert_eq!(
@@ -197,7 +199,7 @@ impl<'pool> AutoreleasePool<'pool> {
         }
     }
 
-    /// Returns a shared reference to the given autoreleased pointer object.
+    /// Return a shared reference to the given autoreleased pointer object.
     ///
     /// This is the preferred way to make references from autoreleased
     /// objects, since it binds the lifetime of the reference to the pool, and
@@ -229,89 +231,9 @@ impl<'pool> AutoreleasePool<'pool> {
     }
 }
 
-/// We use a macro here so that the documentation is included whether the
-/// feature is enabled or not.
-#[cfg(not(feature = "unstable-autoreleasesafe"))]
-macro_rules! auto_trait_except_pool {
-    {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
-        $(#[$fn_meta])*
-        $v unsafe trait AutoreleaseSafe {}
-
-        unsafe impl<T: ?Sized> AutoreleaseSafe for T {}
-    }
-}
-
-#[cfg(feature = "unstable-autoreleasesafe")]
-macro_rules! auto_trait_except_pool {
-    {$(#[$fn_meta:meta])* $v:vis unsafe trait AutoreleaseSafe {}} => {
-        $(#[$fn_meta])*
-        $v unsafe auto trait AutoreleaseSafe {}
-
-        impl !AutoreleaseSafe for Pool {}
-        impl !AutoreleaseSafe for AutoreleasePool<'_> {}
-    }
-}
-
-auto_trait_except_pool! {
-    /// Marks types that are safe to pass across the closure in an
-    /// [`autoreleasepool`].
-    ///
-    /// With the `"unstable-autoreleasesafe"` feature enabled, this is an auto
-    /// trait that is implemented for all types except [`AutoreleasePool`].
-    ///
-    /// Otherwise it is a dummy trait that is implemented for all types; the
-    /// safety invariants are checked with debug assertions instead.
-    ///
-    /// You should not normally need to implement this trait yourself.
-    ///
-    ///
-    /// # Safety
-    ///
-    /// Must not be implemented for types that interact with the autorelease
-    /// pool. So if you reimplement the [`AutoreleasePool`] struct or
-    /// likewise, this should be negatively implemented for that.
-    ///
-    /// This can be accomplished with an `PhantomData<AutoreleasePool<'_>>` if
-    /// the `"unstable-autoreleasesafe"` feature is enabled.
-    ///
-    ///
-    /// # Examples
-    ///
-    /// Most types are [`AutoreleaseSafe`].
-    ///
-    /// ```
-    /// use objc2::rc::{AutoreleasePool, AutoreleaseSafe};
-    /// fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
-    /// requires_autoreleasesafe::<()>();
-    /// requires_autoreleasesafe::<Box<Vec<i32>>>();
-    /// requires_autoreleasesafe::<fn(AutoreleasePool<'_>)>();
-    /// ```
-    ///
-    /// But [`AutoreleasePool`] isn't (if the `"unstable-autoreleasesafe"`
-    /// feature is enabled).
-    ///
-    #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
-    #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```")]
-    /// use objc2::rc::AutoreleasePool;
-    /// # use objc2::rc::AutoreleaseSafe;
-    /// # fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
-    /// requires_autoreleasesafe::<AutoreleasePool<'static>>();
-    /// ```
-    ///
-    /// This also means that trait objects aren't (since they may contain an
-    /// [`AutoreleasePool`] internally):
-    ///
-    #[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
-    #[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```")]
-    /// # use objc2::rc::AutoreleaseSafe;
-    /// # fn requires_autoreleasesafe<T: AutoreleaseSafe>() {}
-    /// requires_autoreleasesafe::<&dyn std::io::Write>();
-    /// ```
-    pub unsafe trait AutoreleaseSafe {}
-}
-
-/// Execute `f` in the context of a new autorelease pool. The pool is drained
-/// after the execution of `f` completes.
+/// Run a closure in the context of a new autorelease pool.
+///
+/// The pool is drained after the execution of the closure completes.
 ///
 /// This corresponds to `@autoreleasepool` blocks in Objective-C and Swift,
 /// see [Apple's documentation][apple-autorelease] for general information on
@@ -323,33 +245,25 @@ auto_trait_except_pool! {
 /// Note that this is mostly useful for preventing leaks (as any Objective-C
 /// method may autorelease internally - see also [`autoreleasepool_leaking`]).
 /// If implementing an interface to an object, you should try to return
-/// retained pointers with [`msg_send!`] wherever you can instead, since
-/// it is usually more efficient, safer, and having to use this function can
-/// be quite cumbersome for users.
+/// [retained] pointers whenevar you can instead, since it is usually more
+/// efficient, safer, and having to use this function can be quite cumbersome
+/// for users.
 ///
 /// [apple-autorelease]: https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
 /// [The pool]: AutoreleasePool
-/// [`msg_send!`]: crate::msg_send
+/// [retained]: crate::rc::Retained
 ///
 ///
 /// # Restrictions
 ///
-/// The given parameter must not be used inside a nested `autoreleasepool`,
-/// since doing so will give the objects that it is used with an incorrect
-/// lifetime bound.
-///
-/// You can try to enable the `"unstable-autoreleasesafe"` Cargo feature using
-/// nightly Rust - if your use of this function compiles with that, it is more
-/// likely to be correct, though note that Rust does not have a way to express
-/// the lifetimes involved, so we cannot detect all invalid usage. See issue
-/// [#540] for details.
-///
-/// [#540]: https://github.com/madsmtm/objc2/issues/540
+/// The [`AutoReleasePool`][AutoreleasePool] parameter must not be used inside
+/// a nested `autoreleasepool`, since doing so will give the objects that it
+/// is used with an incorrect lifetime bound.
 ///
 ///
 /// # Examples
 ///
-/// Use an external API, and ensure that the memory that it used is cleaned
+/// Use some external API, and ensure that the memory that it used is cleaned
 /// up afterwards.
 ///
 /// ```
@@ -374,7 +288,7 @@ auto_trait_except_pool! {
 ///     // Create `obj` and autorelease it to the pool
 ///     // SAFETY: The pool is the current innermost pool
 ///     let obj = unsafe { Retained::autorelease(NSObject::new(), pool) };
-///     // We now have a reference that we can freely use
+///     // We now have a `&'p NSObject` reference that we can freely use
 ///     println!("{obj:?}");
 /// }); // `obj` is deallocated when the pool ends
 /// // And is no longer usable outside the closure
@@ -392,12 +306,10 @@ auto_trait_except_pool! {
 /// });
 /// ```
 ///
-/// Fails to compile with the `"unstable-autoreleasesafe"` feature enabled, or
-/// panics with debug assertions enabled, because we tried to pass an outer
+/// Panics with debug assertions enabled because we tried to pass an outer
 /// pool to an inner pool:
 ///
-#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
-#[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
+/// ```should_panic
 /// use objc2::rc::{autoreleasepool, Retained};
 /// use objc2::runtime::NSObject;
 ///
@@ -436,23 +348,23 @@ auto_trait_except_pool! {
 #[inline]
 pub fn autoreleasepool<T, F>(f: F) -> T
 where
-    for<'pool> F: AutoreleaseSafe + FnOnce(AutoreleasePool<'pool>) -> T,
+    // In the past, this had a `F: AutoreleaseSafe` bound, but we removed that
+    // because it wasn't sufficient for soundness, see:
+    // https://github.com/madsmtm/objc2/issues/540
+    for<'pool> F: FnOnce(AutoreleasePool<'pool>) -> T,
 {
-    // SAFETY:
-    // - The `AutoreleaseSafe` bound on the closure ensures that no pool from
-    //   a different "level" can be passed down through and used in this one.
-    // - The pools are guaranteed to be dropped in the reverse order they were
-    //   created (since you can't possibly "interleave" closures).
+    // SAFETY: The pools are guaranteed to be dropped in the reverse order
+    // they were created (since you can't possibly "interleave" closures).
     //
-    //   This would not work if we e.g. allowed users to create pools on the
-    //   stack, since they could then safely control the drop order.
+    // This would not work if we e.g. allowed users to create pools on the
+    // stack, since they could then safely control the drop order.
     let pool = unsafe { Pool::new() };
     let res = f(AutoreleasePool::new(Some(&pool)));
     unsafe { pool.drain() };
     res
 }
 
-/// Execute `f` in the context of a "fake" autorelease pool.
+/// Run a closure in the context of a "fake" autorelease pool.
 ///
 /// This is useful to create a context in which to use autoreleased objects,
 /// without the overhead of actually creating and draining the pool.
@@ -499,8 +411,7 @@ where
 /// While you can pass an outer pool into this, you still can't pass the pool
 /// from this into [`autoreleasepool`]:
 ///
-#[cfg_attr(feature = "unstable-autoreleasesafe", doc = "```compile_fail,E0277")]
-#[cfg_attr(not(feature = "unstable-autoreleasesafe"), doc = "```should_panic")]
+/// ```should_panic
 /// use objc2::rc::{autoreleasepool, autoreleasepool_leaking, Retained};
 /// use objc2::runtime::NSObject;
 ///
@@ -522,11 +433,6 @@ where
     // assume that there's an autorelease pool _somewhere_ in the call stack
     // above it, and then use their autoreleased objects for a duration that
     // is guaranteed to be shorter than that.
-    //
-    // The `AutoreleaseSafe` bound is not required, since we don't actually do
-    // anything inside this; hence if the user know they have the _actual_
-    // innermost pool, they may still safely use it to extend the lifetime
-    // beyond this closure.
     f(AutoreleasePool::new(None))
 }
 
@@ -538,20 +444,13 @@ mod tests {
 
     use static_assertions::{assert_impl_all, assert_not_impl_any};
 
-    use super::{autoreleasepool, AutoreleasePool, AutoreleaseSafe};
+    use super::{autoreleasepool, AutoreleasePool};
     use crate::rc::{RcTestObject, Retained, ThreadTestData};
-    use crate::runtime::AnyObject;
 
     #[test]
     fn auto_traits() {
         assert_impl_all!(AutoreleasePool<'static>: Unpin, UnwindSafe, RefUnwindSafe);
         assert_not_impl_any!(AutoreleasePool<'static>: Send, Sync);
-
-        assert_impl_all!(usize: AutoreleaseSafe);
-        assert_impl_all!(*mut AnyObject: AutoreleaseSafe);
-        assert_impl_all!(&mut AnyObject: AutoreleaseSafe);
-        #[cfg(feature = "unstable-autoreleasesafe")]
-        assert_not_impl_any!(AutoreleasePool<'static>: AutoreleaseSafe);
     }
 
     #[allow(unused)]
@@ -566,12 +465,9 @@ mod tests {
         pool
     }
 
-    #[allow(unused)]
-    fn assert_object_safe(_: &dyn AutoreleaseSafe) {}
-
     #[cfg_attr(
-        not(feature = "unstable-autoreleasesafe"),
-        ignore = "only stably ZST when `unstable-autoreleasesafe` is enabled"
+        all(feature = "std", debug_assertions),
+        ignore = "larger with debug assertions enabled"
     )]
     #[test]
     fn assert_zst() {

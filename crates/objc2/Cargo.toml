@@ -88,9 +88,6 @@ unstable-static-class-inlined = ["unstable-static-class"]
 # Augment the above with the nightly `darwin_objc` feature.
 unstable-darwin-objc = []
 
-# Uses nightly features to make autorelease pools fully sound
-unstable-autoreleasesafe = []
-
 # Enable some new features available on ARM64 on:
 # - macOS 13.0
 # - iOS 16.0

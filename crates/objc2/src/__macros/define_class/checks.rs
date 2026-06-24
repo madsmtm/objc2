@@ -43,10 +43,6 @@ impl<T: ?Sized> Unpin for ThreadKindAutoTraits<T> {}
 impl<T: ?Sized> UnwindSafe for ThreadKindAutoTraits<T> {}
 impl<T: ?Sized> RefUnwindSafe for ThreadKindAutoTraits<T> {}
 
-// Thread kind does not affect autorelease safety.
-#[cfg(feature = "unstable-autoreleasesafe")]
-unsafe impl<T: ?Sized> crate::rc::AutoreleaseSafe for ThreadKindAutoTraits<T> {}
-
 /// Convert a class name with a trailing NUL byte to a `CStr`, at `const`.
 #[track_caller]
 pub const fn class_c_name(name: &str) -> &CStr {
