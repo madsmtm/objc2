@@ -889,7 +889,8 @@ mod tests {
         unsafe impl<T> ClassType for GenericDefineClass<T> {
             type Super = NSObject;
             type ThreadKind = <Self::Super as ClassType>::ThreadKind;
-            const NAME: &'static str = "GenericDefineClass";
+            const NAME: &'static CStr =
+                unsafe { CStr::from_bytes_with_nul_unchecked(b"GenericDefineClass\0") };
 
             #[inline]
             fn as_super(&self) -> &Self::Super {
@@ -898,7 +899,7 @@ mod tests {
 
             fn class() -> &'static AnyClass {
                 let superclass = NSObject::class();
-                let mut builder = ClassBuilder::new(&c(Self::NAME), superclass).unwrap();
+                let mut builder = ClassBuilder::new(Self::NAME, superclass).unwrap();
 
                 unsafe {
                     builder.add_method(
@@ -1125,6 +1126,6 @@ mod tests {
 
         let cls = AutoName::class();
         assert_eq!(cls.name().to_str().unwrap(), expected);
-        assert_eq!(AutoName::NAME, expected);
+        assert_eq!(AutoName::NAME.to_str().unwrap(), expected);
     }
 }

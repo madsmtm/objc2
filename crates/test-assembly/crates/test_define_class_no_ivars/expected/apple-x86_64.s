@@ -189,14 +189,14 @@ Lfunc_begin1:
 	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
-	jne	LBB6_17
+	jne	LBB6_15
 	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].11]
 	xor	edx, edx
 	call	_objc_allocateClassPair
 	test	rax, rax
-	je	LBB6_15
+	je	LBB6_13
 	mov	qword ptr [rbp - 16], rax
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297]
 Ltmp6:
@@ -238,36 +238,30 @@ Ltmp14:
 	mov	r8d, 5
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp15:
-Ltmp16:
 	lea	rdi, [rip + L_anon.[ID].8]
-	mov	esi, 8
-	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
-Ltmp17:
+	call	_objc_getProtocol
 	test	rax, rax
-	je	LBB6_10
+	je	LBB6_9
 	mov	rdi, qword ptr [rbp - 16]
 	mov	rsi, rax
 	call	_class_addProtocol
-LBB6_10:
-Ltmp18:
-	lea	rdi, [rip + l_anon.[ID].9]
-	mov	esi, 9
-	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
-Ltmp19:
+LBB6_9:
+	lea	rdi, [rip + L_anon.[ID].9]
+	call	_objc_getProtocol
 	test	rax, rax
-	je	LBB6_13
+	je	LBB6_11
 	mov	rdi, qword ptr [rbp - 16]
 	mov	rsi, rax
 	call	_class_addProtocol
-LBB6_13:
+LBB6_11:
 	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d]
-Ltmp20:
+Ltmp16:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)]
 	lea	rcx, [rip + L_anon.[ID].10]
 	lea	rdi, [rbp - 16]
 	mov	r8d, 15
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
-Ltmp21:
+Ltmp17:
 	mov	rbx, qword ptr [rbp - 16]
 	mov	rdi, rbx
 	call	_objc_registerClassPair
@@ -276,16 +270,16 @@ Ltmp21:
 	pop	rbx
 	pop	rbp
 	ret
-LBB6_17:
+LBB6_15:
 	lea	rdi, [rip + l_anon.[ID].2]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
-LBB6_15:
+LBB6_13:
 	lea	rdi, [rip + L_anon.[ID].11]
 	lea	rdx, [rip + l_anon.[ID].13]
 	mov	esi, 8
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
-LBB6_16:
-Ltmp22:
+LBB6_14:
+Ltmp18:
 	mov	rbx, rax
 	mov	rdi, qword ptr [rbp - 16]
 	call	_objc_disposeClassPair
@@ -302,11 +296,11 @@ Lexception1:
 	.uleb128 Lcst_end1-Lcst_begin1
 Lcst_begin1:
 	.uleb128 Ltmp6-Lfunc_begin1
-	.uleb128 Ltmp21-Ltmp6
-	.uleb128 Ltmp22-Lfunc_begin1
+	.uleb128 Ltmp17-Ltmp6
+	.uleb128 Ltmp18-Lfunc_begin1
 	.byte	0
-	.uleb128 Ltmp21-Lfunc_begin1
-	.uleb128 Lfunc_end1-Ltmp21
+	.uleb128 Ltmp17-Lfunc_begin1
+	.uleb128 Lfunc_end1-Ltmp17
 	.byte	0
 	.byte	0
 Lcst_end1:
@@ -368,9 +362,9 @@ Lfunc_begin2:
 	mov	rbx, rax
 	test	r14d, r14d
 	je	LBB9_3
-Ltmp23:
+Ltmp19:
 	call	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
-Ltmp24:
+Ltmp20:
 	mov	r14, rax
 	mov	rdi, rbx
 	call	_objc_release
@@ -382,16 +376,16 @@ LBB9_3:
 	pop	rbp
 	ret
 LBB9_5:
-Ltmp25:
+Ltmp21:
 	mov	r14, rax
-Ltmp26:
+Ltmp22:
 	mov	rdi, rbx
 	call	_objc_release
-Ltmp27:
+Ltmp23:
 	mov	rdi, r14
 	call	__Unwind_Resume
 LBB9_4:
-Ltmp28:
+Ltmp24:
 	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
@@ -406,23 +400,23 @@ Lttbaseref1:
 	.uleb128 Lcst_end2-Lcst_begin2
 Lcst_begin2:
 	.uleb128 Lfunc_begin2-Lfunc_begin2
-	.uleb128 Ltmp23-Lfunc_begin2
+	.uleb128 Ltmp19-Lfunc_begin2
 	.byte	0
 	.byte	0
-	.uleb128 Ltmp23-Lfunc_begin2
-	.uleb128 Ltmp24-Ltmp23
-	.uleb128 Ltmp25-Lfunc_begin2
+	.uleb128 Ltmp19-Lfunc_begin2
+	.uleb128 Ltmp20-Ltmp19
+	.uleb128 Ltmp21-Lfunc_begin2
 	.byte	0
+	.uleb128 Ltmp20-Lfunc_begin2
+	.uleb128 Ltmp22-Ltmp20
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp22-Lfunc_begin2
+	.uleb128 Ltmp23-Ltmp22
 	.uleb128 Ltmp24-Lfunc_begin2
-	.uleb128 Ltmp26-Ltmp24
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp26-Lfunc_begin2
-	.uleb128 Ltmp27-Ltmp26
-	.uleb128 Ltmp28-Lfunc_begin2
 	.byte	1
-	.uleb128 Ltmp27-Lfunc_begin2
-	.uleb128 Lfunc_end2-Ltmp27
+	.uleb128 Ltmp23-Lfunc_begin2
+	.uleb128 Lfunc_end2-Ltmp23
 	.byte	0
 	.byte	0
 Lcst_end2:
@@ -635,15 +629,12 @@ L_anon.[ID].6:
 L_anon.[ID].7:
 	.asciz	"@@:c"
 
-	.section	__TEXT,__literal8,8byte_literals
 L_anon.[ID].8:
-	.ascii	"NSObject"
+	.asciz	"NSObject"
 
-	.section	__TEXT,__const
-l_anon.[ID].9:
-	.ascii	"NSCopying"
+L_anon.[ID].9:
+	.asciz	"NSCopying"
 
-	.section	__TEXT,__cstring,cstring_literals
 L_anon.[ID].10:
 	.asciz	"@@:^{_NSZone=}"
 

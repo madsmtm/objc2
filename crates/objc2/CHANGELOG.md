@@ -96,6 +96,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   `define_class!`. `#[method_id(...)]` is now fully deprecated.
 * Removed `build.rs` at the cost of worse support for Simulator and Mac
   Catalyst targets on older Rust versions.
+* **BREAKING**: Changed `ClassType::NAME` and `ProtocolType::NAME` to be
+  `&CStr` instead of `&str`.
 
 ## Removed
 * Removed `rc::AutoreleaseSafe`, it relies on unstable language features that

@@ -17,6 +17,7 @@ mod available;
 mod cf_objc2_type;
 mod class;
 mod convert;
+mod cstr;
 pub(crate) mod define_class;
 mod extern_class;
 mod extern_conformance;
@@ -59,11 +60,12 @@ pub use self::class::{disallow_in_static, CachedClass};
 pub use self::convert::{
     ConvertArgument, ConvertArguments, ConvertError, ConvertReturn, TupleExtender,
 };
+pub use self::cstr::class_c_name;
 pub use self::define_class::{
-    class_c_name, define_class, method_encoding_str_array, method_encoding_str_len,
-    ClassBuilderHelper, ClassFnKind, ClassFnResultKind, ClassProtocolMethodsBuilder,
-    ConvertDefinedFn, DefinedIvarsHelper, FnToExternFn, LifetimeAssign, MethodKind,
-    MethodResultKind, ThreadKindAutoTraits,
+    define_class, method_encoding_str_array, method_encoding_str_len, ClassBuilderHelper,
+    ClassFnKind, ClassFnResultKind, ClassProtocolMethodsBuilder, ConvertDefinedFn,
+    DefinedIvarsHelper, FnToExternFn, LifetimeAssign, MethodKind, MethodResultKind,
+    ThreadKindAutoTraits,
 };
 pub use self::extern_class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 #[allow(deprecated)]

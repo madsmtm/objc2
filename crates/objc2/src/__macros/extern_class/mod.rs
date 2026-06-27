@@ -308,10 +308,12 @@ macro_rules! __extern_class_inner {
                 (<<Self as $crate::ClassType>::Super as $crate::ClassType>::ThreadKind)
             };
 
-            const NAME: &'static $crate::__macros::str = $crate::__fallback_if_not_set! {
-                ($($name)*)
-                ($crate::__macros::stringify!($class))
-            };
+            const NAME: &'static $crate::__macros::CStr = $crate::__macros::class_c_name(
+                $crate::__macros::concat!($crate::__fallback_if_not_set! {
+                    ($($name)*)
+                    ($crate::__macros::stringify!($class))
+                }, "\0")
+            );
 
             #[inline]
             fn class() -> &'static $crate::runtime::AnyClass {

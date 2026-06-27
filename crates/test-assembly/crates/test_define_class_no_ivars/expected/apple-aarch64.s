@@ -255,7 +255,7 @@ Lfunc_begin1:
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
 	cmp	w9, #1
-	b.ne	LBB6_15
+	b.ne	LBB6_13
 Lloh38:
 	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh39:
@@ -268,7 +268,7 @@ Lloh42:
 	add	x1, x1, l_anon.[ID].11@PAGEOFF
 	mov	x2, #0
 	bl	_objc_allocateClassPair
-	cbz	x0, LBB6_16
+	cbz	x0, LBB6_14
 	str	x0, [sp, #8]
 Lloh43:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGE
@@ -355,37 +355,31 @@ Lloh72:
 	mov	w4, #5
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp15:
-Ltmp16:
 Lloh73:
 	adrp	x0, l_anon.[ID].8@PAGE
 Lloh74:
 	add	x0, x0, l_anon.[ID].8@PAGEOFF
-	mov	w1, #8
-	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	bl	_objc_getProtocol
+	cbz	x0, LBB6_9
 	mov	x1, x0
-Ltmp17:
-	cbz	x1, LBB6_10
 	ldr	x0, [sp, #8]
 	bl	_class_addProtocol
-LBB6_10:
-Ltmp18:
+LBB6_9:
 Lloh75:
 	adrp	x0, l_anon.[ID].9@PAGE
 Lloh76:
 	add	x0, x0, l_anon.[ID].9@PAGEOFF
-	mov	w1, #9
-	bl	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	bl	_objc_getProtocol
+	cbz	x0, LBB6_11
 	mov	x1, x0
-Ltmp19:
-	cbz	x1, LBB6_13
 	ldr	x0, [sp, #8]
 	bl	_class_addProtocol
-LBB6_13:
+LBB6_11:
 Lloh77:
 	adrp	x8, L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGE
 Lloh78:
 	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGEOFF]
-Ltmp20:
+Ltmp16:
 Lloh79:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)@PAGE
 Lloh80:
@@ -397,7 +391,7 @@ Lloh82:
 	add	x0, sp, #8
 	mov	w4, #15
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
-Ltmp21:
+Ltmp17:
 	ldr	x19, [sp, #8]
 	mov	x0, x19
 	bl	_objc_registerClassPair
@@ -407,13 +401,13 @@ Ltmp21:
 	ldp	x20, x19, [sp, #16]
 	add	sp, sp, #48
 	ret
-LBB6_15:
+LBB6_13:
 Lloh83:
 	adrp	x0, l_anon.[ID].2@PAGE
 Lloh84:
 	add	x0, x0, l_anon.[ID].2@PAGEOFF
 	bl	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
-LBB6_16:
+LBB6_14:
 Lloh85:
 	adrp	x0, l_anon.[ID].11@PAGE
 Lloh86:
@@ -424,8 +418,8 @@ Lloh88:
 	add	x2, x2, l_anon.[ID].13@PAGEOFF
 	mov	w1, #8
 	bl	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
-LBB6_17:
-Ltmp22:
+LBB6_15:
+Ltmp18:
 	mov	x19, x0
 	ldr	x0, [sp, #8]
 	bl	_objc_disposeClassPair
@@ -467,11 +461,11 @@ Lexception1:
 	.uleb128 Lcst_end1-Lcst_begin1
 Lcst_begin1:
 	.uleb128 Ltmp6-Lfunc_begin1
-	.uleb128 Ltmp21-Ltmp6
-	.uleb128 Ltmp22-Lfunc_begin1
+	.uleb128 Ltmp17-Ltmp6
+	.uleb128 Ltmp18-Lfunc_begin1
 	.byte	0
-	.uleb128 Ltmp21-Lfunc_begin1
-	.uleb128 Lfunc_end1-Ltmp21
+	.uleb128 Ltmp17-Lfunc_begin1
+	.uleb128 Lfunc_end1-Ltmp17
 	.byte	0
 	.byte	0
 Lcst_end1:
@@ -558,9 +552,9 @@ Lfunc_begin2:
 	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
 	mov	x19, x0
 	cbz	w20, LBB9_3
-Ltmp23:
+Ltmp19:
 	bl	SYM(<objc2[CRATE_ID]::runtime::nsobject::NSObject>::new, 0)
-Ltmp24:
+Ltmp20:
 	mov	x20, x0
 	mov	x0, x19
 	bl	_objc_release
@@ -571,16 +565,16 @@ LBB9_3:
 	ldp	x20, x19, [sp], #32
 	ret
 LBB9_4:
-Ltmp25:
+Ltmp21:
 	mov	x20, x0
-Ltmp26:
+Ltmp22:
 	mov	x0, x19
 	bl	_objc_release
-Ltmp27:
+Ltmp23:
 	mov	x0, x20
 	bl	__Unwind_Resume
 LBB9_6:
-Ltmp28:
+Ltmp24:
 	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
 Lfunc_end2:
 	.section	__TEXT,__gcc_except_tab
@@ -595,23 +589,23 @@ Lttbaseref1:
 	.uleb128 Lcst_end2-Lcst_begin2
 Lcst_begin2:
 	.uleb128 Lfunc_begin2-Lfunc_begin2
-	.uleb128 Ltmp23-Lfunc_begin2
+	.uleb128 Ltmp19-Lfunc_begin2
 	.byte	0
 	.byte	0
-	.uleb128 Ltmp23-Lfunc_begin2
-	.uleb128 Ltmp24-Ltmp23
-	.uleb128 Ltmp25-Lfunc_begin2
+	.uleb128 Ltmp19-Lfunc_begin2
+	.uleb128 Ltmp20-Ltmp19
+	.uleb128 Ltmp21-Lfunc_begin2
 	.byte	0
+	.uleb128 Ltmp20-Lfunc_begin2
+	.uleb128 Ltmp22-Ltmp20
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp22-Lfunc_begin2
+	.uleb128 Ltmp23-Ltmp22
 	.uleb128 Ltmp24-Lfunc_begin2
-	.uleb128 Ltmp26-Ltmp24
-	.byte	0
-	.byte	0
-	.uleb128 Ltmp26-Lfunc_begin2
-	.uleb128 Ltmp27-Ltmp26
-	.uleb128 Ltmp28-Lfunc_begin2
 	.byte	1
-	.uleb128 Ltmp27-Lfunc_begin2
-	.uleb128 Lfunc_end2-Ltmp27
+	.uleb128 Ltmp23-Lfunc_begin2
+	.uleb128 Lfunc_end2-Ltmp23
 	.byte	0
 	.byte	0
 Lcst_end2:
@@ -901,15 +895,12 @@ l_anon.[ID].6:
 l_anon.[ID].7:
 	.asciz	"@@:B"
 
-	.section	__TEXT,__literal8,8byte_literals
 l_anon.[ID].8:
-	.ascii	"NSObject"
+	.asciz	"NSObject"
 
-	.section	__TEXT,__const
 l_anon.[ID].9:
-	.ascii	"NSCopying"
+	.asciz	"NSCopying"
 
-	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].10:
 	.asciz	"@@:^{_NSZone=}"
 

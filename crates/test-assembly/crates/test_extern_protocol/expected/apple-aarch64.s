@@ -6,8 +6,7 @@ Lloh0:
 	adrp	x0, l_anon.[ID].0@PAGE
 Lloh1:
 	add	x0, x0, l_anon.[ID].0@PAGEOFF
-	mov	w1, #10
-	b	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	b	_objc_getProtocol
 	.loh AdrpAdd	Lloh0, Lloh1
 
 	.globl	_fn2_dyn_call
@@ -55,8 +54,8 @@ L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__const
+	.section	__TEXT,__cstring,cstring_literals
 l_anon.[ID].0:
-	.ascii	"MyProtocol"
+	.asciz	"MyProtocol"
 
 .subsections_via_symbols

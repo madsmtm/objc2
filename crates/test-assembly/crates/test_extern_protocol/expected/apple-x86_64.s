@@ -5,10 +5,9 @@
 _fn1_get_protocol:
 	push	rbp
 	mov	rbp, rsp
-	lea	rdi, [rip + l_anon.[ID].0]
-	mov	esi, 10
+	lea	rdi, [rip + L_anon.[ID].0]
 	pop	rbp
-	jmp	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	jmp	_objc_getProtocol
 
 	.globl	_fn2_dyn_call
 	.p2align	4
@@ -52,8 +51,8 @@ L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"MyProtocol"
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
+	.asciz	"MyProtocol"
 
 .subsections_via_symbols

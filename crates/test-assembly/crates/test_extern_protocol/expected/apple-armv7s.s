@@ -6,13 +6,12 @@
 _fn1_get_protocol:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r0, :lower16:(l_anon.[ID].0-(LPC0_0+8))
-	movt	r0, :upper16:(l_anon.[ID].0-(LPC0_0+8))
+	movw	r0, :lower16:(L_anon.[ID].0-(LPC0_0+8))
+	movt	r0, :upper16:(L_anon.[ID].0-(LPC0_0+8))
 LPC0_0:
 	add	r0, pc, r0
-	mov	r1, #10
 	pop	{r7, lr}
-	b	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
+	b	_objc_getProtocol
 
 	.globl	_fn2_dyn_call
 	.p2align	2
@@ -60,8 +59,8 @@ L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"MyProtocol"
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
+	.asciz	"MyProtocol"
 
 .subsections_via_symbols

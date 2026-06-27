@@ -47,7 +47,7 @@
 
 use alloc::borrow::Cow;
 use alloc::ffi::CString;
-use alloc::format;
+use alloc::vec::Vec;
 use core::ffi::CStr;
 use core::mem;
 use core::ptr::{self, NonNull};
@@ -249,12 +249,14 @@ pub(crate) fn ivar_drop_flag_names<T: DefinedClass>() -> (Cow<'static, CStr>, Co
         // GNUStep does not support a subclass having an ivar with the
         // same name as a superclass, so let's use the class name as the
         // ivar name to ensure uniqueness.
-        (
-            CString::new(format!("{}_ivars", T::NAME)).unwrap().into(),
-            CString::new(format!("{}_drop_flag", T::NAME))
-                .unwrap()
-                .into(),
-        )
+        let mut ivars = Vec::from(T::NAME.to_bytes());
+        ivars.extend_from_slice(b"_ivars");
+        let ivars = CString::new(ivars).unwrap();
+
+        let mut drop_flag = Vec::from(T::NAME.to_bytes());
+        drop_flag.extend_from_slice(b"_drop_flag");
+        let drop_flag = CString::new(drop_flag).unwrap();
+        (ivars.into(), drop_flag.into())
     } else {
         // SAFETY: The byte slices are NUL-terminated, and do not contain
         // interior NUL bytes.
@@ -450,6 +452,7 @@ pub(crate) unsafe fn get_initialized_ivar_ptr<T: DefinedClass>(
 mod tests {
     use alloc::vec::Vec;
     use core::cell::Cell;
+    use std::format;
     use std::sync::OnceLock;
 
     use super::*;

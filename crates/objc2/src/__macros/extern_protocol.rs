@@ -202,10 +202,12 @@ macro_rules! __inner_extern_protocol {
         // and is correctly defined.
         $($attr_impl)*
         unsafe impl $crate::ProtocolType for dyn $protocol {
-            const NAME: &'static $crate::__macros::str = $crate::__fallback_if_not_set! {
-                ($($name)*)
-                ($crate::__macros::stringify!($protocol))
-            };
+            const NAME: &'static $crate::__macros::CStr = $crate::__macros::class_c_name(
+                $crate::__macros::concat!($crate::__fallback_if_not_set! {
+                    ($($name)*)
+                    ($crate::__macros::stringify!($protocol))
+                }, "\0")
+            );
             const __INNER: () = ();
         }
 
@@ -432,6 +434,6 @@ mod tests {
 
         let proto = <dyn Foo>::protocol().unwrap();
         assert_eq!(proto.name().to_str().unwrap(), "NSObject");
-        assert_eq!(<dyn Foo>::NAME, "NSObject");
+        assert_eq!(<dyn Foo>::NAME.to_str().unwrap(), "NSObject");
     }
 }

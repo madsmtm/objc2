@@ -588,7 +588,7 @@ fn auto_name() {
     let expected = format!("define_class::AutoName{}", env!("CARGO_PKG_VERSION"));
 
     assert_eq!(AutoName::class().name().to_str().unwrap(), expected);
-    assert_eq!(AutoName::NAME, expected);
+    assert_eq!(AutoName::NAME.to_str().unwrap(), expected);
 }
 
 #[test]
@@ -600,7 +600,7 @@ fn set_name() {
     );
 
     assert_eq!(SetName::class().name().to_str().unwrap(), "SetName");
-    assert_eq!(SetName::NAME, "SetName");
+    assert_eq!(SetName::NAME.to_str().unwrap(), "SetName");
 }
 
 #[test]
@@ -613,7 +613,7 @@ fn name_can_be_expr() {
 
     let expected = "Name5Concat";
     assert_eq!(Name5Concat::class().name().to_str().unwrap(), expected);
-    assert_eq!(Name5Concat::NAME, expected);
+    assert_eq!(Name5Concat::NAME.to_str().unwrap(), expected);
 }
 
 // Test overriding `alloc` method

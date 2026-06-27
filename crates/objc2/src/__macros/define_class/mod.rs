@@ -656,15 +656,13 @@ macro_rules! __define_class_inner {
                     (<<Self as $crate::ClassType>::Super as $crate::ClassType>::ThreadKind)
                 };
 
-                const NAME: &'static $crate::__macros::str = $crate::__define_class_name!($class, $($name)*);
+                const NAME: &'static $crate::__macros::CStr = $crate::__macros::class_c_name(
+                    $crate::__macros::concat!($crate::__define_class_name!($class, $($name)*), "\0")
+                );
 
                 fn class() -> &'static $crate::runtime::AnyClass {
                     let _ = <Self as $crate::__macros::ValidThreadKind<Self::ThreadKind>>::check;
                     let _ = <Self as $crate::__macros::MainThreadOnlyDoesNotImplSendSync<_>>::check;
-
-                    const C_NAME: &'static $crate::__macros::CStr = $crate::__macros::class_c_name(
-                        $crate::__macros::concat!($crate::__define_class_name!($class, $($name)*), "\0")
-                    );
 
                     // TODO: Use `std::sync::OnceLock`
                     #[export_name = $crate::__macros::concat!(
@@ -675,7 +673,7 @@ macro_rules! __define_class_inner {
 
                     REGISTER_CLASS.call_once(|| {
                         let (__objc2_cls, __objc2_ivar_offset, __objc2_drop_flag_offset) = $crate::__macros::define_class::<Self>(
-                            C_NAME,
+                            Self::NAME,
                             $crate::__define_class_name_is_auto_generated!($($name)*),
                             |mut __objc2_builder| {
                                 // Implement protocols and methods

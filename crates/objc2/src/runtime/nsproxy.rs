@@ -1,5 +1,6 @@
 //! Defined here instead of in `objc2-foundation` since it's a root object,
 //! and the `extern_class!` macro doesn't support those (yet).
+use core::ffi::CStr;
 use core::fmt;
 use core::hash;
 
@@ -27,7 +28,7 @@ crate::__extern_class_impl_traits! {
 unsafe impl ClassType for NSProxy {
     type Super = AnyObject;
     type ThreadKind = dyn AnyThread;
-    const NAME: &'static str = "NSProxy";
+    const NAME: &'static CStr = unsafe { CStr::from_bytes_with_nul_unchecked(b"NSProxy\0") };
 
     #[inline]
     fn class() -> &'static AnyClass {

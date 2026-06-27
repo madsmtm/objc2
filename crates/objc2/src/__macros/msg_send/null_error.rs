@@ -24,23 +24,24 @@ pub(crate) unsafe fn encountered_error<E: ClassType>(err: *mut E) -> Retained<E>
 }
 
 /// Poor mans string equality in `const`. Implements `a == b`.
-const fn is_eq(a: &str, b: &str) -> bool {
-    let a = a.as_bytes();
-    let b = b.as_bytes();
-
-    if a.len() != b.len() {
-        return false;
-    }
+///
+/// FIXME(MSRV): Use newer APIs for implementing this.
+const fn is_eq(a: &CStr, b: &[u8]) -> bool {
+    let ptr = a.as_ptr();
 
     let mut i = 0;
-    while i < a.len() {
-        if a[i] != b[i] {
+    while i < b.len() {
+        let c = unsafe { *ptr.add(i) };
+        if (c as u8) != b[i] {
+            return false;
+        }
+        if c == 0 {
             return false;
         }
         i += 1;
     }
 
-    true
+    unsafe { *ptr.add(i) == 0 }
 }
 
 // TODO: Use inline `const` once in MSRV (or add proper trait bounds).
@@ -50,7 +51,7 @@ trait IsNSError {
 
 impl<T: ClassType> IsNSError for T {
     const IS_NSERROR_COMPATIBLE: bool = {
-        if is_eq(T::NAME, "NSError") || is_eq(T::NAME, "NSObject") {
+        if is_eq(T::NAME, b"NSError") || is_eq(T::NAME, b"NSObject") {
             true
         } else {
             // The post monomorphization error here is not nice, but it's
@@ -119,15 +120,21 @@ fn foundation_not_linked() -> &'static AnyClass {
 
 #[cfg(test)]
 mod tests {
+    use std::ffi::CString;
+
     use super::*;
+
+    fn c(s: &str) -> CString {
+        CString::new(s).unwrap()
+    }
 
     #[test]
     fn test_is_eq() {
-        assert!(is_eq("NSError", "NSError"));
-        assert!(!is_eq("nserror", "NSError"));
-        assert!(!is_eq("CFError", "NSError"));
-        assert!(!is_eq("NSErr", "NSError"));
-        assert!(!is_eq("NSErrorrrr", "NSError"));
+        assert!(is_eq(&c("NSError"), b"NSError"));
+        assert!(!is_eq(&c("nserror"), b"NSError"));
+        assert!(!is_eq(&c("CFError"), b"NSError"));
+        assert!(!is_eq(&c("NSErr"), b"NSError"));
+        assert!(!is_eq(&c("NSErrorrrr"), b"NSError"));
     }
 
     #[test]

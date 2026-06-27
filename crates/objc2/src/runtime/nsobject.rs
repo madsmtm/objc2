@@ -1,3 +1,4 @@
+use core::ffi::CStr;
 use core::fmt;
 use core::hash;
 use core::ops::Deref;
@@ -81,7 +82,7 @@ impl RefUnwindSafe for private::ForDefinedSubclasses {}
 unsafe impl ClassType for NSObject {
     type Super = AnyObject;
     type ThreadKind = dyn AnyThread;
-    const NAME: &'static str = "NSObject";
+    const NAME: &'static CStr = unsafe { CStr::from_bytes_with_nul_unchecked(b"NSObject\0") };
 
     #[inline]
     fn class() -> &'static AnyClass {
@@ -348,7 +349,7 @@ pub unsafe trait NSObjectProtocol {
 unsafe impl<T> NSObjectProtocol for ProtocolObject<T> where T: ?Sized + NSObjectProtocol {}
 // SAFETY: Same as in extern_protocol!
 unsafe impl ProtocolType for dyn NSObjectProtocol {
-    const NAME: &'static str = "NSObject";
+    const NAME: &'static CStr = unsafe { CStr::from_bytes_with_nul_unchecked(b"NSObject\0") };
     const __INNER: () = ();
 }
 // SAFETY: Same as in extern_protocol!

@@ -114,6 +114,6 @@ mod tests {
         use crate::NSAccessibilityElementProtocol;
         use objc2::ProtocolType;
         let actual = <dyn NSAccessibilityElementProtocol>::NAME;
-        assert_eq!(actual, "NSAccessibilityElement");
+        assert_eq!(actual.to_str().unwrap(), "NSAccessibilityElement");
     }
 }

@@ -9,12 +9,10 @@ _fn1_get_protocol:
 	call	L0$pb
 L0$pb:
 	pop	eax
-	sub	esp, 8
-	lea	eax, [eax + l_anon.[ID].0-L0$pb]
-	push	10
-	push	eax
-	call	SYM(objc2[CRATE_ID]::top_level_traits::get_protocol, 0)
-	add	esp, 24
+	lea	eax, [eax + L_anon.[ID].0-L0$pb]
+	mov	dword ptr [esp], eax
+	call	_objc_getProtocol
+	add	esp, 8
 	pop	ebp
 	ret
 
@@ -69,8 +67,8 @@ L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 L_OBJC_IMAGE_INFO_a3f3690bc9f113ac:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.section	__TEXT,__const
-l_anon.[ID].0:
-	.ascii	"MyProtocol"
+	.section	__TEXT,__cstring,cstring_literals
+L_anon.[ID].0:
+	.asciz	"MyProtocol"
 
 .subsections_via_symbols
