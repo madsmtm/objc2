@@ -293,19 +293,254 @@ fn.sec_identity_create_with_certificates.arguments.1.generics = ["Security.SecBa
 fn.sec_identity_copy_certificates_ref.return.generics = ["Security.SecBase.SecCertificate"]
 
 ##
-## Fixing nullability, lifetime and pointer bounds.
+## Pointer bounds.
+##
+
+fn.SecAccessCreateFromOwnerAndACL.arguments.0.bounds = "single"
+fn.SecAccessCreateFromOwnerAndACL.arguments.2.bounds.counted-by = "acl_count"
+fn.SecAccessGetOwnerAndACL.arguments.1.bounds = "single"
+fn.SecAccessGetOwnerAndACL.arguments.2.bounds = "single"
+fn.SecAccessGetOwnerAndACL.arguments.3.bounds.counted-by = "*acl_count"
+fn.SecAccessCopyOwnerAndACL.arguments.1.bounds = "single"
+fn.SecAccessCopyOwnerAndACL.arguments.2.bounds = "single"
+fn.SecAccessCopyOwnerAndACL.arguments.3.bounds = "single"
+
+fn.SecACLCreateFromSimpleContents.arguments.3.bounds = "single"
+fn.SecACLCopySimpleContents.arguments.3.bounds = "single"
+fn.SecACLCopyContents.arguments.3.bounds = "single"
+fn.SecACLSetSimpleContents.arguments.3.bounds = "single"
+fn.SecACLGetAuthorizations.arguments.1.bounds.counted-by = "*tag_count"
+fn.SecACLGetAuthorizations.arguments.2.bounds = "single"
+fn.SecACLSetAuthorizations.arguments.1.bounds.counted-by = "*tag_count"
+
+fn.SecAsn1CoderCreate.arguments.0.bounds = "single"
+fn.SecAsn1Decode.arguments.3.bounds = "unsafe" # Terminated by .file == 0
+fn.SecAsn1DecodeData.arguments.1.bounds = "single"
+fn.SecAsn1DecodeData.arguments.2.bounds = "unsafe" # Terminated by .file == 0
+fn.SecAsn1EncodeItem.arguments.2.bounds = "unsafe" # Terminated by .file == 0
+fn.SecAsn1EncodeItem.arguments.3.bounds = "single"
+fn.SecAsn1AllocItem.arguments.1.bounds = "single" # Probably
+fn.SecAsn1AllocCopy.arguments.3.bounds = "single"
+fn.SecAsn1AllocCopyItem.arguments.1.bounds = "single"
+fn.SecAsn1AllocCopyItem.arguments.2.bounds = "single"
+fn.SecAsn1OidCompare.arguments.0.bounds = "single"
+fn.SecAsn1OidCompare.arguments.1.bounds = "single"
+
+fn.SecCertificateCreateFromData.arguments.0.bounds = "single"
+fn.SecCertificateGetType.arguments.1.bounds = "single"
+fn.SecCertificateGetSubject.arguments.1.bounds = "single"
+fn.SecCertificateGetIssuer.arguments.1.bounds = "single"
+fn.SecCertificateGetCLHandle.arguments.1.bounds = "single"
+fn.SecCertificateGetAlgorithmID.arguments.1.bounds = "single"
+
+fn.SecKeyGetCSSMKey.arguments.1.bounds = "single"
+fn.SecKeyGetCSPHandle.arguments.1.bounds = "single"
+fn.SecKeyGetCredentials.arguments.3.bounds = "single"
+
+fn.SecKeychainGetVersion.arguments.0.bounds = "single"
+fn.SecKeychainOpen.arguments.0.bounds = "null-terminated"
+fn.SecKeychainOpen.arguments.2.bounds.sized-by = "password_length"
+fn.SecKeychainCreate.arguments.0.bounds = "null-terminated"
+fn.SecKeychainSetSettings.arguments.1.bounds = "single"
+fn.SecKeychainCopySettings.arguments.1.bounds = "single"
+fn.SecKeychainGetPreferenceDomain.arguments.0.bounds = "single"
+fn.SecKeychainGetStatus.arguments.1.bounds = "single"
+fn.SecKeychainGetPath.arguments.1.bounds = "single"
+fn.SecKeychainGetPath.arguments.2.bounds.sized-by = "*io_path_length"
+fn.SecKeychainAttributeInfoForItemID.arguments.2.bounds = "single"
+fn.SecKeychainFreeAttributeInfo.arguments.0.bounds = "single" # Correct here to pass &mut SecKeychainAttributeInfo
+fn.SecKeychainAddInternetPassword.arguments.2.bounds.sized-by = "server_name_length"
+fn.SecKeychainAddInternetPassword.arguments.4.bounds.sized-by = "security_domain_length"
+fn.SecKeychainAddInternetPassword.arguments.6.bounds.sized-by = "account_name_length"
+fn.SecKeychainAddInternetPassword.arguments.8.bounds.sized-by = "path_length"
+fn.SecKeychainFindInternetPassword.arguments.2.bounds.sized-by = "server_name_length"
+fn.SecKeychainFindInternetPassword.arguments.4.bounds.sized-by = "security_domain_length"
+fn.SecKeychainFindInternetPassword.arguments.6.bounds.sized-by = "account_name_length"
+fn.SecKeychainFindInternetPassword.arguments.8.bounds.sized-by = "path_length"
+fn.SecKeychainFindInternetPassword.arguments.12.bounds = "single"
+fn.SecKeychainFindInternetPassword.arguments.13.bounds = "single" # Inner ptr is counted by *password_length
+fn.SecKeychainAddGenericPassword.arguments.2.bounds.sized-by = "service_name_length"
+fn.SecKeychainAddGenericPassword.arguments.4.bounds.sized-by = "account_name_length"
+fn.SecKeychainAddGenericPassword.arguments.6.bounds.sized-by = "password_length"
+fn.SecKeychainFindGenericPassword.arguments.2.bounds.sized-by = "service_name_length"
+fn.SecKeychainFindGenericPassword.arguments.4.bounds.sized-by = "account_name_length"
+fn.SecKeychainFindGenericPassword.arguments.5.bounds.sized-by = "single"
+fn.SecKeychainFindGenericPassword.arguments.6.bounds.sized-by = "single" # Inner ptr is counted by *password_length
+fn.SecKeychainGetUserInteractionAllowed.arguments.0.bounds = "single"
+fn.SecKeychainGetCSPHandle.arguments.1.bounds = "single"
+fn.SecKeychainGetDLDBHandle.arguments.1.bounds = "single"
+
+fn.SecKeychainItemModifyAttributesAndData.arguments.1.bounds = "single"
+fn.SecKeychainItemCreateFromContent.arguments.1.bounds = "single"
+fn.SecKeychainItemModifyContent.arguments.1.bounds = "single"
+fn.SecKeychainItemCopyContent.arguments.1.bounds = "single"
+fn.SecKeychainItemCopyContent.arguments.2.bounds = "single"
+fn.SecKeychainItemCopyContent.arguments.3.bounds = "single"
+fn.SecKeychainItemCopyContent.arguments.4.bounds = "single" # Inner ptr is counted by *length
+fn.SecKeychainItemFreeContent.arguments.0.bounds = "single"
+fn.SecKeychainItemCopyAttributesAndData.arguments.1.bounds = "single"
+fn.SecKeychainItemCopyAttributesAndData.arguments.2.bounds = "single"
+fn.SecKeychainItemCopyAttributesAndData.arguments.3.bounds = "single"
+fn.SecKeychainItemCopyAttributesAndData.arguments.4.bounds = "single"
+fn.SecKeychainItemCopyAttributesAndData.arguments.5.bounds = "single" # Inner ptr is counted by *length
+fn.SecKeychainItemFreeAttributesAndData.arguments.0.bounds = "unsafe" # Unsure if we have &mut ownership here
+fn.SecKeychainItemGetDLDBHandle.arguments.1.bounds = "single"
+fn.SecKeychainItemGetUniqueRecordID.arguments.1.bounds = "single"
+
+fn.SecKeychainItemImport.arguments.2.bounds = "single"
+fn.SecKeychainItemImport.arguments.3.bounds = "single"
+fn.SecKeychainItemImport.arguments.5.bounds = "single"
+
+fn.SecKeychainSearchCreateFromAttributes.arguments.2.bounds = "single"
+
+fn.SecKeychainItemExport.arguments.3.bounds = "single"
+fn.SecItemExport.arguments.3.bounds = "single"
+fn.SecItemImport.arguments.2.bounds = "single"
+fn.SecItemImport.arguments.3.bounds = "single"
+fn.SecItemImport.arguments.5.bounds = "single"
+
+fn.SecPolicyGetOID.arguments.1.bounds = "single"
+fn.SecPolicyGetValue.arguments.1.bounds = "single"
+fn.SecPolicySetValue.arguments.1.bounds = "single"
+fn.SecPolicyGetTPHandle.arguments.1.bounds = "single"
+
+fn.SecPolicySearchCreate.arguments.1.bounds = "single"
+fn.SecPolicySearchCreate.arguments.2.bounds = "single" # Unused
+
+fn.SecTrustGetNetworkFetchAllowed.arguments.1.bounds = "single"
+fn.SecTrustEvaluate.arguments.1.bounds = "single"
+fn.SecTrustGetTrustResult.arguments.1.bounds = "single"
+fn.SecTrustGetResult.arguments.1.bounds = "single"
+fn.SecTrustGetResult.arguments.3.bounds = "single"
+fn.SecTrustGetCssmResult.arguments.1.bounds = "single"
+fn.SecTrustGetCssmResultCode.arguments.1.bounds = "single"
+fn.SecTrustGetTPHandle.arguments.1.bounds = "single"
+
+fn.SecTrustedApplicationCreateFromPath.arguments.0.bounds = "null-terminated"
+
+fn.SecHostCreateGuest.arguments.5.bounds = "single"
+fn.SecHostSelectedGuest.arguments.1.bounds = "single"
+
+
+fn.AuthorizationCreate.arguments.0.bounds = "single"
+fn.AuthorizationCreate.arguments.1.bounds = "single"
+fn.AuthorizationCreate.arguments.3.bounds = "single"
+fn.AuthorizationCopyRights.arguments.1.bounds = "single"
+fn.AuthorizationCopyRights.arguments.2.bounds = "single"
+fn.AuthorizationCopyRights.arguments.4.bounds = "single"
+fn.AuthorizationCopyRightsAsync.arguments.1.bounds = "single"
+fn.AuthorizationCopyRightsAsync.arguments.2.bounds = "single"
+fn.AuthorizationCopyInfo.arguments.2.bounds = "single"
+fn.AuthorizationMakeExternalForm.arguments.1.bounds = "single"
+fn.AuthorizationCreateFromExternalForm.arguments.0.bounds = "single"
+fn.AuthorizationCreateFromExternalForm.arguments.1.bounds = "single"
+fn.AuthorizationFreeItemSet.arguments.0.bounds = "unsafe" # Unsure if we have &mut ownership here
+fn.AuthorizationCopyPrivilegedReference.arguments.0.bounds = "single"
+
+fn.AuthorizationPluginCreate.arguments.0.bounds = "single"
+fn.AuthorizationPluginCreate.arguments.1.bounds = "single"
+fn.AuthorizationPluginCreate.arguments.2.bounds = "single"
+
+fn.AuthorizationRightGet.arguments.0.bounds = "null-terminated"
+fn.AuthorizationRightSet.arguments.1.bounds = "null-terminated"
+fn.AuthorizationRightRemove.arguments.1.bounds = "null-terminated"
+
+fn.CMSDecoderGetNumSigners.arguments.1.bounds = "single"
+fn.CMSDecoderCopySignerStatus.arguments.4.bounds = "single"
+fn.CMSDecoderCopySignerStatus.arguments.6.bounds = "single"
+fn.CMSDecoderIsContentEncrypted.arguments.1.bounds = "single"
+fn.CMSDecoderCopySignerSigningTime.arguments.2.bounds = "single"
+fn.CMSDecoderCopySignerTimestamp.arguments.2.bounds = "single"
+fn.CMSDecoderCopySignerTimestampWithPolicy.arguments.3.bounds = "single"
+
+fn.CMSEncoderGetHasDetachedContent.arguments.1.bounds = "single"
+fn.CMSEncoderSetEncapsulatedContentType.arguments.1.bounds = "single"
+fn.CMSEncoderGetCertificateChainMode.arguments.1.bounds = "single"
+fn.CMSEncode.arguments.2.bounds = "single"
+fn.CMSEncoderCopySignerTimestamp.arguments.2.bounds = "single"
+fn.CMSEncoderCopySignerTimestampWithPolicy.arguments.3.bounds = "single"
+
+fn.SessionGetInfo.arguments.1.bounds = "single"
+fn.SessionGetInfo.arguments.2.bounds = "single"
+
+fn.SecureDownloadCreateWithTicket.arguments.5.bounds = "single"
+fn.SecureDownloadGetDownloadSize.arguments.1.bounds = "single"
+
+fn.SSLGetSessionState.arguments.1.bounds = "single"
+fn.SSLGetSessionOption.arguments.2.bounds = "single"
+fn.SSLGetProtocolVersionMin.arguments.1.bounds = "single"
+fn.SSLGetProtocolVersionMax.arguments.1.bounds = "single"
+fn.SSLGetProtocolVersionEnabled.arguments.2.bounds = "single"
+fn.SSLGetProtocolVersion.arguments.1.bounds = "single"
+fn.SSLGetConnection.arguments.1.bounds = "single"
+fn.SSLSetPeerDomainName.arguments.1.bounds.sized-by = "peer_name_len"
+fn.SSLGetPeerDomainNameLength.arguments.1.bounds = "single"
+fn.SSLGetPeerDomainName.arguments.1.bounds.sized-by = "*peer_name_len"
+fn.SSLGetPeerDomainName.arguments.2.bounds = "single"
+fn.SSLCopyRequestedPeerNameLength.arguments.1.bounds = "single"
+fn.SSLCopyRequestedPeerName.arguments.1.bounds.sized-by = "*peer_name_len"
+fn.SSLCopyRequestedPeerName.arguments.2.bounds = "single"
+fn.SSLGetMaxDatagramRecordSize.arguments.1.bounds = "single"
+fn.SSLGetNegotiatedProtocolVersion.arguments.1.bounds = "single"
+fn.SSLGetNumberSupportedCiphers.arguments.1.bounds = "single"
+fn.SSLGetSupportedCiphers.arguments.1.bounds.sized-by = "*num_ciphers"
+fn.SSLGetSupportedCiphers.arguments.2.bounds = "single"
+fn.SSLGetNumberEnabledCiphers.arguments.1.bounds = "single"
+fn.SSLSetEnabledCiphers.arguments.1.bounds.sized-by = "num_ciphers"
+fn.SSLGetEnabledCiphers.arguments.1.bounds.sized-by = "*num_ciphers"
+fn.SSLGetEnabledCiphers.arguments.2.bounds = "single"
+fn.SSLGetEnableCertVerify.arguments.1.bounds = "single"
+fn.SSLGetAllowsExpiredCerts.arguments.1.bounds = "single"
+fn.SSLGetAllowsExpiredRoots.arguments.1.bounds = "single"
+fn.SSLGetAllowsAnyRoot.arguments.1.bounds = "single"
+fn.SSLGetPeerID.arguments.1.bounds = "single" # Inner sized by *peer_id_len
+fn.SSLGetPeerID.arguments.2.bounds = "single"
+fn.SSLGetNegotiatedCipher.arguments.1.bounds = "single"
+fn.SSLGetClientCertificateState.arguments.1.bounds = "single"
+fn.SSLGetDiffieHellmanParams.arguments.1.bounds = "single" # Inner sized by *dh_params_len
+fn.SSLGetDiffieHellmanParams.arguments.2.bounds = "single"
+fn.SSLGetRsaBlinding.arguments.1.bounds = "single"
+fn.SSLWrite.arguments.1.bounds.sized-by = "data_length"
+fn.SSLWrite.arguments.3.bounds = "single"
+fn.SSLRead.arguments.1.bounds.sized-by = "data_length"
+fn.SSLRead.arguments.3.bounds = "single"
+fn.SSLGetBufferedReadSize.arguments.1.bounds = "single"
+fn.SSLGetDatagramWriteSize.arguments.1.bounds = "single"
+
+# fn.sec_protocol_metadata_get_negotiated_protocol.return.bounds = "null-terminated" TODO: Uncertain lifetime
+# fn.sec_protocol_metadata_copy_negotiated_protocol.return.bounds = "null-terminated" TODO: Uncertain lifetime
+# fn.sec_protocol_metadata_get_server_name.return.bounds = "null-terminated" TODO: Uncertain lifetime
+# fn.sec_protocol_metadata_copy_server_name.return.bounds = "null-terminated" TODO: Uncertain lifetime
+fn.sec_protocol_options_add_tls_application_protocol.arguments.1.bounds = "null-terminated"
+fn.sec_protocol_options_set_tls_server_name.arguments.1.bounds = "null-terminated"
+
+fn.cssmPerror.arguments.0.bounds = "null-terminated"
+fn.cssmOidToAlg.arguments.0.bounds = "single"
+fn.cssmOidToAlg.arguments.1.bounds = "single"
+fn.cssmAlgToOid.return.bounds = "single"
+
+##
+## Nullability.
 ##
 
 fn.SecureDownloadCreateWithTicket.arguments.0.nullability = "nonnull"
 fn.SecureDownloadUpdateWithData.arguments.1.nullability = "nonnull"
+fn.SecureDownloadCopyURLs.arguments.1.nullability = "nonnull"
+fn.SecureDownloadCopyName.arguments.1.nullability = "nonnull"
+fn.SecureDownloadCopyCreationDate.arguments.1.nullability = "nonnull"
 fn.SecureDownloadCopyTicketLocation.arguments.0.nullability = "nonnull"
+fn.SecureDownloadCopyTicketLocation.arguments.1.nullability = "nonnull"
 
 fn.SecDigestTransformCreate.return.nullability = "nullable"
 
 fn.SecEncryptTransformCreate.return.nullability = "nullable"
 fn.SecDecryptTransformCreate.return.nullability = "nullable"
 
+fn.SecTransformExecute.return.nullability = "nullable"
+
+##
+## Lifetime.
+##
+
 # Docs say: call the CFRelease function to free the key’s memory
 fn.SecKeyUnwrapSymmetric.arguments.0.lifetime = "out-pointer-retained"
-
-fn.SecTransformExecute.return.nullability = "nullable"
