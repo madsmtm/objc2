@@ -3691,6 +3691,8 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 read: _,
+                // `const` is irrelevant in constants since they're always
+                // constant.
                 written: _,
                 lifetime: Lifetime::Unspecified, // TODO
                 bounds: PointerBounds::NullTerminated,
@@ -3811,8 +3813,7 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 read: _,
-                // Map both `const` and non-`const` to `&CStr`.
-                written: _,
+                written: false,
                 lifetime: Lifetime::Unspecified, // TODO
                 bounds: PointerBounds::NullTerminated,
                 pointee,
@@ -3965,7 +3966,8 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 read: _,
-                written,
+                // Only map `const char*` to `&CStr`
+                written: false,
                 lifetime: Lifetime::Unspecified, // TODO
                 bounds: PointerBounds::NullTerminated,
                 pointee,
@@ -3975,8 +3977,6 @@ impl Ty {
                         f,
                         "let {arg_to} = NonNull::new({arg}.as_ptr().cast_mut()).unwrap();"
                     )
-                } else if *written {
-                    writeln!(f, "let {arg_to} = {arg}.map(|ptr| ptr.as_ptr().cast_mut()).unwrap_or_else(core::ptr::null_mut);")
                 } else {
                     writeln!(
                         f,
@@ -4077,7 +4077,7 @@ impl Ty {
             Self::Pointer {
                 nullability,
                 read: _,
-                written: _,
+                written: false,
                 lifetime: Lifetime::Unspecified, // TODO
                 bounds: PointerBounds::NullTerminated,
                 pointee,
