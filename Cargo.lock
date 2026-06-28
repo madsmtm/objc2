@@ -1998,6 +1998,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-core-foundation",
+ "objc2-disk-arbitration",
  "objc2-security",
 ]
 

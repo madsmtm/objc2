@@ -9,14 +9,6 @@ tvos = "12.0"
 watchos = "5.0"
 visionos = "1.0"
 
-# CarbonCore is deprecated, and very C-centric, which header-translator has
-# trouble with. Recursive structs are especially problematic currently.
-#
-# So for now, we completely disable CarbonCore. This does lead to a lot of
-# unused code, since other parts of CoreServices still tries to depend on
-# CarbonCore, but we'll live with that for now.
-module.CarbonCore.skipped = true
-
 # Deprecated, replaced with functionality in Security.
 module.OSServices.module.KeychainCore.skipped = true
 # Deprecated, replaced with functionality in IOKit.
@@ -42,7 +34,8 @@ fn.vAEBuildParameters.skipped = true
 fn.vAEBuildAppleEvent.skipped = true
 
 # Dependent on target endianness
-typedef.WideChar.skipped = true # union+typedef
+union.WideChar.skipped = true
+typedef.WideChar.skipped = true
 
 # Needs mach_msg_header_t
 fn.AEDecodeMessage.skipped = true
@@ -88,6 +81,49 @@ const.typeFloat.skipped = true
 const.typeLongFloat.skipped = true
 const.typeExtended.skipped = true
 const.typeFSS.skipped = true
+
+# Needs long double
+fn.relationl.skipped = true
+fn.num2decl.skipped = true
+fn.dec2numl.skipped = true
+fn.x80told.skipped = true
+fn.ldtox80.skipped = true
+fn.SInt64ToLongDouble.skipped = true
+fn.LongDoubleToSInt64.skipped = true
+fn.UInt64ToLongDouble.skipped = true
+fn.LongDoubleToUInt64.skipped = true
+
+# Recursive, we must define it ourselves to get the encoding right.
+struct.QElem.skipped = true
+
+# Wrong type of value.
+const.WDEFNFnd.use-value = true
+const.CDEFNFnd.use-value = true
+
+# Uses kInvalidID from MacTypes.h
+const.kMPNoID.use-value = true
+
+# Literal overflows i32, needs to be cast / converted to a negative literal.
+const.kCollectionAllAttributes.use-value = true
+const.gestaltAFPClientAttributeMask.use-value = true
+const.gestaltUSBPrinterSharingAttrMask.use-value = true
+const.gestaltUSBPrinterSharingAttrRunning.use-value = true
+const.badComponentInstance.use-value = true
+const.badComponentSelector.use-value = true
+const.kStackParameterMask.use-value = true
+const.kXLibTag1.use-value = true
+const.smMaskAll.use-value = true
+
+# Private
+const._MixedModeMagic.skipped = true
+
+# Uses `_FILESEC_REMOVE_ACL` from sys/fcntl.h
+const.kFSFileSecurityRemoveACL.skipped = true
+
+# Uses sizeof(PEFContainerHeader), which is not yet supported.
+# Note: `PEFContainerHeader` has a fixed size regardless of architecture, so
+# it's fine to just use the value.
+const.kPEFFirstSectionHeaderOffset.use-value = true
 
 ##
 ## Nullability and pointer bounds.

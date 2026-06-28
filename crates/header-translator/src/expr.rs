@@ -36,6 +36,7 @@ pub enum Expr {
     Signed(i64),
     Unsigned(u64),
     Float(f64),
+    Boolean(bool),
     MacroInvocation {
         id: ItemIdentifier,
         is_function_like: bool,
@@ -79,6 +80,7 @@ impl Expr {
             Self::Signed(_) => Ty::Primitive(Primitive::Int),
             Self::Unsigned(_) => Ty::Primitive(Primitive::UInt),
             Self::Float(_) => Ty::Primitive(Primitive::Float),
+            Self::Boolean(_) => Ty::Primitive(Primitive::C99Bool),
             Self::MacroInvocation { evaluated, .. } => {
                 if let Some(evaluated) = evaluated {
                     evaluated.guess_type(location)
@@ -254,6 +256,10 @@ impl Expr {
                     } else if ident == "CFUUIDGetConstantUUIDWithBytes" {
                         i = tokens.len() - i - 1;
                         Token::CFUUID("todo".into())
+                    } else if ident == "true" {
+                        Token::Expr(Expr::Boolean(true))
+                    } else if ident == "false" {
+                        Token::Expr(Expr::Boolean(false))
                     } else if let Some(expr) = declaration_references.get(&ident) {
                         Token::Expr(expr.clone())
                     } else if let Some(macro_invocation) = context
@@ -498,6 +504,7 @@ impl Expr {
             Self::Signed(_) => {}
             Self::Unsigned(_) => {}
             Self::Float(_) => {}
+            Self::Boolean(_) => {}
             Self::MacroInvocation { evaluated, id, .. } => {
                 if evaluated.is_none() {
                     items.push(ItemTree::from_id(id.clone()));
@@ -537,6 +544,7 @@ impl fmt::Display for Expr {
             Self::Signed(signed) => write!(f, "{signed}"),
             Self::Unsigned(unsigned) => write!(f, "{unsigned}"),
             Self::Float(n) => write!(f, "{n}"),
+            Self::Boolean(b) => write!(f, "{b}"),
             Self::MacroInvocation {
                 id,
                 is_function_like,

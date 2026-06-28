@@ -75,6 +75,8 @@ files.extend-exclude = [
     # This tests some weird strings
     "framework-crates/objc2-foundation/src/tests/string.rs",
 ]
+# In framework-crates/objc2-core-services/translation-config.toml, WDEFNFnd
+default.extend-words.Fnd = "Fnd"
 # Comes from the `clang` crate
 default.extend-identifiers.ParmDecl = "ParmDecl"
 # In framework-crates/objc2-core-nfc/translation-config.toml

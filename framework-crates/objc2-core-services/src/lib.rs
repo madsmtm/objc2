@@ -9,8 +9,6 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 // Update in Cargo.toml as well.
 #![doc(html_root_url = "https://docs.rs/objc2-core-services/0.2.2")]
-// We ignore everything that depends on CarbonCore for now.
-#![allow(unexpected_cfgs)]
 
 #[cfg(feature = "alloc")]
 extern crate alloc;
@@ -21,11 +19,15 @@ extern crate std;
 #[cfg(all(feature = "CarbonCore", feature = "Files"))]
 mod files;
 mod generated;
+#[cfg(all(feature = "CarbonCore", feature = "OSUtils"))]
+mod osutils;
 
 #[cfg(all(feature = "CarbonCore", feature = "Files"))]
 pub use self::files::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(all(feature = "CarbonCore", feature = "OSUtils"))]
+pub use self::osutils::*;
 
 #[cfg(feature = "FSEvents")]
 pub type ConstFSEventStreamRef = *const __FSEventStream;
@@ -35,27 +37,86 @@ pub type ConstFSEventStreamRef = *const __FSEventStream;
 /// [Apple's documentation](https://developer.apple.com/documentation/coreservices/kfseventstreameventidsincenow?language=objc)
 pub const kFSEventStreamEventIdSinceNow: FSEventStreamEventId = 0xFFFFFFFFFFFFFFFF;
 
+#[cfg(all(feature = "CarbonCore", feature = "IntlResources"))]
+pub type WideChar = core::ffi::c_short;
+
 // MacTypes.h
 #[allow(dead_code)]
 mod mac_types {
     #[cfg(feature = "objc2")]
     use objc2::encode::{Encode, Encoding, RefEncode};
 
+    #[repr(C, packed(2))]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
+    #[allow(unreachable_pub)] // Intentionally don't make this truly public
+    pub struct wide {
+        #[cfg(target_endian = "big")]
+        hi: i32,
+
+        lo: u32,
+
+        #[cfg(target_endian = "little")]
+        hi: i32,
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl Encode for wide {
+        const ENCODING: Encoding = Encoding::Struct(
+            "wide",
+            if cfg!(target_endian = "big") {
+                &[<i32>::ENCODING, <u32>::ENCODING]
+            } else {
+                &[<u32>::ENCODING, <i32>::ENCODING]
+            },
+        );
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl RefEncode for wide {
+        const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+    }
+
+    #[repr(C, packed(2))]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
+    #[allow(unreachable_pub)] // Intentionally don't make this truly public
+    pub struct UnsignedWide {
+        #[cfg(target_endian = "big")]
+        hi: u32,
+
+        lo: u32,
+
+        #[cfg(target_endian = "little")]
+        hi: u32,
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl Encode for UnsignedWide {
+        const ENCODING: Encoding =
+            Encoding::Struct("UnsignedWide", &[<u32>::ENCODING, <u32>::ENCODING]);
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl RefEncode for UnsignedWide {
+        const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+    }
+
+    pub(crate) type Fixed = i32;
+    pub(crate) type FixedPtr = *mut Fixed;
     pub(crate) type Fract = i32;
+    pub(crate) type FractPtr = *mut Fract;
+    pub(crate) type UnsignedFixed = u32;
+    pub(crate) type UnsignedFixedPtr = *mut UnsignedFixed;
+    pub(crate) type ShortFixed = core::ffi::c_short;
+    pub(crate) type ShortFixedPtr = *mut ShortFixed;
 
     #[repr(C)]
     #[derive(Clone, Copy, Debug, PartialEq, Default)]
-    pub(crate) struct Float80 {
+    #[allow(unreachable_pub)] // Intentionally don't make this truly public
+    pub struct Float80 {
         exp: i16,
         man: [i16; 4],
     }
-
     #[cfg(feature = "objc2")]
     unsafe impl Encode for Float80 {
         const ENCODING: Encoding =
             Encoding::Struct("Float80", &[<i16>::ENCODING, <[i16; 4]>::ENCODING]);
     }
-
     #[cfg(feature = "objc2")]
     unsafe impl RefEncode for Float80 {
         const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
@@ -89,6 +150,8 @@ mod mac_types {
 
     pub(crate) type Boolean = u8;
 
+    pub(crate) type ProcPtr = Option<unsafe extern "C" fn() -> core::ffi::c_long>;
+
     #[cfg(target_pointer_width = "64")]
     pub(crate) type URefCon = *mut core::ffi::c_void;
     #[cfg(target_pointer_width = "64")]
@@ -103,9 +166,6 @@ mod mac_types {
 
     pub(crate) type UniChar = u16;
     pub(crate) type UniCharCount = core::ffi::c_ulong;
-    pub(crate) type ConstStr255Param = *const core::ffi::c_char;
-    pub(crate) type StringPtr = *mut core::ffi::c_char;
-    pub(crate) type ConstStringPtr = *const core::ffi::c_char;
     pub(crate) type Str255 = [core::ffi::c_uchar; 255];
     pub(crate) type Str63 = [core::ffi::c_uchar; 64];
     pub(crate) type Str32 = [core::ffi::c_uchar; 33];
@@ -113,8 +173,66 @@ mod mac_types {
     pub(crate) type Str27 = [core::ffi::c_uchar; 28];
     pub(crate) type Str15 = [core::ffi::c_uchar; 16];
     pub(crate) type Str32Field = [core::ffi::c_uchar; 34];
+    pub(crate) type StrFileName = Str63;
+    pub(crate) type StringPtr = *mut core::ffi::c_char;
+    pub(crate) type ConstStringPtr = *const core::ffi::c_char;
+    pub(crate) type ConstStr255Param = *const core::ffi::c_char;
+    pub(crate) type ConstStr63Param = *const core::ffi::c_char;
+    pub(crate) type ConstStrFileNameParam = ConstStr63Param;
+
+    #[repr(C)]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
+    #[allow(unreachable_pub)] // Intentionally don't make this truly public
+    pub struct Point {
+        v: core::ffi::c_short,
+        h: core::ffi::c_short,
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl Encode for Point {
+        const ENCODING: Encoding = Encoding::Struct(
+            "Point",
+            &[
+                <core::ffi::c_short>::ENCODING,
+                <core::ffi::c_short>::ENCODING,
+            ],
+        );
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl RefEncode for Point {
+        const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+    }
+
+    #[repr(C)]
+    #[derive(Clone, Copy, Debug, PartialEq, Default)]
+    #[allow(unreachable_pub)] // Intentionally don't make this truly public
+    pub struct Rect {
+        top: core::ffi::c_short,
+        left: core::ffi::c_short,
+        bottom: core::ffi::c_short,
+        right: core::ffi::c_short,
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl Encode for Rect {
+        const ENCODING: Encoding = Encoding::Struct(
+            "Rect",
+            &[
+                <core::ffi::c_short>::ENCODING,
+                <core::ffi::c_short>::ENCODING,
+                <core::ffi::c_short>::ENCODING,
+                <core::ffi::c_short>::ENCODING,
+            ],
+        );
+    }
+    #[cfg(feature = "objc2")]
+    unsafe impl RefEncode for Rect {
+        const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+    }
+
+    pub(crate) type Style = core::ffi::c_uchar;
 
     pub(crate) type SignedByte = i8;
+
+    pub(crate) type UInt32 = u32;
 }
 
 #[allow(unused_imports)]

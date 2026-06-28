@@ -2135,6 +2135,11 @@ impl Stmt {
 
         let data = context.library(&id).const_data.get(&id.name);
         let skipped = data.and_then(|data| data.skipped);
+        let use_value = data.and_then(|data| data.use_value);
+
+        if use_value.is_some() {
+            error!(?id, "`use-value` on #define does nothing");
+        }
 
         if skipped.unwrap_or(false) {
             return None;

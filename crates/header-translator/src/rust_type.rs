@@ -3022,13 +3022,17 @@ impl Ty {
         match self {
             Self::Union { .. } => true,
             Self::TypeDef { id, .. }
-                if matches!(&*id.name, "MPSPackedFloat3" | "MTLPackedFloat3") =>
+                if matches!(
+                    &*id.name,
+                    "MPSPackedFloat3" | "MTLPackedFloat3" | "WideChar"
+                ) =>
             {
                 // These are custom-defined to not contain the internal union.
                 false
             }
             Self::TypeDef { to, .. } => to.contains_union(),
             Self::Struct { fields, .. } => fields.iter().any(|(_, field)| field.contains_union()),
+            Self::Array { element_type, .. } => element_type.contains_union(),
             _ => false,
         }
     }
