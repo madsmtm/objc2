@@ -68,3 +68,28 @@ const.kTXNQDFontColorAttributeSize.skipped = true
 
 # Private.
 const._KeyboardDispatch.skipped = true
+
+##
+## Nullability, lifetime and pointer bounds.
+##
+
+# This is a creation method, I'm guessing it's retained.
+fn.InstallEventLoopTimer.arguments.5.lifetime = "out-pointer-retained"
+
+# This has "Get" in the name, I'm guessing it's not retained.
+fn.InvokeDataBrowserGetContextualMenuUPP.arguments.1.lifetime = "out-pointer-not-retained"
+fn.InvokeDataBrowserGetContextualMenuUPP.arguments.3.lifetime = "out-pointer-not-retained"
+
+# This is a creation method, I'm guessing it's retained.
+fn.HIObjectRegisterSubclass.arguments.7.lifetime = "out-pointer-retained"
+
+# Docs say: This API was mistakenly named as a "Get" API. It behaves as "Copy"
+# API. THE CALLER IS RESPONSIBLE FOR RELEASING THE RETURNED SHAPE.
+fn.HIThemeGetButtonShape.arguments.2.lifetime = "out-pointer-retained"
+fn.HIThemeGetMenuBackgroundShape.arguments.2.lifetime = "out-pointer-retained"
+fn.HIThemeGetTabPaneDrawShape.arguments.3.lifetime = "out-pointer-retained"
+fn.HIThemeGetTabPaneContentShape.arguments.3.lifetime = "out-pointer-retained"
+fn.HIThemeGetTabDrawShape.arguments.2.lifetime = "out-pointer-retained"
+fn.HIThemeGetTabShape.arguments.2.lifetime = "out-pointer-retained"
+fn.HIThemeGetTrackThumbShape.arguments.1.lifetime = "out-pointer-retained"
+fn.HIThemeGetWindowShape.arguments.3.lifetime = "out-pointer-retained"

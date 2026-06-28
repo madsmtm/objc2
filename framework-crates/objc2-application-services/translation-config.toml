@@ -161,6 +161,11 @@ fn.PMPrintSettingsGetValue.arguments.2.lifetime = "out-pointer-not-retained"
 fn.TranslationPerformForData.arguments.2.lifetime = "out-pointer-retained"
 fn.TranslationPerformForURL.arguments.3.lifetime = "out-pointer-retained"
 
+# These have "Get" in the name, I'm guessing they're not retained.
+fn.ATSFontFamilyGetName.arguments.2.lifetime = "out-pointer-not-retained"
+fn.ATSFontGetName.arguments.2.lifetime = "out-pointer-not-retained"
+fn.ATSFontGetPostScriptName.arguments.2.lifetime = "out-pointer-not-retained"
+
 ##
 ## Safety
 ##

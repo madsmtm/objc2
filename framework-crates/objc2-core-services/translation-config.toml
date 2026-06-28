@@ -126,7 +126,7 @@ const.kFSFileSecurityRemoveACL.skipped = true
 const.kPEFFirstSectionHeaderOffset.use-value = true
 
 ##
-## Nullability and pointer bounds.
+## Nullability, lifetime and pointer bounds.
 ##
 
 fn.MDQueryCreateSubset.arguments.1.nullability = "nonnull"
@@ -140,6 +140,7 @@ fn.SKIndexCopyInfoForDocumentIDs.arguments.3.bounds = "unsafe"
 fn.SKIndexCopyDocumentRefsForDocumentIDs.arguments.3.bounds = "unsafe"
 fn.SKIndexCopyDocumentURLsForDocumentIDs.arguments.3.bounds = "unsafe"
 fn.SKSearchResultsGetInfoInRange.arguments.2.bounds = "unsafe"
+fn.SKSearchResultsGetInfoInRange.arguments.3.bounds = "unsafe"
 
 # Docs says: Despite the absence of the word Copy [...] you are responsible for releasing this object.
 fn.LSOpenCFURLRef.arguments.1.lifetime = "out-pointer-retained"
@@ -147,6 +148,12 @@ fn.LSOpenFromURLSpec.arguments.1.lifetime = "out-pointer-retained"
 
 # Header says: Returned values has to be released with CFRelease().
 fn.LSSharedFileListItemResolve.arguments.2.lifetime = "out-pointer-retained"
+
+# Docs say: The caller is responsible for releasing the returned CFUUID.
+fn.CSDiskSpaceStartRecovery.arguments.3.lifetime = "out-pointer-retained"
+
+# _Probably_ creates the output string.
+fn.InvokeIndexToUCStringUPP.arguments.3.lifetime = "out-pointer-retained"
 
 ##
 ## Safety.
