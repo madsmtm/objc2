@@ -252,6 +252,36 @@ fn.IOCFUnserializeBinary.arguments.4.lifetime = "out-pointer-retained"
 fn.IOCFUnserializeWithSize.arguments.4.lifetime = "out-pointer-retained"
 
 ##
+## Pointer bounds
+##
+
+fn.IOObjectConformsTo.arguments.1.bounds = "null-terminated"
+fn.IOServiceAddNotification.arguments.1.bounds = "null-terminated"
+fn.IOServiceAddMatchingNotification.arguments.1.bounds = "null-terminated"
+fn.IOServiceAddInterestNotification.arguments.2.bounds = "null-terminated"
+fn.IORegistryEntryFromPath.arguments.1.bounds = "null-terminated"
+fn.IORegistryCreateIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryCreateIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetNameInPlane.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetLocationInPlane.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetPath.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryCopyPath.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntrySearchCFProperty.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetProperty.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetProperty.arguments.2.bounds = "single" # NOT sized by *size
+# fn.IORegistryEntryGetProperty.arguments.3.bounds = "single"
+fn.IORegistryEntryGetChildIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetChildEntry.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetParentIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetParentEntry.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryInPlane.arguments.1.bounds = "null-terminated"
+fn.IOServiceOFPathToBSDName.arguments.1.bounds = "null-terminated"
+
+# network
+fn.IONetworkSetPacketFiltersMask.arguments.1.bounds = "null-terminated"
+fn.IONetworkGetPacketFiltersMask.arguments.1.bounds = "null-terminated"
+
+##
 ## Safety
 ##
 

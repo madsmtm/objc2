@@ -3015,10 +3015,20 @@ impl Ty {
         }
     }
 
+    /// Whether the type, if behind a pointer, is allowed to be converted
+    /// to/from `CStr`.
     fn is_pointee_cstr(&self) -> bool {
         // Only check `char`; `unsigned char` or `signed char` are not
         // converted to `CStr` automatically.
-        matches!(self.through_typedef(), Self::Primitive(Primitive::Char))
+        match self.through_typedef() {
+            Self::Primitive(Primitive::Char) => true,
+            // `[c_char; N]` arrays work similar to `*c_char` in that we want
+            // to map them to `&CStr` when possible.
+            Self::Array { element_type, .. } => {
+                matches!(**element_type, Self::Primitive(Primitive::Char))
+            }
+            _ => false,
+        }
     }
 
     pub(crate) fn contains_union(&self) -> bool {
@@ -3732,7 +3742,7 @@ impl Ty {
         })
     }
 
-    pub(crate) fn fn_argument(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
+    fn fn_argument(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
@@ -3972,17 +3982,29 @@ impl Ty {
                 bounds: PointerBounds::NullTerminated,
                 pointee,
             } if pointee.is_pointee_cstr() => {
+                // We could emit a length check here for `char[N]`, to ensure
+                // that the user doesn't pass a string that is too long.
+                //
+                // But in practice, at least for the places that this is
+                // relevant (namely IOKit), it doesn't matter, the length is
+                // gotten via. `strlen`, and passing a string that is too long
+                // (seemingly) doesn't change the behaviour.
+
+                writeln!(f, "let {arg_to} = ")?;
                 if *nullability == Nullability::NonNull {
-                    writeln!(
-                        f,
-                        "let {arg_to} = NonNull::new({arg}.as_ptr().cast_mut()).unwrap();"
-                    )
+                    writeln!(f, "NonNull::new({arg}.as_ptr().cast_mut()).unwrap()")?;
                 } else {
                     writeln!(
                         f,
-                        "let {arg_to} = {arg}.map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null);"
-                    )
+                        "{arg}.map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null)"
+                    )?;
                 }
+                if !matches!(pointee.through_typedef(), Self::Primitive(Primitive::Char)) {
+                    writeln!(f, ".cast()")?;
+                }
+                writeln!(f, ";")?;
+
+                Ok(())
             }
             // HACK to support CFArray<T>.
             Self::Pointer {

@@ -1,5 +1,6 @@
 #![allow(non_snake_case, clippy::missing_safety_doc)]
-use core::{ffi::c_void, ptr};
+use core::ffi::{c_void, CStr};
+use core::ptr;
 use objc2_core_foundation::{CFDictionary, CFRetained};
 
 use crate::{
@@ -23,6 +24,13 @@ fn consume(matching: Option<CFRetained<CFDictionary>>) -> *mut CFDictionary {
 /// Parameter `matching`: A CF dictionary containing matching information, of which one reference is always consumed by this function (Note prior to the Tiger release there was a small chance that the dictionary might not be released if there was an error attempting to serialize the dictionary). IOKitLib can construct matching dictionaries for common criteria with helper functions such as IOServiceMatching, IOServiceNameMatching, IOBSDNameMatching.
 ///
 /// Returns: The first service matched is returned on success. The service must be released by the caller.
+///
+/// # Safety
+///
+/// - `matching` generic must be of the correct type.
+/// - `matching` generic must be of the correct type.
+/// - `matching` might not allow `None`.
+#[inline]
 pub unsafe fn IOServiceGetMatchingService(
     main_port: libc::mach_port_t,
     matching: Option<CFRetained<CFDictionary>>,
@@ -48,6 +56,14 @@ pub unsafe fn IOServiceGetMatchingService(
 /// Parameter `existing`: An iterator handle, or NULL, is returned on success, and should be released by the caller when the iteration is finished. If NULL is returned, the iteration was successful but found no matching services.
 ///
 /// Returns: A kern_return_t error code.
+///
+/// # Safety
+///
+/// - `matching` generic must be of the correct type.
+/// - `matching` generic must be of the correct type.
+/// - `matching` might not allow `None`.
+/// - `existing` must be a valid pointer.
+#[inline]
 pub unsafe fn IOServiceGetMatchingServices(
     main_port: libc::mach_port_t,
     matching: Option<CFRetained<CFDictionary>>,
@@ -91,9 +107,21 @@ pub unsafe fn IOServiceGetMatchingServices(
 /// Parameter `notification`: An iterator handle is returned on success, and should be released by the caller when the notification is to be destroyed. The notification is armed when the iterator is emptied by calls to IOIteratorNext - when no more objects are returned, the notification is armed. Note the notification is not armed when first created.
 ///
 /// Returns: A kern_return_t error code.
+///
+/// # Safety
+///
+/// - `notify_port` must be a valid pointer.
+/// - `notification_type` might not allow `None`.
+/// - `matching` generic must be of the correct type.
+/// - `matching` generic must be of the correct type.
+/// - `matching` might not allow `None`.
+/// - `callback` must be implemented correctly.
+/// - `ref_con` must be a valid pointer.
+/// - `notification` must be a valid pointer.
+#[inline]
 pub unsafe fn IOServiceAddMatchingNotification(
     notify_port: IONotificationPortRef,
-    notification_type: *mut io_name_t,
+    notification_type: Option<&CStr>,
     matching: Option<CFRetained<CFDictionary>>,
     callback: IOServiceMatchingCallback,
     ref_con: *mut c_void,
@@ -102,7 +130,7 @@ pub unsafe fn IOServiceAddMatchingNotification(
     extern "C-unwind" {
         fn IOServiceAddMatchingNotification(
             notify_port: IONotificationPortRef,
-            notification_type: *mut io_name_t,
+            notification_type: *const io_name_t,
             matching: *mut CFDictionary,
             callback: IOServiceMatchingCallback,
             ref_con: *mut c_void,
@@ -110,6 +138,10 @@ pub unsafe fn IOServiceAddMatchingNotification(
         ) -> libc::kern_return_t;
     }
 
+    let notification_type = notification_type
+        .map(|ptr| ptr.as_ptr())
+        .unwrap_or_else(core::ptr::null)
+        .cast();
     unsafe {
         IOServiceAddMatchingNotification(
             notify_port,

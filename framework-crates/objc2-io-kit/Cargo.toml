@@ -125,3 +125,6 @@ pwr_mgt = [
 ]
 serial = []
 usb = []
+
+[dev-dependencies]
+objc2-core-foundation = { workspace = true, features = ["CFString"] }
