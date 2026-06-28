@@ -77,6 +77,10 @@ files.extend-exclude = [
 ]
 # In framework-crates/objc2-core-services/translation-config.toml, WDEFNFnd
 default.extend-words.Fnd = "Fnd"
+# In BackgroundAssets, BA is short of that framework.
+default.extend-words.BA = "BA"
+# Used in Metal, LOD = level of detail
+default.extend-words.lod = "lod"
 # Comes from the `clang` crate
 default.extend-identifiers.ParmDecl = "ParmDecl"
 # In framework-crates/objc2-core-nfc/translation-config.toml
@@ -86,10 +90,6 @@ default.extend-identifiers.IMAGEIO_PNG_FILTER_PAETH = "IMAGEIO_PNG_FILTER_PAETH"
 # In framework-crates/objc2-io-bluetooth/translation-config.toml
 default.extend-identifiers.kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent = "kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent"
 default.extend-identifiers.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent = "kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent"
-# In BackgroundAssets, BA is short of that framework.
-default.extend-words.BA = "BA"
-# Used in Metal, LOD = level of detail
-default.extend-words.lod = "lod"
 
 # Used in framework crates.
 [workspace.dependencies]
