@@ -1737,6 +1737,8 @@ impl Ty {
                             | "malloc_zone_t"
                             | "_malloc_zone_t"
                             | "GDevice"
+                            | "TERec"
+                            | "NMRec"
                     )
                 ) {
                     // Fake fields, we'll have to define it ourselves

@@ -16,6 +16,52 @@ license.workspace = true
 workspace = true
 
 [dependencies]
+objc2 = { workspace = true, optional = true, features = ["std"] }
+objc2-application-services = { workspace = true, optional = true, features = [
+    "ATS",
+    "ATSTypes",
+    "ATSUI",
+    "ATSUnicodeTypes",
+    "HIServices",
+    "HIShape",
+    "QD",
+    "Quickdraw",
+] }
+objc2-core-foundation = { workspace = true }
+objc2-core-graphics = { workspace = true, optional = true, features = [
+    "CGColor",
+    "CGContext",
+    "CGEventTypes",
+    "CGImage",
+    "CGWindowLevel",
+] }
+objc2-core-services = { workspace = true, optional = true, features = [
+    "AE",
+    "AEDataModel",
+    "AERegistry",
+    "CarbonCore",
+    "Collections",
+    "Components",
+    "DictionaryServices",
+    "Endian",
+    "Files",
+    "IconsCore",
+    "LaunchServices",
+    "MacErrors",
+    "OSUtils",
+    "TextCommon",
+] }
+objc2-core-text = { workspace = true, optional = true, features = ["CTFont"] }
+objc2-foundation = { workspace = true, optional = true, features = [
+    "NSArray",
+    "NSAttributedString",
+    "NSDictionary",
+    "NSGeometry",
+    "NSRange",
+    "NSString",
+    "alloc",
+    "objc2-core-foundation",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -26,7 +72,169 @@ targets = [
 ]
 
 [features]
-default = ["std"]
+default = [
+    "std",
+    "AEInteraction",
+    "Appearance",
+    "CarbonEvents",
+    "CarbonEventsCore",
+    "ControlDefinitions",
+    "Controls",
+    "Dialogs",
+    "Drag",
+    "Events",
+    "HIAccessibility",
+    "HIArchive",
+    "HIButtonViews",
+    "HIClockView",
+    "HICocoaView",
+    "HIComboBox",
+    "HIContainerViews",
+    "HIDataBrowser",
+    "HIDisclosureViews",
+    "HIGeometry",
+    "HIImageViews",
+    "HILittleArrows",
+    "HIMenuView",
+    "HIObject",
+    "HIPopupButton",
+    "HIProgressViews",
+    "HIRelevanceBar",
+    "HIScrollView",
+    "HISearchField",
+    "HISegmentedView",
+    "HISeparator",
+    "HISlider",
+    "HITabbedView",
+    "HITextLengthFilter",
+    "HITextUtils",
+    "HITextViews",
+    "HITheme",
+    "HIToolbar",
+    "HIToolbox",
+    "HIToolboxDebugging",
+    "HIView",
+    "HIWindowViews",
+    "IBCarbonRuntime",
+    "IMKInputSession",
+    "Keyboards",
+    "Lists",
+    "MacApplication",
+    "MacHelp",
+    "MacTextEditor",
+    "MacWindows",
+    "Menus",
+    "Notification",
+    "Scrap",
+    "TSMTE",
+    "TextEdit",
+    "TextInputSources",
+    "TextServices",
+    "Translation",
+    "TranslationExtensions",
+    "TypeSelect",
+    "objc2",
+    "objc2-application-services",
+    "objc2-core-graphics",
+    "objc2-core-services",
+    "objc2-core-text",
+    "objc2-foundation",
+]
 std = ["alloc"]
 alloc = []
+objc2 = [
+    "dep:objc2",
+    "objc2-application-services?/objc2",
+    "objc2-core-foundation/objc2",
+    "objc2-core-graphics?/objc2",
+    "objc2-core-services?/objc2",
+    "objc2-core-text?/objc2",
+]
+objc2-application-services = ["dep:objc2-application-services"]
+objc2-core-graphics = ["dep:objc2-core-graphics"]
+objc2-core-services = ["dep:objc2-core-services"]
+objc2-core-text = ["dep:objc2-core-text"]
+objc2-foundation = ["dep:objc2-foundation"]
 unstable-darwin-objc = []
+
+AEInteraction = []
+Appearance = []
+CarbonEvents = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFCGTypes",
+]
+CarbonEventsCore = ["objc2-core-foundation/CFCGTypes"]
+ControlDefinitions = []
+Controls = []
+Dialogs = []
+Drag = []
+Events = []
+HIAccessibility = []
+HIArchive = []
+HIButtonViews = []
+HIClockView = []
+HICocoaView = []
+HIComboBox = []
+HIContainerViews = []
+HIDataBrowser = []
+HIDisclosureViews = []
+HIGeometry = ["objc2-core-foundation/CFCGTypes"]
+HIImageViews = []
+HILittleArrows = []
+HIMenuView = []
+HIObject = [
+    "objc2-core-foundation/CFBundle",
+    "objc2-core-foundation/CFDictionary",
+]
+HIPopupButton = []
+HIProgressViews = []
+HIRelevanceBar = []
+HIScrollView = []
+HISearchField = []
+HISegmentedView = []
+HISeparator = []
+HISlider = []
+HITabbedView = []
+HITextLengthFilter = []
+HITextUtils = []
+HITextViews = []
+HITheme = [
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFDate",
+]
+HIToolbar = []
+HIToolbox = []
+HIToolboxDebugging = []
+HIView = [
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFURL",
+]
+HIWindowViews = []
+IBCarbonRuntime = []
+IMKInputSession = []
+Keyboards = []
+Lists = []
+MacApplication = ["objc2-core-foundation/CFCGTypes"]
+MacHelp = []
+MacTextEditor = [
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFURL",
+]
+MacWindows = ["objc2-core-foundation/CFCGTypes"]
+Menus = [
+    "objc2-core-foundation/CFAttributedString",
+    "objc2-core-foundation/CFUUID",
+]
+Notification = []
+Scrap = []
+TSMTE = []
+TextEdit = []
+TextInputSources = [
+    "objc2-core-foundation/CFArray",
+    "objc2-core-foundation/CFDictionary",
+    "objc2-core-foundation/CFURL",
+]
+TextServices = []
+Translation = []
+TranslationExtensions = []
+TypeSelect = []

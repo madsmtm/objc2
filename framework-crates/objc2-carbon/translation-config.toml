@@ -1,6 +1,7 @@
 framework = "Carbon"
 crate = "objc2-carbon"
 required-crates = ["objc2-core-foundation"]
+custom-lib-rs = true
 macos = "10.0"
 
 # Use AppKit instead
@@ -15,7 +16,55 @@ module.SecurityHI.skipped = true
 # Use NSSpeechRecognizer (or AVFoundation) instead
 module.SpeechRecognition.skipped = true
 
-# TODO: Maybe add these in the future?
-custom-lib-rs = true # For docs
+# TODO: Maybe add this in the future?
 module.Help.skipped = true
-module.HIToolbox.skipped = true
+
+# Uses kUnknownType from MacTypes.h
+const.kKeyboardUnknown.use-value = true
+
+# Wrong type of value.
+const.kControlFocusNoPart.use-value = true
+const.kHIViewFocusNoPart.use-value = true
+
+# Float literals that don't use `.0`
+const.kEventDurationSecond.skipped = true
+const.kEventDurationMillisecond.skipped = true
+const.kEventDurationMicrosecond.skipped = true
+const.kEventDurationNanosecond.skipped = true
+const.kEventDurationMinute.skipped = true
+const.kEventDurationHour.skipped = true
+const.kEventDurationDay.skipped = true
+const.kEventDurationNoWait.skipped = true
+const.kEventDurationForever.skipped = true
+
+# WindowRef is a pointer, not an integer.
+const.kFirstWindowOfClass.skipped = true
+const.kLastWindowOfClass.skipped = true
+const.kFirstWindowOfGroup.skipped = true
+const.kLastWindowOfGroup.skipped = true
+const.kFirstWindowGroup.skipped = true
+const.kLastWindowGroup.skipped = true
+const.kUserFocusAuto.skipped = true
+const.kScrapRefNone.skipped = true
+
+# Tries to cast to `float`, which isn't supported
+const.kWindowOffsetUnchanged.skipped = true
+
+# Literal overflows i32, needs to be cast / converted to a negative literal.
+const.kAEDontDisposeOnResume.use-value = true
+const.kTXNClearTheseFontFeatures.use-value = true
+const.kTXNDecrementTypeSize.use-value = true
+const.kMouseUpOutOfSlop.use-value = true
+
+# Uses sizeof(...), which isn't yet supported by header-translator.
+const.kTXNTextEncodingAttributeSize.skipped = true
+const.kTXNATSUIStyleSize.skipped = true
+const.kTXNQDFontNameAttributeSize.skipped = true
+const.kTXNQDFontFamilyIDAttributeSize.skipped = true
+const.kTXNFontSizeAttributeSize.skipped = true
+const.kTXNQDFontSizeAttributeSize.skipped = true
+const.kTXNQDFontStyleAttributeSize.skipped = true
+const.kTXNQDFontColorAttributeSize.skipped = true
+
+# Private.
+const._KeyboardDispatch.skipped = true
