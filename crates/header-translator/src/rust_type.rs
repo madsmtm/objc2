@@ -1736,6 +1736,7 @@ impl Ty {
                             | "cssm_list_element"
                             | "malloc_zone_t"
                             | "_malloc_zone_t"
+                            | "GDevice"
                     )
                 ) {
                     // Fake fields, we'll have to define it ourselves

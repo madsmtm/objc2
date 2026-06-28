@@ -29,10 +29,17 @@ objc2-core-graphics = { workspace = true, optional = true, features = [
 objc2-core-services = { workspace = true, optional = true, features = [
     "AE",
     "AEDataModel",
+    "CarbonCore",
+    "Files",
     "IconStorage",
     "IconsCore",
     "LaunchServices",
     "OSServices",
+    "TextCommon",
+] }
+objc2-core-text = { workspace = true, optional = true, features = [
+    "SFNTLayoutTypes",
+    "SFNTTypes",
 ] }
 objc2-foundation = { workspace = true, optional = true, features = [
     "NSArray",
@@ -55,6 +62,17 @@ targets = [
 [features]
 default = [
     "std",
+    "ATS",
+    "ATSAvailability",
+    "ATSDefines",
+    "ATSFont",
+    "ATSLayoutTypes",
+    "ATSTypes",
+    "ATSUI",
+    "ATSUnicodeDirectAccess",
+    "ATSUnicodeFlattening",
+    "ATSUnicodeGlyphs",
+    "ATSUnicodeTypes",
     "AXActionConstants",
     "AXAttributeConstants",
     "AXConstants",
@@ -67,6 +85,8 @@ default = [
     "AXValueConstants",
     "AXWebConstants",
     "Accessibility",
+    "ColorSyncDeprecated",
+    "Fonts",
     "HIServices",
     "HIShape",
     "Icons",
@@ -81,6 +101,11 @@ default = [
     "Pasteboard",
     "PrintCore",
     "Processes",
+    "QD",
+    "QDAvailability",
+    "Quickdraw",
+    "SFNTLayoutTypes",
+    "SFNTTypes",
     "TranslationServices",
     "UniversalAccess",
     "bitflags",
@@ -88,6 +113,7 @@ default = [
     "objc2",
     "objc2-core-graphics",
     "objc2-core-services",
+    "objc2-core-text",
     "objc2-foundation",
 ]
 std = ["alloc"]
@@ -99,12 +125,29 @@ objc2 = [
     "objc2-core-foundation/objc2",
     "objc2-core-graphics?/objc2",
     "objc2-core-services?/objc2",
+    "objc2-core-text?/objc2",
 ]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-services = ["dep:objc2-core-services"]
+objc2-core-text = ["dep:objc2-core-text"]
 objc2-foundation = ["dep:objc2-foundation"]
 unstable-darwin-objc = []
 
+ATS = []
+ATSAvailability = []
+ATSDefines = []
+ATSFont = [
+    "objc2-core-foundation/CFCGTypes",
+    "objc2-core-foundation/CFRunLoop",
+    "objc2-core-foundation/CFURL",
+]
+ATSLayoutTypes = []
+ATSTypes = ["objc2-core-foundation/CFCGTypes"]
+ATSUI = []
+ATSUnicodeDirectAccess = []
+ATSUnicodeFlattening = []
+ATSUnicodeGlyphs = []
+ATSUnicodeTypes = []
 AXActionConstants = []
 AXAttributeConstants = ["bitflags"]
 AXConstants = []
@@ -122,6 +165,8 @@ AXValue = []
 AXValueConstants = []
 AXWebConstants = []
 Accessibility = []
+ColorSyncDeprecated = ["objc2-core-foundation/CFDictionary"]
+Fonts = []
 HIServices = []
 HIShape = ["objc2-core-foundation/CFCGTypes"]
 Icons = ["objc2-core-foundation/CFCGTypes"]
@@ -146,6 +191,11 @@ Pasteboard = [
 ]
 PrintCore = []
 Processes = ["objc2-core-foundation/CFDictionary"]
+QD = []
+QDAvailability = []
+Quickdraw = []
+SFNTLayoutTypes = []
+SFNTTypes = []
 TranslationServices = [
     "objc2-core-foundation/CFArray",
     "objc2-core-foundation/CFData",

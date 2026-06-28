@@ -5,11 +5,6 @@ custom-lib-rs = true
 macos = "10.0"
 maccatalyst = "13.0"
 
-# Headers say that these are "private".
-module.ATS.skipped = true
-module.QD.skipped = true
-# Maybe private?
-module.ATSUI.skipped = true
 # Replaced by AVFoundation
 module.SpeechSynthesis.skipped = true
 
@@ -118,6 +113,24 @@ typedef.ICDirSpecArrayPtr.skipped = true
 fn.HIShapeCreateDifference.renamed = "create_difference"
 fn.HIShapeCreateUnion.renamed = "create_union"
 fn.HIShapeCreateXor.renamed = "create_xor"
+
+# Uses sizeof(CMProfileLocation), whose value depends on the target.
+const.cmCurrentProfileLocationSize.skipped = true
+
+# Uses kNilOptions from MacTypes.h
+const.kATSOptionFlagsDefault.use-value = true
+
+# Recursive, we must define it ourselves to get the encoding right.
+struct.GDevice.skipped = true
+
+# Literal overflows i32, needs to be cast / converted to a negative literal.
+const.kATSNoTracking.use-value = true
+const.cmProfileMajorVersionMask.use-value = true
+const.cmCMSReservedFlagsMask.use-value = true
+const.kUseProfileIntent.use-value = true
+const.cmColorSpaceReservedMask.use-value = true
+const.cmDeviceStateForceNotify.use-value = true
+const.cmDeviceStateAppleRsvdBits.use-value = true
 
 ##
 ## Nullability, lifetime and pointer bounds.
