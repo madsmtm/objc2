@@ -436,6 +436,7 @@ fn.AuthorizationCreateFromExternalForm.arguments.0.bounds = "single"
 fn.AuthorizationCreateFromExternalForm.arguments.1.bounds = "single"
 fn.AuthorizationFreeItemSet.arguments.0.bounds = "unsafe" # Unsure if we have &mut ownership here
 fn.AuthorizationCopyPrivilegedReference.arguments.0.bounds = "single"
+fn.AuthorizationExecuteWithPrivileges.arguments.1.bounds = "null-terminated"
 
 fn.AuthorizationPluginCreate.arguments.0.bounds = "single"
 fn.AuthorizationPluginCreate.arguments.1.bounds = "single"

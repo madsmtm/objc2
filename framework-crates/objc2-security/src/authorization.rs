@@ -1,4 +1,4 @@
-use core::ffi::c_char;
+use core::ffi::{c_char, CStr};
 use core::ptr::NonNull;
 
 use crate::{AuthorizationFlags, AuthorizationRef, AuthorizationString, OSStatus};
@@ -29,12 +29,19 @@ use crate::{AuthorizationFlags, AuthorizationRef, AuthorizationString, OSStatus}
 /// This function has been deprecated and should no longer be used.
 /// Use a launchd-launched helper tool and/or the Service Management framework
 /// for this functionality.
+///
+/// # Safety
+///
+/// - `authorization` must be a valid pointer.
+/// - `arguments` must be a valid pointer.
+/// - `communications_pipe` must be a valid pointer or null.
 #[deprecated]
 #[allow(clippy::missing_safety_doc)]
 #[allow(non_snake_case)]
+#[inline]
 pub unsafe fn AuthorizationExecuteWithPrivileges(
     authorization: AuthorizationRef,
-    path_to_tool: NonNull<c_char>,
+    path_to_tool: &CStr,
     options: AuthorizationFlags,
     arguments: NonNull<AuthorizationString>,
     communications_pipe: *mut *mut libc::FILE,
@@ -48,6 +55,7 @@ pub unsafe fn AuthorizationExecuteWithPrivileges(
             communications_pipe: *mut *mut libc::FILE,
         ) -> OSStatus;
     }
+    let path_to_tool = NonNull::new(path_to_tool.as_ptr().cast_mut()).unwrap();
     unsafe {
         AuthorizationExecuteWithPrivileges(
             authorization,
