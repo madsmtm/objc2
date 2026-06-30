@@ -191,6 +191,19 @@ class.NSWindow.main-thread-only = true
 # Documented as "Thread-Unsafe"
 # class.NSResponder.sendable = false
 
+##
+## Fixing nullability.
+##
+
+# These are nullable when sandboxed without correct entitlements, see:
+# https://github.com/madsmtm/objc2/issues/813
+class.NSSavePanel.methods.savePanel.return.nullability = "nullable"
+class.NSSavePanel.methods.new.return.nullability = "nullable"
+class.NSSavePanel.methods.init.return.nullability = "nullable"
+class.NSOpenPanel.methods.openPanel.return.nullability = "nullable"
+class.NSOpenPanel.methods.init.return.nullability = "nullable"
+class.NSOpenPanel.methods.new.return.nullability = "nullable"
+
 ###
 ### Fixing pointer bounds.
 ###
