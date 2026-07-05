@@ -3,13 +3,6 @@
 //! and one created from an [`i8`]/[`u8`]. You should use the getter
 //! methods that fit your use-case instead!
 //!
-//! This does not implement [`Eq`] nor [`Ord`], since it may contain a
-//! floating point value. Beware that the implementation of [`PartialEq`]
-//! and [`PartialOrd`] does not properly handle NaNs either. Compare
-//! [`NSNumber::encoding`] with [`Encoding::Float`] or
-//! [`Encoding::Double`], and use [`NSNumber::as_f32`] or
-//! [`NSNumber::as_f64`] to get the desired floating point value directly.
-//!
 //! TODO: Once we have better CoreFoundation support, use that to create
 //! efficient static numbers. See:
 //! <https://github.com/nvzqz/fruity/blob/811d7787495eaaee6bc39d372004e5d96ef9f49b/src/foundation/ns_number.rs#L328-L401>
