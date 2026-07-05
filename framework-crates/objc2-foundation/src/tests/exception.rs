@@ -8,7 +8,7 @@ use crate::{ns_string, NSException, NSObject};
 
 #[test]
 fn create_and_query() {
-    let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")), None).unwrap();
+    let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")));
 
     assert_eq!(&*exc.name(), ns_string!("abc"));
     assert_eq!(&*exc.reason().unwrap(), ns_string!("def"));
@@ -37,7 +37,7 @@ fn create_and_query() {
 #[test]
 #[should_panic = "'abc' reason: def"]
 fn unwrap() {
-    let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")), None).unwrap();
+    let exc = NSException::new(ns_string!("abc"), Some(ns_string!("def")));
 
     panic!("{exc:?}");
 }

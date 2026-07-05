@@ -22,6 +22,8 @@ impl NSError {
         // SAFETY: `domain` and `user_info` are copied to the error object, so
         // even if the `&NSString` came from a `&mut NSMutableString`, we're
         // still good!
+        //
+        // Additionally, the user info is `NULL`, which is thread-safe.
         unsafe { Self::initWithDomain_code_userInfo(Self::alloc(), domain, code, None) }
     }
 }
