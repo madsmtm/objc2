@@ -691,4 +691,44 @@ mod tests {
         let enumerator = array.into_iter();
         assert!(enumerator.enumerate().all(|(i, obj)| obj.as_usize() == i));
     }
+
+    type MyObject<'a> = &'a ();
+
+    /// Test that `IterUnchecked<'a, T>` is covariant over `'a` and `T`.
+    #[allow(unused)]
+    fn assert_iter_unchecked_variance<'a, 'b>(
+        obj: IterUnchecked<'static, MyObject<'static>>,
+    ) -> IterUnchecked<'a, MyObject<'b>> {
+        obj
+    }
+
+    /// Test that `Iter<'a, T>` is covariant over `'a` and `T`.
+    #[allow(unused)]
+    fn assert_iter_variance<'a, 'b>(
+        obj: Iter<'static, MyObject<'static>>,
+    ) -> Iter<'a, MyObject<'b>> {
+        obj
+    }
+
+    /// Test that `IntoIter<T>` is covariant over `T`.
+    #[allow(unused)]
+    fn assert_into_iter_variance<'b>(obj: IntoIter<MyObject<'static>>) -> IntoIter<MyObject<'b>> {
+        obj
+    }
+
+    /// Test that `IterUncheckedWithBackingEnum` is covariant in all params.
+    #[allow(unused)]
+    fn assert_iter_unchecked_with_backing_enum_variance<'a, 'b, 'c>(
+        obj: IterUncheckedWithBackingEnum<'static, MyObject<'static>, MyObject<'static>>,
+    ) -> IterUncheckedWithBackingEnum<'a, MyObject<'b>, MyObject<'c>> {
+        obj
+    }
+
+    /// Test that `IterUncheckedWithBackingEnum` is covariant in all params.
+    #[allow(unused)]
+    fn assert_iter_with_backing_enum_variance<'a, 'b, 'c>(
+        obj: IterWithBackingEnum<'static, MyObject<'static>, MyObject<'static>>,
+    ) -> IterWithBackingEnum<'a, MyObject<'b>, MyObject<'c>> {
+        obj
+    }
 }
