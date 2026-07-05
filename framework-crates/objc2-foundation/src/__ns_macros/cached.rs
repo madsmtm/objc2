@@ -8,13 +8,19 @@ use objc2::Message;
 /// Allows storing an `Retained` in a static and lazily loading it.
 #[derive(Debug)]
 pub struct CachedRetained<T> {
+    // Logically stores `Retained<T>`, but type must be `Send` + `Sync` to be
+    // able to store `NSString` in a static.
     ptr: AtomicPtr<T>,
 }
 
 impl<T> CachedRetained<T> {
     /// Constructs a new [`CachedRetained`].
+    ///
+    /// # Safety
+    ///
+    /// The type / usage of this must be `Send` + `Sync`.
     #[allow(clippy::new_without_default)]
-    pub const fn new() -> Self {
+    pub const unsafe fn new() -> Self {
         Self {
             ptr: AtomicPtr::new(ptr::null_mut()),
         }
@@ -27,6 +33,9 @@ impl<T: Message> CachedRetained<T> {
     #[inline]
     pub fn get(&self, f: impl FnOnce() -> Retained<T>) -> &'static T {
         // TODO: Investigate if we can use weaker orderings.
+        //
+        // TODO: Figure out if we should use a `Once` here instead? This will
+        // currently leak if initialized under high contention.
         let ptr = self.ptr.load(Ordering::SeqCst);
         // SAFETY: The pointer is either NULL, or has been created below.
         unsafe { ptr.as_ref() }.unwrap_or_else(|| {

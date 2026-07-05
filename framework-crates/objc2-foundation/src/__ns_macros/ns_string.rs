@@ -207,8 +207,10 @@ macro_rules! __ns_string_static {
 #[macro_export]
 macro_rules! __ns_string_inner {
     ($inp:ident) => {{
+        // SAFETY: This stores an `NSString` instance, which is `Send` +
+        // `Sync` in this case, because we know it is not mutable.
         static CACHED_NSSTRING: $crate::__ns_macros::CachedRetained<$crate::NSString> =
-            $crate::__ns_macros::CachedRetained::new();
+            unsafe { $crate::__ns_macros::CachedRetained::new() };
         CACHED_NSSTRING.get(|| $crate::NSString::from_str($inp))
     }};
 }
