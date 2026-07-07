@@ -602,10 +602,9 @@ impl Drop for ProtocolBuilder {
 #[cfg(test)]
 mod tests {
     use core::hash::Hasher;
+    use core::mem::offset_of;
     use std::collections::hash_map::DefaultHasher;
     use std::hash::Hash;
-
-    use memoffset::offset_of;
 
     use super::*;
     use crate::encode::RefEncode;
