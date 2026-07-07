@@ -6,9 +6,9 @@ mod tests {
 
     #[test]
     fn cmp() {
-        let system = CFTimeZone::system().unwrap();
-        let default = CFTimeZone::default().unwrap();
+        let system = CFTimeZone::system();
+        let default = CFTimeZone::default();
         assert_eq!(system, default);
-        assert_eq!(system.name().unwrap(), default.name().unwrap(),);
+        assert_eq!(system.name(), default.name());
     }
 }

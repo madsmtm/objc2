@@ -5,8 +5,7 @@ use crate::CFError;
 
 impl fmt::Display for CFError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let desc = self.description().unwrap();
-        write!(f, "{desc}")
+        write!(f, "{}", self.description())
     }
 }
 

@@ -12,7 +12,7 @@ use objc2_core_foundation::{
 };
 
 fn main() {
-    let rl = CFRunLoop::main().unwrap();
+    let rl = CFRunLoop::main();
 
     // Add an observer.
     let observer = create_observer(
@@ -60,7 +60,7 @@ fn main() {
     let timer = create_timer(fire_date, 0.0, 0, |_| {
         println!("Fired one-shot timer after 0.5 seconds");
         // Still runs on the main thread.
-        assert_eq!(CFRunLoop::current().unwrap(), CFRunLoop::main().unwrap());
+        assert_eq!(CFRunLoop::current(), CFRunLoop::main());
     });
     rl.add_timer(&timer, unsafe { kCFRunLoopCommonModes });
 
