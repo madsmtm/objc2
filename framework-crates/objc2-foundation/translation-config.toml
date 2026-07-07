@@ -123,6 +123,11 @@ class.NSMutableData.methods.mutableBytes.return.nullability = "nullable"
 # Returns NULL if given an empty string.
 class.NSURL.methods."initFileURLWithFileSystemRepresentation:isDirectory:relativeToURL:".return.nullability = "nullable"
 
+# Returns NULL on error.
+# FB21165258, see https://github.com/madsmtm/objc2/issues/803.
+class.NSAppleScript.methods."executeAndReturnError:".return.nullability = "nullable"
+class.NSAppleScript.methods."executeAppleEvent:error:".return.nullability = "nullable"
+
 # Unnecessary, this derefs to `NSData` which has a `length` method.
 class.NSMutableData.methods.length.skipped = true
 
