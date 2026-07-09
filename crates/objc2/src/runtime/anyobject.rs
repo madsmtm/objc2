@@ -183,6 +183,7 @@ impl AnyObject {
     ///
     /// See [`Ivar::load_ptr`] for details surrounding this.
     #[deprecated = "this is difficult to use correctly, use `Ivar::load` instead."]
+    #[doc(hidden)]
     pub unsafe fn get_ivar<T: Encode>(&self, name: &str) -> &T {
         let ivar = self.lookup_instance_variable_dynamically(name);
         // SAFETY: Upheld by caller
@@ -199,6 +200,7 @@ impl AnyObject {
     ///
     /// See [`Ivar::load_ptr`] for details surrounding this.
     #[deprecated = "this is difficult to use correctly, use `Ivar::load_mut` instead."]
+    #[doc(hidden)]
     pub unsafe fn get_mut_ivar<T: Encode>(&mut self, name: &str) -> &mut T {
         let ivar = self.lookup_instance_variable_dynamically(name);
         // SAFETY: Upheld by caller
