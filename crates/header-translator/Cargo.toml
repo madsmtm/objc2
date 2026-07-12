@@ -22,7 +22,6 @@ tracing = { version = "0.1.37", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3.16", features = ["fmt", "env-filter"] }
 tracing-tree = "0.4.1"
 proc-macro2 = "1.0.66"
-syn = { version = "2.0", features = ["parsing"] }
 heck = "0.5"
 semver = { version = "1.0", features = ["serde"] }
 lenient_semver_parser = "0.4"

@@ -95,14 +95,5 @@ fn immediate_children<'tu>(
     });
 }
 
-pub(crate) fn to_snake_case(input: impl AsRef<str>) -> String {
-    let input = input.as_ref();
-    if input == "_" {
-        String::from("_")
-    } else {
-        heck::ToSnakeCase::to_snake_case(input)
-    }
-}
-
 /// The version of the framework crates.
 pub const VERSION: &str = "0.3.2";

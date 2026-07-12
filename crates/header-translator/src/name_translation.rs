@@ -5,7 +5,7 @@
 //! Kinda ugly and under-tested, may not work for all cases.
 #![allow(clippy::if_same_then_else)]
 
-use std::{collections::VecDeque, iter::FusedIterator};
+use std::{borrow::Cow, collections::VecDeque, iter::FusedIterator};
 
 use itertools::Itertools;
 
@@ -526,6 +526,108 @@ pub(crate) fn is_completion_handler_param_name(s: &str) -> bool {
     )
 }
 
+pub(crate) fn to_snake_case(mut input: &str) -> Cow<'_, str> {
+    if !input.contains(|c: char| c.is_ascii_uppercase()) {
+        // No uppercase chars -> assume already snake case
+        Cow::Borrowed(input)
+    } else {
+        // Preserve leading underscores.
+        let mut leading_underscores = 0;
+        while let Some(rest) = input.strip_prefix('_') {
+            leading_underscores += 1;
+            input = rest;
+        }
+        let mut result = heck::ToSnakeCase::to_snake_case(input);
+        for _ in 0..leading_underscores {
+            result.insert(0, '_');
+        }
+        Cow::Owned(result)
+    }
+}
+
+pub(crate) fn param_name(param: &str) -> Cow<'_, str> {
+    let param = to_snake_case(param);
+    if let Some(param) = keyword(&param) {
+        Cow::Borrowed(param)
+    } else {
+        param
+    }
+}
+
+/// Check if a given name is a reserved keyword.
+fn keyword(name: &str) -> Option<&'static str> {
+    // <https://doc.rust-lang.org/reference/keywords.html>
+    Some(match name {
+        // Strict keywords.
+        "_" => "param1", // HACK: Assumes that there are not other fields / parameters with the name `_`.
+        "as" => "r#as",
+        "async" => "r#async",
+        "await" => "r#await",
+        "break" => "r#break",
+        "const" => "r#const",
+        "continue" => "r#continue",
+        "crate" => "crate_", // Cannot be a raw identifier
+        "dyn" => "r#dyn",
+        "else" => "r#else",
+        "enum" => "r#enum",
+        "extern" => "r#extern",
+        "false" => "r#false",
+        "fn" => "r#fn",
+        "for" => "r#for",
+        "if" => "r#if",
+        "impl" => "r#impl",
+        "in" => "r#in",
+        "let" => "r#let",
+        "loop" => "r#loop",
+        "match" => "r#match",
+        "mod" => "r#mod",
+        "move" => "r#move",
+        "mut" => "r#mut",
+        "pub" => "r#pub",
+        "ref" => "r#ref",
+        "return" => "r#return",
+        "self" => "self_", // Cannot be a raw identifier
+        "Self" => "Self_", // Cannot be a raw identifier
+        "static" => "r#static",
+        "struct" => "r#struct",
+        "super" => "super_", // Cannot be a raw identifier
+        "trait" => "r#trait",
+        "true" => "r#true",
+        "type" => "r#type",
+        "unsafe" => "r#unsafe",
+        "use" => "r#use",
+        "where" => "r#where",
+        "while" => "r#while",
+
+        // Reserved keywords.
+        "abstract" => "r#abstract",
+        "become" => "r#become",
+        "box" => "r#box",
+        "do" => "r#do",
+        "final" => "r#final",
+        "gen" => "r#gen",
+        "macro" => "r#macro",
+        "override" => "r#override",
+        "priv" => "r#priv",
+        "try" => "r#try",
+        "typeof" => "r#typeof",
+        "unsized" => "r#unsized",
+        "virtual" => "r#virtual",
+        "yield" => "r#yield",
+
+        // Weak keywords. Not necessary to r#-prefix these.
+        // "macro_rules" => "r#macro_rules",
+        // "raw" => "r#raw",
+        // "safe" => "r#safe",
+        // "union" => "r#union",
+        _ => return None,
+    })
+}
+
+pub(crate) fn handle_keyword(name: &str) -> &str {
+    keyword(name).unwrap_or(name)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -771,5 +873,14 @@ mod tests {
         assert!(is_completion_handler_param_name(last_selector_piece(
             "signData:withSecureElementPass:completion:"
         )));
+    }
+
+    #[test]
+    fn snake() {
+        assert_eq!(to_snake_case("FooBar"), "foo_bar");
+        assert_eq!(to_snake_case("foo_bar"), "foo_bar");
+        assert_eq!(to_snake_case("_"), "_");
+        assert_eq!(to_snake_case("___Foo"), "___foo");
+        assert_eq!(to_snake_case("fooBar"), "foo_bar");
     }
 }

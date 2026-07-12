@@ -891,7 +891,6 @@ dependencies = [
  "regex",
  "semver",
  "serde",
- "syn",
  "toml",
  "toml_edit",
  "tracing",

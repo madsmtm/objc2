@@ -10,7 +10,9 @@ use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::id::{cfg_gate_ln, ItemTree};
-use crate::name_translation::{self, is_likely_bounds_affecting};
+use crate::name_translation::{
+    self, handle_keyword, is_likely_bounds_affecting, param_name, to_snake_case,
+};
 use crate::objc2_utils::in_selector_family;
 use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::stmt::parse_param_children;
@@ -636,7 +638,7 @@ impl Method {
                         "`{arg_name}` might not be bounds-checked"
                     )));
                 }
-                safety.merge(arg_ty.safety_in_method_argument(&crate::to_snake_case(arg_name)))
+                safety.merge(arg_ty.safety_in_method_argument(&to_snake_case(arg_name)))
             })
             .merge(result_type.safety_in_fn_return());
 
@@ -907,7 +909,7 @@ impl Method {
                     is_class,
                 );
 
-                let mut safety = ty.safety_in_fn_argument(&crate::to_snake_case(&name));
+                let mut safety = ty.safety_in_fn_argument(&to_snake_case(&name));
                 if kind == PropertyKind::UnsafeRetained && !ty.is_primitive_or_record() {
                     // We could _possibly_ allow these to be safe, but let's
                     // not for now, they interact weirdly with the getters
@@ -1245,7 +1247,7 @@ impl Method {
             if !self.safe {
                 write!(f, "unsafe ")?;
             }
-            write!(f, "fn {}(", handle_reserved(&self.fn_name))?;
+            write!(f, "fn {}(", handle_keyword(&self.fn_name))?;
 
             // Receiver
             if let MemoryManagement::RetainedInit = self.memory_management {
@@ -1258,7 +1260,7 @@ impl Method {
 
             // Arguments
             for (param, arg_ty) in arguments {
-                let param = handle_reserved(&crate::to_snake_case(param));
+                let param = param_name(param);
                 write!(f, "{param}: {}, ", arg_ty.method_argument())?;
             }
             if self.requires_main_thread_marker {
@@ -1284,30 +1286,5 @@ impl Method {
 
             Ok(())
         })
-    }
-}
-
-pub(crate) fn handle_reserved(name: &str) -> String {
-    // try to parse name as an identifier
-    if let Ok(ident) = syn::parse_str::<syn::Ident>(name) {
-        ident.to_string()
-    }
-    // try to parse as a raw identifier (NOTE: does not handle `self` or `super`)
-    else if let Ok(ident) = syn::parse_str::<syn::Ident>(&format!("r#{name}")) {
-        ident.to_string()
-    }
-    // translate whatever remains unchanged (needed for, e.g., `_`)
-    else if name == "self" {
-        "self_".into()
-    } else if name == "Self" {
-        "r#Self".into()
-    } else if name == "super" {
-        "super_".into()
-    } else if name == "_" {
-        // Hack: Assumes that there are not other fields / parameters with the
-        // name `_`.
-        "param1".into()
-    } else {
-        name.into()
     }
 }

@@ -22,9 +22,11 @@ use crate::id::ItemIdentifier;
 use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
-use crate::method::{handle_reserved, Method};
-use crate::name_translation::is_likely_bounds_affecting;
-use crate::name_translation::{enum_prefix, split_words};
+use crate::method::Method;
+use crate::name_translation::handle_keyword;
+use crate::name_translation::{
+    enum_prefix, is_likely_bounds_affecting, param_name, split_words, to_snake_case,
+};
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
 use crate::rust_type::PointeeTy;
@@ -2057,7 +2059,7 @@ impl Stmt {
                                 "`{arg_name}` might not be bounds-checked"
                             )));
                         }
-                        safety.merge(arg_ty.safety_in_fn_argument(&crate::to_snake_case(arg_name)))
+                        safety.merge(arg_ty.safety_in_fn_argument(&to_snake_case(arg_name)))
                     })
                     .merge(result_type.safety_in_fn_return());
 
@@ -3068,7 +3070,7 @@ impl Stmt {
                         } else {
                             write!(f, "pub ")?;
                         }
-                        let name = handle_reserved(name);
+                        let name = handle_keyword(name);
                         writeln!(f, "{name}: {},", ty.record())?;
                     }
                     writeln!(f, "}}")?;
@@ -3361,7 +3363,7 @@ impl Stmt {
                     write!(f, "// TODO: ")?;
                     write!(f, "pub fn {c_name}(")?;
                     for (param, arg_ty) in arguments {
-                        let param = handle_reserved(&crate::to_snake_case(param));
+                        let param = param_name(param);
                         write!(f, "{param}: {},", arg_ty.fn_argument_converted())?;
                     }
                     writeln!(
@@ -3408,7 +3410,7 @@ impl Stmt {
                     }
                     writeln!(f, "#[inline]")?;
                     let unsafe_ = if *safe { "" } else { "unsafe " };
-                    let fn_name = handle_reserved(&id.name);
+                    let fn_name = handle_keyword(&id.name);
                     // Wrappers have normal Rust ABI to unclutter docs.
                     write!(f, "{vis} {unsafe_}fn {fn_name}(")?;
 
@@ -3433,7 +3435,7 @@ impl Stmt {
                             continue;
                         }
 
-                        let param = handle_reserved(&crate::to_snake_case(param));
+                        let param = param_name(param);
                         write!(f, "{param}: {},", arg_ty.fn_argument_converted())?;
                     }
 
@@ -3467,7 +3469,7 @@ impl Stmt {
 
                     write!(f, "fn {c_name}(")?;
                     for (param, arg_ty) in arguments {
-                        let param = handle_reserved(&crate::to_snake_case(param));
+                        let param = param_name(param);
                         write!(f, "{param}: {},", arg_ty.fn_argument_unconverted())?;
                     }
                     writeln!(
@@ -3480,7 +3482,7 @@ impl Stmt {
 
                     // Perform argument conversion.
                     for (i, (param, ty)) in arguments.iter().enumerate() {
-                        let param = handle_reserved(&crate::to_snake_case(param));
+                        let param = param_name(param);
                         let param_or_self = if arg_is_self.unwrap_or(usize::MAX) == i {
                             "self"
                         } else {
@@ -3493,7 +3495,7 @@ impl Stmt {
                     let fn_call = FormatterFn(|f| {
                         write!(f, "unsafe {{ {c_name}(")?;
                         for (i, (param, ty)) in arguments.iter().enumerate() {
-                            let param = handle_reserved(&crate::to_snake_case(param));
+                            let param = param_name(param);
                             if arg_is_self.unwrap_or(usize::MAX) == i {
                                 let converter = ty.fn_argument_converter("self", &param);
                                 if converter.to_string().is_empty() {
