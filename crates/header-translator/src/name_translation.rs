@@ -430,6 +430,12 @@ fn is_method_candidate(fn_name: &str, type_name: &str) -> bool {
     // That would allow `CGPDFContextCreate` to be emitted as `CGContext.pdf_create`.
     let mut fn_words = lowercase_words(fn_name);
 
+    // SSLContext methods are kinda weirdly named, they don't start with the
+    // full "SSLContext", only "SSL".
+    if type_name == "SSLContext" && fn_words.next().as_deref() == Some("ssl") {
+        return true;
+    }
+
     for type_word in lowercase_words(type_name) {
         if let Some(fn_word) = fn_words.next() {
             if fn_word == type_word {

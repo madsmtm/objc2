@@ -27,6 +27,8 @@ mod authorization;
 mod cipher_suite;
 #[cfg(feature = "cssmapple")]
 mod cssmapple;
+#[cfg(feature = "SecureTransport")]
+mod secure_transport;
 #[cfg(all(feature = "libc", feature = "Authorization"))]
 #[allow(unused_imports, unreachable_pub)]
 pub use self::authorization::*;
