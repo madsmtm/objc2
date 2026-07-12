@@ -370,6 +370,7 @@ impl TypeSafety {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Primitive {
+    /// `()` or `c_void`
     Void,
     C99Bool,
     Char,
@@ -393,6 +394,7 @@ pub enum Primitive {
     /// Not yet supported by `rustc`
     /// <https://github.com/rust-lang/rust/issues/116909>
     F128,
+    // Integer types
     I8,
     U8,
     I16,
@@ -424,6 +426,8 @@ impl Primitive {
                 let s = self.as_str();
                 if s.starts_with("c_") {
                     Some(ItemTree::core_ffi(s))
+                } else if *self == Self::Void {
+                    Some(ItemTree::core_ffi("c_void"))
                 } else {
                     None
                 }
@@ -435,7 +439,7 @@ impl Primitive {
     const fn as_str(&self) -> &'static str {
         match self {
             // Primitives
-            Self::Void => "c_void",
+            Self::Void => "()",
             Self::C99Bool => "bool",
             Self::Char => "c_char",
             Self::SChar => "c_schar",
@@ -974,7 +978,11 @@ impl PointeeTy {
                     write!(f, "{}, ", arg.plain(allow_generic_param))?;
                 }
                 write!(f, ")")?;
-                write!(f, "{}", result_type.fn_type_return())?;
+                write!(
+                    f,
+                    "{}",
+                    result_type.prefix_return(result_type.fn_type_return())
+                )?;
                 if *no_escape {
                     write!(f, " + '_")?;
                 } else {
@@ -1583,6 +1591,15 @@ pub enum Ty {
         id: ItemIdentifier,
         /// FIXME: This does not work for recursive structs.
         fields: Vec<(String, Ty)>,
+    },
+    /// `Result<T, E>`
+    Result {
+        /// If this is `c_void`, the result type is `Result<(), E>`
+        ty: Box<Self>,
+        err: Box<Self>,
+        /// The inner / original return type. Useful for e.g. knowing if we're
+        /// converting `Boolean` or `Bool`.
+        original_ty: Box<Self>,
     },
 }
 
@@ -2411,7 +2428,7 @@ impl Ty {
                     // typedef NSArray<NSNumber*> MPSShape;
                 }
 
-                if array_decays_to_pointer && matches!(inner.through_typedef(), Self::Array { .. })
+                if array_decays_to_pointer && matches!(inner.through_wrapper(), Self::Array { .. })
                 {
                     Self::Pointer {
                         nullability,
@@ -2528,10 +2545,11 @@ impl Ty {
         }
     }
 
-    /// Recurse into typedefs (at the topmost layer).
-    fn through_typedef(&self) -> &Self {
+    /// Recurse into typedefs and `Result<(), E>` (at the topmost layer).
+    fn through_wrapper(&self) -> &Self {
         match self {
-            Self::TypeDef { to, .. } => to.through_typedef(),
+            Self::TypeDef { to, .. } => to.through_wrapper(),
+            Self::Result { ty, err, .. } if **ty == Self::VOID => err.through_wrapper(),
             _ => self,
         }
     }
@@ -2570,6 +2588,16 @@ impl Ty {
                 let fields = fields.iter().flat_map(|(_, field)| field.required_items());
                 vec![ItemTree::new(id.clone(), fields)]
             }
+            Self::Result {
+                ty,
+                original_ty,
+                err,
+                ..
+            } => ty
+                .required_items()
+                .chain(original_ty.required_items())
+                .chain(err.required_items())
+                .collect(),
         };
         items.into_iter()
     }
@@ -2590,6 +2618,10 @@ impl Ty {
             Self::Struct { fields, .. } | Self::Union { fields, .. } => fields
                 .iter()
                 .any(|(_, field)| field.requires_mainthreadmarker(self_requires)),
+            Self::Result { ty, err, .. } => {
+                ty.requires_mainthreadmarker(self_requires)
+                    || err.requires_mainthreadmarker(self_requires)
+            }
         }
     }
 
@@ -2614,6 +2646,10 @@ impl Ty {
             Self::Union { fields, .. } => fields
                 .iter()
                 .all(|(_, field)| field.provides_mainthreadmarker(self_provides)),
+            Self::Result { ty, err, .. } => {
+                ty.provides_mainthreadmarker(self_provides)
+                    && err.provides_mainthreadmarker(self_provides)
+            }
             _ => false,
         }
     }
@@ -2684,6 +2720,7 @@ impl Ty {
                 TypeSafety::unknown_in_argument("should be set correctly")
             }
             Self::TypeDef { to, .. } => to.safety(),
+            Self::Result { ty, err, .. } => ty.safety().merge(err.safety()),
         }
     }
 
@@ -2794,17 +2831,9 @@ impl Ty {
         self.safety_in_fn().in_return.preface("The returned")
     }
 
-    #[allow(dead_code)]
-    fn is_primitive(&self) -> bool {
-        matches!(
-            self.through_typedef(),
-            Self::Primitive(_) | Self::Simd { .. } | Self::Enum { .. }
-        )
-    }
-
     pub(crate) fn is_primitive_or_record(&self) -> bool {
         matches!(
-            self.through_typedef(),
+            self.through_wrapper(),
             Self::Primitive(_)
                 | Self::Simd { .. }
                 | Self::Enum { .. }
@@ -2836,6 +2865,7 @@ impl Ty {
                 let fields = fields.iter().flat_map(|(_, field)| field.required_items());
                 Some(ItemTree::new(id.clone(), fields))
             }
+            Self::Result { ty, .. } => ty.implementable(),
         }
     }
 
@@ -2846,7 +2876,7 @@ impl Ty {
     /// the runtime is keeping track of, so forgetting to `release` those
     /// would leak resources.
     fn is_static_object(&self) -> bool {
-        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_static_object()
         } else {
             false
@@ -2863,7 +2893,7 @@ impl Ty {
 
     /// Determine whether the inner type of a `Pointer` is object-like.
     fn is_objc_type(&self) -> bool {
-        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_objc_type()
         } else {
             false
@@ -2872,7 +2902,7 @@ impl Ty {
 
     /// Determine whether the pointee inside a `Pointer` is a CF-like type.
     fn is_cf_type(&self) -> bool {
-        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_cf_type()
         } else {
             false
@@ -2881,7 +2911,7 @@ impl Ty {
 
     /// Determine whether the pointee inside a `Pointer` is a Dispatch-like type.
     fn is_dispatch_type(&self) -> bool {
-        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_dispatch_type()
         } else {
             false
@@ -2890,7 +2920,7 @@ impl Ty {
 
     /// Determine whether the pointee inside a `Pointer` is a Network-like type.
     fn is_network_type(&self) -> bool {
-        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_network_type()
         } else {
             false
@@ -2899,7 +2929,7 @@ impl Ty {
 
     /// Determine whether the inner type of a `Pointer` is a block.
     fn is_block_type(&self) -> bool {
-        if let Self::Pointee(pointee_ty) = self.through_typedef() {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_block_type()
         } else {
             false
@@ -3004,8 +3034,8 @@ impl Ty {
     }
 
     pub(crate) fn is_class_with_mutable_in_name(&self) -> bool {
-        if let Self::Pointer { pointee, .. } = self.through_typedef() {
-            if let Self::Pointee(pointee) = pointee.through_typedef() {
+        if let Self::Pointer { pointee, .. } = self.through_wrapper() {
+            if let Self::Pointee(pointee) = pointee.through_wrapper() {
                 matches!(pointee.through_typedef(), PointeeTy::Class { id, .. } | PointeeTy::CFTypeDef { id, .. } if id.name.contains("Mutable"))
             } else {
                 false
@@ -3020,7 +3050,7 @@ impl Ty {
     fn is_pointee_cstr(&self) -> bool {
         // Only check `char`; `unsigned char` or `signed char` are not
         // converted to `CStr` automatically.
-        match self.through_typedef() {
+        match self.through_wrapper() {
             Self::Primitive(Primitive::Char) => true,
             // `[c_char; N]` arrays work similar to `*c_char` in that we want
             // to map them to `&CStr` when possible.
@@ -3051,7 +3081,7 @@ impl Ty {
     }
 
     pub(crate) fn directly_contains_fn_ptr(&self) -> bool {
-        if let Self::Pointer { pointee, .. } = self.through_typedef() {
+        if let Self::Pointer { pointee, .. } = self.through_wrapper() {
             matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. }))
         } else {
             false
@@ -3059,11 +3089,23 @@ impl Ty {
     }
 
     pub(crate) fn is_objc_bool(&self) -> bool {
-        matches!(self.through_typedef(), Self::Primitive(Primitive::ObjcBool))
+        matches!(self.through_wrapper(), Self::Primitive(Primitive::ObjcBool))
+    }
+
+    fn has_zero_niche(&self) -> bool {
+        matches!(
+            self,
+            Self::Pointer {
+                nullability: Nullability::NonNull,
+                ..
+            } | Self::Sel {
+                nullability: Nullability::NonNull,
+            }
+        )
     }
 
     pub(crate) fn has_zero_default(&self) -> bool {
-        match self.through_typedef() {
+        match self {
             Self::Primitive(Primitive::Void | Primitive::VaList) => false,
             Self::Primitive(_) => true,
             Self::Simd { .. } => true,
@@ -3107,6 +3149,10 @@ impl Ty {
                 is_bridged: false,
                 ..
             } => fields.iter().all(|(_, field)| field.has_zero_default()),
+            Self::TypeDef { to, .. } => to.has_zero_default(),
+            Self::Result { ty, err, .. } if **ty == Self::VOID => {
+                err.has_zero_niche()
+            },
             _ => false,
         }
     }
@@ -3157,7 +3203,11 @@ impl Ty {
                             write!(f, "...")?;
                         }
                         write!(f, ")")?;
-                        write!(f, "{}", result_type.fn_type_return())?;
+                        write!(
+                            f,
+                            "{}",
+                            result_type.prefix_return(result_type.fn_type_return())
+                        )?;
                         if *nullability != Nullability::NonNull {
                             write!(f, ">")?;
                         }
@@ -3195,21 +3245,42 @@ impl Ty {
                 Self::Enum { id, .. } => {
                     write!(f, "{}", id.path())
                 }
+                Self::Result { ty, err, .. } => {
+                    write!(
+                        f,
+                        "Result<{}, {}>",
+                        ty.plain(allow_generic_param),
+                        err.plain(allow_generic_param)
+                    )
+                }
             }
         })
     }
 
     fn behind_pointer(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
+            Self::Primitive(Primitive::Void) => write!(f, "c_void"),
             Self::Pointee(pointee) => write!(f, "{}", pointee.behind_pointer(allow_generic_param)),
             _ => write!(f, "{}", self.plain(allow_generic_param)),
         })
     }
 
-    pub(crate) fn method_return(&self) -> impl fmt::Display + '_ {
+    /// Prefix the inner value with ` -> ` if needed.
+    ///
+    /// If the type is `c_void`, we don't print anything at all.
+    pub(crate) fn prefix_return<'a>(
+        &'a self,
+        inner: impl fmt::Display + 'a,
+    ) -> impl fmt::Display + 'a {
         FormatterFn(move |f| match self {
             // Don't output anything here.
             Self::Primitive(Primitive::Void) => Ok(()),
+            _ => write!(f, " -> {inner}"),
+        })
+    }
+
+    pub(crate) fn method_return(&self) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
             Self::Pointer {
                 nullability,
                 pointee,
@@ -3218,9 +3289,9 @@ impl Ty {
             } if pointee.is_static_object() => {
                 if *nullability == Nullability::NonNull {
                     // TODO: Add runtime nullability check here.
-                    write!(f, " -> &'static {}", pointee.behind_pointer(true))
+                    write!(f, "&'static {}", pointee.behind_pointer(true))
                 } else {
-                    write!(f, " -> Option<&'static {}>", pointee.behind_pointer(true))
+                    write!(f, "Option<&'static {}>", pointee.behind_pointer(true))
                 }
             }
             Self::Pointer {
@@ -3231,7 +3302,7 @@ impl Ty {
                 ..
             } if pointee.is_block_type() => {
                 // TODO: Emit `RcBlock` or similar.
-                write!(f, " -> {}", self.plain(true))
+                write!(f, "{}", self.plain(true))
             }
             Self::Pointer {
                 nullability,
@@ -3243,9 +3314,9 @@ impl Ty {
                 // NOTE: We return CF types as `Retained` for now, since we
                 // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
-                    write!(f, " -> Retained<{}>", pointee.behind_pointer(true))
+                    write!(f, "Retained<{}>", pointee.behind_pointer(true))
                 } else {
-                    write!(f, " -> Option<Retained<{}>>", pointee.behind_pointer(true))
+                    write!(f, "Option<Retained<{}>>", pointee.behind_pointer(true))
                 }
             }
             Self::Pointer {
@@ -3256,66 +3327,59 @@ impl Ty {
                 ..
             } if pointee.is_pointee_cstr() => {
                 if *nullability == Nullability::NonNull {
-                    write!(f, " -> &CStr")
+                    write!(f, "&CStr")
                 } else {
-                    write!(f, " -> Option<&CStr>")
+                    write!(f, "Option<&CStr>")
                 }
             }
             Self::Primitive(Primitive::C99Bool) => {
                 warn!("C99's bool as Objective-C method return is ill supported");
-                write!(f, " -> bool")
+                write!(f, "bool")
             }
-            Self::Primitive(Primitive::ObjcBool) => write!(f, " -> bool"),
-            _ => write!(f, " -> {}", self.plain(true)),
+            Self::Primitive(Primitive::ObjcBool) => write!(f, "bool"),
+            Self::Result { ty, err, .. } => {
+                // Using `Result<Option<X>, Y>` will be detected by `objc2`,
+                // so we don't bother with checking validity here.
+                write!(f, "Result<{}, {}>", ty.method_return(), err.method_return())
+            }
+            _ => write!(f, "{}", self.plain(true)),
         })
     }
 
     pub fn method_return_inner_pointer(&self) -> impl fmt::Display + '_ {
-        // TODO(breaking): Return " -> self.plain()" here instead.
+        // TODO(breaking): Return "self.plain()" here instead.
         self.method_return()
     }
 
-    /// The return type if it can be converted to a `Result<T, Retained<NSError>>`.
-    pub(crate) fn method_return_with_error(&self) -> Option<impl fmt::Display + '_> {
+    /// Attempt to convert the type to a `Result<T, Retained<NSError>>`.
+    pub(crate) fn convert_to_result(&self, err: Ty) -> Option<Self> {
         // We allow return values with unspecified nullability, because that's
         // what Swift seems to do as well. Note that non-null return values
         // cannot be mapped as `Result<T, E>`, because the return value `T`
         // would always be present.
-        let display_closure: Box<dyn Fn(&mut fmt::Formatter<'_>) -> _> = match self {
+        match self {
             Self::Pointer {
                 nullability:
                     Nullability::Nullable | Nullability::NullableResult | Nullability::Unspecified,
-                lifetime: Lifetime::Unspecified,
-                bounds: PointerBounds::Single,
+                read,
+                written,
+                lifetime,
+                bounds,
                 pointee,
-                ..
-            } if pointee.is_static_object() => {
-                // NULL -> error
-                Box::new(move |f| {
-                    write!(
-                        f,
-                        " -> Result<&'static {}, Retained<{}>>",
-                        pointee.behind_pointer(true),
-                        ItemIdentifier::nserror().path(),
-                    )
-                })
-            }
-            Self::Pointer {
-                nullability:
-                    Nullability::Nullable | Nullability::NullableResult | Nullability::Unspecified,
-                lifetime: Lifetime::Unspecified,
-                bounds: PointerBounds::Single,
-                pointee,
-                ..
+                // TODO: Remove this check?
             } if pointee.is_object_like() && !pointee.is_block_type() => {
-                // NULL -> error
-                Box::new(move |f| {
-                    write!(
-                        f,
-                        " -> Result<Retained<{}>, Retained<{}>>",
-                        pointee.behind_pointer(true),
-                        ItemIdentifier::nserror().path(),
-                    )
+                Some(Self::Result {
+                    ty: Box::new(Self::Pointer {
+                        // NULL -> error
+                        nullability: Nullability::NonNull,
+                        read: *read,
+                        written: *written,
+                        lifetime: *lifetime,
+                        bounds: bounds.clone(),
+                        pointee: pointee.clone(),
+                    }),
+                    err: Box::new(err),
+                    original_ty: Box::new(self.clone()),
                 })
             }
             Self::Primitive(Primitive::C99Bool) | Self::Primitive(Primitive::ObjcBool) => {
@@ -3323,24 +3387,18 @@ impl Ty {
                     warn!("C99's bool as Objective-C method return is ill supported");
                 }
                 // NO -> error
-                Box::new(move |f| {
-                    write!(
-                        f,
-                        " -> Result<(), Retained<{}>>",
-                        ItemIdentifier::nserror().path()
-                    )
+                Some(Self::Result {
+                    ty: Box::new(Self::Primitive(Primitive::Void)),
+                    err: Box::new(err),
+                    original_ty: Box::new(self.clone()),
                 })
             }
-            _ => {
-                return None;
-            }
-        };
-        Some(FormatterFn(display_closure))
+            _ => None,
+        }
     }
 
     pub(crate) fn method_return_encoding_type(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Primitive(Primitive::Void) => write!(f, "()"),
             Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),
             Self::Pointer { pointee, .. } if **pointee == Self::Pointee(PointeeTy::Self_) => {
                 write!(f, "*mut This")
@@ -3352,8 +3410,6 @@ impl Ty {
     fn fn_type_return(&self) -> impl fmt::Display + '_ {
         let allow_generic_param = true; // Might not be entirely correct?
         FormatterFn(move |f| match self {
-            // Don't output anything here.
-            Self::Primitive(Primitive::Void) => Ok(()),
             Self::Pointer {
                 nullability,
                 pointee,
@@ -3365,18 +3421,18 @@ impl Ty {
                     // do that?).
                     write!(
                         f,
-                        " -> &'static {}",
+                        "&'static {}",
                         pointee.behind_pointer(allow_generic_param)
                     )
                 } else {
                     write!(
                         f,
-                        " -> Option<&'static {}>",
+                        "Option<&'static {}>",
                         pointee.behind_pointer(allow_generic_param)
                     )
                 }
             }
-            _ => write!(f, " -> {}", self.plain(allow_generic_param)),
+            _ => write!(f, "{}", self.plain(allow_generic_param)),
         })
     }
 
@@ -3407,8 +3463,6 @@ impl Ty {
 
     pub(crate) fn fn_return(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            // Don't output anything here.
-            Self::Primitive(Primitive::Void) => Ok(()),
             Self::Pointer {
                 nullability,
                 read,
@@ -3424,38 +3478,34 @@ impl Ty {
                 // are a hint, and not an ABI stable promise.
                 if *bounds == PointerBounds::Single {
                     if pointee.is_static_object() {
-                        return write!(f, "-> Option<&'static {}>", pointee.behind_pointer(false));
+                        return write!(f, "Option<&'static {}>", pointee.behind_pointer(false));
                     } else if let Some(wrapper) = pointee.retain_wrapper() {
                         if wrapper == RetainWrapper::Retained {
-                            return write!(f, "-> *mut {}", pointee.behind_pointer(false));
+                            return write!(f, "*mut {}", pointee.behind_pointer(false));
                         } else {
-                            return write!(
-                                f,
-                                "-> Option<NonNull<{}>>",
-                                pointee.behind_pointer(false)
-                            );
+                            return write!(f, "Option<NonNull<{}>>", pointee.behind_pointer(false));
                         }
                     }
                 }
 
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer(false));
                 if *nullability == Nullability::NonNull {
-                    write!(f, "-> Option<NonNull<{pointee}>>",)
+                    write!(f, "Option<NonNull<{pointee}>>",)
                 } else if *written {
-                    write!(f, " -> *mut {pointee}")
+                    write!(f, "*mut {pointee}")
                 } else {
-                    write!(f, " -> *const {pointee}",)
+                    write!(f, "*const {pointee}",)
                 }
             }
-            _ => write!(f, " -> {}", self.plain(false)),
+            _ => write!(f, "{}", self.plain(false)),
         })
     }
 
     pub(crate) fn fn_return_converted(&self, returns_retained: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            _ if self.is_objc_bool() => write!(f, " -> bool"),
+            _ if self.is_objc_bool() => write!(f, "bool"),
             Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                write!(f, " -> bool")
+                write!(f, "bool")
             }
             Self::Pointer {
                 // Null-check only necessary here
@@ -3464,7 +3514,7 @@ impl Ty {
                 pointee,
                 ..
             } if pointee.is_static_object() => {
-                write!(f, " -> &'static {}", pointee.behind_pointer(true))
+                write!(f, "&'static {}", pointee.behind_pointer(true))
             }
             Self::Pointer {
                 nullability,
@@ -3473,16 +3523,11 @@ impl Ty {
                 ..
             } if let Some(wrapper) = pointee.retain_wrapper() => {
                 if *nullability == Nullability::NonNull {
-                    write!(
-                        f,
-                        " -> {}<{}>",
-                        wrapper.name(),
-                        pointee.behind_pointer(true)
-                    )
+                    write!(f, "{}<{}>", wrapper.name(), pointee.behind_pointer(true))
                 } else {
                     write!(
                         f,
-                        " -> Option<{}<{}>>",
+                        "Option<{}<{}>>",
                         wrapper.name(),
                         pointee.behind_pointer(true)
                     )
@@ -3498,16 +3543,16 @@ impl Ty {
 
                 // TODO: Use `'static` here when specified.
                 if *nullability == Nullability::NonNull {
-                    write!(f, " -> &CStr")
+                    write!(f, "&CStr")
                 } else {
-                    write!(f, " -> Option<&CStr>")
+                    write!(f, "Option<&CStr>")
                 }
             }
             Self::Pointer { pointee, .. }
                 if pointee.is_generic_param()
                     || matches!(&**pointee, Self::Pointer { pointee, .. } if pointee.is_generic_param()) =>
             {
-                write!(f, " -> {}", self.plain(true))
+                write!(f, "{}", self.plain(true))
             }
             Self::Pointer {
                 nullability: Nullability::NonNull,
@@ -3516,7 +3561,7 @@ impl Ty {
                 ..
             } => {
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer(true));
-                write!(f, " -> NonNull<{pointee}>")
+                write!(f, "NonNull<{pointee}>")
             }
             _ => write!(f, "{}", self.fn_return()),
         })
@@ -3759,7 +3804,7 @@ impl Ty {
                 let inner = maybemaybeuninit(*read, pointee.behind_pointer(allow_generic_param));
                 // We don't care if `PointeeTy` pointers may be written to,
                 // since those use interior mutability anyhow.
-                let mut_ = if !written || matches!(pointee.through_typedef(), Self::Pointee(_)) {
+                let mut_ = if !written || matches!(pointee.through_wrapper(), Self::Pointee(_)) {
                     ""
                 } else {
                     "mut "
@@ -3999,7 +4044,7 @@ impl Ty {
                         "{arg}.map(|ptr| ptr.as_ptr()).unwrap_or_else(core::ptr::null)"
                     )?;
                 }
-                if !matches!(pointee.through_typedef(), Self::Primitive(Primitive::Char)) {
+                if !matches!(pointee.through_wrapper(), Self::Primitive(Primitive::Char)) {
                     writeln!(f, ".cast()")?;
                 }
                 writeln!(f, ";")?;
@@ -4139,7 +4184,7 @@ impl Ty {
             Lifetime::Autoreleasing | Lifetime::Strong,
         )) = self.out_pointer_data()
         {
-            match pointee.through_typedef() {
+            match pointee.through_wrapper() {
                 Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) if id.is_cferror() => false,
                 Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() => false,
                 _ => true,
@@ -4159,7 +4204,7 @@ impl Ty {
             } = &mut **pointee
             {
                 if *lifetime == Lifetime::Unspecified {
-                    match pointee.through_typedef() {
+                    match pointee.through_wrapper() {
                         // Error params usually follow the create rule (they
                         // aren't attached to anything, so they can't really
                         // be returned in any other way).
@@ -4191,7 +4236,7 @@ impl Ty {
     }
 
     fn fn_contains_bool(&self) -> bool {
-        if let Self::Pointer { pointee, .. } = self.through_typedef() {
+        if let Self::Pointer { pointee, .. } = self.through_wrapper() {
             if let Self::Pointee(PointeeTy::Fn {
                 arguments,
                 result_type,
@@ -4251,7 +4296,7 @@ impl Ty {
         })
     }
 
-    pub(crate) const VOID_RESULT: Self = Self::Primitive(Primitive::Void);
+    pub(crate) const VOID: Self = Self::Primitive(Primitive::Void);
 
     pub(crate) fn parse_function_argument(
         ty: Type<'_>,
@@ -4449,7 +4494,7 @@ impl Ty {
     }
 
     pub fn is_signed(&self) -> Option<bool> {
-        match self.through_typedef() {
+        match self.through_wrapper() {
             Self::Primitive(prim) => prim.is_signed(),
             Self::Simd { ty, .. } => ty.is_signed(),
             Self::Enum { ty, .. } => ty.is_signed(),
@@ -4469,58 +4514,43 @@ impl Ty {
         Self::parse(ty, false, context)
     }
 
-    pub(crate) fn argument_is_error_out(&self) -> bool {
-        if let Self::Pointer {
+    pub(crate) fn argument_as_error_out(&self) -> Option<Ty> {
+        if let Some((
             // We always pass a place to write the error information,
             // so doesn't matter whether it's optional or not.
-            nullability: _,
-            read: _,
-            written,
-            lifetime: Lifetime::Unspecified,
-            bounds: PointerBounds::Unspecified, // TODO.
+            _,
             pointee,
-        } = self
+            Nullability::Nullable | Nullability::NullableResult | Nullability::Unspecified,
+            lifetime @ (Lifetime::Autoreleasing | Lifetime::Strong),
+        )) = self.out_pointer_data()
         {
-            if let Self::Pointer {
-                nullability: inner_nullability,
-                read: inner_read,
-                written: inner_written,
-                lifetime,
-                bounds: PointerBounds::Single,
-                pointee,
-            } = &**pointee
-            {
-                if let Self::Pointee(PointeeTy::Class {
-                    id,
-                    generics,
-                    protocols,
-                    ..
-                }) = &**pointee
-                {
-                    if !id.is_nserror() {
-                        return false;
-                    }
-                    assert!(*written, "expected error written {self:?}");
-                    assert_ne!(
-                        *inner_nullability,
-                        Nullability::NonNull,
-                        "invalid inner error nullability {self:?}"
-                    );
-                    assert!(*inner_read, "expected inner error read {self:?}");
-                    assert!(*inner_written, "expected inner error written {self:?}");
-
-                    assert_eq!(generics, &[], "invalid error generics {self:?}");
-                    assert_eq!(protocols, &[], "invalid error protocols {self:?}");
+            let is_error = match pointee {
+                // Error params usually follow the create rule (they
+                // aren't attached to anything, so they can't really
+                // be returned in any other way).
+                Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) if id.is_cferror() => true,
+                Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() => {
                     assert_eq!(
-                        *lifetime,
+                        lifetime,
                         Lifetime::Autoreleasing,
                         "invalid error lifetime {self:?}"
                     );
-                    return true;
+                    true
                 }
+                _ => false,
+            };
+            if is_error {
+                return Some(Ty::Pointer {
+                    nullability: Nullability::NonNull,
+                    read: true,
+                    written: true,
+                    lifetime,
+                    bounds: PointerBounds::Single,
+                    pointee: Box::new(pointee.clone()),
+                });
             }
         }
-        false
+        None
     }
 
     pub(crate) fn is_retainable(&self) -> bool {
@@ -4549,24 +4579,24 @@ impl Ty {
     }
 
     pub(crate) fn is_enum_through_typedef(&self) -> bool {
-        matches!(self.through_typedef(), Self::Enum { .. })
+        matches!(self.through_wrapper(), Self::Enum { .. })
     }
 
     pub(crate) fn is_floating_through_typedef(&self) -> bool {
         matches!(
-            self.through_typedef(),
+            self.through_wrapper(),
             Self::Primitive(Primitive::F32 | Primitive::F64 | Primitive::Float | Primitive::Double)
         )
     }
 
     pub(crate) fn is_block_returning_void(&self) -> bool {
         matches!(
-            self.through_typedef(),
+            self.through_wrapper(),
             Self::Pointer { pointee, .. } if matches!(
-                pointee.through_typedef(),
+                pointee.through_wrapper(),
                 Self::Pointee(pointee) if matches!(
                     pointee.through_typedef(),
-                    PointeeTy::Block { result_type, .. } if **result_type == Ty::VOID_RESULT,
+                    PointeeTy::Block { result_type, .. } if **result_type == Ty::VOID,
                 ),
             ),
         )
@@ -4605,7 +4635,7 @@ impl Ty {
     /// SIMD is not yet possible in FFI, see:
     /// <https://github.com/rust-lang/rust/issues/63068>
     pub(crate) fn needs_simd(&self) -> bool {
-        match self.through_typedef() {
+        match self.through_wrapper() {
             Self::Simd { .. } => true,
             Self::Pointer { pointee, .. } => pointee.needs_simd(),
             Self::Array { element_type, .. } => element_type.needs_simd(),
@@ -4938,7 +4968,7 @@ impl Ty {
         }
 
         // Typedefs doesn't matter for subtyping (in that sense, they are covariant).
-        match (self.through_typedef(), other.through_typedef()) {
+        match (self.through_wrapper(), other.through_wrapper()) {
             (
                 Self::Pointer {
                     nullability,
@@ -5018,7 +5048,7 @@ impl Ty {
     /// This is meant to catch `NSInteger`, `NSRange`, `MTL4BufferRange`, `MTLGPUAddress` and
     /// similar constructs.
     pub(crate) fn can_affect_bounds(&self) -> bool {
-        match self.through_typedef() {
+        match self.through_wrapper() {
             Self::Pointer { pointee, .. } => pointee.can_affect_bounds(),
             Self::Array { element_type, .. } => element_type.can_affect_bounds(),
             Self::Primitive(prim) | Self::Simd { ty: prim, .. } => matches!(
@@ -5045,6 +5075,13 @@ impl Ty {
             // `MTLIndexType`).
             Self::Pointee(_) | Self::Enum { .. } | Self::Sel { .. } => false,
             Self::TypeDef { .. } => unreachable!("using through_typedef"),
+            Self::Result {
+                ty,
+                err,
+                original_ty,
+            } => {
+                ty.can_affect_bounds() || err.can_affect_bounds() || original_ty.can_affect_bounds()
+            }
         }
     }
 

@@ -3364,7 +3364,11 @@ impl Stmt {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument_converted())?;
                     }
-                    writeln!(f, "){};", result_type.fn_return())?;
+                    writeln!(
+                        f,
+                        "){};",
+                        result_type.prefix_return(result_type.fn_return())
+                    )?;
                 }
                 Self::FnDecl {
                     id,
@@ -3436,7 +3440,8 @@ impl Stmt {
                     write!(
                         f,
                         "){} {{",
-                        result_type.fn_return_converted(*returns_retained)
+                        result_type
+                            .prefix_return(result_type.fn_return_converted(*returns_retained))
                     )?;
 
                     // Emit raw
@@ -3465,7 +3470,11 @@ impl Stmt {
                         let param = handle_reserved(&crate::to_snake_case(param));
                         write!(f, "{param}: {},", arg_ty.fn_argument_unconverted())?;
                     }
-                    writeln!(f, "){};", result_type.fn_return())?;
+                    writeln!(
+                        f,
+                        "){};",
+                        result_type.prefix_return(result_type.fn_return())
+                    )?;
 
                     writeln!(f, "    }}")?;
 
@@ -3516,7 +3525,7 @@ impl Stmt {
                     abi,
                     documentation,
                 } => {
-                    let ret = result_type.fn_return();
+                    let ret = result_type.prefix_return(result_type.fn_return());
 
                     // Only emit for base types, not for mutable subclasses,
                     // as it's unclear whether it's safe to downcast to

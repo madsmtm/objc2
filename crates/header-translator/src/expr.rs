@@ -101,7 +101,7 @@ impl Expr {
                     Ty::TypeDef {
                         id: ItemIdentifier::from_raw(to.clone(), location.clone()),
                         // Unknown at this point what the casted type actually is.
-                        to: Box::new(Ty::Primitive(Primitive::Void)),
+                        to: Box::new(Ty::VOID),
                     }
                 }
                 [Token::Expr(expr)] => expr.guess_type(location),

@@ -1,4 +1,5 @@
 use core::panic;
+use std::borrow::Cow;
 use std::fmt;
 
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
@@ -574,7 +575,7 @@ impl Method {
             .last()
             .map(|(_, arg_ty)| arg_ty.is_block_returning_void())
             .unwrap_or(false)
-            && result_type == Ty::VOID_RESULT;
+            && result_type == Ty::VOID;
 
         // Next, determine if the naming makes it an inferred
         let last_selector_piece = name_translation::last_selector_piece(&selector);
@@ -878,7 +879,7 @@ impl Method {
         let setter = if let Some(selector) = setter_sel {
             let setter_data = setter_data.expect("setter_data must be present if setter_sel was");
             if !setter_data.skipped {
-                let result_type = Ty::VOID_RESULT;
+                let result_type = Ty::VOID;
                 let mut ty = Ty::parse_property_setter(
                     entity.get_type().expect("property type"),
                     kind == PropertyKind::Copy,
@@ -1149,20 +1150,17 @@ impl Method {
             }
 
             let mut arguments = &self.arguments[..];
-            let error_return = if let Some(((_, ty), rest)) = arguments.split_last() {
-                if ty.argument_is_error_out() {
-                    if let Some(error_return) = self.result_type.method_return_with_error() {
+            let mut error_trailing = "";
+            let mut result_type = Cow::Borrowed(&self.result_type);
+            if let Some(((_, ty), rest)) = arguments.split_last() {
+                if let Some(error) = ty.argument_as_error_out() {
+                    if let Some(new_result) = self.result_type.convert_to_result(error) {
+                        result_type = Cow::Owned(new_result);
                         arguments = rest;
-                        Some(error_return)
-                    } else {
-                        None
+                        error_trailing = "_";
                     }
-                } else {
-                    None
                 }
-            } else {
-                None
-            };
+            }
 
             // TODO: Use this somehow?
             // if self.non_isolated {
@@ -1191,7 +1189,6 @@ impl Method {
                 writeln!(f, "        #[optional]")?;
             }
 
-            let error_trailing = if error_return.is_some() { "_" } else { "" };
             writeln!(
                 f,
                 "        #[unsafe(method({}{}))]",
@@ -1271,11 +1268,17 @@ impl Method {
 
             // Result
             if let MemoryManagement::InnerPointer = self.memory_management {
-                write!(f, "{}", self.result_type.method_return_inner_pointer())?;
-            } else if let Some(error_return) = error_return {
-                write!(f, "{error_return}")?;
+                write!(
+                    f,
+                    "{}",
+                    result_type.prefix_return(result_type.method_return_inner_pointer())
+                )?;
             } else {
-                write!(f, "{}", self.result_type.method_return())?;
+                write!(
+                    f,
+                    "{}",
+                    result_type.prefix_return(result_type.method_return())
+                )?;
             }
             writeln!(f, ";")?;
 
