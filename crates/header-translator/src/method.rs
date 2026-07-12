@@ -1156,8 +1156,8 @@ impl Method {
             let mut error_trailing = "";
             let mut result_type = Cow::Borrowed(&self.result_type);
             if let Some(((_, ty), rest)) = arguments.split_last() {
-                if let Some(error) = ty.argument_as_error_out() {
-                    if let Some(new_result) = self.result_type.convert_to_result(error) {
+                if let Some(error) = ty.argument_as_error_out(true) {
+                    if let Some(new_result) = self.result_type.convert_to_result(error, true) {
                         result_type = Cow::Owned(new_result);
                         arguments = rest;
                         error_trailing = "_";

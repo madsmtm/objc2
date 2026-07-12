@@ -8,7 +8,7 @@ _fn1_strong_none:
 	mov	r7, sp
 	mov	r1, #0
 	pop	{r7, lr}
-	b	_SecTrustEvaluateWithError
+	b	_SecItemCopyMatching
 
 	.globl	_fn2_strong_some_none
 	.p2align	2
@@ -49,7 +49,7 @@ LPC1_1:
 Ltmp0:
 	add	r1, sp, #8
 	mov	r0, r4
-	bl	_SecTrustEvaluateWithError
+	bl	_SecItemCopyMatching
 Ltmp1:
 	ldr	r4, [sp, #8]
 	add	r0, sp, #12
@@ -327,6 +327,151 @@ Lcst_end1:
 	.byte	0
 	.p2align	2, 0x0
 Lttbase1:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	_fn5_strong_error
+	.p2align	2
+	.code	32
+_fn5_strong_error:
+Lfunc_begin2:
+	push	{r4, r5, r6, r7, lr}
+	add	r7, sp, #12
+	push	{r8, r10, r11}
+	sub	r4, sp, #64
+	bfc	r4, #0, #4
+	mov	sp, r4
+	vst1.64	{d8, d9, d10, d11}, [r4:128]!
+	vst1.64	{d12, d13, d14, d15}, [r4:128]
+	sub	sp, sp, #64
+	mov	r4, r0
+	mov	r0, #0
+	str	r0, [sp, #8]
+	movw	r0, :lower16:(L_rust_eh_personality$non_lazy_ptr-(LPC4_2+8))
+	movt	r0, :upper16:(L_rust_eh_personality$non_lazy_ptr-(LPC4_2+8))
+LPC4_2:
+	ldr	r0, [pc, r0]
+	str	r0, [sp, #36]
+	ldr	r0, LCPI4_0
+LPC4_0:
+	add	r0, pc, r0
+	str	r0, [sp, #40]
+	str	r7, [sp, #44]
+	str	sp, [sp, #52]
+	ldr	r0, LCPI4_1
+LPC4_1:
+	add	r0, pc, r0
+	str	r0, [sp, #48]
+	add	r0, sp, #12
+	bl	__Unwind_SjLj_Register
+	mov	r0, #1
+	str	r0, [sp, #16]
+Ltmp18:
+	add	r1, sp, #8
+	mov	r0, r4
+	bl	_SecTrustEvaluateWithError
+Ltmp19:
+	ldr	r4, [sp, #8]
+	cmp	r0, #0
+	beq	LBB4_5
+	cmp	r4, #0
+	beq	LBB4_4
+	mvn	r0, #0
+	str	r0, [sp, #16]
+	mov	r0, r4
+	bl	_CFRelease
+LBB4_4:
+	mov	r4, #0
+	b	LBB4_6
+LBB4_5:
+	cmp	r4, #0
+	beq	LBB4_7
+LBB4_6:
+	add	r0, sp, #12
+	bl	__Unwind_SjLj_Unregister
+	mov	r0, r4
+	add	r4, sp, #64
+	vld1.64	{d8, d9, d10, d11}, [r4:128]!
+	vld1.64	{d12, d13, d14, d15}, [r4:128]
+	sub	sp, r7, #24
+	pop	{r8, r10, r11}
+	pop	{r4, r5, r6, r7, pc}
+LBB4_7:
+	mvn	r0, #0
+	str	r0, [sp, #16]
+	bl	SYM(<objc2_core_foundation[CRATE_ID]::generated::__CFError::CFError>::__null, 0)
+	mov	r4, r0
+	b	LBB4_6
+LBB4_8:
+	lsl	r0, r0, #2
+	adr	r1, LJTI4_0
+	ldr	r0, [r0, r1]
+	add	pc, r0, r1
+	.p2align	2
+LJTI4_0:
+	.data_region jt32
+	.long	LBB4_10-LJTI4_0
+	.long	LBB4_14-LJTI4_0
+	.end_data_region
+LBB4_10:
+Ltmp20:
+	ldr	r0, [sp, #20]
+	str	r0, [sp, #4]
+	ldr	r0, [sp, #8]
+	cmp	r0, #0
+	beq	LBB4_15
+	mov	r1, #2
+	str	r1, [sp, #16]
+Ltmp21:
+	bl	_CFRelease
+Ltmp22:
+	b	LBB4_15
+LBB4_12:
+	ldr	r0, [sp, #16]
+	cmp	r0, #2
+	bls	LBB4_8
+	trap
+LBB4_14:
+Ltmp23:
+	ldr	r0, [sp, #20]
+	ldr	r0, [sp, #24]
+	mov	lr, pc
+	b	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
+LBB4_15:
+	mvn	r0, #0
+	str	r0, [sp, #16]
+	ldr	r0, [sp, #4]
+	mov	lr, pc
+	b	__Unwind_SjLj_Resume
+	.p2align	2
+	.data_region
+LCPI4_0:
+	.long	Lexception2-(LPC4_0+8)
+LCPI4_1:
+	.long	LBB4_12-(LPC4_1+8)
+	.end_data_region
+Lfunc_end2:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table4:
+Lexception2:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
+	.byte	3
+	.uleb128 Lcst_end2-Lcst_begin2
+Lcst_begin2:
+	.byte	0
+	.byte	0
+	.byte	1
+	.byte	1
+Lcst_end2:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase2:
 	.byte	0
 	.p2align	2, 0x0
 

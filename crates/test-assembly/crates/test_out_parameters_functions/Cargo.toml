@@ -10,11 +10,13 @@ path = "lib.rs"
 [target.'cfg(target_vendor = "apple")'.dependencies]
 objc2-core-foundation = { path = "../../../../framework-crates/objc2-core-foundation", default-features = false, features = [
     "std",
+    "CFDictionary",
     "CFError",
     "CFString",
 ] }
 objc2-security = { path = "../../../../framework-crates/objc2-security", default-features = false, features = [
     "std",
+    "SecItem",
     "SecTrust",
 ] }
 objc2-core-media = { path = "../../../../framework-crates/objc2-core-media", default-features = false, features = [

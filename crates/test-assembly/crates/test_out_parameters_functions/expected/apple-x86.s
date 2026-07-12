@@ -9,7 +9,7 @@ _fn1_strong_none:
 	sub	esp, 8
 	push	0
 	push	dword ptr [ebp + 8]
-	call	_SecTrustEvaluateWithError
+	call	_SecItemCopyMatching
 	add	esp, 24
 	pop	ebp
 	ret
@@ -28,7 +28,7 @@ Ltmp0:
 	lea	ecx, [ebp - 8]
 	mov	dword ptr [esp + 4], ecx
 	mov	dword ptr [esp], eax
-	call	_SecTrustEvaluateWithError
+	call	_SecItemCopyMatching
 Ltmp1:
 	mov	eax, dword ptr [ebp - 8]
 	add	esp, 20
@@ -212,6 +212,98 @@ Lcst_end1:
 	.byte	0
 	.p2align	2, 0x0
 Lttbase1:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	_fn5_strong_error
+	.p2align	4
+_fn5_strong_error:
+Lfunc_begin2:
+	push	ebp
+	mov	ebp, esp
+	push	esi
+	sub	esp, 20
+	mov	eax, dword ptr [ebp + 8]
+	mov	dword ptr [ebp - 8], 0
+Ltmp18:
+	lea	ecx, [ebp - 8]
+	mov	dword ptr [esp + 4], ecx
+	mov	dword ptr [esp], eax
+	call	_SecTrustEvaluateWithError
+Ltmp19:
+	mov	ecx, eax
+	mov	eax, dword ptr [ebp - 8]
+	test	cl, cl
+	je	LBB4_2
+	test	eax, eax
+	je	LBB4_7
+	mov	dword ptr [esp], eax
+	call	_CFRelease
+LBB4_7:
+	xor	eax, eax
+LBB4_4:
+	add	esp, 20
+	pop	esi
+	pop	ebp
+	ret
+LBB4_2:
+	test	eax, eax
+	jne	LBB4_4
+	call	SYM(<objc2_core_foundation[CRATE_ID]::generated::__CFError::CFError>::__null, 0)
+	add	esp, 20
+	pop	esi
+	pop	ebp
+	ret
+LBB4_8:
+Ltmp20:
+	mov	esi, eax
+	mov	eax, dword ptr [ebp - 8]
+	test	eax, eax
+	je	LBB4_10
+Ltmp21:
+	mov	dword ptr [esp], eax
+	call	_CFRelease
+Ltmp22:
+LBB4_10:
+	mov	dword ptr [esp], esi
+	call	__Unwind_Resume
+LBB4_11:
+Ltmp23:
+	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
+Lfunc_end2:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table4:
+Lexception2:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
+	.byte	1
+	.uleb128 Lcst_end2-Lcst_begin2
+Lcst_begin2:
+	.uleb128 Ltmp18-Lfunc_begin2
+	.uleb128 Ltmp19-Ltmp18
+	.uleb128 Ltmp20-Lfunc_begin2
+	.byte	0
+	.uleb128 Ltmp19-Lfunc_begin2
+	.uleb128 Ltmp21-Ltmp19
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp21-Lfunc_begin2
+	.uleb128 Ltmp22-Ltmp21
+	.uleb128 Ltmp23-Lfunc_begin2
+	.byte	1
+	.uleb128 Ltmp22-Lfunc_begin2
+	.uleb128 Lfunc_end2-Ltmp22
+	.byte	0
+	.byte	0
+Lcst_end2:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase2:
 	.byte	0
 	.p2align	2, 0x0
 

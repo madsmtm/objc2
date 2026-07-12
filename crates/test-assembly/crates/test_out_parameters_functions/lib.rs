@@ -2,20 +2,20 @@
 //!
 //! In particular, we want to ensure that the assert is optimized away.
 #![cfg(target_vendor = "apple")]
-use objc2_core_foundation::{CFError, CFRetained, CFString};
+use objc2_core_foundation::{CFDictionary, CFError, CFRetained, CFString, CFType};
 use objc2_core_media::{CMAudioDeviceClockGetAudioDevice, CMClock};
-use objc2_security::SecTrust;
+use objc2_security::{SecItemCopyMatching, SecTrust};
 
 #[export_name = "fn1_strong_none"]
-fn strong_none(trust: &SecTrust) -> bool {
-    unsafe { SecTrust::evaluate_with_error(trust, None) }
+fn strong_none(query: &CFDictionary<CFString, CFType>) -> i32 {
+    unsafe { SecItemCopyMatching(query, None) }
 }
 
 #[export_name = "fn2_strong_some_none"]
-fn strong_some_none(trust: &SecTrust) -> Option<CFRetained<CFError>> {
-    let mut err = None;
-    let _ = unsafe { SecTrust::evaluate_with_error(trust, Some(&mut err)) };
-    err
+fn strong_some_none(query: &CFDictionary<CFString, CFType>) -> Option<CFRetained<CFType>> {
+    let mut result = None;
+    let _ = unsafe { SecItemCopyMatching(query, Some(&mut result)) };
+    result
 }
 
 #[export_name = "fn3_autoreleasing_none"]
@@ -38,3 +38,13 @@ fn autoreleasing_some_none(clock: &CMClock) -> Option<CFRetained<CFString>> {
     // We should have a branch and a CFRetain here.
     device_uid_out
 }
+
+#[export_name = "fn5_strong_error"]
+fn strong(trust: &SecTrust) -> Result<(), CFRetained<CFError>> {
+    unsafe { SecTrust::evaluate_with_error(trust) }
+}
+
+// #[export_name = "fn6_autoreleasing_error"]
+// fn autoreleasing(sbuf: &CMSampleBuffer, content_key: &AVContentKey,) -> Result<(), CFRetained<CFError>> {
+//     unsafe { AVSampleBufferAttachContentKey(trust) }
+// }

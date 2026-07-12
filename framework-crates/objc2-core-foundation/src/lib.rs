@@ -32,8 +32,6 @@ mod data;
 mod date;
 #[cfg(feature = "CFDictionary")]
 mod dictionary;
-#[cfg(feature = "CFError")]
-mod error;
 #[cfg(feature = "CFFileDescriptor")]
 mod filedescriptor;
 // Allow `default` methods on CFAllocator and CFTimeZone
@@ -58,6 +56,10 @@ mod url;
 mod user_notification;
 #[cfg(feature = "CFUUID")]
 mod uuid;
+
+#[cfg(feature = "CFError")]
+#[allow(clashing_extern_declarations)]
+mod error;
 
 #[cfg(feature = "CFArray")]
 pub use self::array::*;

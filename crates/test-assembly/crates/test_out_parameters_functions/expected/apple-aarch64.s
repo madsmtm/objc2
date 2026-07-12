@@ -3,7 +3,7 @@
 	.p2align	2
 _fn1_strong_none:
 	mov	x1, #0
-	b	_SecTrustEvaluateWithError
+	b	_SecItemCopyMatching
 
 	.globl	_fn2_strong_some_none
 	.p2align	2
@@ -16,7 +16,7 @@ Lfunc_begin0:
 	str	xzr, [sp, #8]
 Ltmp0:
 	add	x1, sp, #8
-	bl	_SecTrustEvaluateWithError
+	bl	_SecItemCopyMatching
 Ltmp1:
 	ldr	x0, [sp, #8]
 	ldp	x29, x30, [sp, #32]
@@ -178,6 +178,87 @@ Lcst_end1:
 	.byte	0
 	.p2align	2, 0x0
 Lttbase1:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	_fn5_strong_error
+	.p2align	2
+_fn5_strong_error:
+Lfunc_begin2:
+	sub	sp, sp, #48
+	stp	x20, x19, [sp, #16]
+	stp	x29, x30, [sp, #32]
+	add	x29, sp, #32
+	str	xzr, [sp, #8]
+Ltmp18:
+	add	x1, sp, #8
+	bl	_SecTrustEvaluateWithError
+Ltmp19:
+	mov	x8, x0
+	ldr	x0, [sp, #8]
+	tbz	w8, #0, LBB4_4
+	cbz	x0, LBB4_5
+	bl	_CFRelease
+	mov	x0, #0
+	b	LBB4_5
+LBB4_4:
+	cbz	x0, LBB4_6
+LBB4_5:
+	ldp	x29, x30, [sp, #32]
+	ldp	x20, x19, [sp, #16]
+	add	sp, sp, #48
+	ret
+LBB4_6:
+	bl	SYM(<objc2_core_foundation[CRATE_ID]::generated::__CFError::CFError>::__null, 0)
+	b	LBB4_5
+LBB4_7:
+Ltmp20:
+	mov	x19, x0
+	ldr	x0, [sp, #8]
+	cbz	x0, LBB4_9
+Ltmp21:
+	bl	_CFRelease
+Ltmp22:
+LBB4_9:
+	mov	x0, x19
+	bl	__Unwind_Resume
+LBB4_10:
+Ltmp23:
+	bl	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
+Lfunc_end2:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table4:
+Lexception2:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
+	.byte	1
+	.uleb128 Lcst_end2-Lcst_begin2
+Lcst_begin2:
+	.uleb128 Ltmp18-Lfunc_begin2
+	.uleb128 Ltmp19-Ltmp18
+	.uleb128 Ltmp20-Lfunc_begin2
+	.byte	0
+	.uleb128 Ltmp19-Lfunc_begin2
+	.uleb128 Ltmp21-Ltmp19
+	.byte	0
+	.byte	0
+	.uleb128 Ltmp21-Lfunc_begin2
+	.uleb128 Ltmp22-Ltmp21
+	.uleb128 Ltmp23-Lfunc_begin2
+	.byte	1
+	.uleb128 Ltmp22-Lfunc_begin2
+	.uleb128 Lfunc_end2-Ltmp22
+	.byte	0
+	.byte	0
+Lcst_end2:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase2:
 	.byte	0
 	.p2align	2, 0x0
 

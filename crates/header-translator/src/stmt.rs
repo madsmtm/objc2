@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
 use std::collections::HashMap;
@@ -3495,10 +3496,32 @@ impl Stmt {
                         }
                     }
 
+                    let mut out_argument = None;
+                    let mut converted_result_type = Cow::Borrowed(result_type);
+                    for (i, (_, arg_ty)) in arguments.iter().enumerate() {
+                        if let Some(error) = arg_ty.argument_as_error_out(false) {
+                            if let Some(new_result) = result_type.convert_to_result(error, false) {
+                                if out_argument.is_some() {
+                                    // If there's multiple candidates, don't do anything.
+                                    out_argument = None;
+                                    converted_result_type = Cow::Borrowed(result_type);
+                                    break;
+                                }
+                                out_argument = Some(i);
+                                converted_result_type = Cow::Owned(new_result);
+                            }
+                        }
+                    }
+
                     // Emit rest of arguments.
                     for (i, (param, arg_ty)) in arguments.iter().enumerate() {
                         if arg_is_self.unwrap_or(usize::MAX) == i {
                             // Emitted above.
+                            continue;
+                        }
+
+                        if out_argument.unwrap_or(usize::MAX) == i {
+                            // Used in return instead.
                             continue;
                         }
 
@@ -3509,8 +3532,9 @@ impl Stmt {
                     write!(
                         f,
                         "){} {{",
-                        result_type
-                            .prefix_return(result_type.fn_return_converted(*returns_retained))
+                        converted_result_type.prefix_return(
+                            converted_result_type.fn_return_converted(*returns_retained)
+                        )
                     )?;
 
                     // Emit raw
@@ -3549,13 +3573,38 @@ impl Stmt {
 
                     // Perform argument conversion.
                     for (i, (param, ty)) in arguments.iter().enumerate() {
-                        let param = param_name(param);
-                        let param_or_self = if arg_is_self.unwrap_or(usize::MAX) == i {
-                            "self"
+                        if out_argument.unwrap_or(usize::MAX) == i {
+                            writeln!(f, "let mut error = None;")?;
+                            let arg = if ty.pointer_is_nonnull() {
+                                "&mut error"
+                            } else {
+                                "Some(&mut error)"
+                            };
+
+                            // Convert autoreleasing out pointer.
+                            let converter = ty
+                                .fn_argument_converter(arg, "error_param", false)
+                                .to_string();
+
+                            if converter.is_empty() {
+                                write!(f, "let error_param = {arg};")?;
+                            } else {
+                                write!(f, "{converter}")?;
+                                unimplemented!("support for Result<..., NSError>");
+                            }
                         } else {
-                            &param
-                        };
-                        write!(f, "{}", ty.fn_argument_converter(param_or_self, &param))?;
+                            let param = param_name(param);
+                            let param_or_self = if arg_is_self.unwrap_or(usize::MAX) == i {
+                                "self"
+                            } else {
+                                &param
+                            };
+                            write!(
+                                f,
+                                "{}",
+                                ty.fn_argument_converter(param_or_self, &param, true)
+                            )?;
+                        }
                     }
 
                     // Call raw
@@ -3564,12 +3613,14 @@ impl Stmt {
                         for (i, (param, ty)) in arguments.iter().enumerate() {
                             let param = param_name(param);
                             if arg_is_self.unwrap_or(usize::MAX) == i {
-                                let converter = ty.fn_argument_converter("self", &param);
+                                let converter = ty.fn_argument_converter("self", &param, true);
                                 if converter.to_string().is_empty() {
                                     write!(f, "self,")?;
                                 } else {
                                     write!(f, "{param},")?;
                                 }
+                            } else if out_argument.unwrap_or(usize::MAX) == i {
+                                write!(f, "error_param,")?;
                             } else {
                                 write!(f, "{param},")?;
                             }
@@ -3577,10 +3628,12 @@ impl Stmt {
                         write!(f, ") }}")?;
                         Ok(())
                     });
+
+                    // Convert result type
                     writeln!(
                         f,
                         "    {}",
-                        result_type.fn_return_converter(*returns_retained, fn_call)
+                        converted_result_type.fn_return_converter(*returns_retained, fn_call)
                     )?;
 
                     writeln!(f, "}}")?;

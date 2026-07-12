@@ -3199,8 +3199,16 @@ impl Ty {
         }
     }
 
-    pub(crate) fn is_objc_bool(&self) -> bool {
+    fn is_c99_bool(&self) -> bool {
+        matches!(self.through_wrapper(), Self::Primitive(Primitive::C99Bool))
+    }
+
+    fn is_objc_bool(&self) -> bool {
         matches!(self.through_wrapper(), Self::Primitive(Primitive::ObjcBool))
+    }
+
+    fn is_cf_bool(&self) -> bool {
+        matches!(self, Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t"))
     }
 
     fn has_zero_niche(&self) -> bool {
@@ -3485,7 +3493,7 @@ impl Ty {
     }
 
     /// Attempt to convert the type to a `Result<T, Retained<NSError>>`.
-    pub(crate) fn convert_to_result(&self, err: Ty) -> Option<Self> {
+    pub(crate) fn convert_to_result(&self, err: Ty, is_method: bool) -> Option<Self> {
         // We allow return values with unspecified nullability, because that's
         // what Swift seems to do as well. Note that non-null return values
         // cannot be mapped as `Result<T, E>`, because the return value `T`
@@ -3515,17 +3523,22 @@ impl Ty {
                     original_ty: Box::new(self.clone()),
                 })
             }
+            // NO -> error
             Self::Primitive(Primitive::C99Bool) | Self::Primitive(Primitive::ObjcBool) => {
-                if *self == Self::Primitive(Primitive::C99Bool) {
+                if *self == Self::Primitive(Primitive::C99Bool) && is_method {
                     warn!("C99's bool as Objective-C method return is ill supported");
                 }
-                // NO -> error
                 Some(Self::Result {
                     ty: Box::new(Self::Primitive(Primitive::Void)),
                     err: Box::new(err),
                     original_ty: Box::new(self.clone()),
                 })
             }
+            _ if self.is_cf_bool() && !is_method => Some(Self::Result {
+                ty: Box::new(Self::Primitive(Primitive::Void)),
+                err: Box::new(err),
+                original_ty: Box::new(self.clone()),
+            }),
             _ => None,
         }
     }
@@ -3637,7 +3650,7 @@ impl Ty {
     pub(crate) fn fn_return_converted(&self, returns_retained: bool) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             _ if self.is_objc_bool() => write!(f, "bool"),
-            Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
+            _ if self.is_cf_bool() => {
                 write!(f, "bool")
             }
             Self::Pointer {
@@ -3696,6 +3709,14 @@ impl Ty {
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer(true));
                 write!(f, "NonNull<{pointee}>")
             }
+            Self::Result { ty, err, .. } => {
+                write!(
+                    f,
+                    "Result<{}, {}>",
+                    ty.fn_return_converted(returns_retained),
+                    err.fn_return_converted(true),
+                )
+            }
             _ => write!(f, "{}", self.fn_return()),
         })
     }
@@ -3726,8 +3747,10 @@ impl Ty {
         FormatterFn(move |f| {
             match self {
                 _ if self.is_objc_bool() => write!(f, "{fn_call}.as_bool()"),
-                Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                    write!(f, "let ret = {fn_call};\nret != 0")
+                _ if self.is_cf_bool() => {
+                    writeln!(f, "let ret = {fn_call};")?;
+                    write!(f, "ret != 0")?;
+                    Ok(())
                 }
                 Self::Pointer {
                     // Null-check only necessary here
@@ -3764,7 +3787,7 @@ impl Ty {
                     write!(
                         f,
                         "{}",
-                        wrapper.fn_return(*nullability, returns_retained, needs_cast, &fn_call)
+                        wrapper.fn_return(*nullability, returns_retained, needs_cast, &fn_call, "")
                     )?;
 
                     Ok(())
@@ -3803,6 +3826,83 @@ impl Ty {
                     writeln!(f, "let ret = {fn_call};")?;
                     write!(f, "ret.expect(\"function was marked as returning non-null, but actually returned NULL\")")?;
                     Ok(())
+                }
+                Self::Result {
+                    ty: _,
+                    err,
+                    original_ty,
+                } => {
+                    let err_name = match &**err {
+                        Self::Pointer { pointee, .. } => pointee.behind_pointer(false),
+                        _ => unreachable!(),
+                    };
+
+                    match &**original_ty {
+                        original_ty
+                            if original_ty.is_c99_bool()
+                                || original_ty.is_objc_bool()
+                                || original_ty.is_cf_bool() =>
+                        {
+                            let check = if original_ty.is_c99_bool() {
+                                "ret"
+                            } else if original_ty.is_objc_bool() {
+                                "ret.as_bool()"
+                            } else {
+                                "ret != 0"
+                            };
+
+                            writeln!(f, "let ret = {fn_call};")?;
+                            writeln!(f, "if {check} {{",)?;
+                            writeln!(f, "    Ok(())")?;
+                            writeln!(f, "}} else {{")?;
+                            // Assume the error location is in this variable.
+                            writeln!(f, "    Err(error.unwrap_or_else({err_name}::__null))",)?;
+                            writeln!(f, "}}")?;
+                            Ok(())
+                        }
+                        Self::Pointer {
+                            nullability,
+                            lifetime,
+                            bounds: PointerBounds::Single,
+                            pointee,
+                            ..
+                        } if let Some(wrapper) = pointee.retain_wrapper() => {
+                            match lifetime {
+                                Lifetime::Autoreleasing if !returns_retained => {}
+                                Lifetime::Strong if returns_retained => {}
+                                Lifetime::Unspecified => {}
+                                _ => {
+                                    error!(?lifetime, returns_retained, "invalid lifetime")
+                                }
+                            }
+
+                            let needs_cast = matches!(
+                                &**pointee,
+                                Self::Pointee(PointeeTy::CFTypeDef { generics, .. })
+                                    if generics.iter().any(|generic| matches!(generic, PointeeTy::GenericParam { .. })
+                                )
+                            );
+
+                            write!(
+                                f,
+                                "{};",
+                                wrapper.fn_return(
+                                    *nullability,
+                                    returns_retained,
+                                    needs_cast,
+                                    &fn_call,
+                                    "let ret = "
+                                )
+                            )?;
+                            writeln!(f, "if let Some(ret) = ret {{")?;
+                            writeln!(f, "    Ok(ret)")?;
+                            writeln!(f, "}} else {{")?;
+                            writeln!(f, "    Err(error.unwrap_or_else({err_name}::__null))",)?;
+                            writeln!(f, "}}")?;
+                            Ok(())
+                        }
+                        _ => unreachable!("invalid Result type: {self:?}"),
+                    }
                 }
                 _ => write!(f, "{fn_call}"),
             }
@@ -3986,9 +4086,7 @@ impl Ty {
     pub(crate) fn fn_argument_converted(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
             _ if self.is_objc_bool() => write!(f, "bool"),
-            Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t") => {
-                write!(f, "bool")
-            }
+            _ if self.is_cf_bool() => write!(f, "bool"),
             _ if let Some((
                 nullability,
                 pointee,
@@ -4040,10 +4138,21 @@ impl Ty {
         items.into_iter()
     }
 
+    pub(crate) fn pointer_is_nonnull(&self) -> bool {
+        matches!(
+            self,
+            Self::Pointer {
+                nullability: Nullability::NonNull,
+                ..
+            }
+        )
+    }
+
     pub(crate) fn fn_argument_converter<'s: 'r, 'a: 'r, 'r>(
         &'s self,
         arg: &'a str,
         arg_to: &'a str,
+        should_assert_arg_null: bool,
     ) -> impl fmt::Display + 'r {
         FormatterFn(move |f| match self {
             _ if self.is_objc_bool() => writeln!(f, "let {arg_to} = Bool::new({arg});"),
@@ -4058,7 +4167,6 @@ impl Ty {
                 lifetime @ (Lifetime::Autoreleasing | Lifetime::Strong),
             )) = self.out_pointer_data() =>
             {
-                assert_eq!(arg, arg_to);
                 let wrapper = pointee.retain_wrapper().unwrap();
                 let name = wrapper.name();
 
@@ -4083,8 +4191,8 @@ impl Ty {
                 // Assert that the given inner value is `NULL`; it is invalid
                 // usage of the API to pass anything else, because that value
                 // will get leaked, see above.
-                let assert_is_null = |f: &mut fmt::Formatter<'_>| {
-                    writeln!(f, "assert!({arg}.is_none(), \"parameter `{arg}` must point to `None` on entry\");")
+                let assert_is_null = |x, f: &mut fmt::Formatter<'_>| {
+                    writeln!(f, "assert!({x}.is_none(), \"parameter `{arg}` must point to `None` on entry\");")
                 };
 
                 // Retain at the end of the function.
@@ -4096,7 +4204,7 @@ impl Ty {
                 if lifetime == Lifetime::Autoreleasing {
                     let retain_on_drop = format!(
                         "Retain{}OnDrop",
-                        heck::ToUpperCamelCase::to_upper_camel_case(arg)
+                        heck::ToUpperCamelCase::to_upper_camel_case(arg_to)
                     );
 
                     // We retain inside `Drop` to support functions that
@@ -4121,32 +4229,41 @@ impl Ty {
                     writeln!(f, "}}")?;
 
                     if nullability == Nullability::NonNull {
-                        assert_is_null(f)?;
+                        if should_assert_arg_null {
+                            assert_is_null(arg, f)?;
+                        }
 
                         // Get and reborrow.
-                        writeln!(f, "let {arg} = &mut *{retain_on_drop}({arg}).0;")?;
+                        writeln!(f, "let {arg_to} = &mut *{retain_on_drop}({arg}).0;")?;
 
                         // Retains at end of function.
                     } else {
-                        writeln!(f, "let mut {arg} = if let Some({arg}) = {arg} {{")?;
-                        assert_is_null(f)?;
-                        writeln!(f, "    Some({retain_on_drop}({arg}))")?;
+                        writeln!(f, "let mut {arg_to} = if let Some({arg_to}) = {arg} {{")?;
+                        if should_assert_arg_null {
+                            assert_is_null(arg_to, f)?;
+                        }
+                        writeln!(f, "    Some({retain_on_drop}({arg_to}))")?;
                         writeln!(f, "}} else {{")?;
                         writeln!(f, "    None")?;
                         writeln!(f, "}};")?;
 
                         // Reborrow.
-                        writeln!(f, "let {arg} = {arg}.as_mut().map(|arg| &mut *arg.0);")?;
+                        writeln!(
+                            f,
+                            "let {arg_to} = {arg_to}.as_mut().map(|arg| &mut *arg.0);"
+                        )?;
 
                         // Retains at end of function after checking drop flag.
                     }
                 } else {
-                    if nullability == Nullability::NonNull {
-                        assert_is_null(f)?;
-                    } else {
-                        writeln!(f, "if let Some({arg}) = {arg}.as_ref() {{")?;
-                        assert_is_null(f)?;
-                        writeln!(f, "}};")?;
+                    if should_assert_arg_null {
+                        if nullability == Nullability::NonNull {
+                            assert_is_null(arg, f)?;
+                        } else {
+                            writeln!(f, "if let Some({arg_to}) = {arg}.as_ref() {{")?;
+                            assert_is_null(arg_to, f)?;
+                            writeln!(f, "}};")?;
+                        }
                     }
 
                     // We don't need to do anything else for functions with
@@ -4672,7 +4789,7 @@ impl Ty {
         Self::parse(ty, false, context)
     }
 
-    pub(crate) fn argument_as_error_out(&self) -> Option<Ty> {
+    pub(crate) fn argument_as_error_out(&self, is_method: bool) -> Option<Ty> {
         if let Some((
             // We always pass a place to write the error information,
             // so doesn't matter whether it's optional or not.
@@ -4683,11 +4800,15 @@ impl Ty {
         )) = self.out_pointer_data()
         {
             let is_error = match pointee {
-                // Error params usually follow the create rule (they
+                // CFError params usually follow the create rule (they
                 // aren't attached to anything, so they can't really
                 // be returned in any other way).
-                Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) if id.is_cferror() => true,
-                Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() => {
+                Ty::Pointee(PointeeTy::CFTypeDef { id, .. }) if id.is_cferror() && !is_method => {
+                    true
+                }
+                // TODO: Properly support NSError in functions.
+                // Requires that we provide NSError::__null.
+                Ty::Pointee(PointeeTy::Class { id, .. }) if id.is_nserror() && is_method => {
                     assert_eq!(
                         lifetime,
                         Lifetime::Autoreleasing,
@@ -5376,7 +5497,8 @@ impl RetainWrapper {
         nullability: Nullability,
         returns_retained: bool,
         needs_cast: bool,
-        fn_call: impl Display + 'a,
+        fn_call: impl fmt::Display + 'a,
+        assign_prefix: &'a str,
     ) -> impl Display + 'a {
         FormatterFn(move |f| {
             writeln!(f, "let ret = {fn_call};")?;
@@ -5389,6 +5511,7 @@ impl RetainWrapper {
             // semantics, otherwise it'd be invalid to use from Swift and
             // Obj-C with ARC too.
             if self == Self::Retained {
+                write!(f, "{assign_prefix}")?;
                 if returns_retained {
                     write!(f, "unsafe {{ Retained::from_raw(ret{cast}) }}")?;
                 } else {
@@ -5401,8 +5524,9 @@ impl RetainWrapper {
                 if nullability == Nullability::NonNull {
                     // TODO: Avoid NULL check, and let CFRetain do that instead?
                     writeln!(f, "let ret = ret{expect};")?;
+                    write!(f, "{assign_prefix}")?;
                 } else {
-                    write!(f, "ret.map(|ret| ")?;
+                    write!(f, "{assign_prefix}ret.map(|ret| ")?;
                 }
                 // CFRetain aborts on NULL pointers, so there's not really a more
                 // efficient way to do this (except if we were to use e.g.
