@@ -16,7 +16,7 @@ fn throw_catch_raise_catch() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
-    let exc = NSException::new(&name, Some(&reason), None).unwrap();
+    let exc = NSException::new(&name, Some(&reason));
 
     assert_eq!(exc.retainCount(), 1);
 
@@ -72,7 +72,7 @@ fn raise_catch_all1() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
-    let exc = NSException::new(&name, Some(&reason), None).unwrap();
+    let exc = NSException::new(&name, Some(&reason));
     exc.raise();
 }
 
@@ -83,7 +83,7 @@ fn raise_catch_all2() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
-    let exc = NSException::new(&name, Some(&reason), None).unwrap();
+    let exc = NSException::new(&name, Some(&reason));
     exc.raise();
 }
 
@@ -96,7 +96,7 @@ fn raise_catch() {
     let name = NSString::from_str("abc");
     let reason = NSString::from_str("def");
 
-    let exc = NSException::new(&name, Some(&reason), None).unwrap();
+    let exc = NSException::new(&name, Some(&reason));
     assert_eq!(exc.retainCount(), 1);
 
     let exc = autoreleasepool(|pool| {
