@@ -9,9 +9,6 @@ tvos = "9.0"
 watchos = "6.0"
 visionos = "1.0"
 
-# Unknown how to handle the calling convention for arrays
-fn.CMTextFormatDescriptionGetDefaultStyle.skipped = true
-
 # Differing definitions depending on architecture
 typedef.CMBaseClassVersion.skipped = true
 typedef.CMStructVersion.skipped = true

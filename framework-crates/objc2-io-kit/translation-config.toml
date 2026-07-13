@@ -83,12 +83,8 @@ typedef.IOReturn.skipped = true
 const.kOSAsyncRef64Size.skipped = true
 const.kOSAsyncRef64Count.skipped = true
 
-# Needs io_user_reference_t, and contains arrays in typedefs
-typedef.OSAsyncReference64.skipped = true
-struct.OSNotificationHeader64.skipped = true
-struct.IOServiceInterestContent64.skipped = true
-
 # Needs mach_msg_size_t/mach_msg_header_t/mach_timespec_t, which isn't exposed by libc
+struct.OSNotificationHeader64.skipped = true
 typedef.OSAsyncReference.skipped = true
 struct.OSNotificationHeader.skipped = true
 fn.IODispatchCalloutFromMessage.skipped = true
