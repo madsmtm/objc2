@@ -51,6 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreText` / `objc2-core-text`.
   - `CoreVideo` / `objc2-core-video`.
   - `Foundation` / `objc2-foundation`.
+  - `HealthKit` / `objc2-health-kit`.
   - `Metal` / `objc2-metal`.
   - `QuartzCore` / `objc2-quartz-core`.
   - `Security` / `objc2-security`.
