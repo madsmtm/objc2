@@ -1318,6 +1318,7 @@ fn.CFHash.unsafe = false
 fn.CFCopyDescription.unsafe = false
 fn.CFGetAllocator.unsafe = false
 fn.CFShow.unsafe = false
+fn.CFCopyTypeIDDescription.unsafe = true # Crashes on invalid CFTypeID
 
 # CFBundle
 fn.CFBundleGetAllBundles.unsafe = true # Not thread-safe
