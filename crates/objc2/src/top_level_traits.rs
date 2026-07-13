@@ -382,7 +382,7 @@ pub trait DefinedClass: ClassType {
 /// assert_eq!(*obj.x(), 42);
 /// ```
 ///
-/// # Minutae
+/// # Minutiae
 ///
 /// When constructing ivars using a [struct expression], it is actually
 /// required to use this type alias; e.g. you cannot inline the alias:
