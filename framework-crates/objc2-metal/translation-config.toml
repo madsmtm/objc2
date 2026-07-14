@@ -44,6 +44,10 @@ typedef.MTLAutoreleasedRenderPipelineReflection.skipped = true
 typedef.MTLAutoreleasedComputePipelineReflection.renamed = "MTLComputePipelineReflection"
 typedef.MTLAutoreleasedComputePipelineReflection.skipped = true
 
+# This can be null on older Macs with discrete graphics cards.
+# https://github.com/madsmtm/objc2/issues/718
+protocol.MTLBuffer.methods.contents.return.nullability = "nullable"
+
 ###
 ### Pointer bounds information.
 ###

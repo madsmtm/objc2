@@ -102,7 +102,9 @@ fn main() {
         command_buffer.commit();
         command_buffer.waitUntilCompleted();
 
-        let sum = unsafe { sum.contents().cast::<u32>().read() };
+        let contents = sum.contents();
+        assert!(!contents.is_null());
+        let sum = unsafe { contents.cast::<u32>().read() };
         assert_eq!(465, sum);
     });
 }

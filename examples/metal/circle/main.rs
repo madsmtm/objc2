@@ -419,9 +419,9 @@ impl TimeSampler {
         self.device
             .sampleTimestamps_gpuTimestamp(&mut cpu_end, &mut gpu_end);
 
-        let samples = unsafe {
-            std::slice::from_raw_parts(self.destination_buffer.contents().as_ptr().cast::<u64>(), 4)
-        };
+        let contents = self.destination_buffer.contents();
+        assert!(!contents.is_null());
+        let samples = unsafe { std::slice::from_raw_parts(contents.cast::<u64>(), 4) };
         let vertex_pass_start = samples[0];
         let vertex_pass_end = samples[1];
         let fragment_pass_start = samples[2];

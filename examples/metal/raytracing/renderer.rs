@@ -378,9 +378,9 @@ impl Renderer {
         self.uniform_buffer_offset
             .set(ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index.get());
 
+        let contents = NonNull::new(self.uniform_buffer.contents()).unwrap();
         let uniforms = unsafe {
-            self.uniform_buffer
-                .contents()
+            contents
                 .add(self.uniform_buffer_offset.get())
                 .cast::<Uniforms>()
                 .as_mut()
@@ -552,7 +552,9 @@ impl Renderer {
         command_encoder.endEncoding();
         command_buffer.commit();
         command_buffer.waitUntilCompleted();
-        let compacted_size = unsafe { compacted_size_buffer.contents().cast::<u32>().read() };
+        let contents = compacted_size_buffer.contents();
+        assert!(!contents.is_null());
+        let compacted_size = unsafe { contents.cast::<u32>().read() };
         let compacted_acceleration_structure = device
             .newAccelerationStructureWithSize(compacted_size as NSUInteger)
             .unwrap();

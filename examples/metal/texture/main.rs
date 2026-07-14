@@ -219,7 +219,8 @@ impl Renderer {
     }
 
     fn resize(&self, size: CGSize) {
-        let contents = self.viewport_size_buffer.contents().as_ptr();
+        let contents = self.viewport_size_buffer.contents();
+        assert!(!contents.is_null());
         let viewport_size: [u32; 2] = [size.width as u32, size.height as u32];
         let byte_count = size_of_val(&viewport_size);
 

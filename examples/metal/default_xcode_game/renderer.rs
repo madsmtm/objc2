@@ -289,9 +289,9 @@ impl Renderer {
         self.uniform_buffer_offset()
             .set(ALIGNED_UNIFORMS_SIZE * self.uniform_buffer_index().get() as usize);
 
+        let contents = NonNull::new(self.dynamic_uniform_buffer().contents()).unwrap();
         self.uniform_buffer_address().set(Some(unsafe {
-            self.dynamic_uniform_buffer()
-                .contents()
+            contents
                 .cast::<Uniforms>()
                 .byte_add(self.uniform_buffer_offset().get())
         }));
