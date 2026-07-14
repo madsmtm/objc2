@@ -28,7 +28,7 @@ lenient_semver_parser = "0.4"
 four-char-code = "2.3.0"
 regex = "1.6"
 clap = { version = "4.5.31", features = ["derive"] }
-itertools = "0.14.0"
+itertools = "0.15.0"
 moka = { version = "0.12.13", features = ["sync"] }
 indexmap = "2.13.0"
 
