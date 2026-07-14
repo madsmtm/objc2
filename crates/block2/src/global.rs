@@ -144,7 +144,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 /// This also doesn't work (yet), as blocks are overly restrictive about the
 /// lifetimes involved.
 ///
-/// ```compile_error
+/// ```compile_fail
 /// use block2::global_block;
 /// global_block! {
 ///     pub static BLOCK_WITH_LIFETIME = |x: &i32| -> i32 {
