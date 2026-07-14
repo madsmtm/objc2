@@ -62,6 +62,7 @@ pub(crate) type io_struct_inband_t = [core::ffi::c_char; 4096];
 #[allow(dead_code, non_camel_case_types)]
 #[cfg(target_pointer_width = "64")]
 pub(crate) type io_user_reference_t = u64;
+#[allow(dead_code, non_camel_case_types)]
 #[cfg(not(target_pointer_width = "64"))]
 pub(crate) type io_user_reference_t = core::ffi::c_uint; // natural_t
 
