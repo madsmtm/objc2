@@ -97,14 +97,17 @@
 //!
 //! ## Thread safety
 //!
-//! Thread-safe blocks are not yet representable in `block2`, and as such any
-//! function that requires a thread-safe block must be marked `unsafe`.
+//! Thread-safe blocks are [not yet][#572] representable in `block2`, and as
+//! such any function that requires a thread-safe block must be marked
+//! `unsafe`.
+//!
+//! [#572]: https://github.com/madsmtm/objc2/issues/572
 //!
 //!
 //! ## Mutability
 //!
-//! Blocks are generally assumed to be shareable, and as such can only very
-//! rarely be made mutable.
+//! Blocks are generally assumed to be shareable, and as such cannot really be
+//! made mutable.
 //!
 //! You will likely have to use interior mutability helpers like [`RefCell`]
 //! or [`Cell`] instead, see below.
@@ -166,7 +169,6 @@
 //! block is always called, or [`unwrap_unchecked`] if you wanted to optimize
 //! with the assumption that it is only called once.
 //!
-//! [`Cell`]: core::cell::Cell
 //! [`ManuallyDrop`]: core::mem::ManuallyDrop
 //! [`unwrap_unchecked`]: core::option::Option::unwrap_unchecked
 //!
