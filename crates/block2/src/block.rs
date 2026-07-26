@@ -25,6 +25,13 @@ use crate::{BlockFn, RcBlock};
 /// [`dyn`]: https://doc.rust-lang.org/std/keyword.dyn.html
 ///
 ///
+/// # Creating blocks
+///
+/// Blocks are usually created using [`RcBlock::new`], and dereferencing the
+/// resulting [`RcBlock`]. [`StackBlock::new`] and [`global_block!`] can be
+/// used in some cases for optimization purposes.
+///
+///
 /// # Memory layout
 ///
 /// This is intended to be an `extern type`, and as such the memory layout of

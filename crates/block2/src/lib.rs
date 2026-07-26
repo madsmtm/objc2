@@ -24,10 +24,11 @@
 //! [`fn` item]: https://doc.rust-lang.org/reference/types/function-item.html
 //!
 //!
-//! ## Using blocks
+//! ## Creating blocks
 //!
-//! You can create a new block from a closure using [`RcBlock::new`]. This can
-//! then be used to call functions or Objective-C methods that takes a block:
+//! You usually create a new block from a closure using [`RcBlock::new`]. The
+//! resulting type can then be automatically dereferenced to [`Block`], which
+//! allows calling functions or Objective-C methods that takes `&Block<...>`:
 //!
 //! ```
 //! use block2::RcBlock;
@@ -43,9 +44,12 @@
 //! # let obj = ExampleObject;
 //!
 //! let val = 5;
-//! let block = RcBlock::new(move |a, b| a + b + val);
-//! obj.someMethod(&block);
+//! // `&RcBlock<...>` dereferences to `&Block<...>` which `someMethod` takes.
+//! obj.someMethod(&RcBlock::new(move |a, b| a + b + val));
 //! ```
+//!
+//! Other ways of creating blocks include [`StackBlock::new`] and
+//! [`global_block!`].
 //!
 //!
 //! ## My block isn't being run?
