@@ -551,6 +551,7 @@ objc2-itunes-library = { workspace = true, optional = true, default-features = t
 objc2-app-tracking-transparency = { workspace = true, optional = true, default-features = true }
 objc2-audio-toolbox = { workspace = true, optional = true, default-features = true }
 objc2-cf-network = { workspace = true, optional = true, default-features = true }
+objc2-core-haptics = { workspace = true, optional = true, default-features = true }
 objc2-core-image = { workspace = true, optional = true, default-features = true }
 objc2-external-accessory = { workspace = true, optional = true, default-features = true }
 objc2-game-controller = { workspace = true, optional = true, default-features = true }
@@ -580,7 +581,6 @@ objc2-vision = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
 objc2-background-tasks = { workspace = true, optional = true, default-features = true }
-objc2-core-haptics = { workspace = true, optional = true, default-features = true }
 objc2-open-gl-es = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(not(target_os = "tvos"))'.dependencies]

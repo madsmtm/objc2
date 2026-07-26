@@ -7,7 +7,7 @@ version.workspace = true
 description = "Bindings to the CoreHaptics framework"
 edition.workspace = true
 rust-version.workspace = true
-keywords = ["cocoa", "apple", "framework", "ios"]
+keywords = ["cocoa", "apple", "framework", "macos", "ios"]
 categories.workspace = true
 repository.workspace = true
 license.workspace = true
@@ -22,11 +22,12 @@ objc2-avf-audio = { workspace = true, optional = true, features = ["AVAudioSessi
 objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [package.metadata.docs.rs]
-default-target = "aarch64-apple-ios"
+default-target = "aarch64-apple-darwin"
 rustc-args = ["--cfg", "docsrs"] # Fix cross-crate link to objc2::topics
 targets = [
+    "aarch64-apple-darwin",
+    "x86_64-apple-darwin",
     "aarch64-apple-ios",
-    "x86_64-apple-ios",
     "aarch64-apple-tvos",
     "aarch64-apple-ios-macabi",
     "aarch64-apple-visionos",
