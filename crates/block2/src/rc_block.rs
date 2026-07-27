@@ -163,8 +163,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     /// struct MyBlockEncoding;
     /// // SAFETY: The encoding is correct.
     /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
-    ///     type Arguments = (*mut NSError,);
-    ///     type Return = i32;
+    ///     type Signature = fn(*mut NSError) -> i32;
     ///     const ENCODING_CSTR: &'static CStr = if cfg!(target_pointer_width = "64") {
     ///         cr#"i16@?0@"NSError"8"#
     ///     } else {
@@ -182,7 +181,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     where
         Signature: BlockSignature,
         Closure: IntoBlock<'b, Signature>,
-        E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
+        E: ManualBlockEncoding<Signature = Signature>,
     {
         Self::maybe_encoded::<Closure, UserSpecified<E>>(closure)
     }
@@ -191,7 +190,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     where
         Signature: BlockSignature,
         Closure: IntoBlock<'b, Signature>,
-        E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
+        E: ManualBlockEncodingExt<Signature = Signature>,
     {
         // SAFETY: The stack block is copied once below.
         //

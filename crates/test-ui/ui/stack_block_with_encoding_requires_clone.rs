@@ -6,8 +6,7 @@ struct Foo;
 fn main() {
     struct FooBlockEncoding;
     unsafe impl ManualBlockEncoding for FooBlockEncoding {
-        type Arguments = ();
-        type Return = ();
+        type Signature = fn();
         const ENCODING_CSTR: &'static CStr = c"v8@?0";
     }
 

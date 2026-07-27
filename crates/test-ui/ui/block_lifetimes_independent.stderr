@@ -137,7 +137,7 @@ error[E0309]: the parameter type `impl Fn() -> &'a i32 + 'b` may not live long e
    |
 help: consider adding an explicit lifetime bound
    |
-61 |     f: impl Fn() -> &'a i32 + 'b + 'b,
+58 |     f: impl Fn() -> &'a i32 + 'b + 'b,
    |                                  ++++
 
 error: lifetime may not live long enough

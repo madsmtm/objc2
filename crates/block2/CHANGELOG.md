@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   fn foo(block: &Block<'_, fn()>) { ... }
   ```
 * **BREAKING**: Renamed `BlockFn` trait to `BlockSignature`.
+* **BREAKING**: Changed how to specify the block signature in `ManualBlockEncoding`.
 
 
 ## [0.6.2] - 2025-10-04

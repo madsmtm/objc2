@@ -38,8 +38,7 @@ type Add12<'a> = Block<'a, fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, 
 
 struct VoidToVoid;
 unsafe impl ManualBlockEncoding for VoidToVoid {
-    type Arguments = ();
-    type Return = ();
+    type Signature = fn();
     #[cfg(target_pointer_width = "64")]
     const ENCODING_CSTR: &'static CStr = c"v8@?0";
     #[cfg(target_pointer_width = "32")]
@@ -48,8 +47,7 @@ unsafe impl ManualBlockEncoding for VoidToVoid {
 
 struct VoidToInt;
 unsafe impl ManualBlockEncoding for VoidToInt {
-    type Arguments = ();
-    type Return = i32;
+    type Signature = fn() -> i32;
     #[cfg(target_pointer_width = "64")]
     const ENCODING_CSTR: &'static CStr = c"i8@?0";
     #[cfg(target_pointer_width = "32")]
@@ -58,8 +56,7 @@ unsafe impl ManualBlockEncoding for VoidToInt {
 
 struct IntToInt;
 unsafe impl ManualBlockEncoding for IntToInt {
-    type Arguments = (i32,);
-    type Return = i32;
+    type Signature = fn(i32) -> i32;
     #[cfg(target_pointer_width = "64")]
     const ENCODING_CSTR: &'static CStr = c"i12@?0i8";
     #[cfg(target_pointer_width = "32")]
@@ -166,10 +163,7 @@ fn test_add_block() {
     invoke_assert(&StackBlock::new(|a: i32| a + 6), 11);
     invoke_assert(&RcBlock::new(|a: i32| a + 6), 11);
     invoke_assert(&StackBlock::with_encoding::<IntToInt>(|a: i32| a + 6), 11);
-    invoke_assert(
-        &RcBlock::with_encoding::<_, IntToInt>(|a: i32| a + 6),
-        11,
-    );
+    invoke_assert(&RcBlock::with_encoding::<_, IntToInt>(|a: i32| a + 6), 11);
     invoke_assert(&GLOBAL_BLOCK, 47);
 }
 
@@ -186,8 +180,7 @@ fn test_add_12() {
 
     struct Enc;
     unsafe impl ManualBlockEncoding for Enc {
-        type Arguments = (i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32);
-        type Return = i32;
+        type Signature = fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32) -> i32;
         #[cfg(target_pointer_width = "64")]
         const ENCODING_CSTR: &'static CStr = c"i56@?0i8i12i16i20i24i28i32i36i40i44i48i52";
         #[cfg(target_pointer_width = "32")]
@@ -241,8 +234,7 @@ fn test_large_struct_block() {
 
     struct Enc;
     unsafe impl ManualBlockEncoding for Enc {
-        type Arguments = (LargeStruct,);
-        type Return = LargeStruct;
+        type Signature = fn(LargeStruct) -> LargeStruct;
         #[cfg(target_pointer_width = "64")]
         const ENCODING_CSTR: &'static CStr = c"{LargeStruct=f[100C]}112@?0{LargeStruct=f[100C]}8";
         #[cfg(target_pointer_width = "32")]
@@ -567,8 +559,7 @@ fn capture_retained() {
 
     struct Enc;
     unsafe impl ManualBlockEncoding for Enc {
-        type Arguments = ();
-        type Return = Bool;
+        type Signature = fn() -> Bool;
 
         const ENCODING_CSTR: &'static CStr = {
             match (Bool::ENCODING, cfg!(target_pointer_width = "64")) {

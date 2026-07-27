@@ -231,8 +231,7 @@ where
     /// struct MyBlockEncoding;
     /// // SAFETY: The encoding is correct.
     /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
-    ///     type Arguments = (*mut NSError,);
-    ///     type Return = i32;
+    ///     type Signature = fn(*mut NSError) -> i32;
     ///     const ENCODING_CSTR: &'static CStr = if cfg!(target_pointer_width = "64") {
     ///         cr#"i16@?0@"NSError"8"#
     ///     } else {
@@ -248,7 +247,7 @@ where
     #[inline]
     pub fn with_encoding<E>(closure: Closure) -> Self
     where
-        E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
+        E: ManualBlockEncoding<Signature = Signature>,
     {
         Self::maybe_encoded::<UserSpecified<E>>(closure)
     }
@@ -256,7 +255,7 @@ where
     #[inline]
     fn maybe_encoded<E>(closure: Closure) -> Self
     where
-        E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
+        E: ManualBlockEncodingExt<Signature = Signature>,
     {
         // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
         let header = BlockHeader {
@@ -333,7 +332,7 @@ impl<'b, Signature, Closure> StackBlock<'b, Signature, Closure> {
     where
         Signature: BlockSignature,
         Closure: IntoBlock<'b, Signature>,
-        E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
+        E: ManualBlockEncodingExt<Signature = Signature>,
     {
         // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
         // Don't need to emit copy and dispose helpers if the closure
@@ -419,7 +418,7 @@ impl<'b, Signature, Closure, E> EncodedDescriptors<E> for StackBlock<'b, Signatu
 where
     Signature: BlockSignature,
     Closure: IntoBlock<'b, Signature>,
-    E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
+    E: ManualBlockEncoding<Signature = Signature>,
 {
     /// [`Self::DESCRIPTOR_BASIC`] with the signature added from `E`.
     const DESCRIPTOR_BASIC_WITH_ENCODING: BlockDescriptorSignature = BlockDescriptorSignature {
@@ -449,7 +448,7 @@ impl<'b, Signature, Closure, E> EncodedCloneDescriptors<E> for StackBlock<'b, Si
 where
     Signature: BlockSignature,
     Closure: IntoBlock<'b, Signature> + Clone,
-    E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
+    E: ManualBlockEncoding<Signature = Signature>,
 {
     /// [`Self::DESCRIPTOR_WITH_CLONE`] with the signature added from `E`.
     const DESCRIPTOR_WITH_CLONE_AND_ENCODING: BlockDescriptorCopyDisposeSignature =

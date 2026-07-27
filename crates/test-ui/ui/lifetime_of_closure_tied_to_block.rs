@@ -3,8 +3,7 @@ use std::ffi::CStr;
 
 struct VoidToI32;
 unsafe impl ManualBlockEncoding for VoidToI32 {
-    type Arguments = ();
-    type Return = i32;
+    type Signature = fn() -> i32;
     const ENCODING_CSTR: &'static CStr = c"i8@?0";
 }
 

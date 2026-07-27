@@ -28,7 +28,7 @@ error[E0597]: `x` does not live long enough
    |
 help: consider adding semicolon after the expression so its temporaries are dropped sooner, before the local variables declared by the block are dropped
    |
-19 |         RcBlock::new(|| x + 2).clone();
+18 |         RcBlock::new(|| x + 2).clone();
    |                                       +
 
 error[E0597]: `x` does not live long enough
@@ -61,7 +61,7 @@ error[E0597]: `x` does not live long enough
    |
 help: consider adding semicolon after the expression so its temporaries are dropped sooner, before the local variables declared by the block are dropped
    |
-29 |         RcBlock::with_encoding::<_, VoidToI32>(|| x + 2).clone();
+28 |         RcBlock::with_encoding::<_, VoidToI32>(|| x + 2).clone();
    |                                                                 +
 
 error[E0597]: `x` does not live long enough

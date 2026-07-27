@@ -146,15 +146,15 @@ impl_traits!(12; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7,
 /// See these functions for examples of how to implement and use this trait,
 /// since its sole purpose is passing values at compile time to them.
 ///
-/// As a side note, one might be surprised by the additional [`Self::Arguments`]
-/// and [`Self::Return`] associated types requiring concrete implementations to
+/// As a side note, one might be surprised by the additional
+/// [`Self::Signature`] associated type requiring concrete implementations to
 /// specify them while they are not actually used. This is intentional:
 ///
 ///  * the types are checked at compile-time to be equal to the ones used with
 ///    [`RcBlock::with_encoding`] and [`StackBlock::with_encoding`], usually
 ///    inferred by the compiler when giving a closure: this should help avoid
 ///    some easy oversights;
-///  * the user is forced to write both the standard Rust types and the
+///  * the user is forced to write both the standard Rust signature and the
 ///    encoding string at the same time, so particular attention to the types
 ///    is put to the forefront for them;
 ///  * reading a block encoding string is tough when not initiated, so these
@@ -167,8 +167,8 @@ impl_traits!(12; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7,
 /// # Safety
 ///
 /// [`Self::ENCODING_CSTR`] must correspond to the actual signature string a
-/// recent-enough Objective-C compiler would generate for a block taking in
-/// [`Self::Arguments`] as input and returning [`Self::Return`] as output.
+/// recent-enough Objective-C compiler would generate for a block with the
+/// signature described in [`Self::Signature`].
 /// This information is actually used by the Objective-C runtime in order to
 /// correctly invoke the block, so specifying a wrong encoding is definitely a
 /// soundness issue: see [this issue comment][i442-sign-check] for more details
@@ -248,10 +248,8 @@ impl_traits!(12; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7,
 /// [GCC documentation]: https://gcc.gnu.org/onlinedocs/gcc/Type-encoding.html
 /// [GCC method signatures]: https://gcc.gnu.org/onlinedocs/gcc/Method-signatures.html
 pub unsafe trait ManualBlockEncoding {
-    /// The function's input argument types.
-    type Arguments: EncodeArguments;
-    /// The function's return type.
-    type Return: EncodeReturn;
+    /// The block's signature.
+    type Signature: BlockSignature;
     /// The raw encoding information string.
     const ENCODING_CSTR: &'static CStr;
 }
@@ -268,8 +266,7 @@ pub(crate) struct NoBlockEncoding<Signature: BlockSignature> {
 // SAFETY: The encoding here is incorrect, but it will never be used because
 // we specify `IS_NONE = true` in `ManualBlockEncodingExt`.
 unsafe impl<Signature: BlockSignature> ManualBlockEncoding for NoBlockEncoding<Signature> {
-    type Arguments = Signature::Args;
-    type Return = Signature::Output;
+    type Signature = Signature;
     // TODO: change this to `c""` when the MSRV is at least 1.77.
     // SAFETY: the byte string is written here and contains exactly one nul byte.
     const ENCODING_CSTR: &'static CStr = unsafe { CStr::from_bytes_with_nul_unchecked(b"\0") };
@@ -295,8 +292,7 @@ impl<Signature: BlockSignature> ManualBlockEncodingExt for NoBlockEncoding<Signa
 pub(crate) struct UserSpecified<E: ManualBlockEncoding>(E);
 
 unsafe impl<E: ManualBlockEncoding> ManualBlockEncoding for UserSpecified<E> {
-    type Arguments = E::Arguments;
-    type Return = E::Return;
+    type Signature = E::Signature;
     const ENCODING_CSTR: &'static CStr = E::ENCODING_CSTR;
 }
 
@@ -308,7 +304,7 @@ unsafe impl<E: ManualBlockEncoding> ManualBlockEncoding for UserSpecified<E> {
 pub(crate) fn debug_assert_block_encoding<Signature, E>()
 where
     Signature: BlockSignature,
-    E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
+    E: ManualBlockEncodingExt<Signature = Signature>,
 {
     #[cfg(debug_assertions)]
     {
@@ -333,8 +329,7 @@ mod tests {
         // Normal case.
         struct Enc1;
         unsafe impl ManualBlockEncoding for Enc1 {
-            type Arguments = (i32, f32);
-            type Return = u8;
+            type Signature = fn(i32, f32) -> u8;
             #[cfg(target_pointer_width = "64")]
             const ENCODING_CSTR: &'static CStr =
                 // Somehow, using a C string literal seems to fail the MSRV
@@ -350,8 +345,7 @@ mod tests {
         // No input + no output case.
         struct Enc2;
         unsafe impl ManualBlockEncoding for Enc2 {
-            type Arguments = ();
-            type Return = ();
+            type Signature = fn();
             #[cfg(target_pointer_width = "64")]
             const ENCODING_CSTR: &'static CStr =
                 unsafe { CStr::from_bytes_with_nul_unchecked(b"v8@?0\0") };
@@ -364,8 +358,7 @@ mod tests {
         // Ensure we don't rely on the encoding string's emptiness.
         struct Enc3;
         unsafe impl ManualBlockEncoding for Enc3 {
-            type Arguments = ();
-            type Return = ();
+            type Signature = fn();
             const ENCODING_CSTR: &'static CStr =
                 unsafe { CStr::from_bytes_with_nul_unchecked(b"\0") };
         }
