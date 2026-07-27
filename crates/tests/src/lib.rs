@@ -48,7 +48,7 @@ pub mod objc2_topics;
 
 #[no_mangle]
 extern "C-unwind" fn debug_block(block: *mut c_void) {
-    let block: &Block<dyn Fn()> = unsafe { &*(block as *const Block<dyn Fn()>) };
+    let block: &Block<'_, fn()> = unsafe { &*(block as *const Block<'_, fn()>) };
     std::println!("{block:#?}");
 }
 

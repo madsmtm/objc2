@@ -1,0 +1,10 @@
+error: lifetime may not live long enough
+ --> ui/block_lifetime_lending.rs
+  |
+  |     takes_lending_block(&RcBlock::new(move || &*x));
+  |                                       ------- ^^^ returning this value requires that `'1` must outlive `'2`
+  |                                       |     |
+  |                                       |     return type of closure is &'2 i32
+  |                                       lifetime `'1` represents this closure's body
+  |
+  = note: closure implements `Fn`, so references to captured variables can't escape the closure

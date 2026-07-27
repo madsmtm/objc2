@@ -21,12 +21,12 @@ fn main() {
 
     let _ = {
         let x = 2;
-        RcBlock::with_encoding::<_, _, _, VoidToI32>(|| x + 2)
+        RcBlock::with_encoding::<_, VoidToI32>(|| x + 2)
     };
 
     let _ = {
         let x = 2;
-        RcBlock::with_encoding::<_, _, _, VoidToI32>(|| x + 2).clone()
+        RcBlock::with_encoding::<_, VoidToI32>(|| x + 2).clone()
     };
 
     let _ = {

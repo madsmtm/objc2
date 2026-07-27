@@ -4,24 +4,25 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::mem::{self, MaybeUninit};
 use core::ops::Deref;
-use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::{self, NonNull};
 
-use objc2::encode::{EncodeArguments, EncodeReturn, Encoding, RefEncode};
+use objc2::encode::{Encoding, RefEncode};
 
 use crate::abi::{
     BlockDescriptor, BlockDescriptorCopyDispose, BlockDescriptorCopyDisposeSignature,
     BlockDescriptorPtr, BlockDescriptorSignature, BlockFlags, BlockHeader,
 };
 use crate::debug::debug_block_header;
-use crate::traits::{ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified};
+use crate::traits::{
+    BlockSignature, ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified,
+};
 use crate::{ffi, Block, IntoBlock};
 
 /// An Objective-C block constructed on the stack.
 ///
 /// This can be a micro-optimization if you know that the function you're
 /// passing the block to won't [copy] the block at all (e.g. if it guarantees
-/// that it'll run it synchronously). That's very rare though, most of the
+/// that it'll run it synchronously). That's quite rare though, most of the
 /// time you'll want to use [`RcBlock`].
 ///
 /// This is a smart pointer that [`Deref`]s to [`Block`].
@@ -36,10 +37,8 @@ use crate::{ffi, Block, IntoBlock};
 /// limitations. Usually, you will not need to specify them, as the compiler
 /// should be able to infer them.
 ///
-/// - The lifetime `'f`, which is the lifetime of the block.
-/// - The parameter `A`, which is a tuple representing the parameters to the
-///   block.
-/// - The parameter `R`, which is the return type of the block.
+/// - The lifetime `'b`, which is the lifetime of the block/closure.
+/// - The parameter `Signature`, which is the signature of the block/closure.
 /// - The parameter `Closure`, which is the contained closure type. This is
 ///   usually not nameable, and you will have to use `_`, `impl Fn()` or
 ///   similar.
@@ -50,13 +49,13 @@ use crate::{ffi, Block, IntoBlock};
 /// The memory layout of this type is _not_ guaranteed.
 ///
 /// That said, it will always be safe to reinterpret pointers to this as a
-/// pointer to a [`Block`] with the corresponding `dyn Fn` type.
+/// pointer to a [`Block`] with the corresponding lifetime and signature.
 #[repr(C)]
-pub struct StackBlock<'f, A, R, Closure> {
+pub struct StackBlock<'b, Signature, Closure> {
     /// For correct variance of the other type parameters.
     ///
     /// We add extra auto traits such that they depend on the closure instead.
-    p: PhantomData<dyn Fn(A) -> R + Send + Sync + RefUnwindSafe + UnwindSafe + Unpin + 'f>,
+    p: PhantomData<(&'b (), Signature)>, // TODO: Variance???
     header: BlockHeader,
     /// The block's closure.
     ///
@@ -69,17 +68,16 @@ pub struct StackBlock<'f, A, R, Closure> {
 
 // SAFETY: Pointers to the stack block is always safe to reinterpret as an
 // ordinary block pointer.
-unsafe impl<'f, A, R, Closure> RefEncode for StackBlock<'f, A, R, Closure>
+unsafe impl<'b, Signature, Closure> RefEncode for StackBlock<'b, Signature, Closure>
 where
-    A: EncodeArguments,
-    R: EncodeReturn,
-    Closure: IntoBlock<'f, A, R>,
+    Signature: BlockSignature,
+    Closure: IntoBlock<'b, Signature>,
 {
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
 // Basic constants and helpers.
-impl<A, R, Closure> StackBlock<'_, A, R, Closure> {
+impl<Signature, Closure> StackBlock<'_, Signature, Closure> {
     /// The size of the block header and the trailing closure.
     ///
     /// This ensures that the closure that the block contains is also moved to
@@ -116,7 +114,7 @@ impl<A, R, Closure> StackBlock<'_, A, R, Closure> {
 }
 
 // `StackBlock::new`
-impl<A, R, Closure: Clone> StackBlock<'_, A, R, Closure> {
+impl<Signature, Closure: Clone> StackBlock<'_, Signature, Closure> {
     // Clone the closure from one block to another.
     unsafe extern "C-unwind" fn clone_closure(dst: *mut c_void, src: *const c_void) {
         let dst: *mut Self = dst.cast();
@@ -152,11 +150,10 @@ impl<A, R, Closure: Clone> StackBlock<'_, A, R, Closure> {
     };
 }
 
-impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure>
+impl<'b, Signature, Closure> StackBlock<'b, Signature, Closure>
 where
-    A: EncodeArguments,
-    R: EncodeReturn,
-    Closure: IntoBlock<'f, A, R> + Clone,
+    Signature: BlockSignature,
+    Closure: IntoBlock<'b, Signature> + Clone,
 {
     /// Construct a `StackBlock` with the given closure.
     ///
@@ -175,7 +172,7 @@ where
     /// ```
     /// use block2::StackBlock;
     /// #
-    /// # extern "C" fn check_addition(block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+    /// # extern "C" fn check_addition(block: &block2::Block<'_, fn(i32, i32) -> i32>) {
     /// #     assert_eq!(block.call(5, 8), 13);
     /// # }
     ///
@@ -184,7 +181,7 @@ where
     /// ```
     #[inline]
     pub fn new(closure: Closure) -> Self {
-        Self::maybe_encoded::<NoBlockEncoding<A, R>>(closure)
+        Self::maybe_encoded::<NoBlockEncoding<Signature>>(closure)
     }
 
     /// Constructs a new [`StackBlock`] with the given function and encoding
@@ -251,7 +248,7 @@ where
     #[inline]
     pub fn with_encoding<E>(closure: Closure) -> Self
     where
-        E: ManualBlockEncoding<Arguments = A, Return = R>,
+        E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
     {
         Self::maybe_encoded::<UserSpecified<E>>(closure)
     }
@@ -259,7 +256,7 @@ where
     #[inline]
     fn maybe_encoded<E>(closure: Closure) -> Self
     where
-        E: ManualBlockEncodingExt<Arguments = A, Return = R>,
+        E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
     {
         // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
         let header = BlockHeader {
@@ -273,7 +270,7 @@ where
                 },
             reserved: MaybeUninit::new(0),
             invoke: Some(Closure::__get_invoke_stack_block()),
-            // TODO: Use `Self::DESCRIPTOR_BASIC` when `F: Copy`
+            // TODO: Use `Self::DESCRIPTOR_BASIC` when `Signature: Copy`
             // (probably only possible with specialization).
             descriptor: if E::IS_NONE {
                 // SAFETY: The descriptor must (probably) point to `static`
@@ -315,7 +312,7 @@ where
 }
 
 // `RcBlock::with_encoding`
-impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
+impl<'b, Signature, Closure> StackBlock<'b, Signature, Closure> {
     unsafe extern "C-unwind" fn empty_clone_closure(_dst: *mut c_void, _src: *const c_void) {
         // We do nothing, the closure has been `memmove`'d already, and
         // ownership will be passed in `RcBlock::with_encoding`.
@@ -334,10 +331,9 @@ impl<'f, A, R, Closure> StackBlock<'f, A, R, Closure> {
     #[inline]
     pub(crate) unsafe fn new_no_clone<E>(closure: Closure) -> Self
     where
-        A: EncodeArguments,
-        R: EncodeReturn,
-        Closure: IntoBlock<'f, A, R>,
-        E: ManualBlockEncodingExt<Arguments = A, Return = R>,
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
+        E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
     {
         // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
         // Don't need to emit copy and dispose helpers if the closure
@@ -419,12 +415,11 @@ trait EncodedDescriptors<E: ManualBlockEncoding> {
     const DESCRIPTOR_WITH_DROP_AND_ENCODING: BlockDescriptorCopyDisposeSignature;
 }
 
-impl<'f, A, R, Closure, E> EncodedDescriptors<E> for StackBlock<'f, A, R, Closure>
+impl<'b, Signature, Closure, E> EncodedDescriptors<E> for StackBlock<'b, Signature, Closure>
 where
-    A: EncodeArguments,
-    R: EncodeReturn,
-    Closure: IntoBlock<'f, A, R>,
-    E: ManualBlockEncoding<Arguments = A, Return = R>,
+    Signature: BlockSignature,
+    Closure: IntoBlock<'b, Signature>,
+    E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
 {
     /// [`Self::DESCRIPTOR_BASIC`] with the signature added from `E`.
     const DESCRIPTOR_BASIC_WITH_ENCODING: BlockDescriptorSignature = BlockDescriptorSignature {
@@ -450,12 +445,11 @@ trait EncodedCloneDescriptors<E: ManualBlockEncoding> {
     const DESCRIPTOR_WITH_CLONE_AND_ENCODING: BlockDescriptorCopyDisposeSignature;
 }
 
-impl<'f, A, R, Closure, E> EncodedCloneDescriptors<E> for StackBlock<'f, A, R, Closure>
+impl<'b, Signature, Closure, E> EncodedCloneDescriptors<E> for StackBlock<'b, Signature, Closure>
 where
-    A: EncodeArguments,
-    R: EncodeReturn,
-    Closure: IntoBlock<'f, A, R> + Clone,
-    E: ManualBlockEncoding<Arguments = A, Return = R>,
+    Signature: BlockSignature,
+    Closure: IntoBlock<'b, Signature> + Clone,
+    E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
 {
     /// [`Self::DESCRIPTOR_WITH_CLONE`] with the signature added from `E`.
     const DESCRIPTOR_WITH_CLONE_AND_ENCODING: BlockDescriptorCopyDisposeSignature =
@@ -468,7 +462,7 @@ where
         };
 }
 
-impl<A, R, Closure: Clone> Clone for StackBlock<'_, A, R, Closure> {
+impl<Signature, Closure: Clone> Clone for StackBlock<'_, Signature, Closure> {
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -479,20 +473,19 @@ impl<A, R, Closure: Clone> Clone for StackBlock<'_, A, R, Closure> {
     }
 }
 
-impl<A, R, Closure: Copy> Copy for StackBlock<'_, A, R, Closure> {}
+impl<Signature, Closure: Copy> Copy for StackBlock<'_, Signature, Closure> {}
 
-impl<'f, A, R, Closure> Deref for StackBlock<'f, A, R, Closure>
+impl<'b, Signature, Closure> Deref for StackBlock<'b, Signature, Closure>
 where
-    A: EncodeArguments,
-    R: EncodeReturn,
-    Closure: IntoBlock<'f, A, R>,
+    Signature: BlockSignature,
+    Closure: IntoBlock<'b, Signature>,
 {
-    type Target = Block<Closure::Dyn>;
+    type Target = Block<'b, Signature>;
 
     #[inline]
     fn deref(&self) -> &Self::Target {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: NonNull<Block<Closure::Dyn>> = ptr.cast();
+        let ptr: NonNull<Block<'b, Signature>> = ptr.cast();
         // SAFETY: A pointer to `StackBlock` is always safe to convert to a
         // pointer to `Block`, and the reference will be valid as long the
         // stack block exists.
@@ -503,7 +496,7 @@ where
     }
 }
 
-impl<A, R, Closure> fmt::Debug for StackBlock<'_, A, R, Closure> {
+impl<Signature, Closure> fmt::Debug for StackBlock<'_, Signature, Closure> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("StackBlock");
         debug_block_header(&self.header, &mut f);
@@ -519,18 +512,18 @@ mod tests {
     fn test_size() {
         assert_eq!(
             mem::size_of::<BlockHeader>(),
-            <StackBlock<'_, (), (), ()>>::SIZE as _,
+            <StackBlock<'_, fn(), ()>>::SIZE as _,
         );
         assert_eq!(
             mem::size_of::<BlockHeader>() + mem::size_of::<fn()>(),
-            <StackBlock<'_, (), (), fn()>>::SIZE as _,
+            <StackBlock<'_, fn(), fn()>>::SIZE as _,
         );
     }
 
     #[allow(dead_code)]
-    fn covariant<'b, 'f>(
-        b: StackBlock<'static, (), (), impl Fn() + 'static>,
-    ) -> StackBlock<'b, (), (), impl Fn() + 'f> {
+    fn covariant<'b, 'c>(
+        b: StackBlock<'static, fn(), impl Fn() + 'static>,
+    ) -> StackBlock<'b, fn(), impl Fn() + 'c> {
         b
     }
 }

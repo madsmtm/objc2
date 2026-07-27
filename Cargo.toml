@@ -102,6 +102,9 @@ default.extend-identifiers.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent = "k
 # (this of course requires that the API we expose is similar enough that framework
 # crates themselves won't break in that version update. But that's the plan).
 dispatch2 = { path = "crates/dispatch2", version = ">=0.3.0, <0.5.0", default-features = false } # v0.3.0 or v0.4.*
+# NOTE: dispatch2 v0.3.1 will not be able to use the newer block2... So this
+# won't work, unless we maybe release a new version of dispatch2 and yank the
+# old ones?
 block2 = { path = "crates/block2", version = ">=0.6.1, <0.8.0", default-features = false } # v0.6.1 or v0.7.*
 objc2 = { path = "crates/objc2", version = ">=0.6.2, <0.8.0", default-features = false } # v0.6.2 or v0.7.*
 # Use a reasonably new version of libc.

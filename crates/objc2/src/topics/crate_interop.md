@@ -56,7 +56,7 @@ extern "C" {
         activities: CFOptionFlags,
         repeats: Boolean,
         order: CFIndex,
-        block: &Block<dyn Fn(CFRunLoopObserverRefWrapper, CFRunLoopActivity)>
+        block: &Block<'_, fn(CFRunLoopObserverRefWrapper, CFRunLoopActivity)>
     ) -> CFRunLoopObserverRef;
 }
 

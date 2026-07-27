@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 * **BREAKING**: Removed extra parentheses when invoking `Block::call`.
+* **BREAKING**: Changed signature of blocks to now need `fn()` instead of `dyn Fn()`.
+
+  ```rust
+  // Before
+  fn foo(block: &Block<dyn Fn(i32) -> i32>) { ... } // Inferred 'static
+  fn foo(block: &Block<dyn Fn() + '_>) { ... }
+
+  // After
+  fn foo(block: &Block<'static, fn(i32) -> i32>) { ... } // 'static is now explicit
+  fn foo(block: &Block<'_, fn()>) { ... }
+  ```
+* **BREAKING**: Renamed `BlockFn` trait to `BlockSignature`.
 
 
 ## [0.6.2] - 2025-10-04

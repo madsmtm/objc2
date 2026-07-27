@@ -5,22 +5,22 @@
 use block2::{Block, RcBlock, StackBlock};
 
 #[export_name = "fn1_stack_block_to_rc"]
-fn stack_block_to_rc() -> RcBlock<dyn Fn(i32) -> i32> {
+fn stack_block_to_rc() -> RcBlock<'static, fn(i32) -> i32> {
     StackBlock::new(|x| x + 2).copy()
 }
 
 #[export_name = "fn2_rc_block"]
-fn rc_block() -> RcBlock<dyn Fn(i32) -> i32> {
+fn rc_block() -> RcBlock<'static, fn(i32) -> i32> {
     RcBlock::new(|x| x + 2)
 }
 
 #[export_name = "fn3_rc_block_drop"]
-fn rc_block_drop(b: Box<i32>) -> RcBlock<dyn Fn(i32) -> i32> {
+fn rc_block_drop(b: Box<i32>) -> RcBlock<'static, fn(i32) -> i32> {
     RcBlock::new(move |x| x + *b)
 }
 
 extern "C" {
-    fn needs_block(block: &Block<dyn Fn(i32) -> i32>);
+    fn needs_block(block: &Block<'_, fn(i32) -> i32>);
 }
 
 #[export_name = "fn4_create_and_use_stack_block"]

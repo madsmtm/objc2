@@ -3,44 +3,42 @@ use core::mem::ManuallyDrop;
 use core::ops::Deref;
 use core::ptr::NonNull;
 
-use objc2::encode::{EncodeArguments, EncodeReturn};
-
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
-use crate::traits::{ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified};
+use crate::traits::{
+    BlockSignature, ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified,
+};
 use crate::{ffi, Block, IntoBlock, StackBlock};
 
 /// A reference-counted Objective-C block that is stored on the heap.
 ///
-/// This is a smart pointer that [`Deref`]s to [`Block`].
+/// This is a smart pointer that [`Deref`]s to [`Block`], and releases it on
+/// `Drop`.
 ///
-/// The generic type `F` must be a [`dyn`] [`Fn`] that implements the
-/// [`BlockFn`] trait, just like described in [`Block`]'s documentation.
-///
-/// [`dyn`]: https://doc.rust-lang.org/std/keyword.dyn.html
-/// [`BlockFn`]: crate::BlockFn
+/// The lifetime `'b` and generic `Signature` are the same as described in
+/// [`Block`]'s documentation.
 ///
 ///
 /// # Memory-layout
 ///
 /// This is guaranteed to have the same size and alignment as a pointer to a
-/// block (i.e. same size as `*const Block<A, R>`).
+/// block (i.e. same memory layout as `*const Block<'b, Signature>`).
 ///
 /// Additionally, it participates in the null-pointer optimization, that is,
-/// `Option<RcBlock<A, R>>` is guaranteed to have the same size as
-/// `RcBlock<A, R>`.
+/// `Option<RcBlock<'b, Signature>>` is guaranteed to have the same size as
+/// `RcBlock<'b, Signature>`.
 #[repr(transparent)]
 #[doc(alias = "MallocBlock")]
 #[cfg_attr(
     feature = "unstable-coerce-pointee",
     derive(std::marker::CoercePointee)
 )]
-pub struct RcBlock<F: ?Sized> {
+pub struct RcBlock<'b, Signature> {
     // Covariant
-    ptr: NonNull<Block<F>>,
+    ptr: NonNull<Block<'b, Signature>>,
 }
 
-impl<F: ?Sized> RcBlock<F> {
+impl<'b, Signature> RcBlock<'b, Signature> {
     /// A raw pointer to the underlying block.
     ///
     /// The pointer is valid for at least as long as the `RcBlock` is alive.
@@ -48,7 +46,7 @@ impl<F: ?Sized> RcBlock<F> {
     /// This is an associated method, and must be called as
     /// `RcBlock::as_ptr(&block)`.
     #[inline]
-    pub fn as_ptr(this: &Self) -> *mut Block<F> {
+    pub fn as_ptr(this: &Self) -> *mut Block<'b, Signature> {
         this.ptr.as_ptr()
     }
 
@@ -76,7 +74,8 @@ impl<F: ?Sized> RcBlock<F> {
     /// // SAFETY: The pointer is valid, and ownership from above.
     /// let add2 = unsafe { RcBlock::from_raw(ptr) }.unwrap();
     /// ```
-    pub fn into_raw(this: Self) -> *mut Block<F> {
+    #[inline]
+    pub fn into_raw(this: Self) -> *mut Block<'b, Signature> {
         let this = ManuallyDrop::new(this);
         this.ptr.as_ptr()
     }
@@ -96,7 +95,7 @@ impl<F: ?Sized> RcBlock<F> {
     /// Additionally, the block must be safe to call (or, if it is not, then
     /// you must treat every call to the block as `unsafe`).
     #[inline]
-    pub unsafe fn from_raw(ptr: *mut Block<F>) -> Option<Self> {
+    pub unsafe fn from_raw(ptr: *mut Block<'b, Signature>) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| Self { ptr })
     }
 
@@ -122,15 +121,15 @@ impl<F: ?Sized> RcBlock<F> {
     #[doc(alias = "Block_copy")]
     #[doc(alias = "_Block_copy")]
     #[inline]
-    pub unsafe fn copy(ptr: *mut Block<F>) -> Option<Self> {
-        let ptr: *mut Block<F> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
+    pub unsafe fn copy(ptr: *mut Block<'b, Signature>) -> Option<Self> {
+        let ptr: *mut Block<'b, Signature> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
         // SAFETY: We just copied the block, so the reference count is +1
         unsafe { Self::from_raw(ptr) }
     }
 }
 
 // TODO: Move so this appears first in the docs.
-impl<F: ?Sized> RcBlock<F> {
+impl<'b, Signature> RcBlock<'b, Signature> {
     /// Construct a `RcBlock` with the given closure.
     ///
     /// The closure will be coped to the heap on construction.
@@ -140,13 +139,12 @@ impl<F: ?Sized> RcBlock<F> {
     // Note: Unsure if this should be #[inline], but I think it may be able to
     // benefit from not being completely so.
     #[inline]
-    pub fn new<'f, A, R, Closure>(closure: Closure) -> Self
+    pub fn new<Closure>(closure: Closure) -> Self
     where
-        A: EncodeArguments,
-        R: EncodeReturn,
-        Closure: IntoBlock<'f, A, R, Dyn = F>,
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
     {
-        Self::maybe_encoded::<_, _, _, NoBlockEncoding<A, R>>(closure)
+        Self::maybe_encoded::<Closure, NoBlockEncoding<Signature>>(closure)
     }
 
     /// Constructs a new [`RcBlock`] with the given function and encoding
@@ -174,28 +172,26 @@ impl<F: ?Sized> RcBlock<F> {
     ///     };
     /// }
     ///
-    /// let my_block = RcBlock::with_encoding::<_, _, _, MyBlockEncoding>(|_err: *mut NSError| {
+    /// let my_block = RcBlock::with_encoding::<_, MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
     /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
     /// ```
     #[inline]
-    pub fn with_encoding<'f, A, R, Closure, E>(closure: Closure) -> Self
+    pub fn with_encoding<Closure, E>(closure: Closure) -> Self
     where
-        A: EncodeArguments,
-        R: EncodeReturn,
-        Closure: IntoBlock<'f, A, R, Dyn = F>,
-        E: ManualBlockEncoding<Arguments = A, Return = R>,
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
+        E: ManualBlockEncoding<Arguments = Signature::Args, Return = Signature::Output>,
     {
-        Self::maybe_encoded::<_, _, _, UserSpecified<E>>(closure)
+        Self::maybe_encoded::<Closure, UserSpecified<E>>(closure)
     }
 
-    fn maybe_encoded<'f, A, R, Closure, E>(closure: Closure) -> Self
+    fn maybe_encoded<Closure, E>(closure: Closure) -> Self
     where
-        A: EncodeArguments,
-        R: EncodeReturn,
-        Closure: IntoBlock<'f, A, R, Dyn = F>,
-        E: ManualBlockEncodingExt<Arguments = A, Return = R>,
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
+        E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
     {
         // SAFETY: The stack block is copied once below.
         //
@@ -209,8 +205,8 @@ impl<F: ?Sized> RcBlock<F> {
 
         // Transfer ownership from the stack to the heap.
         let mut block = ManuallyDrop::new(block);
-        let ptr: *mut StackBlock<'f, A, R, Closure> = &mut *block;
-        let ptr: *mut Block<F> = ptr.cast();
+        let ptr: *mut StackBlock<'b, Signature, Closure> = &mut *block;
+        let ptr: *mut Block<'b, Signature> = ptr.cast();
         // SAFETY: The block will be moved to the heap, and we forget the
         // original block because the heap block will drop in our dispose
         // helper.
@@ -218,7 +214,7 @@ impl<F: ?Sized> RcBlock<F> {
     }
 }
 
-impl<F: ?Sized> Clone for RcBlock<F> {
+impl<'b, Signature> Clone for RcBlock<'b, Signature> {
     /// Increase the reference-count of the block.
     #[doc(alias = "Block_copy")]
     #[doc(alias = "_Block_copy")]
@@ -239,22 +235,18 @@ fn rc_new_fail() -> ! {
     panic!("failed creating RcBlock")
 }
 
-// Intentionally not `#[track_caller]`, see above.
-pub(crate) fn block_copy_fail() -> ! {
-    // This likely means the system is out of memory.
-    panic!("failed copying Block")
-}
-
-// Intentionally not `#[track_caller]`, see above.
+// Intentionally not `#[track_caller]`, to keep the code-size smaller (as this
+// error is very unlikely).
 fn rc_clone_fail() -> ! {
     unreachable!("cloning a RcBlock bumps the reference count, which should be infallible")
 }
 
-impl<F: ?Sized> Deref for RcBlock<F> {
-    type Target = Block<F>;
+impl<'b, Signature> Deref for RcBlock<'b, Signature> {
+    /// The lifetime and signature of the block is the same.
+    type Target = Block<'b, Signature>;
 
     #[inline]
-    fn deref(&self) -> &Block<F> {
+    fn deref(&self) -> &Block<'b, Signature> {
         // SAFETY: The pointer is valid, as ensured by creation methods, and
         // will be so for as long as the `RcBlock` is, since that holds +1
         // reference count.
@@ -262,7 +254,7 @@ impl<F: ?Sized> Deref for RcBlock<F> {
     }
 }
 
-impl<F: ?Sized> Drop for RcBlock<F> {
+impl<'b, Signature> Drop for RcBlock<'b, Signature> {
     /// Release the block, decreasing the reference-count by 1.
     ///
     /// The `Drop` method of the underlying closure will be called once the
@@ -277,7 +269,7 @@ impl<F: ?Sized> Drop for RcBlock<F> {
     }
 }
 
-impl<F: ?Sized> fmt::Debug for RcBlock<F> {
+impl<'b, Signature> fmt::Debug for RcBlock<'b, Signature> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("RcBlock");
         let header = unsafe { self.ptr.cast::<BlockHeader>().as_ref() };
@@ -295,7 +287,7 @@ mod tests {
 
     #[test]
     fn return_rc_block() {
-        fn get_adder(x: i32) -> RcBlock<dyn Fn(i32) -> i32> {
+        fn get_adder(x: i32) -> RcBlock<'static, fn(i32) -> i32> {
             RcBlock::new(move |y| y + x)
         }
 
@@ -308,23 +300,21 @@ mod tests {
     fn rc_block_with_precisely_described_lifetimes() {
         fn args<'a, 'b>(
             f: impl Fn(&'a i32, &'b i32) + 'static,
-        ) -> RcBlock<dyn Fn(&'a i32, &'b i32) + 'static> {
+        ) -> RcBlock<'static, fn(&'a i32, &'b i32)> {
             RcBlock::new(f)
         }
 
         fn args_return<'a, 'b>(
             f: impl Fn(&'a i32) -> &'b i32 + 'static,
-        ) -> RcBlock<dyn Fn(&'a i32) -> &'b i32 + 'static> {
+        ) -> RcBlock<'static, fn(&'a i32) -> &'b i32> {
             RcBlock::new(f)
         }
 
-        fn args_entire<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<dyn Fn(&'a i32) + 'b> {
+        fn args_entire<'a, 'b>(f: impl Fn(&'a i32) + 'b) -> RcBlock<'b, fn(&'a i32)> {
             RcBlock::new(f)
         }
 
-        fn return_entire<'a, 'b>(
-            f: impl Fn() -> &'a i32 + 'b,
-        ) -> RcBlock<dyn Fn() -> &'a i32 + 'b> {
+        fn return_entire<'a, 'b>(f: impl Fn() -> &'a i32 + 'b) -> RcBlock<'b, fn() -> &'a i32> {
             RcBlock::new(f)
         }
 
@@ -335,14 +325,21 @@ mod tests {
     }
 
     #[allow(dead_code)]
-    fn covariant<'f>(b: RcBlock<dyn Fn() + 'static>) -> RcBlock<dyn Fn() + 'f> {
+    fn covariant<'b>(b: RcBlock<'static, fn()>) -> RcBlock<'b, fn()> {
         b
+    }
+
+    #[allow(dead_code)]
+    fn new_allows_contravariant<'a>(
+        closure: impl Fn(&'a i32) + 'static,
+    ) -> RcBlock<'static, fn(&'static i32)> {
+        RcBlock::new(closure)
     }
 
     #[test]
     fn allow_re_entrancy() {
         #[allow(clippy::type_complexity)]
-        let block: Rc<OnceCell<RcBlock<dyn Fn(u32) -> u32>>> = Rc::new(OnceCell::new());
+        let block: Rc<OnceCell<RcBlock<'_, fn(u32) -> u32>>> = Rc::new(OnceCell::new());
 
         let captured_block = block.clone();
         let fibonacci = move |n| {

@@ -8,7 +8,7 @@ use core::ptr::{self, NonNull};
 
 use crate::abi::{BlockDescriptor, BlockDescriptorPtr, BlockFlags, BlockHeader};
 use crate::debug::debug_block_header;
-use crate::{Block, BlockFn};
+use crate::{Block, BlockSignature};
 
 // TODO: Should this be a static to help the compiler deduplicating them?
 const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
@@ -16,7 +16,7 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
     size: mem::size_of::<BlockHeader>() as c_ulong,
 };
 
-/// A global Objective-C block that does not capture an environment.
+/// A global Objective-C block that does not capture from the environment.
 ///
 /// This can be used as an optimization of [`RcBlock`] if your closure doesn't
 /// capture any variables.
@@ -29,24 +29,24 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 /// [`RcBlock`]: crate::RcBlock
 /// [`global_block!`]: crate::global_block
 #[repr(C)]
-pub struct GlobalBlock<F: ?Sized> {
+pub struct GlobalBlock<Signature> {
     header: BlockHeader,
     // We don't store a function pointer, instead it is placed inside the
     // invoke function.
-    f: PhantomData<F>,
+    f: PhantomData<Signature>,
 }
 
-// TODO: Add `Send + Sync` bounds once the block itself supports that.
-unsafe impl<F: ?Sized + BlockFn> Sync for GlobalBlock<F> {}
-unsafe impl<F: ?Sized + BlockFn> Send for GlobalBlock<F> {}
+// TODO: Document safety.
+unsafe impl<Signature: BlockSignature> Sync for GlobalBlock<Signature> {}
+unsafe impl<Signature: BlockSignature> Send for GlobalBlock<Signature> {}
 
-// Note: We can't put correct bounds on A and R because we have a const fn,
+// Note: We can't put correct bounds on signature because we have a const fn,
 // and that's not allowed yet in our MSRV.
 //
 // Fortunately, we don't need them, since they're present on `Sync`, so
 // constructing the static in `global_block!` with an invalid `GlobalBlock`
 // triggers an error.
-impl<F: ?Sized> GlobalBlock<F> {
+impl<Signature> GlobalBlock<Signature> {
     // TODO: Use new ABI with BLOCK_HAS_SIGNATURE
     const FLAGS: BlockFlags = BlockFlags::BLOCK_IS_GLOBAL.union(BlockFlags::BLOCK_USE_STRET);
 
@@ -74,16 +74,17 @@ impl<F: ?Sized> GlobalBlock<F> {
         }
     }
 
-    // TODO: Add some constructor for when `F: Copy`.
+    // TODO: Add some constructor for when `Signature: Copy`.
 }
 
-impl<F: ?Sized> Deref for GlobalBlock<F> {
-    type Target = Block<F>;
+impl<Signature> Deref for GlobalBlock<Signature> {
+    /// Global blocks are escaping.
+    type Target = Block<'static, Signature>;
 
     #[inline]
     fn deref(&self) -> &Self::Target {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: NonNull<Block<F>> = ptr.cast();
+        let ptr: NonNull<Block<'static, Signature>> = ptr.cast();
         // SAFETY: This has the same layout as `Block`
         //
         // A global block does not hold any data, so it is safe to call
@@ -92,7 +93,7 @@ impl<F: ?Sized> Deref for GlobalBlock<F> {
     }
 }
 
-impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
+impl<Signature> fmt::Debug for GlobalBlock<Signature> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("GlobalBlock");
         debug_block_header(&self.header, &mut f);
@@ -102,10 +103,11 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 
 /// Construct a static [`GlobalBlock`].
 ///
-/// The syntax is similar to a static closure (except that all types have to
-/// be specified). Note that the block cannot capture its environment, its
-/// parameter types must be [`EncodeArgument`] and the return type must be
-/// [`EncodeReturn`].
+/// The syntax is similar to a static closure, except that all types have to
+/// be specified. Note that the block cannot capture its environment.
+///
+/// The block's parameter types must be [`EncodeArgument`] and the return type
+/// must be [`EncodeReturn`].
 ///
 /// [`EncodeArgument`]: objc2::encode::EncodeArgument
 /// [`EncodeReturn`]: objc2::encode::EncodeReturn
@@ -132,12 +134,23 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 /// assert_eq!(ADDER_BLOCK.call(5, 7), 12);
 /// ```
 ///
+/// The following does not compile because the types aren't specified.
+///
+/// ```compile_fail
+/// use block2::global_block;
+/// global_block! {
+///     pub static IDENTITY_BLOCK = |x /* missing type */| /* missing type */ {
+///         x
+///     };
+/// }
+/// ```
+///
 /// The following does not compile because [`Box`] is not [`EncodeArgument`]:
 ///
 /// ```compile_fail,E0277
 /// use block2::global_block;
 /// global_block! {
-///     pub static BLOCK = |b: Box<i32>| {};
+///     pub static BLOCK = |x: Box<i32>| {};
 /// }
 /// ```
 ///
@@ -163,7 +176,7 @@ impl<F: ?Sized> fmt::Debug for GlobalBlock<F> {
 /// ```compile_fail
 /// use block2::global_block;
 /// global_block! {
-///     pub static BLOCK<T: Encode> = |b: T| {};
+///     pub static BLOCK<T: objc2::encode::Encode> = |x: T| {};
 /// }
 /// ```
 ///
@@ -186,12 +199,12 @@ macro_rules! global_block {
     ) => {
         $(#[$m])*
         #[allow(unused_unsafe)]
-        $vis static $name: $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static> = unsafe {
-            let mut header = $crate::GlobalBlock::<dyn Fn($($t),*) $(-> $r)? + 'static>::__DEFAULT_HEADER;
+        $vis static $name: $crate::GlobalBlock<fn($($t),*) $(-> $r)?> = unsafe {
+            let mut header = $crate::GlobalBlock::<fn($($t),*) $(-> $r)?>::__DEFAULT_HEADER;
             header.isa = ::core::ptr::addr_of!($crate::ffi::_NSConcreteGlobalBlock);
             header.invoke = ::core::option::Option::Some({
                 unsafe extern "C-unwind" fn inner(
-                    _: *mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>,
+                    _: *mut $crate::GlobalBlock<fn($($t),*) $(-> $r)?>,
                     $($a: $t),*
                 ) $(-> $r)? {
                     $body
@@ -199,7 +212,7 @@ macro_rules! global_block {
 
                 // TODO: SAFETY
                 ::core::mem::transmute::<
-                    unsafe extern "C-unwind" fn(*mut $crate::GlobalBlock<dyn Fn($($t),*) $(-> $r)? + 'static>, $($a: $t),*) $(-> $r)?,
+                    unsafe extern "C-unwind" fn(*mut $crate::GlobalBlock<fn($($t),*) $(-> $r)?>, $($a: $t),*) $(-> $r)?,
                     unsafe extern "C-unwind" fn(),
                 >(inner)
             });
@@ -293,10 +306,5 @@ mod tests {
 }}"
         );
         assert_eq!(format!("{NOOP_BLOCK:#?}"), expected);
-    }
-
-    #[allow(dead_code)]
-    fn covariant<'f>(b: GlobalBlock<dyn Fn() + 'static>) -> GlobalBlock<dyn Fn() + 'f> {
-        b
     }
 }

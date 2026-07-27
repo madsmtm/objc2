@@ -1,0 +1,17 @@
+error[E0373]: closure may outlive the current function, but it borrows `x`, which is owned by the current function
+  --> ui/block_lifetime_escaping.rs
+   |
+   |     takes_escaping_block(&RcBlock::new(|a, b| x + a + b));
+   |                                        ^^^^^^ - `x` is borrowed here
+   |                                        |
+   |                                        may outlive borrowed value `x`
+   |
+note: function requires argument type to outlive `'static`
+  --> ui/block_lifetime_escaping.rs
+   |
+   |     takes_escaping_block(&RcBlock::new(|a, b| x + a + b));
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+help: to force the closure to take ownership of `x` (and any other referenced variables), use the `move` keyword
+   |
+12 |     takes_escaping_block(&RcBlock::new(move |a, b| x + a + b));
+   |                                        ++++

@@ -12,21 +12,21 @@ mod private {
     pub trait Sealed<A, R> {}
 }
 
-/// Types that represent closure parameters/arguments and return types in a
-/// block.
+/// Types that represent block parameters/arguments and return types.
 ///
-/// This is implemented for [`dyn`] [`Fn`] closures with up to 12 parameters,
-/// where each parameter implements [`EncodeArgument`] and the return type
-/// implements [`EncodeReturn`].
-///
-/// [`dyn`]: https://doc.rust-lang.org/std/keyword.dyn.html
+/// This is implemented for [`fn`][prim@fn] pointer types with up to 12
+/// parameters, where each parameter implements [`EncodeArgument`] and the
+/// return type implements [`EncodeReturn`].
 ///
 ///
 /// # Safety
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restriction should be lifted!
-pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
+///
+/// Note: `block2` does not (yet?) have a concept of `unsafe` blocks, which
+/// means that [the `call` method][Block::call] is always safe.
+pub unsafe trait BlockSignature: private::Sealed<Self::Args, Self::Output> + Sized {
     /// The parameters/arguments to the block.
     type Args: EncodeArguments;
 
@@ -36,7 +36,7 @@ pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
 
 /// Types that may be converted into a block.
 ///
-/// This is implemented for [`Fn`] closures of up to 12 parameters, where each
+/// This is implemented for [`fn`] ptrs of up to 12 parameters, where each
 /// parameter implements [`EncodeArgument`] and the return type implements
 /// [`EncodeReturn`].
 ///
@@ -45,16 +45,16 @@ pub unsafe trait BlockFn: private::Sealed<Self::Args, Self::Output> {
 ///
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restriction should be lifted!
-pub unsafe trait IntoBlock<'f, A, R>: private::Sealed<A, R>
-where
-    A: EncodeArguments,
-    R: EncodeReturn,
+pub unsafe trait IntoBlock<'b, Signature: BlockSignature>:
+    private::Sealed<Signature::Args, Signature::Output>
 {
-    /// The type-erased `dyn Fn(...Args) -> R + 'f`.
-    type Dyn: ?Sized + BlockFn<Args = A, Output = R>;
-
     #[doc(hidden)]
     fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn();
+}
+
+#[doc(hidden)]
+pub unsafe trait __DynToBlock {
+    type Block;
 }
 
 macro_rules! impl_traits {
@@ -64,43 +64,48 @@ macro_rules! impl_traits {
             Closure: ?Sized + Fn($($t),*) -> R,
         {}
 
-        // TODO: Add `+ Send`, `+ Sync` and `+ Send + Sync` versions.
-        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn> BlockFn for dyn Fn($($t),*) -> R + '_ {
+        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn> BlockSignature for fn($($t),*) -> R {
             type Args = ($($t,)*);
             type Output = R;
         }
 
-        unsafe impl<'f, $($t,)* R, Closure> IntoBlock<'f, ($($t,)*), R> for Closure
+        unsafe impl<'b, $($t,)* R, Closure> IntoBlock<'b, fn($($t,)*) -> R> for Closure
         where
             $($t: EncodeArgument,)*
             R: EncodeReturn,
-            Closure: Fn($($t),*) -> R + 'f,
+            Closure: Fn($($t),*) -> R + 'b,
         {
-            type Dyn = dyn Fn($($t),*) -> R + 'f;
-
             #[inline]
             fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn() {
-                unsafe extern "C-unwind" fn invoke<'f, $($t,)* R, Closure>(
-                    block: *mut StackBlock<'f, ($($t,)*), R, Closure>,
+                unsafe extern "C-unwind" fn invoke<'b, $($t,)* R, Closure>(
+                    block: *mut StackBlock<'b, fn($($t,)*) -> R, Closure>,
                     $($a: $t,)*
                 ) -> R
                 where
-                    Closure: Fn($($t),*) -> R + 'f
+                    Closure: Fn($($t),*) -> R + 'b
                 {
+                    // SAFETY: Validity of the StackBlock is upheld by caller.
                     let closure = unsafe { &*ptr::addr_of!((*block).closure) };
                     (closure)($($a),*)
                 }
 
+                // SAFETY: Erasing signature is sound, we won't call the
+                // function without transmuting the signature back.
                 unsafe {
                     mem::transmute::<
-                        unsafe extern "C-unwind" fn(*mut StackBlock<'f, ($($t,)*), R, Closure>, $($t,)*) -> R,
+                        unsafe extern "C-unwind" fn(*mut StackBlock<'b, fn($($t,)*) -> R, Closure>, $($t,)*) -> R,
                         unsafe extern "C-unwind" fn(),
                     >(invoke)
                 }
             }
         }
 
-        impl<'f, $($t: EncodeArgument,)* R: EncodeReturn> Block<dyn Fn($($t),*) -> R + 'f> {
+        // Intentionally no bounds, for better backwards compatibility.
+        unsafe impl<'b, $($t,)* R> __DynToBlock for dyn Fn($($t,)*) -> R + 'b {
+            type Block = Block<'b, fn($($t,)*) -> R>;
+        }
+
+        impl<'b, $($t: EncodeArgument,)* R: EncodeReturn> Block<'b, fn($($t),*) -> R> {
             #[doc = concat!("Call the block with ", $num_args, " arguments.")]
             ///
             /// The return value is the output of the block.
@@ -256,24 +261,15 @@ pub unsafe trait ManualBlockEncoding {
 ///
 /// This is used in a bit of a hackish way in order to share more code between
 /// the encoded and non-encoded paths.
-pub(crate) struct NoBlockEncoding<A, R>
-where
-    A: EncodeArguments,
-    R: EncodeReturn,
-{
-    _a: PhantomData<A>,
-    _r: PhantomData<R>,
+pub(crate) struct NoBlockEncoding<Signature: BlockSignature> {
+    _p: PhantomData<Signature>,
 }
 
 // SAFETY: The encoding here is incorrect, but it will never be used because
 // we specify `IS_NONE = true` in `ManualBlockEncodingExt`.
-unsafe impl<A, R> ManualBlockEncoding for NoBlockEncoding<A, R>
-where
-    A: EncodeArguments,
-    R: EncodeReturn,
-{
-    type Arguments = A;
-    type Return = R;
+unsafe impl<Signature: BlockSignature> ManualBlockEncoding for NoBlockEncoding<Signature> {
+    type Arguments = Signature::Args;
+    type Return = Signature::Output;
     // TODO: change this to `c""` when the MSRV is at least 1.77.
     // SAFETY: the byte string is written here and contains exactly one nul byte.
     const ENCODING_CSTR: &'static CStr = unsafe { CStr::from_bytes_with_nul_unchecked(b"\0") };
@@ -289,11 +285,7 @@ impl<E: ManualBlockEncoding> ManualBlockEncodingExt for UserSpecified<E> {
     const IS_NONE: bool = false;
 }
 
-impl<A, R> ManualBlockEncodingExt for NoBlockEncoding<A, R>
-where
-    A: EncodeArguments,
-    R: EncodeReturn,
-{
+impl<Signature: BlockSignature> ManualBlockEncodingExt for NoBlockEncoding<Signature> {
     const IS_NONE: bool = true;
 }
 
@@ -313,11 +305,10 @@ unsafe impl<E: ManualBlockEncoding> ManualBlockEncoding for UserSpecified<E> {
 /// not none.
 #[cfg_attr(not(debug_assertions), inline(always))]
 #[allow(unused)]
-pub(crate) fn debug_assert_block_encoding<A, R, E>()
+pub(crate) fn debug_assert_block_encoding<Signature, E>()
 where
-    A: EncodeArguments,
-    R: EncodeReturn,
-    E: ManualBlockEncodingExt<Arguments = A, Return = R>,
+    Signature: BlockSignature,
+    E: ManualBlockEncodingExt<Arguments = Signature::Args, Return = Signature::Output>,
 {
     #[cfg(debug_assertions)]
     {
@@ -325,7 +316,7 @@ where
             // TODO: relax to check for equivalence instead of strict equality.
             assert_eq!(
                 E::ENCODING_CSTR,
-                &*crate::encoding::block_signature_string::<A, R>()
+                &*crate::encoding::block_signature_string::<Signature::Args, Signature::Output>()
             );
         }
     }
@@ -381,12 +372,12 @@ mod tests {
         assert!(!core::convert::identity(UserSpecified::<Enc3>::IS_NONE));
 
         // Only `NoBlockEncoding` should be `IS_NONE`.
-        assert!(core::convert::identity(NoBlockEncoding::<(), ()>::IS_NONE));
+        assert!(core::convert::identity(NoBlockEncoding::<fn()>::IS_NONE));
         assert!(core::convert::identity(
-            NoBlockEncoding::<(i32, f32), u8>::IS_NONE
+            NoBlockEncoding::<fn(i32, f32) -> u8>::IS_NONE
         ));
         assert!(core::convert::identity(
-            NoBlockEncoding::<(*const u8,), *const c_char>::IS_NONE
+            NoBlockEncoding::<fn(*const u8) -> *const c_char>::IS_NONE
         ));
     }
 }

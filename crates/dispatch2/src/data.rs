@@ -117,12 +117,12 @@ impl DispatchData {
         let block = unsafe {
             core::mem::transmute::<
                 &'_ block2::Block<
-                    dyn Fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> u8
-                        + '_,
+                    '_,
+                    fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> u8,
                 >,
                 &'_ block2::Block<
-                    dyn Fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> bool
-                        + '_,
+                    '_,
+                    fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> bool,
                 >,
             >(&block)
         };

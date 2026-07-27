@@ -11,10 +11,10 @@
 //!
 //! | `block2` type                            | Equivalent Rust type  |
 //! | ---------------------------------------- | --------------------- |
-//! | `&Block<dyn Fn() + 'a>`                  | `&dyn Fn() + 'a`      |
-//! | `RcBlock<dyn Fn() + 'a>`                 | `Arc<dyn Fn() + 'a>`  |
-//! | `StackBlock<'a, (), (), impl Fn() + 'a>` | `impl Fn() + 'a`      |
-//! | `GlobalBlock<dyn Fn()>`                  | [`fn` item]           |
+//! | `&'p Block<'b, fn()>`                    | `&'p (dyn Fn() + 'b)` |
+//! | `RcBlock<'b, fn()>`                      | `Arc<dyn Fn() + 'b>`  |
+//! | `StackBlock<'b, fn(), impl Fn() + 'b>`   | `impl Fn() + 'b`      |
+//! | `GlobalBlock<fn()>`                      | [`fn` item]           |
 //!
 //! For more information on the specifics of the block implementation, see the
 //! [C language specification][lang] and the [ABI specification][ABI].
@@ -36,7 +36,7 @@
 //! # struct ExampleObject;
 //! #
 //! # impl ExampleObject {
-//! #     fn someMethod(&self, block: &block2::Block<dyn Fn(i32, i32) -> i32>) {
+//! #     fn someMethod(&self, block: &block2::Block<'_, fn(i32, i32) -> i32>) {
 //! #         assert_eq!(block.call(5, 8), 18);
 //! #     }
 //! # }
@@ -64,35 +64,39 @@
 //!
 //! ## Lifetimes
 //!
-//! When dealing with blocks, there can be quite a few lifetimes to keep in
-//! mind.
+//! When dealing with blocks, there are a few lifetimes to keep in mind.
 //!
 //! The most important one is the lifetime of the block's data, i.e. the
 //! lifetime of the data in the closure contained in the block. This lifetime
-//! can be specified as `'f` in `&Block<dyn Fn() + 'f>`.
+//! can be specified as `'b` in `&Block<'b, fn()>`.
 //!
-//! Note that `&Block<dyn Fn()>`, without any lifetime specifier, can be a bit
-//! confusing, as the default depends on where it is typed. In function/method
-//! signatures, it defaults to `'static`, but as the type of e.g. a `let`
-//! binding, the lifetime may be inferred to be something smaller, see [the
-//! reference][ref-dyn-lifetime] for details. If in doubt, either add a
-//! `+ 'static` or `+ '_` to force an escaping or non-escaping block.
-//!
-//! Another lifetime is the lifetime of the currently held pointer, i.e. `'b`
-//! in `&'b Block<dyn Fn()>`. This lifetime can be safely extended using
+//! Another lifetime is the lifetime of the currently held pointer, i.e. `'p`
+//! in `&'p Block<'_, fn()>`. This lifetime can be safely extended using
 //! [`Block::copy`], so should prove to be little trouble (of course the
-//! lifetime still can't be extended past the lifetime of the captured data
-//! above).
+//! lifetime still can't be extended past the lifetime `'b` above).
 //!
 //! Finally, the block's parameter and return types can also contain
-//! lifetimes, as `'a` and `'r` in `&Block<dyn Fn(&'a i32) -> &'r u32>`.
-//! Unfortunately, these lifetimes are quite problematic and unsupported at
-//! the moment, due to Rust trait limitations regarding higher-ranked trait
-//! bounds. If you run into problems with this in a block that takes or
+//! lifetimes, such as `'a` and `'r` in `&Block<'_, fn(&'a i32) -> &'r u32>`.
+//! Unfortunately, these lifetimes are quite problematic and [unsupported at
+//! the moment][#837], due to Rust trait limitations regarding higher-ranked
+//! trait bounds. If you run into problems with this in a block that takes or
 //! returns a reference, consider using the ABI-compatible `NonNull<T>`, or
 //! transmute to a `'static` lifetime.
 //!
-//! [ref-dyn-lifetime]: https://doc.rust-lang.org/reference/lifetime-elision.html#default-trait-object-lifetimes
+//! [#837]: https://github.com/madsmtm/objc2/issues/837
+//!
+//!
+//! ### Escaping blocks
+//!
+//! A lot of blocks, especially those that perform asynchronous work, are
+//! "escaping", meaning their data lifetime `'b` must be `'static`. To pass
+//! information onwards from these to the rest of your code, you'll want to
+//! look into using [`Rc`] (if the block is only used on a single thread), or
+//! [`Arc`] (if the block is sent to another thread) to pass data into your
+//! block.
+//!
+//! [`Rc`]: std::rc::Rc
+//! [`Arc`]: std::sync::Arc
 //!
 //!
 //! ## Thread safety
@@ -195,7 +199,7 @@
 //! ## External functions using blocks
 //!
 //! To declare external functions or methods that takes blocks, use
-//! `&Block<dyn Fn(Params) -> R>` or `Option<&Block<dyn Fn(Args) -> R>>`,
+//! `&Block<'_, fn(Params) -> R>` or `Option<&Block<'_, fn(Params) -> R>>`,
 //! where `Params` is the parameter types, and `R` is the return type.
 //!
 //! For this example, consider the function `check_addition` which takes a
@@ -220,9 +224,14 @@
 //! use block2::Block;
 //!
 //! extern "C" {
-//!     fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>);
+//!     fn check_addition(block: &Block<'static, fn(i32, i32) -> i32>);
 //! }
 //! ```
+//!
+//! We use `'static` as the lifetime here, because by default in Objective-C,
+//! blocks are considered escaping. If the block was marked with
+//! `NS_NOESCAPE` ([`__attribute__((noescape))`][noescape]), we would use an
+//! inferred `'_` lifetime instead.
 //!
 //! This can similarly be done for Objective-C methods declared with
 //! [`objc2::extern_methods!`] (though most of the time, the [framework
@@ -242,14 +251,15 @@
 //! impl MyClass {
 //!     extern_methods!(
 //!         #[unsafe(method(checkAddition:))]
-//!         pub fn checkAddition(&self, block: &Block<dyn Fn(i32, i32) -> i32>);
+//!         pub fn checkAddition(&self, block: &Block<'static, fn(i32, i32) -> i32>);
 //!     );
 //! }
 //! ```
 //!
 //! If the function/method allows passing `NULL` blocks, the type should be
-//! `Option<&Block<dyn Fn(i32, i32) -> i32>>` instead.
+//! `Option<&Block<fn(i32, i32) -> i32>>` instead.
 //!
+//! [noescape]: https://clang.llvm.org/docs/AttributeReference.html#noescape
 //! [framework-crates]: objc2::topics::frameworks_list
 //!
 //!
@@ -263,7 +273,7 @@
 //! use block2::Block;
 //!
 //! #[no_mangle]
-//! extern "C" fn check_addition(block: &Block<dyn Fn(i32, i32) -> i32>) {
+//! extern "C" fn check_addition(block: &Block<'_, fn(i32, i32) -> i32>) {
 //!     assert_eq!(block.call(5, 8), 13);
 //! }
 //! ```
@@ -437,11 +447,11 @@ pub use self::block::Block;
 pub use self::global::GlobalBlock;
 pub use self::rc_block::RcBlock;
 pub use self::stack::StackBlock;
-pub use self::traits::{BlockFn, IntoBlock, ManualBlockEncoding};
+pub use self::traits::{BlockSignature, IntoBlock, ManualBlockEncoding};
 
 /// Deprecated alias for a `'static` `StackBlock`.
 #[deprecated = "renamed to `StackBlock`"]
-pub type ConcreteBlock<A, R, Closure> = StackBlock<'static, A, R, Closure>;
+pub type ConcreteBlock<Signature, Closure> = StackBlock<'static, Signature, Closure>;
 
 // Note: We could use `_Block_object_assign` and `_Block_object_dispose` to
 // implement a `ByRef<T>` wrapper, which would behave like `__block` marked
@@ -456,4 +466,4 @@ pub type ConcreteBlock<A, R, Closure> = StackBlock<'static, A, R, Closure>;
 /// framework crates.
 ///
 /// Tracked in [#572](https://github.com/madsmtm/objc2/issues/572).
-pub type DynBlock<F> = crate::Block<F>;
+pub type DynBlock<F> = <F as crate::traits::__DynToBlock>::Block;

@@ -34,7 +34,7 @@ unsafe impl Encode for LargeStruct {
         Encoding::Struct("LargeStruct", &[f32::ENCODING, <[u8; 100]>::ENCODING]);
 }
 
-type Add12 = Block<dyn Fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32) -> i32>;
+type Add12<'a> = Block<'a, fn(i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32) -> i32>;
 
 struct VoidToVoid;
 unsafe impl ManualBlockEncoding for VoidToVoid {
@@ -68,23 +68,23 @@ unsafe impl ManualBlockEncoding for IntToInt {
 
 extern "C-unwind" {
     /// Returns a pointer to a global block that returns 7.
-    fn get_int_block() -> *mut Block<dyn Fn() -> i32>;
+    fn get_int_block() -> *mut Block<'static, fn() -> i32>;
     /// Returns a pointer to a copied block that returns `i`.
-    fn get_int_block_with(i: i32) -> *mut Block<dyn Fn() -> i32>;
+    fn get_int_block_with(i: i32) -> *mut Block<'static, fn() -> i32>;
     /// Invokes a block and returns its result.
-    fn invoke_int_block(block: &Block<dyn Fn() -> i32>) -> i32;
+    fn invoke_int_block(block: &Block<'_, fn() -> i32>) -> i32;
 
     /// Returns a pointer to a global block that returns its argument + 7.
-    fn get_add_block() -> *mut Block<dyn Fn(i32) -> i32>;
+    fn get_add_block() -> *mut Block<'static, fn(i32) -> i32>;
     /// Returns a pointer to a copied block that returns its argument + `i`.
-    fn get_add_block_with(i: i32) -> *mut Block<dyn Fn(i32) -> i32>;
+    fn get_add_block_with(i: i32) -> *mut Block<'static, fn(i32) -> i32>;
     /// Invokes a block with `a` and returns the result.
-    fn invoke_add_block(block: &Block<dyn Fn(i32) -> i32>, a: i32) -> i32;
+    fn invoke_add_block(block: &Block<'_, fn(i32) -> i32>, a: i32) -> i32;
 
-    fn get_add_12() -> *mut Add12;
-    fn get_add_12_with(x: i32) -> *mut Add12;
+    fn get_add_12() -> *mut Add12<'static>;
+    fn get_add_12_with(x: i32) -> *mut Add12<'static>;
     fn invoke_add_12(
-        block: &Add12,
+        block: &Add12<'_>,
         a1: i32,
         a2: i32,
         a3: i32,
@@ -99,12 +99,12 @@ extern "C-unwind" {
         a12: i32,
     ) -> i32;
 
-    fn get_large_struct_block() -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
+    fn get_large_struct_block() -> *mut Block<'static, fn(LargeStruct) -> LargeStruct>;
     fn get_large_struct_block_with(
         i: LargeStruct,
-    ) -> *mut Block<dyn Fn(LargeStruct) -> LargeStruct>;
+    ) -> *mut Block<'static, fn(LargeStruct) -> LargeStruct>;
     fn invoke_large_struct_block(
-        block: &Block<dyn Fn(LargeStruct) -> LargeStruct>,
+        block: &Block<'_, fn(LargeStruct) -> LargeStruct>,
         s: LargeStruct,
     ) -> LargeStruct;
 
@@ -121,7 +121,7 @@ fn test_block_debugging() {
 #[test]
 fn test_int_block() {
     #[track_caller]
-    fn invoke_assert(block: &Block<dyn Fn() -> i32>, expected: i32) {
+    fn invoke_assert(block: &Block<'_, fn() -> i32>, expected: i32) {
         assert_eq!(block.call(), expected);
         assert_eq!(unsafe { invoke_int_block(block) }, expected);
     }
@@ -140,14 +140,14 @@ fn test_int_block() {
     invoke_assert(&StackBlock::new(|| 10), 10);
     invoke_assert(&RcBlock::new(|| 6), 6);
     invoke_assert(&StackBlock::with_encoding::<VoidToInt>(|| 10), 10);
-    invoke_assert(&RcBlock::with_encoding::<_, _, _, VoidToInt>(|| 6), 6);
+    invoke_assert(&RcBlock::with_encoding::<_, VoidToInt>(|| 6), 6);
     invoke_assert(&GLOBAL_BLOCK, 42);
 }
 
 #[test]
 fn test_add_block() {
     #[track_caller]
-    fn invoke_assert(block: &Block<dyn Fn(i32) -> i32>, expected: i32) {
+    fn invoke_assert(block: &Block<'_, fn(i32) -> i32>, expected: i32) {
         assert_eq!(block.call(5), expected);
         assert_eq!(unsafe { invoke_add_block(block, 5) }, expected);
     }
@@ -167,7 +167,7 @@ fn test_add_block() {
     invoke_assert(&RcBlock::new(|a: i32| a + 6), 11);
     invoke_assert(&StackBlock::with_encoding::<IntToInt>(|a: i32| a + 6), 11);
     invoke_assert(
-        &RcBlock::with_encoding::<_, _, _, IntToInt>(|a: i32| a + 6),
+        &RcBlock::with_encoding::<_, IntToInt>(|a: i32| a + 6),
         11,
     );
     invoke_assert(&GLOBAL_BLOCK, 47);
@@ -176,7 +176,7 @@ fn test_add_block() {
 #[test]
 fn test_add_12() {
     #[track_caller]
-    fn invoke_assert(block: &Add12, expected: i32) {
+    fn invoke_assert(block: &Add12<'_>, expected: i32) {
         assert_eq!(block.call(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), expected);
         assert_eq!(
             unsafe { invoke_add_12(block, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) },
@@ -212,7 +212,7 @@ fn test_add_12() {
     invoke_assert(&StackBlock::new(closure), 78);
     invoke_assert(&RcBlock::new(closure), 78);
     invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 78);
-    invoke_assert(&RcBlock::with_encoding::<_, _, _, Enc>(closure), 78);
+    invoke_assert(&RcBlock::with_encoding::<_, Enc>(closure), 78);
     invoke_assert(&GLOBAL_BLOCK, 120);
 }
 
@@ -291,18 +291,18 @@ fn test_block_copy() {
 
 #[test]
 fn test_block_stack_move() {
-    fn make_block() -> StackBlock<'static, (), i32, impl Fn() -> i32> {
+    fn make_block() -> StackBlock<'static, fn() -> i32, impl Fn() -> i32> {
         let x = 7;
         StackBlock::new(move || x)
     }
-    fn make_block_with_encoding() -> StackBlock<'static, (), i32, impl Fn() -> i32> {
+    fn make_block_with_encoding() -> StackBlock<'static, fn() -> i32, impl Fn() -> i32> {
         let x = 7;
         StackBlock::with_encoding::<VoidToInt>(move || x)
     }
 
     for block in [
-        &make_block() as &Block<dyn Fn() -> i32>,
-        &make_block_with_encoding() as &Block<dyn Fn() -> i32>,
+        &make_block() as &Block<'_, fn() -> i32>,
+        &make_block_with_encoding() as &Block<'_, fn() -> i32>,
     ] {
         assert_eq!(unsafe { invoke_int_block(block) }, 7);
     }
@@ -430,7 +430,7 @@ fn rc_new_clone_drop() {
     }
 
     test_with!(RcBlock::new);
-    test_with!(RcBlock::with_encoding::<_, _, _, VoidToVoid>);
+    test_with!(RcBlock::with_encoding::<_, VoidToVoid>);
 }
 
 #[test]
@@ -499,7 +499,7 @@ fn retain_release_rc_block() {
             };
             expected.assert_current();
 
-            let ptr = &*block as *const Block<_> as *mut AnyObject;
+            let ptr = &*block as *const Block<'_, _> as *mut AnyObject;
             let obj = unsafe { Retained::retain(ptr) }.unwrap();
             expected.assert_current();
 
@@ -513,7 +513,7 @@ fn retain_release_rc_block() {
     }
 
     test_with!(RcBlock::new);
-    test_with!(RcBlock::with_encoding::<_, _, _, VoidToVoid>);
+    test_with!(RcBlock::with_encoding::<_, VoidToVoid>);
 }
 
 /// Retaining/releasing stack blocks is kinda weird and unsupported.
@@ -534,7 +534,7 @@ fn retain_release_stack_block() {
     });
     expected.assert_current();
 
-    let ptr = &*block as *const Block<_> as *mut AnyObject;
+    let ptr = &*block as *const Block<'_, _> as *mut AnyObject;
     // Don't use `Retained::retain`, as that has debug assertions against the kind
     // of things GNUStep is doing.
     let obj = if cfg!(feature = "gnustep-1-7") {

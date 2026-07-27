@@ -64,94 +64,94 @@ error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block0(&StackBlock::new(|_x| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn()>`, found `&StackBlock<'_, (_,), (), {closure@...}>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn()>`, found `&StackBlock<'_, fn(_), {closure@...}>`
   |     |
   |     arguments to this function are incorrect
   |
-  = note: expected reference `&Block<(dyn Fn() + 'static)>`
-             found reference `&StackBlock<'_, (_,), (), {closure@$DIR/ui/block_wrong_number_args.rs:13:35: 13:39}>`
+  = note: expected reference `&Block<'_, fn()>`
+             found reference `&StackBlock<'_, fn(_), {closure@$DIR/ui/block_wrong_number_args.rs:13:35: 13:39}>`
 note: function defined here
  --> ui/block_wrong_number_args.rs
   |
-  | fn takes_block0(block: &Block<dyn Fn()>) {
+  | fn takes_block0(block: &Block<'_, fn()>) {
   |    ^^^^^^^^^^^^ -----------------------
 
 error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block0(&RcBlock::new(|_x| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn()>`, found `&RcBlock<dyn Fn(_)>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn()>`, found `&RcBlock<'_, fn(_)>`
   |     |
   |     arguments to this function are incorrect
   |
-  = note: expected reference `&Block<(dyn Fn() + 'static)>`
-             found reference `&RcBlock<dyn Fn(_)>`
+  = note: expected reference `&Block<'_, fn()>`
+             found reference `&RcBlock<'_, fn(_)>`
 note: function defined here
  --> ui/block_wrong_number_args.rs
   |
-  | fn takes_block0(block: &Block<dyn Fn()>) {
+  | fn takes_block0(block: &Block<'_, fn()>) {
   |    ^^^^^^^^^^^^ -----------------------
 
 error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block1(&StackBlock::new(|| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&StackBlock<'_, (), (), {closure@...}>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn(i32)>`, found `&StackBlock<'_, fn(), {closure@...}>`
   |     |
   |     arguments to this function are incorrect
   |
-  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
-             found reference `&StackBlock<'_, (), (), {closure@$DIR/ui/block_wrong_number_args.rs:16:35: 16:37}>`
+  = note: expected reference `&Block<'_, fn(i32)>`
+             found reference `&StackBlock<'_, fn(), {closure@$DIR/ui/block_wrong_number_args.rs:16:35: 16:37}>`
 note: function defined here
  --> ui/block_wrong_number_args.rs
   |
-  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  | fn takes_block1(block: &Block<'_, fn(i32)>) {
   |    ^^^^^^^^^^^^ --------------------------
 
 error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block1(&RcBlock::new(|| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&RcBlock<dyn Fn()>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn(i32)>`, found `&RcBlock<'_, fn()>`
   |     |
   |     arguments to this function are incorrect
   |
-  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
-             found reference `&RcBlock<dyn Fn()>`
+  = note: expected reference `&Block<'_, fn(i32)>`
+             found reference `&RcBlock<'_, fn()>`
 note: function defined here
  --> ui/block_wrong_number_args.rs
   |
-  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  | fn takes_block1(block: &Block<'_, fn(i32)>) {
   |    ^^^^^^^^^^^^ --------------------------
 
 error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block1(&StackBlock::new(|_x, _y| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&StackBlock<'_, (_, _), (), ...>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn(i32)>`, found `&StackBlock<'_, fn(_, _), {closure@...}>`
   |     |
   |     arguments to this function are incorrect
   |
-  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
-             found reference `&StackBlock<'_, (_, _), (), {closure@$DIR/ui/block_wrong_number_args.rs:19:35: 19:43}>`
+  = note: expected reference `&Block<'_, fn(i32)>`
+             found reference `&StackBlock<'_, fn(_, _), {closure@$DIR/ui/block_wrong_number_args.rs:19:35: 19:43}>`
 note: function defined here
  --> ui/block_wrong_number_args.rs
   |
-  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  | fn takes_block1(block: &Block<'_, fn(i32)>) {
   |    ^^^^^^^^^^^^ --------------------------
 
 error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block1(&RcBlock::new(|_x, _y| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<dyn Fn(i32)>`, found `&RcBlock<dyn Fn(_, _)>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn(i32)>`, found `&RcBlock<'_, fn(_, _)>`
   |     |
   |     arguments to this function are incorrect
   |
-  = note: expected reference `&Block<(dyn Fn(i32) + 'static)>`
-             found reference `&RcBlock<dyn Fn(_, _)>`
+  = note: expected reference `&Block<'_, fn(i32)>`
+             found reference `&RcBlock<'_, fn(_, _)>`
 note: function defined here
  --> ui/block_wrong_number_args.rs
   |
-  | fn takes_block1(block: &Block<dyn Fn(i32)>) {
+  | fn takes_block1(block: &Block<'_, fn(i32)>) {
   |    ^^^^^^^^^^^^ --------------------------

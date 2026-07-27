@@ -1,10 +1,10 @@
 use block2::{Block, RcBlock, StackBlock};
 
-fn takes_block0(block: &Block<dyn Fn()>) {
+fn takes_block0(block: &Block<'_, fn()>) {
     block.call(1);
 }
 
-fn takes_block1(block: &Block<dyn Fn(i32)>) {
+fn takes_block1(block: &Block<'_, fn(i32)>) {
     block.call();
     block.call(1, 2);
 }
