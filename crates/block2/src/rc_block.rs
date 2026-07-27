@@ -39,6 +39,88 @@ pub struct RcBlock<'b, Signature> {
 }
 
 impl<'b, Signature> RcBlock<'b, Signature> {
+    /// Construct a `RcBlock` with the given closure.
+    ///
+    /// The closure will be coped to the heap on construction.
+    ///
+    /// When the block is called, it will return the value that results from
+    /// calling the closure.
+    // Note: Unsure if this should be #[inline], but I think it may be able to
+    // benefit from not being completely so.
+    #[inline]
+    pub fn new<Closure>(closure: Closure) -> Self
+    where
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
+    {
+        Self::maybe_encoded::<Closure, NoBlockEncoding<Signature>>(closure)
+    }
+
+    /// Constructs a new [`RcBlock`] with the given function and encoding
+    /// information.
+    ///
+    /// See [`StackBlock::with_encoding`] as to why and how this could be
+    /// useful. The same requirements as [`Self::new`] apply here as well.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// # use core::ffi::CStr;
+    /// # use block2::{Block, ManualBlockEncoding, RcBlock};
+    /// # use objc2_foundation::NSError;
+    /// #
+    /// struct MyBlockEncoding;
+    /// // SAFETY: The encoding is correct.
+    /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
+    ///     type Signature = fn(*mut NSError) -> i32;
+    ///     const ENCODING_CSTR: &'static CStr = if cfg!(target_pointer_width = "64") {
+    ///         cr#"i16@?0@"NSError"8"#
+    ///     } else {
+    ///         cr#"i8@?0@"NSError"4"#
+    ///     };
+    /// }
+    ///
+    /// let my_block = RcBlock::with_encoding::<_, MyBlockEncoding>(|_err: *mut NSError| {
+    ///     42i32
+    /// });
+    /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
+    /// ```
+    #[inline]
+    pub fn with_encoding<Closure, E>(closure: Closure) -> Self
+    where
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
+        E: ManualBlockEncoding<Signature = Signature>,
+    {
+        Self::maybe_encoded::<Closure, UserSpecified<E>>(closure)
+    }
+
+    fn maybe_encoded<Closure, E>(closure: Closure) -> Self
+    where
+        Signature: BlockSignature,
+        Closure: IntoBlock<'b, Signature>,
+        E: ManualBlockEncodingExt<Signature = Signature>,
+    {
+        // SAFETY: The stack block is copied once below.
+        //
+        // Note: We could theoretically use `_NSConcreteMallocBlock`, and use
+        // `malloc` ourselves to put the block on the heap, but that symbol is
+        // not part of the public ABI, and may break in the future.
+        //
+        // Clang doesn't do this optimization either.
+        // <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/CGBlocks.cpp#L281-L284>
+        let block = unsafe { StackBlock::new_no_clone::<E>(closure) };
+
+        // Transfer ownership from the stack to the heap.
+        let mut block = ManuallyDrop::new(block);
+        let ptr: *mut StackBlock<'b, Signature, Closure> = &mut *block;
+        let ptr: *mut Block<'b, Signature> = ptr.cast();
+        // SAFETY: The block will be moved to the heap, and we forget the
+        // original block because the heap block will drop in our dispose
+        // helper.
+        unsafe { Self::copy(ptr) }.unwrap_or_else(|| rc_new_fail())
+    }
+
     /// A raw pointer to the underlying block.
     ///
     /// The pointer is valid for at least as long as the `RcBlock` is alive.
@@ -125,91 +207,6 @@ impl<'b, Signature> RcBlock<'b, Signature> {
         let ptr: *mut Block<'b, Signature> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
         // SAFETY: We just copied the block, so the reference count is +1
         unsafe { Self::from_raw(ptr) }
-    }
-}
-
-// TODO: Move so this appears first in the docs.
-impl<'b, Signature> RcBlock<'b, Signature> {
-    /// Construct a `RcBlock` with the given closure.
-    ///
-    /// The closure will be coped to the heap on construction.
-    ///
-    /// When the block is called, it will return the value that results from
-    /// calling the closure.
-    // Note: Unsure if this should be #[inline], but I think it may be able to
-    // benefit from not being completely so.
-    #[inline]
-    pub fn new<Closure>(closure: Closure) -> Self
-    where
-        Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
-    {
-        Self::maybe_encoded::<Closure, NoBlockEncoding<Signature>>(closure)
-    }
-
-    /// Constructs a new [`RcBlock`] with the given function and encoding
-    /// information.
-    ///
-    /// See [`StackBlock::with_encoding`] as to why and how this could be
-    /// useful. The same requirements as [`Self::new`] apply here as well.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use core::ffi::CStr;
-    /// # use block2::{Block, ManualBlockEncoding, RcBlock};
-    /// # use objc2_foundation::NSError;
-    /// #
-    /// struct MyBlockEncoding;
-    /// // SAFETY: The encoding is correct.
-    /// unsafe impl ManualBlockEncoding for MyBlockEncoding {
-    ///     type Signature = fn(*mut NSError) -> i32;
-    ///     const ENCODING_CSTR: &'static CStr = if cfg!(target_pointer_width = "64") {
-    ///         cr#"i16@?0@"NSError"8"#
-    ///     } else {
-    ///         cr#"i8@?0@"NSError"4"#
-    ///     };
-    /// }
-    ///
-    /// let my_block = RcBlock::with_encoding::<_, MyBlockEncoding>(|_err: *mut NSError| {
-    ///     42i32
-    /// });
-    /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
-    /// ```
-    #[inline]
-    pub fn with_encoding<Closure, E>(closure: Closure) -> Self
-    where
-        Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
-        E: ManualBlockEncoding<Signature = Signature>,
-    {
-        Self::maybe_encoded::<Closure, UserSpecified<E>>(closure)
-    }
-
-    fn maybe_encoded<Closure, E>(closure: Closure) -> Self
-    where
-        Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
-        E: ManualBlockEncodingExt<Signature = Signature>,
-    {
-        // SAFETY: The stack block is copied once below.
-        //
-        // Note: We could theoretically use `_NSConcreteMallocBlock`, and use
-        // `malloc` ourselves to put the block on the heap, but that symbol is
-        // not part of the public ABI, and may break in the future.
-        //
-        // Clang doesn't do this optimization either.
-        // <https://github.com/llvm/llvm-project/blob/llvmorg-17.0.6/clang/lib/CodeGen/CGBlocks.cpp#L281-L284>
-        let block = unsafe { StackBlock::new_no_clone::<E>(closure) };
-
-        // Transfer ownership from the stack to the heap.
-        let mut block = ManuallyDrop::new(block);
-        let ptr: *mut StackBlock<'b, Signature, Closure> = &mut *block;
-        let ptr: *mut Block<'b, Signature> = ptr.cast();
-        // SAFETY: The block will be moved to the heap, and we forget the
-        // original block because the heap block will drop in our dispose
-        // helper.
-        unsafe { Self::copy(ptr) }.unwrap_or_else(|| rc_new_fail())
     }
 }
 
