@@ -317,109 +317,22 @@ macro_rules! args_impl {
 }
 
 args_impl!();
-args_impl!(a: A);
-args_impl!(a: A, b: B);
-args_impl!(a: A, b: B, c: C);
-args_impl!(a: A, b: B, c: C, d: D);
-args_impl!(a: A, b: B, c: C, d: D, e: E);
-args_impl!(a: A, b: B, c: C, d: D, e: E, f: F);
-args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
-args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
-args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
-args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
-args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K
-);
-args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L
-);
-args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M
-);
-args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N
-);
-args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O
-);
-args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O,
-    p: P
-);
+args_impl!(t1: T1);
+args_impl!(t1: T1, t2: T2);
+args_impl!(t1: T1, t2: T2, t3: T3);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15);
+args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15, t16: T16);
 
 #[cfg(test)]
 mod tests {

@@ -308,137 +308,33 @@ fn write_result<T: ConvertError, E: ClassType>(
 
 // Support functions with up to 16 arguments.
 impl_fn_to_extern!();
-impl_fn_to_extern!(a: A);
-impl_fn_to_extern!(a: A, b: B);
-impl_fn_to_extern!(a: A, b: B, c: C);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D, e: E);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D, e: E, f: F);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
-impl_fn_to_extern!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
-impl_fn_to_extern!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-);
-impl_fn_to_extern!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-);
-impl_fn_to_extern!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-);
-impl_fn_to_extern!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-);
-impl_fn_to_extern!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O,
-);
+impl_fn_to_extern!(t1: T1);
+impl_fn_to_extern!(t1: T1, t2: T2);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14);
+impl_fn_to_extern!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15);
 
 // Only implement normal methods for 16-wide functions, as the error methods
 // need to be able to store an extra parameter.
 impl_fn_to_extern_delegate! {
     (normal)
     ()
-    (
-        a: A,
-        b: B,
-        c: C,
-        d: D,
-        e: E,
-        f: F,
-        g: G,
-        h: H,
-        i: I,
-        j: J,
-        k: K,
-        l: L,
-        m: M,
-        n: N,
-        o: O,
-        p: P,
-    )
+    (t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15, t16: T16)
 }
 impl_fn_to_extern_delegate! {
     (normal)
     (unsafe)
-    (
-        a: A,
-        b: B,
-        c: C,
-        d: D,
-        e: E,
-        f: F,
-        g: G,
-        h: H,
-        i: I,
-        j: J,
-        k: K,
-        l: L,
-        m: M,
-        n: N,
-        o: O,
-        p: P,
-    )
+    (t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15, t16: T16)
 }
 
 /// A tool for overwriting the lifetime of types in a function pointer where

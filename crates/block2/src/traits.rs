@@ -137,18 +137,18 @@ macro_rules! impl_traits {
 }
 
 impl_traits!(0;);
-impl_traits!(1; t0: T0);
-impl_traits!(2; t0: T0, t1: T1);
-impl_traits!(3; t0: T0, t1: T1, t2: T2);
-impl_traits!(4; t0: T0, t1: T1, t2: T2, t3: T3);
-impl_traits!(5; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4);
-impl_traits!(6; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
-impl_traits!(7; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
-impl_traits!(8; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
-impl_traits!(9; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
-impl_traits!(10; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
-impl_traits!(11; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
-impl_traits!(12; t0: T0, t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+impl_traits!(1; t1: T1);
+impl_traits!(2; t1: T1, t2: T2);
+impl_traits!(3; t1: T1, t2: T2, t3: T3);
+impl_traits!(4; t1: T1, t2: T2, t3: T3, t4: T4);
+impl_traits!(5; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
+impl_traits!(6; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
+impl_traits!(7; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
+impl_traits!(8; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
+impl_traits!(9; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
+impl_traits!(10; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
+impl_traits!(11; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+impl_traits!(12; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12);
 
 /// Interim abstraction to manually provide block encodings for use at compile
 /// time with [`StackBlock::with_encoding`] and [`RcBlock::with_encoding`].

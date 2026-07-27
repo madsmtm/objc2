@@ -540,109 +540,22 @@ macro_rules! encode_args_impl {
 }
 
 encode_args_impl!();
-encode_args_impl!(a: A);
-encode_args_impl!(a: A, b: B);
-encode_args_impl!(a: A, b: B, c: C);
-encode_args_impl!(a: A, b: B, c: C, d: D);
-encode_args_impl!(a: A, b: B, c: C, d: D, e: E);
-encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F);
-encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G);
-encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H);
-encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I);
-encode_args_impl!(a: A, b: B, c: C, d: D, e: E, f: F, g: G, h: H, i: I, j: J);
-encode_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K
-);
-encode_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L
-);
-encode_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M
-);
-encode_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N
-);
-encode_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O
-);
-encode_args_impl!(
-    a: A,
-    b: B,
-    c: C,
-    d: D,
-    e: E,
-    f: F,
-    g: G,
-    h: H,
-    i: I,
-    j: J,
-    k: K,
-    l: L,
-    m: M,
-    n: N,
-    o: O,
-    p: P
-);
+encode_args_impl!(t1: T1);
+encode_args_impl!(t1: T1, t2: T2);
+encode_args_impl!(t1: T1, t2: T2, t3: T3);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15);
+encode_args_impl!(t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12, t13: T13, t14: T14, t15: T15, t16: T16);
 
 // TODO: Implement for `PhantomData` and `PhantomPinned`?
 
