@@ -3,7 +3,7 @@ use alloc::string::ToString;
 use alloc::vec::Vec;
 use core::mem;
 
-use objc2::encode::{EncodeArguments, EncodeReturn, Encoding};
+use objc2::encode::Encoding;
 
 /// Computes the raw signature string of the object corresponding to the block
 /// taking `A` as inputs and returning `R`.
@@ -19,19 +19,10 @@ use objc2::encode::{EncodeArguments, EncodeReturn, Encoding};
 /// # Example
 ///
 /// ```ignore
-/// assert_eq!(block_signature_string::<(i32, f32), u8>(), "C16@?0i8f12");
+/// use objc2::encode::{EncodeArguments, EncodeReturn};
+/// assert_eq!(block_signature_string((i32, f32)::ENCODINGS, u8::ENCODING_RETURN), "C16@?0i8f12");
 /// ```
-#[allow(unused)]
-pub(crate) fn block_signature_string<A, R>() -> CString
-where
-    A: EncodeArguments,
-    R: EncodeReturn,
-{
-    block_signature_string_inner(A::ENCODINGS, &R::ENCODING_RETURN)
-}
-
-#[allow(unused)]
-fn block_signature_string_inner(args: &[Encoding], ret: &Encoding) -> CString {
+pub(crate) fn block_signature_string(args: &[Encoding], ret: Encoding) -> CString {
     // TODO: alignment?
     let arg_sizes = args
         .iter()
@@ -67,59 +58,66 @@ mod tests {
         for (args, ret, val) in [
             (
                 &[][..],
-                &Encoding::Void,
-                #[cfg(target_pointer_width = "64")]
-                "v8@?0",
-                #[cfg(target_pointer_width = "32")]
-                "v4@?0",
+                Encoding::Void,
+                if cfg!(target_pointer_width = "64") {
+                    "v8@?0"
+                } else {
+                    "v4@?0"
+                },
             ),
             (
                 &[],
-                &Encoding::Int,
-                #[cfg(target_pointer_width = "64")]
-                "i8@?0",
-                #[cfg(target_pointer_width = "32")]
-                "i4@?0",
+                Encoding::Int,
+                if cfg!(target_pointer_width = "64") {
+                    "i8@?0"
+                } else {
+                    "i4@?0"
+                },
             ),
             (
                 &[],
-                &Encoding::Float,
-                #[cfg(target_pointer_width = "64")]
-                "f8@?0",
-                #[cfg(target_pointer_width = "32")]
-                "f4@?0",
+                Encoding::Float,
+                if cfg!(target_pointer_width = "64") {
+                    "f8@?0"
+                } else {
+                    "f4@?0"
+                },
             ),
             (
                 &[],
-                &Encoding::Bool,
-                #[cfg(target_pointer_width = "64")]
-                "B8@?0",
-                #[cfg(target_pointer_width = "32")]
-                "B4@?0",
+                Encoding::Bool,
+                if cfg!(target_pointer_width = "64") {
+                    "B8@?0"
+                } else {
+                    "B4@?0"
+                },
             ),
             (
                 &[Encoding::Int],
-                &Encoding::Void,
-                #[cfg(target_pointer_width = "64")]
-                "v12@?0i8",
-                #[cfg(target_pointer_width = "32")]
-                "v8@?0i4",
+                Encoding::Void,
+                if cfg!(target_pointer_width = "64") {
+                    "v12@?0i8"
+                } else {
+                    "v8@?0i4"
+                },
             ),
             (
                 &[Encoding::Int],
-                &Encoding::Int,
-                #[cfg(target_pointer_width = "64")]
-                "i12@?0i8",
-                #[cfg(target_pointer_width = "32")]
-                "i8@?0i4",
+                Encoding::Int,
+                if cfg!(target_pointer_width = "64") {
+                    "i12@?0i8"
+                } else {
+                    "i8@?0i4"
+                },
             ),
             (
                 &[Encoding::Long, Encoding::Double, Encoding::FloatComplex],
-                &Encoding::Atomic(&Encoding::UChar),
-                #[cfg(target_pointer_width = "64")]
-                "AC32@?0l8d16jf24",
-                #[cfg(target_pointer_width = "32")]
-                "AC24@?0l4d8jf16",
+                Encoding::Atomic(&Encoding::UChar),
+                if cfg!(target_pointer_width = "64") {
+                    "AC32@?0l8d16jf24"
+                } else {
+                    "AC24@?0l4d8jf16"
+                },
             ),
             (
                 &[
@@ -133,21 +131,24 @@ mod tests {
                         ],
                     ),
                 ],
-                &Encoding::String,
+                Encoding::String,
                 // Probably unaligned.
-                #[cfg(any(
+                if cfg!(any(
                     target_arch = "x86_64",
                     all(target_arch = "aarch64", not(target_vendor = "apple"))
-                ))]
-                "*53@?0(ThisOrThat=Si)8{ThisAndThat=QjDAB}12",
-                #[cfg(all(target_arch = "aarch64", target_vendor = "apple"))]
-                "*37@?0(ThisOrThat=Si)8{ThisAndThat=QjDAB}12",
-                #[cfg(all(target_arch = "x86", target_vendor = "apple"))]
-                "*49@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8",
-                #[cfg(all(target_arch = "x86", not(target_vendor = "apple")))]
-                "*41@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8",
-                #[cfg(target_arch = "arm")]
-                "*37@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8",
+                )) {
+                    "*53@?0(ThisOrThat=Si)8{ThisAndThat=QjDAB}12"
+                } else if cfg!(all(target_arch = "aarch64", target_vendor = "apple")) {
+                    "*37@?0(ThisOrThat=Si)8{ThisAndThat=QjDAB}12"
+                } else if cfg!(all(target_arch = "x86", target_vendor = "apple")) {
+                    "*49@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8"
+                } else if cfg!(all(target_arch = "x86", not(target_vendor = "apple"))) {
+                    "*41@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8"
+                } else if cfg!(target_arch = "arm") {
+                    "*37@?0(ThisOrThat=Si)4{ThisAndThat=QjDAB}8"
+                } else {
+                    unimplemented!()
+                },
             ),
             (
                 &[
@@ -161,19 +162,21 @@ mod tests {
                     Encoding::Unknown,
                     Encoding::Unknown,
                 ],
-                &Encoding::Pointer(&Encoding::Atomic(&Encoding::UChar)),
-                #[cfg(target_pointer_width = "64")]
-                "^AC56@?0@?8#16@24^c32:40*48?56?56?56",
-                #[cfg(target_pointer_width = "32")]
-                "^AC28@?0@?4#8@12^c16:20*24?28?28?28",
+                Encoding::Pointer(&Encoding::Atomic(&Encoding::UChar)),
+                if cfg!(target_pointer_width = "64") {
+                    "^AC56@?0@?8#16@24^c32:40*48?56?56?56"
+                } else {
+                    "^AC28@?0@?4#8@12^c16:20*24?28?28?28"
+                },
             ),
             (
                 &[Encoding::Array(123, &Encoding::Object)],
-                &Encoding::Pointer(&Encoding::Class),
-                #[cfg(target_pointer_width = "64")]
-                "^#992@?0[123@]8",
-                #[cfg(target_pointer_width = "32")]
-                "^#496@?0[123@]4",
+                Encoding::Pointer(&Encoding::Class),
+                if cfg!(target_pointer_width = "64") {
+                    "^#992@?0[123@]8"
+                } else {
+                    "^#496@?0[123@]4"
+                },
             ),
             // Bitfields can probably not be passed around through functions,
             // so this may be a bit nonsensical, but let's test it anyway.
@@ -187,15 +190,16 @@ mod tests {
                     Encoding::BitField(42, None),
                     Encoding::BitField(28, Some(&(2, Encoding::UInt))),
                 ],
-                &Encoding::Sel,
-                #[cfg(target_pointer_width = "64")]
-                ":25@?0b18b29b310b611b812b4213b2I2821",
-                #[cfg(target_pointer_width = "32")]
-                ":21@?0b14b25b36b67b88b429b2I2817",
+                Encoding::Sel,
+                if cfg!(target_pointer_width = "64") {
+                    ":25@?0b18b29b310b611b812b4213b2I2821"
+                } else {
+                    ":21@?0b14b25b36b67b88b429b2I2817"
+                },
             ),
         ] {
             assert_eq!(
-                block_signature_string_inner(args, ret),
+                block_signature_string(args, ret),
                 CString::new(val.to_owned().into_bytes()).unwrap()
             );
         }

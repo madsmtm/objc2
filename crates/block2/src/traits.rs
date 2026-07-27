@@ -301,8 +301,10 @@ where
     {
         if !E::IS_NONE {
             // TODO: relax to check for equivalence instead of strict equality.
-            let signature_string =
-                crate::encoding::block_signature_string::<Signature::__Args, Signature::__Output>();
+            let signature_string = crate::encoding::block_signature_string(
+                Signature::__Args::ENCODINGS,
+                Signature::__Output::ENCODING_RETURN,
+            );
             assert_eq!(E::ENCODING_CSTR, &*signature_string);
         }
     }
