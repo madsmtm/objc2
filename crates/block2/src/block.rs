@@ -2,7 +2,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ptr::NonNull;
 
-use objc2::encode::{Encoding, RefEncode};
+use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
@@ -111,12 +111,59 @@ impl<'b, Signature> Block<'b, Signature> {
     }
 
     #[inline]
-    pub(crate) fn invoke_ptr(&self) -> unsafe extern "C-unwind" fn() {
+    fn invoke_ptr(&self) -> unsafe extern "C-unwind" fn() {
         // SAFETY: `invoke` is never NULL - Clang also assumes this in its
         // codegen, and will null ptr deref if it is.
         unsafe { self.header().invoke.unwrap_unchecked() }
     }
 }
+
+// Add `call` method to blocks for each argument combination.
+//
+// In the future, we should use some form of variadic generics here, or maybe
+// implement the `Fn` traits for blocks (once that is stable). For now, this
+// is the only way to avoid redundant parentheses when calling blocks.
+macro_rules! call_block {
+    ($num_args:literal; $($a:ident: $t:ident),*) => {
+        impl<'b, $($t: EncodeArgument,)* R: EncodeReturn> Block<'b, fn($($t),*) -> R> {
+            #[doc = concat!("Call the block with ", $num_args, " arguments.")]
+            ///
+            /// The return value is the output of the block.
+            #[doc(alias = "invoke")]
+            #[inline]
+            #[allow(clippy::too_many_arguments)]
+            pub fn call(&self, $($a: $t),*) -> R {
+                // Very similar to `MessageArguments::__invoke`
+
+                // SAFETY: We're transmuting to the signature of the `Block`'s
+                // `invoke` function, which should be the correct one based on
+                // the type parameters given that we hold a reference to this
+                // `Block` with this signature in the first place.
+                let invoke: unsafe extern "C-unwind" fn(&Self $(, $t)*) -> R = unsafe {
+                    core::mem::transmute(self.invoke_ptr())
+                };
+
+                // SAFETY: The block's "closure" is an `Fn`, and as such is
+                // safe to call from an immutable reference.
+                unsafe { invoke(self $(, $a)*) }
+            }
+        }
+    };
+}
+
+call_block!(0;);
+call_block!(1; t1: T1);
+call_block!(2; t1: T1, t2: T2);
+call_block!(3; t1: T1, t2: T2, t3: T3);
+call_block!(4; t1: T1, t2: T2, t3: T3, t4: T4);
+call_block!(5; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5);
+call_block!(6; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6);
+call_block!(7; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7);
+call_block!(8; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8);
+call_block!(9; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9);
+call_block!(10; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10);
+call_block!(11; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
+call_block!(12; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12);
 
 impl<'b, Signature> fmt::Debug for Block<'b, Signature> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
