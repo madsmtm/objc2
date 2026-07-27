@@ -420,7 +420,7 @@ pub unsafe trait EncodeArgument: argument_private::Sealed {
 impl<T: Encode> argument_private::Sealed for T {}
 // SAFETY: All `Encode` types are also valid as argument types
 unsafe impl<T: Encode> EncodeArgument for T {
-    const ENCODING_ARGUMENT: Encoding = T::ENCODING;
+    const ENCODING_ARGUMENT: Encoding = decay_parameter_encoding(T::ENCODING);
 }
 
 mod args_private {
@@ -505,9 +505,7 @@ macro_rules! encode_args_impl {
         impl<$($T: EncodeArgument),*> args_private::Sealed for ($($T,)*) {}
 
         impl<$($T: EncodeArgument),*> EncodeArguments for ($($T,)*) {
-            const ENCODINGS: &'static [Encoding] = &[
-                $(decay_parameter_encoding($T::ENCODING_ARGUMENT)),*
-            ];
+            const ENCODINGS: &'static [Encoding] = &[$($T::ENCODING_ARGUMENT),*];
 
             #[inline]
             unsafe fn __invoke<R: EncodeReturn>(msg_send_fn: Imp, receiver: *mut AnyObject, sel: Sel, ($($a,)*): Self) -> R {
