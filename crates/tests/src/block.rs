@@ -105,6 +105,9 @@ extern "C-unwind" {
         s: LargeStruct,
     ) -> LargeStruct;
 
+    fn get_array_block() -> *mut Block<'static, fn(*const [i32; 4]) -> i32>;
+    fn invoke_array_block(block: &Block<'_, fn(*const [i32; 4]) -> i32>, s: &[i32; 4]) -> i32;
+
     fn try_block_debugging(x: i32);
 }
 
@@ -263,6 +266,45 @@ fn test_large_struct_block() {
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
     let block = block.copy();
     assert_eq!(unsafe { invoke_large_struct_block(&block, data) }, new_data);
+}
+
+#[test]
+fn test_array() {
+    #[track_caller]
+    fn invoke_assert(block: &Block<'_, fn(*const [i32; 4]) -> i32>, expected: i32) {
+        assert_eq!(block.call(&[1, 2, 3, 4]), expected);
+        assert_eq!(
+            unsafe { invoke_array_block(block, &[1, 2, 3, 4]) },
+            expected
+        );
+    }
+
+    struct Enc;
+    unsafe impl ManualBlockEncoding for Enc {
+        type Signature = fn(*const [i32; 4]) -> i32;
+        #[cfg(target_pointer_width = "64")]
+        const ENCODING_CSTR: &'static CStr = c"i16@?0[4i]8";
+        #[cfg(target_pointer_width = "32")]
+        const ENCODING_CSTR: &'static CStr = c"i8@?0[4i]4";
+    }
+
+    global_block! {
+        static GLOBAL_BLOCK = |arr: *const [i32; 4]| -> i32 {
+            let arr = unsafe { arr.as_ref().unwrap() };
+            arr[0] + arr[1] + arr[2] + arr[3]
+        };
+    }
+
+    invoke_assert(unsafe { &*get_array_block() }, 10);
+    let closure = |arr: *const [i32; 4]| {
+        let arr = unsafe { arr.as_ref().unwrap() };
+        arr[0] + arr[1] + arr[2] + arr[3]
+    };
+    invoke_assert(&StackBlock::new(closure), 10);
+    invoke_assert(&RcBlock::new(closure), 10);
+    invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 10);
+    invoke_assert(&RcBlock::with_encoding::<_, Enc>(closure), 10);
+    invoke_assert(&GLOBAL_BLOCK, 10);
 }
 
 #[test]

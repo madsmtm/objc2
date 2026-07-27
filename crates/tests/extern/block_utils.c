@@ -11,6 +11,7 @@ typedef int32_t (^IntBlock)();
 typedef int32_t (^AddBlock)(int32_t);
 typedef int32_t (^Add12)(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 typedef LargeStruct (^LargeStructBlock)(LargeStruct);
+typedef int32_t (^ArrayBlock)(int32_t[4]);
 
 
 IntBlock get_int_block() {
@@ -82,6 +83,16 @@ LargeStructBlock get_large_struct_block_with(LargeStruct a) {
 
 LargeStruct invoke_large_struct_block(LargeStructBlock block, LargeStruct s) {
     return block(s);
+}
+
+ArrayBlock get_array_block() {
+    return Block_copy(^(int32_t arr[4]) {
+        return arr[0] + arr[1] + arr[2] + arr[3];
+    });
+}
+
+int32_t invoke_array_block(ArrayBlock block, int32_t arr[4]) {
+    return block(arr);
 }
 
 
