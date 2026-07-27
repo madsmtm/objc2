@@ -671,12 +671,14 @@ pub enum PointeeTy {
     Fn {
         is_variadic: bool,
         no_escape: bool,
+        // TODO: Add parameter names if possible?
         arguments: Vec<Ty>,
         result_type: Box<Ty>,
     },
     Block {
         sendable: Option<bool>,
         no_escape: bool,
+        // TODO: Add parameter names if possible?
         arguments: Vec<Ty>,
         result_type: Box<Ty>,
     },
@@ -973,7 +975,8 @@ impl PointeeTy {
                 arguments,
                 result_type,
             } => {
-                write!(f, "block2::DynBlock<dyn Fn(")?;
+                let lifetime = if *no_escape { "_" } else { "static" };
+                write!(f, "block2::Block<'{lifetime}, fn(")?;
                 for arg in arguments {
                     write!(f, "{}, ", arg.plain(allow_generic_param))?;
                 }
@@ -983,14 +986,6 @@ impl PointeeTy {
                     "{}",
                     result_type.prefix_return(result_type.fn_type_return())
                 )?;
-                if *no_escape {
-                    write!(f, " + '_")?;
-                } else {
-                    // `dyn Fn()` in function parameters implies `+ 'static`,
-                    // so no need to specify that.
-                    //
-                    // write!(f, " + 'static")?;
-                }
                 write!(f, ">")
             }
             Self::CFTypeDef { id, generics, .. } => {
