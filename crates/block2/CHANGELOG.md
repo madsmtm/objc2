@@ -22,6 +22,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `BlockFn` trait to `BlockSignature`.
 * **BREAKING**: Changed how to specify the block signature in `ManualBlockEncoding`.
 
+### Removed
+* **BREAKING**: Removed associated types `Args` and `Output` on `BlockSignature`.
+
 
 ## [0.6.2] - 2025-10-04
 [0.6.2]: https://github.com/madsmtm/objc2/compare/block2-0.6.1...block2-0.6.2

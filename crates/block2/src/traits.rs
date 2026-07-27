@@ -8,8 +8,8 @@ use objc2::encode::{EncodeArgument, EncodeReturn};
 
 use crate::{Block, StackBlock};
 
-mod private {
-    pub trait Sealed<A, R> {}
+mod private_signature {
+    pub trait Sealed {}
 }
 
 /// Types that represent block parameters/arguments and return types.
@@ -26,12 +26,18 @@ mod private {
 ///
 /// Note: `block2` does not (yet?) have a concept of `unsafe` blocks, which
 /// means that [the `call` method][Block::call] is always safe.
-pub unsafe trait BlockSignature: private::Sealed<Self::Args, Self::Output> + Sized {
+pub unsafe trait BlockSignature: private_signature::Sealed + Sized {
     /// The parameters/arguments to the block.
-    type Args: EncodeArguments;
+    #[doc(hidden)]
+    type __Args: EncodeArguments;
 
     /// The return type of the block.
-    type Output: EncodeReturn;
+    #[doc(hidden)]
+    type __Output: EncodeReturn;
+}
+
+mod private_into {
+    pub trait Sealed<'b, Signature> {}
 }
 
 /// Types that may be converted into a block.
@@ -46,7 +52,7 @@ pub unsafe trait BlockSignature: private::Sealed<Self::Args, Self::Output> + Siz
 /// This is a sealed trait, and should not need to be implemented. Open an
 /// issue if you know a use-case where this restriction should be lifted!
 pub unsafe trait IntoBlock<'b, Signature: BlockSignature>:
-    private::Sealed<Signature::Args, Signature::Output>
+    private_into::Sealed<'b, Signature>
 {
     #[doc(hidden)]
     fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn();
@@ -58,16 +64,20 @@ pub unsafe trait __DynToBlock {
 }
 
 macro_rules! impl_traits {
-    ($num_args:literal; $($a:ident: $t:ident),*) => (
-        impl<$($t: EncodeArgument,)* R: EncodeReturn, Closure> private::Sealed<($($t,)*), R> for Closure
-        where
-            Closure: ?Sized + Fn($($t),*) -> R,
-        {}
+    ($num_args:literal; $($a:ident: $t:ident),*) => {
+        impl<$($t: EncodeArgument,)* R: EncodeReturn> private_signature::Sealed for fn($($t),*) -> R {}
 
         unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn> BlockSignature for fn($($t),*) -> R {
-            type Args = ($($t,)*);
-            type Output = R;
+            type __Args = ($($t,)*);
+            type __Output = R;
         }
+
+        impl<'b, $($t,)* R, Closure> private_into::Sealed<'b, fn($($t,)*) -> R> for Closure
+        where
+            $($t: EncodeArgument,)*
+            R: EncodeReturn,
+            Closure: Fn($($t),*) -> R + 'b,
+        {}
 
         unsafe impl<'b, $($t,)* R, Closure> IntoBlock<'b, fn($($t,)*) -> R> for Closure
         where
@@ -123,7 +133,7 @@ macro_rules! impl_traits {
                 unsafe { invoke(self $(, $a)*) }
             }
         }
-    );
+    };
 }
 
 impl_traits!(0;);
@@ -310,10 +320,9 @@ where
     {
         if !E::IS_NONE {
             // TODO: relax to check for equivalence instead of strict equality.
-            assert_eq!(
-                E::ENCODING_CSTR,
-                &*crate::encoding::block_signature_string::<Signature::Args, Signature::Output>()
-            );
+            let signature_string =
+                crate::encoding::block_signature_string::<Signature::__Args, Signature::__Output>();
+            assert_eq!(E::ENCODING_CSTR, &*signature_string);
         }
     }
 }
