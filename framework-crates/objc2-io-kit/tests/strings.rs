@@ -8,29 +8,9 @@ use objc2_io_kit::{
     IOObjectRelease, IORegistryEntryFromPath, IORegistryEntryGetPath, IORegistryGetRootEntry,
 };
 
-#[cfg(not(target_os = "macos"))]
-macro_rules! main_port {
-    () => {
-        #[allow(unused_unsafe)]
-        unsafe {
-            objc2_io_kit::kIOMainPortDefault
-        }
-    };
-}
-
-#[cfg(target_os = "macos")]
-macro_rules! main_port {
-    () => {{
-        #[allow(deprecated, unused_unsafe)]
-        unsafe {
-            objc2_io_kit::kIOMasterPortDefault
-        }
-    }};
-}
-
 #[test]
 fn out_pointer() {
-    let obj = IORegistryGetRootEntry(main_port!());
+    let obj = IORegistryGetRootEntry(main_port());
 
     let mut name = [0; 128];
     assert_eq!(
@@ -50,7 +30,7 @@ fn out_pointer() {
 
 #[test]
 fn in_pointer() {
-    let obj = IORegistryGetRootEntry(main_port!());
+    let obj = IORegistryGetRootEntry(main_port());
 
     assert!(unsafe { IOObjectConformsTo(obj, Some(c"IORegistryEntry")) });
     assert!(!unsafe { IOObjectConformsTo(obj, Some(c"BogusClassName")) });
@@ -62,7 +42,7 @@ fn in_pointer() {
 fn entry_path() {
     let path = c"IOService:/";
 
-    let obj = unsafe { IORegistryEntryFromPath(main_port!(), Some(path)) };
+    let obj = unsafe { IORegistryEntryFromPath(main_port(), Some(path)) };
     assert_ne!(obj, MACH_PORT_NULL as u32);
 
     let mut out_path = [0; 512];
@@ -80,16 +60,29 @@ fn entry_path() {
 #[test]
 fn entry_path_too_long() {
     let path = CString::new([b'x'; 1000]).unwrap();
-    let obj = unsafe { IORegistryEntryFromPath(main_port!(), Some(&path)) };
+    let obj = unsafe { IORegistryEntryFromPath(main_port(), Some(&path)) };
     assert_eq!(obj, MACH_PORT_NULL as u32);
 }
 
 #[test]
 fn in_pointer_too_long() {
-    let obj = IORegistryGetRootEntry(main_port!());
+    let obj = IORegistryGetRootEntry(main_port());
 
     let name = CString::new([b'x'; 1000]).unwrap();
     assert!(!unsafe { IOObjectConformsTo(obj, Some(&name)) });
 
     assert_eq!(IOObjectRelease(obj), kIOReturnSuccess);
+}
+
+fn main_port() -> libc::mach_port_t {
+    #[cfg(target_os = "macos")]
+    #[allow(deprecated)]
+    unsafe {
+        objc2_io_kit::kIOMasterPortDefault
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    unsafe {
+        objc2_io_kit::kIOMainPortDefault
+    }
 }

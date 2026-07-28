@@ -4,8 +4,6 @@ use std::ffi::CStr;
 use objc2_core_foundation::{
     CFBoolean, CFDictionary, CFRetained, CFString, CFStringBuiltInEncodings, CFType,
 };
-#[allow(deprecated)]
-use objc2_io_kit::kIOMasterPortDefault;
 use objc2_io_kit::{
     kIOEthernetInterfaceClass, kIOPrimaryInterface, kIOPropertyMatchKey, kIOReturnSuccess,
     IOObjectRelease, IOServiceGetMatchingService, IOServiceMatching,
@@ -23,7 +21,7 @@ fn matching_ethernet_interface() {
 
     #[allow(deprecated)]
     let service =
-        unsafe { IOServiceGetMatchingService(kIOMasterPortDefault, Some((&matching_dict).into())) };
+        unsafe { IOServiceGetMatchingService(main_port(), Some((&matching_dict).into())) };
 
     assert_eq!(IOObjectRelease(service), kIOReturnSuccess);
 }
@@ -32,4 +30,17 @@ fn matching_ethernet_interface() {
 // TODO: Make this use-case easier in `objc2-core-foundation`?
 unsafe fn cstr(s: &CStr) -> CFRetained<CFString> {
     unsafe { CFString::with_c_string(None, s, CFStringBuiltInEncodings::EncodingUTF8.0).unwrap() }
+}
+
+fn main_port() -> libc::mach_port_t {
+    #[cfg(target_os = "macos")]
+    #[allow(deprecated)]
+    unsafe {
+        objc2_io_kit::kIOMasterPortDefault
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    unsafe {
+        objc2_io_kit::kIOMainPortDefault
+    }
 }
