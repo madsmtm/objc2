@@ -11,7 +11,7 @@ use objc2_io_kit::{
 
 #[test]
 fn matching_ethernet_interface() {
-    let matching_dict = unsafe { IOServiceMatching(kIOEthernetInterfaceClass.as_ptr()) }.unwrap();
+    let matching_dict = unsafe { IOServiceMatching(Some(kIOEthernetInterfaceClass)) }.unwrap();
 
     let property_dict = CFDictionary::<CFString, CFType>::from_slices(
         &[unsafe { &cstr(kIOPrimaryInterface) }],

@@ -315,31 +315,188 @@ fn.IOCFUnserializeWithSize.arguments.4.lifetime = "out-pointer-retained"
 ## Pointer bounds
 ##
 
+# IOKitLib.h
+fn.IOMainPort.arguments.1.bounds = "single"
+fn.IOMasterPort.arguments.1.bounds = "single"
+fn.IOCreateReceivePort.arguments.1.bounds = "single"
 fn.IOObjectConformsTo.arguments.1.bounds = "null-terminated"
 fn.IOServiceAddNotification.arguments.1.bounds = "null-terminated"
+fn.IOServiceAddNotification.arguments.5.bounds = "single"
 fn.IOServiceAddMatchingNotification.arguments.1.bounds = "null-terminated"
 fn.IOServiceAddInterestNotification.arguments.2.bounds = "null-terminated"
+fn.IOServiceAddInterestNotification.arguments.5.bounds = "single"
+fn.IOServiceMatchPropertyTable.arguments.2.bounds = "single"
+fn.IOServiceGetBusyState.arguments.1.bounds = "single"
+fn.IOKitGetBusyState.arguments.1.bounds = "single"
+fn.IOServiceOpen.arguments.3.bounds = "single"
+fn.IOConnectGetService.arguments.1.bounds = "single"
+fn.IOConnectMapMemory.arguments.3.bounds = "single"
+fn.IOConnectMapMemory.arguments.4.bounds = "single"
+fn.IOConnectMapMemory64.arguments.3.bounds = "single"
+fn.IOConnectMapMemory64.arguments.4.bounds = "single"
+fn.IOConnectCallMethod.arguments.2.bounds.counted-by = "input_cnt"
+fn.IOConnectCallMethod.arguments.6.bounds.counted-by = "*output_cnt"
+fn.IOConnectCallMethod.arguments.7.bounds = "single"
+fn.IOConnectCallMethod.arguments.8.bounds.counted-by = "*output_struct_cnt"
+fn.IOConnectCallMethod.arguments.9.bounds = "single"
+fn.IOConnectCallAsyncMethod.arguments.3.bounds.counted-by = "reference_cnt"
+fn.IOConnectCallAsyncMethod.arguments.5.bounds.counted-by = "input_cnt"
+fn.IOConnectCallAsyncMethod.arguments.7.bounds.counted-by = "input_struct_cnt"
+fn.IOConnectCallAsyncMethod.arguments.9.bounds.counted-by = "*output_cnt"
+fn.IOConnectCallAsyncMethod.arguments.10.bounds = "single"
+fn.IOConnectCallAsyncMethod.arguments.11.bounds.counted-by = "*output_struct_cnt"
+fn.IOConnectCallAsyncMethod.arguments.12.bounds = "single"
+fn.IOConnectCallStructMethod.arguments.2.bounds.counted-by = "input_struct_cnt"
+fn.IOConnectCallStructMethod.arguments.4.bounds.counted-by = "*output_struct_cnt"
+fn.IOConnectCallStructMethod.arguments.5.bounds = "single"
+fn.IOConnectCallAsyncStructMethod.arguments.3.bounds.counted-by = "reference_cnt"
+fn.IOConnectCallAsyncStructMethod.arguments.5.bounds.counted-by = "input_struct_cnt"
+fn.IOConnectCallAsyncStructMethod.arguments.7.bounds.counted-by = "*output_struct_cnt"
+fn.IOConnectCallAsyncStructMethod.arguments.8.bounds = "single"
+fn.IOConnectCallScalarMethod.arguments.2.bounds.counted-by = "input_cnt"
+fn.IOConnectCallScalarMethod.arguments.4.bounds.counted-by = "*output_cnt"
+fn.IOConnectCallScalarMethod.arguments.5.bounds = "single"
+fn.IOConnectCallAsyncScalarMethod.arguments.3.bounds.counted-by = "reference_cnt"
+fn.IOConnectCallAsyncScalarMethod.arguments.5.bounds.counted-by = "input_cnt"
+fn.IOConnectCallAsyncScalarMethod.arguments.7.bounds.counted-by = "*output_cnt"
+fn.IOConnectCallAsyncScalarMethod.arguments.8.bounds = "single"
 fn.IORegistryEntryFromPath.arguments.1.bounds = "null-terminated"
 fn.IORegistryCreateIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryCreateIterator.arguments.3.bounds = "single"
 fn.IORegistryEntryCreateIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryCreateIterator.arguments.3.bounds = "single"
 fn.IORegistryEntryGetNameInPlane.arguments.1.bounds = "null-terminated"
 fn.IORegistryEntryGetLocationInPlane.arguments.1.bounds = "null-terminated"
 fn.IORegistryEntryGetPath.arguments.1.bounds = "null-terminated"
 fn.IORegistryEntryCopyPath.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetRegistryEntryID.arguments.1.bounds = "single"
 fn.IORegistryEntrySearchCFProperty.arguments.1.bounds = "null-terminated"
 fn.IORegistryEntryGetProperty.arguments.1.bounds = "null-terminated"
 fn.IORegistryEntryGetProperty.arguments.2.bounds = "single" # NOT sized by *size
-# fn.IORegistryEntryGetProperty.arguments.3.bounds = "single"
+fn.IORegistryEntryGetProperty.arguments.3.bounds = "single"
 fn.IORegistryEntryGetChildIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetChildIterator.arguments.2.bounds = "single"
 fn.IORegistryEntryGetChildEntry.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetChildEntry.arguments.2.bounds = "single"
 fn.IORegistryEntryGetParentIterator.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetParentIterator.arguments.2.bounds = "single"
 fn.IORegistryEntryGetParentEntry.arguments.1.bounds = "null-terminated"
+fn.IORegistryEntryGetParentEntry.arguments.2.bounds = "single"
 fn.IORegistryEntryInPlane.arguments.1.bounds = "null-terminated"
+fn.IOServiceMatching.arguments.0.bounds = "null-terminated"
+fn.IOServiceNameMatching.arguments.0.bounds = "null-terminated"
+fn.IOBSDNameMatching.arguments.2.bounds = "null-terminated"
+fn.IOOpenFirmwarePathMatching.arguments.2.bounds = "null-terminated"
 fn.IOServiceOFPathToBSDName.arguments.1.bounds = "null-terminated"
+fn.IOCatalogueSendData.arguments.2.bounds.counted-by = "size" # Probably
+fn.IOCatalogueGetData.arguments.2.bounds.counted-by = "*size" # Probably
+fn.IOCatalogueGetData.arguments.3.bounds = "single"
 
-# network
+# IODataQueueClient.h
+# IODataQueueMemory is variable sized, so we can't really make using it safe.
+fn.IODataQueueDataAvailable.arguments.0.bounds = "unsafe" # IODataQueueMemory
+fn.IODataQueuePeek.arguments.0.bounds = "unsafe" # IODataQueueMemory
+fn.IODataQueuePeek.return.bounds = "unsafe" # Unclear lifetime
+fn.IODataQueueDequeue.arguments.0.bounds = "unsafe" # IODataQueueMemory
+fn.IODataQueueDequeue.arguments.1.bounds.sized-by = "*data_size"
+fn.IODataQueueDequeue.arguments.2.bounds = "single"
+fn.IODataQueueWaitForAvailableData.arguments.0.bounds = "unsafe" # IODataQueueMemory
+fn.IODataQueueEnqueue.arguments.0.bounds = "unsafe" # IODataQueueMemory
+fn.IODataQueueEnqueue.arguments.1.bounds.sized-by = "data_size"
+fn.IODataQueueSetNotificationPort.arguments.0.bounds = "unsafe" # IODataQueueMemory
+
+# IOCFPlugin.h
+# Unsure about these, there's no documentation on it
+fn.IOCreatePlugInInterfaceForService.arguments.3.bounds = "unsafe"
+fn.IOCreatePlugInInterfaceForService.arguments.4.bounds = "unsafe"
+fn.IODestroyPlugInInterface.arguments.0.bounds = "unsafe"
+
+# IOCFURLAccess.h
+fn.IOURLCreatePropertyFromResource.arguments.3.bounds = "single"
+fn.IOURLCreateDataAndPropertiesFromResource.arguments.5.bounds = "single"
+fn.IOURLWriteDataAndPropertiesToResource.arguments.3.bounds = "single"
+
+# IOCFUnserialize.h
+fn.IOCFUnserialize.arguments.0.bounds = "null-terminated"
+fn.IOCFUnserializeBinary.arguments.0.bounds.sized-by = "buffer_size"
+fn.IOCFUnserializeWithSize.arguments.0.bounds.sized-by = "buffer_size"
+
+# graphics/IOGraphicsInterface.h
+fn.IOAccelFindAccelerator.arguments.1.bounds = "single"
+fn.IOAccelFindAccelerator.arguments.2.bounds = "single"
+# graphics/IOGraphicsLib.h
+fn.IOFramebufferOpen.arguments.3.bounds = "single"
+fn.IODisplayGetFloatParameter.arguments.3.bounds = "single"
+fn.IODisplayGetIntegerRangeParameter.arguments.3.bounds = "single"
+fn.IODisplayGetIntegerRangeParameter.arguments.4.bounds = "single"
+fn.IODisplayGetIntegerRangeParameter.arguments.5.bounds = "single"
+
+# hid/IOHIDDevice.h
+fn.IOHIDDeviceRegisterInputReportCallback.arguments.1.bounds.sized-by = "report_length"
+fn.IOHIDDeviceRegisterInputReportWithTimeStampCallback.arguments.1.bounds.sized-by = "report_length"
+fn.IOHIDDeviceSetReport.arguments.3.bounds.sized-by = "report_length"
+fn.IOHIDDeviceSetReportWithCallback.arguments.3.bounds.sized-by = "report_length"
+fn.IOHIDDeviceGetReport.arguments.3.bounds.sized-by = "*p_report_length"
+fn.IOHIDDeviceGetReport.arguments.4.bounds = "single"
+fn.IOHIDDeviceGetReportWithCallback.arguments.3.bounds.sized-by = "*p_report_length"
+fn.IOHIDDeviceGetReportWithCallback.arguments.4.bounds = "single"
+# hid/IOHIDValue.h
+fn.IOHIDValueCreateWithBytes.arguments.3.bounds.sized-by = "length"
+fn.IOHIDValueCreateWithBytesNoCopy.arguments.3.bounds.sized-by = "length"
+fn.IOHIDValueGetBytePtr.return.bounds.sized-by = "self.length()"
+
+# hidsystem/IOHIDLib.h
+fn.IOHIDPostEvent.arguments.3.bounds = "unsafe" # Needs correct event_data_version
+fn.IOHIDGetButtonEventNum.arguments.2.bounds = "single"
+fn.IOHIDGetScrollAcceleration.arguments.1.bounds = "single"
+fn.IOHIDGetMouseAcceleration.arguments.1.bounds = "single"
+fn.IOHIDGetMouseButtonMode.arguments.1.bounds = "single"
+fn.IOHIDGetAccelerationWithKey.arguments.2.bounds = "single"
+fn.IOHIDGetParameter.arguments.3.bounds.sized-by = "max_size"
+fn.IOHIDGetParameter.arguments.4.bounds = "single"
+fn.IOHIDGetStateForSelector.arguments.2.bounds = "single"
+fn.IOHIDGetModifierLockState.arguments.2.bounds = "single"
+fn.IOHIDRegisterVirtualDisplay.arguments.1.bounds = "single"
+fn.IOHIDSetVirtualDisplayBounds.arguments.2.bounds = "single"
+fn.IOHIDGetActivityState.arguments.1.bounds = "single"
+# hidsystem/event_status_driver.h
+fn.NXEventSystemInfo.arguments.1.written = false
+fn.NXEventSystemInfo.arguments.1.bounds = "null-terminated"
+fn.NXEventSystemInfo.arguments.2.bounds.counted-by = "*evs_info_cnt"
+fn.NXEventSystemInfo.arguments.3.bounds = "single"
+fn.NXSetClickSpace.arguments.1.written = false
+fn.NXSetClickSpace.arguments.1.bounds = "single"
+fn.NXGetClickSpace.arguments.1.bounds = "single"
+# hidsystem/IOHIDUserDevice.h
+fn.IOHIDUserDeviceHandleReportWithTimeStamp.arguments.2.bounds.sized-by = "report_length"
+
+# network/IONetworkLib.h
+fn.IONetworkOpen.arguments.1.bounds = "single"
+fn.IONetworkWriteData.arguments.2.bounds.sized-by = "in_size"
+fn.IONetworkReadData.arguments.2.bounds.sized-by = "*in_out_size_p"
+fn.IONetworkReadData.arguments.3.bounds = "single"
+fn.IONetworkGetDataCapacity.arguments.2.bounds = "single"
+fn.IONetworkGetDataHandle.arguments.1.bounds = "null-terminated"
+fn.IONetworkGetDataHandle.arguments.2.bounds = "single"
 fn.IONetworkSetPacketFiltersMask.arguments.1.bounds = "null-terminated"
 fn.IONetworkGetPacketFiltersMask.arguments.1.bounds = "null-terminated"
+fn.IONetworkGetPacketFiltersMask.arguments.2.bounds = "single"
+
+# pwr_mgt/IOPMLib.h
+fn.IOPMGetAggressiveness.arguments.2.bounds = "single"
+fn.IORegisterApp.arguments.2.bounds = "single"
+fn.IORegisterApp.arguments.4.bounds = "single"
+fn.IORegisterForSystemPower.arguments.1.bounds = "single"
+fn.IORegisterForSystemPower.arguments.3.bounds = "single"
+fn.IODeregisterApp.arguments.0.bounds = "single"
+fn.IODeregisterForSystemPower.arguments.0.bounds = "single"
+fn.IOPMAssertionCreateWithDescription.arguments.7.bounds = "single"
+fn.IOPMAssertionCreateWithProperties.arguments.1.bounds = "single"
+fn.IOPMAssertionDeclareUserActivity.arguments.2.bounds = "single"
+fn.IOPMDeclareNetworkClientActivity.arguments.1.bounds = "single"
+fn.IOPMAssertionCreate.arguments.2.bounds = "single"
+fn.IOPMAssertionCreateWithName.arguments.3.bounds = "single"
+fn.IOPMGetThermalWarningLevel.arguments.0.bounds = "single"
 
 ##
 ## Safety
