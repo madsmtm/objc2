@@ -1,13 +1,13 @@
 #![allow(non_snake_case, clippy::missing_safety_doc)]
 use core::ffi::{c_void, CStr};
 use core::ptr;
-use objc2_core_foundation::{CFDictionary, CFRetained};
+use objc2_core_foundation::{CFDictionary, CFRetained, CFString, CFType};
 
 use crate::{
     io_iterator_t, io_name_t, io_service_t, IONotificationPortRef, IOServiceMatchingCallback,
 };
 
-fn consume(matching: Option<CFRetained<CFDictionary>>) -> *mut CFDictionary {
+fn consume<K, V>(matching: Option<CFRetained<CFDictionary<K, V>>>) -> *mut CFDictionary<K, V> {
     if let Some(matching) = matching {
         CFRetained::into_raw(matching).as_ptr()
     } else {
@@ -27,18 +27,17 @@ fn consume(matching: Option<CFRetained<CFDictionary>>) -> *mut CFDictionary {
 ///
 /// # Safety
 ///
-/// - `matching` generic must be of the correct type.
-/// - `matching` generic must be of the correct type.
+/// - `matching` generic should be of the correct type.
 /// - `matching` might not allow `None`.
 #[inline]
 pub unsafe fn IOServiceGetMatchingService(
     main_port: libc::mach_port_t,
-    matching: Option<CFRetained<CFDictionary>>,
+    matching: Option<CFRetained<CFDictionary<CFString, CFType>>>,
 ) -> io_service_t {
     extern "C-unwind" {
         fn IOServiceGetMatchingService(
             main_port: libc::mach_port_t,
-            matching: *mut CFDictionary,
+            matching: *mut CFDictionary<CFString, CFType>,
         ) -> io_service_t;
     }
 
@@ -59,20 +58,19 @@ pub unsafe fn IOServiceGetMatchingService(
 ///
 /// # Safety
 ///
-/// - `matching` generic must be of the correct type.
-/// - `matching` generic must be of the correct type.
+/// - `matching` generic should be of the correct type.
 /// - `matching` might not allow `None`.
 /// - `existing` must be a valid pointer.
 #[inline]
 pub unsafe fn IOServiceGetMatchingServices(
     main_port: libc::mach_port_t,
-    matching: Option<CFRetained<CFDictionary>>,
+    matching: Option<CFRetained<CFDictionary<CFString, CFType>>>,
     existing: *mut io_iterator_t,
 ) -> libc::kern_return_t {
     extern "C-unwind" {
         fn IOServiceGetMatchingServices(
             main_port: libc::mach_port_t,
-            matching: *mut CFDictionary,
+            matching: *mut CFDictionary<CFString, CFType>,
             existing: *mut io_iterator_t,
         ) -> libc::kern_return_t;
     }
@@ -112,8 +110,7 @@ pub unsafe fn IOServiceGetMatchingServices(
 ///
 /// - `notify_port` must be a valid pointer.
 /// - `notification_type` might not allow `None`.
-/// - `matching` generic must be of the correct type.
-/// - `matching` generic must be of the correct type.
+/// - `matching` generic should be of the correct type.
 /// - `matching` might not allow `None`.
 /// - `callback` must be implemented correctly.
 /// - `ref_con` must be a valid pointer.
@@ -122,7 +119,7 @@ pub unsafe fn IOServiceGetMatchingServices(
 pub unsafe fn IOServiceAddMatchingNotification(
     notify_port: IONotificationPortRef,
     notification_type: Option<&CStr>,
-    matching: Option<CFRetained<CFDictionary>>,
+    matching: Option<CFRetained<CFDictionary<CFString, CFType>>>,
     callback: IOServiceMatchingCallback,
     ref_con: *mut c_void,
     notification: *mut io_iterator_t,
@@ -131,7 +128,7 @@ pub unsafe fn IOServiceAddMatchingNotification(
         fn IOServiceAddMatchingNotification(
             notify_port: IONotificationPortRef,
             notification_type: *const io_name_t,
-            matching: *mut CFDictionary,
+            matching: *mut CFDictionary<CFString, CFType>,
             callback: IOServiceMatchingCallback,
             ref_con: *mut c_void,
             notification: *mut io_iterator_t,

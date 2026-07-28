@@ -1,2 +1,2 @@
 [dev-dependencies]
-objc2-core-foundation = { workspace = true, features = ["CFString"] }
+objc2-core-foundation = { workspace = true, features = ["CFString", "CFNumber"] }

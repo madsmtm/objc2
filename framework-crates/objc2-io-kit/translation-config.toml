@@ -242,8 +242,11 @@ const.kIONetworkLinkNoNetworkChange.use-value = true
 ## Generics.
 ##
 
-# TODO
+# Matching dictionaries use (CFString, CFType)
+fn.IOServiceGetMatchingService.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOServiceGetMatchingServices.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.IOServiceAddNotification.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+fn.IOServiceAddMatchingNotification.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.IOServiceMatchPropertyTable.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.IORegistryEntryCreateCFProperties.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.IOServiceMatching.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
