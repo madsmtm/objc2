@@ -4,6 +4,7 @@ use core::ptr;
 use crate::{kCFBooleanFalse, kCFBooleanTrue, CFBoolean, CFNumber, CFNumberType, CFRetained};
 
 impl CFBoolean {
+    #[inline]
     pub fn new(value: bool) -> &'static CFBoolean {
         if value {
             unsafe { kCFBooleanTrue }
@@ -12,6 +13,7 @@ impl CFBoolean {
         }
     }
 
+    #[inline]
     pub fn as_bool(&self) -> bool {
         self.value()
     }
