@@ -309,8 +309,8 @@ dependencies = [
 
 [[package]]
 name = "clang"
-version = "2.0.0"
-source = "git+https://github.com/madsmtm/clang-rs.git?branch=objc2#89eb928e616c411395cf8eaf682d2b586720a198"
+version = "2.1.0"
+source = "git+https://github.com/KyleMayes/clang-rs.git?branch=objc2#8d645ba2f86b783b07975759c996b088988b3b18"
 dependencies = [
  "clang-sys",
  "libc",
@@ -318,9 +318,9 @@ dependencies = [
 
 [[package]]
 name = "clang-sys"
-version = "1.8.1"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b023947811758c97c59bf9d1c188fd619ad4718dcaa767947df1cadb14f39f4"
+checksum = "157a8ba7b480713b56f4c09fd13fc3e0a22a5dfab8097ba61cbc5feef950788a"
 dependencies = [
  "glob",
  "libc",
