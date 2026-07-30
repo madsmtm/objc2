@@ -297,16 +297,13 @@ where
     Signature: BlockSignature,
     E: ManualBlockEncodingExt<Signature = Signature>,
 {
-    #[cfg(debug_assertions)]
-    {
-        if !E::IS_NONE {
-            // TODO: relax to check for equivalence instead of strict equality.
-            let signature_string = crate::encoding::block_signature_string(
-                Signature::__Args::ENCODINGS,
-                Signature::__Output::ENCODING_RETURN,
-            );
-            assert_eq!(E::ENCODING_CSTR, &*signature_string);
-        }
+    if cfg!(debug_assertions) && !E::IS_NONE {
+        // TODO: relax to check for equivalence instead of strict equality.
+        let signature_string = crate::encoding::block_signature_string(
+            Signature::__Args::ENCODINGS,
+            Signature::__Output::ENCODING_RETURN,
+        );
+        assert_eq!(E::ENCODING_CSTR, &*signature_string);
     }
 }
 
