@@ -3036,7 +3036,18 @@ impl Stmt {
                         Ordering::Greater => writeln!(f, "#[repr(C, align({align}))]")?,
                     }
 
-                    if *is_union || fields.iter().any(|(_, _, field)| field.contains_union()) {
+                    let is_unsized = fields.iter().any(|(_, _, field)| field.is_unsized());
+
+                    if !*is_union && is_unsized {
+                        // #[non_exhaustive] makes the type not FFI safe in
+                        // depending crates, so this has to be done manually.
+                        writeln!(f, "#[allow(clippy::manual_non_exhaustive)]")?;
+                    }
+
+                    if is_unsized {
+                        // Don't add any derives on unsized structs.
+                    } else if *is_union || fields.iter().any(|(_, _, field)| field.contains_union())
+                    {
                         writeln!(f, "#[derive(Clone, Copy)]")?;
                     } else {
                         if fields
@@ -3071,8 +3082,21 @@ impl Stmt {
                             write!(f, "pub ")?;
                         }
                         let name = handle_keyword(name);
-                        writeln!(f, "{name}: {},", ty.record())?;
+                        if *is_union && ty.is_unsized() {
+                            // Required for field to be allowed in union
+                            // (since unsized types don't implement `Copy`).
+                            writeln!(f, "{name}: core::mem::ManuallyDrop<{}>,", ty.record())?;
+                        } else {
+                            writeln!(f, "{name}: {},", ty.record())?;
+                        }
                     }
+
+                    // Add a private field to unsized structs to prevent them
+                    // from being safely constructed in user code.
+                    if !*is_union && is_unsized {
+                        writeln!(f, "_this_is_unsized: (),")?;
+                    }
+
                     writeln!(f, "}}")?;
                     writeln!(f)?;
 

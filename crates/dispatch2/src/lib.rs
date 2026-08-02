@@ -19,6 +19,7 @@
 #![no_std]
 #![allow(unreachable_patterns)]
 #![warn(missing_docs)]
+#![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::undocumented_unsafe_blocks)]
 #![warn(clippy::missing_safety_doc)]

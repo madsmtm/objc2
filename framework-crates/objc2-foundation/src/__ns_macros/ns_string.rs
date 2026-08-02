@@ -1,4 +1,3 @@
-#![allow(missing_copy_implementations)]
 //! Macro for making a static NSString.
 //!
 //! This closely follows what clang does, see:

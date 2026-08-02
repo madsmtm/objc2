@@ -108,6 +108,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed thread-safety of some properties that are only thread-unsafe on iOS.
 * Fixed bitflags implementations to set externally defined flags.
 * **BREAKING**: `UIApplication::sharedApplication` now returns an `Option` (it returns `None` if called before `UIApplication::main()`).
+* **BREAKING**: Improved support for unsized structs.
 
 ## [0.3.2] - 2025-10-04
 [0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2

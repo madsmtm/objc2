@@ -46,7 +46,6 @@ mod context {
 
     #[repr(C)]
     #[derive(Debug)]
-    #[allow(missing_copy_implementations)]
     #[allow(unreachable_pub)]
     pub struct _CGLContextObject {
         inner: [u8; 0],

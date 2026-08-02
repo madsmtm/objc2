@@ -116,6 +116,7 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 #![cfg_attr(docsrs, doc(auto_cfg(hide(feature, values("unstable-objfw")))))]
 #![warn(missing_docs)]
+#![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]

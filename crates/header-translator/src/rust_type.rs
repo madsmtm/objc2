@@ -978,7 +978,7 @@ impl PointeeTy {
                 let lifetime = if *no_escape { "_" } else { "static" };
                 write!(f, "block2::Block<'{lifetime}, fn(")?;
                 for arg in arguments {
-                    write!(f, "{}, ", arg.plain(allow_generic_param))?;
+                    write!(f, "{}, ", arg.argument(allow_generic_param))?;
                 }
                 write!(f, ")")?;
                 write!(
@@ -1567,7 +1567,7 @@ pub enum Ty {
     },
     Array {
         element_type: Box<Self>,
-        num_elements: usize,
+        num_elements: Option<usize>,
     },
     Enum {
         id: ItemIdentifier,
@@ -2423,14 +2423,19 @@ impl Ty {
                     // typedef NSArray<NSNumber*> MPSShape;
                 }
 
-                if array_decays_to_pointer && matches!(inner.through_wrapper(), Self::Array { .. })
-                {
+                // Unsized types like `struct Foo { int arr[]; }` also decays
+                // to a pointer.
+                if array_decays_to_pointer && (inner.is_array() || inner.is_unsized()) {
                     Self::Pointer {
                         nullability,
                         read: true,
                         written: !is_const,
                         lifetime,
-                        bounds: PointerBounds::Single,
+                        bounds: if inner.is_unsized() {
+                            PointerBounds::CountedBy("Unknown".to_string())
+                        } else {
+                            PointerBounds::Single
+                        },
                         pointee: Box::new(Self::TypeDef {
                             id,
                             to: Box::new(inner),
@@ -2469,42 +2474,35 @@ impl Ty {
                     result_type: Box::new(result_type),
                 })
             }
-            TypeKind::IncompleteArray => {
+            TypeKind::IncompleteArray | TypeKind::ConstantArray => {
                 let mut parser = AttributeParser::new(&attributed_name, &name);
                 let lifetime = parser.lifetime();
                 parser.check();
 
-                let ty = ty
-                    .get_element_type()
-                    .expect("incomplete array to have element type");
-
-                let pointee = Self::parse(ty, false, context);
-                Self::Pointer {
-                    nullability,
-                    read: true,
-                    written: !is_const,
-                    lifetime,
-                    bounds: PointerBounds::CountedBy("Unknown".into()),
-                    pointee: Box::new(pointee),
-                }
-            }
-            TypeKind::ConstantArray => {
                 // Only top-level arrays decay to pointers. E.g.
                 // int[4][2] -> int(*)[2]
                 let element = ty.get_element_type().expect("array to have element type");
                 let element_type = Box::new(Self::parse(element, false, context));
 
-                let num_elements = ty
-                    .get_size()
-                    .expect("constant array to have element length");
+                let num_elements = ty.get_size();
+                debug_assert_eq!(
+                    num_elements.is_none(),
+                    ty.get_kind() == TypeKind::IncompleteArray
+                );
+
+                let arr = Self::Array {
+                    element_type,
+                    num_elements,
+                };
 
                 if array_decays_to_pointer {
                     Self::Pointer {
                         nullability,
                         read: true,
                         written: !is_const,
-                        lifetime: Lifetime::Unspecified,
-                        // The ABI of arrays is such that `&[T; N]` -> `*const T`.
+                        lifetime,
+                        // The ABI of Rust arrays is such that
+                        // `&[T; N]` -> `*const T`.
                         //
                         // So in that sense, since the array already contains
                         // bounds information in its type, this is a "single"
@@ -2517,17 +2515,18 @@ impl Ty {
                         // directly, they must be either wrapped in a struct,
                         // or given as a parameter. So we don't have to handle
                         // that.
-                        bounds: PointerBounds::Single,
-                        pointee: Box::new(Self::Array {
-                            element_type,
-                            num_elements,
-                        }),
+                        bounds: if arr.is_unsized() {
+                            PointerBounds::CountedBy("Unknown".into())
+                        } else {
+                            PointerBounds::Single
+                        },
+                        pointee: Box::new(arr),
                     }
                 } else {
-                    Self::Array {
-                        element_type,
-                        num_elements,
+                    if lifetime != Lifetime::Unspecified {
+                        error!(?lifetime, "unknown lifetime on array");
                     }
+                    arr
                 }
             }
             _ => {
@@ -2686,8 +2685,17 @@ impl Ty {
                 };
                 TypeSafety::unsafe_in_argument(reason).merge(pointee.safety().ignore_in_argument())
             }
-            // Safe as long as the inner element type is.
-            Self::Array { element_type, .. } => element_type.safety().context("array element"),
+            // Sized arrays are safe as long as the inner element type is.
+            Self::Array { element_type, .. } => {
+                let mut safety = element_type.safety().context("array element");
+
+                // Unsized arrays are not yet soundly representable in Rust.
+                if self.is_unsized() {
+                    safety = safety.merge(TypeSafety::unknown_in_argument("has unclear size"));
+                }
+
+                safety
+            }
             // Enums are safe in both positions.
             //
             // Note that enums don't strictly prevent passing invalid
@@ -2706,6 +2714,7 @@ impl Ty {
                             field_safety = field_safety
                                 .merge(TypeSafety::unsafe_in_argument("must be set correctly"));
                         }
+
                         safety.merge(field_safety.context(format!("struct field `{field_name}`")))
                     })
             }
@@ -2731,7 +2740,7 @@ impl Ty {
                 nullability,
                 pointee,
                 ..
-            } => {
+            } if !pointee.is_unsized() => {
                 let mut safety = pointee.safety();
                 if *nullability == Nullability::Unspecified {
                     // Mark as unknown in argument, to avoid situations where
@@ -2842,11 +2851,8 @@ impl Ty {
         match self {
             Self::Primitive(_) | Self::Simd { .. } | Self::Sel { .. } => None,
             Self::Pointee(pointee) => pointee.implementable(),
-            Self::Pointer { pointee, .. }
-            | Self::Array {
-                element_type: pointee,
-                ..
-            } => pointee.implementable(),
+            Self::Pointer { pointee, .. } => pointee.implementable(),
+            Self::Array { element_type, .. } => element_type.implementable(),
             // TypeDefs aren't implement-able, even if their underlying type
             // is, since the type might come from another crate.
             //
@@ -2861,6 +2867,40 @@ impl Ty {
                 Some(ItemTree::new(id.clone(), fields))
             }
             Self::Result { ty, .. } => ty.implementable(),
+        }
+    }
+
+    fn is_array(&self) -> bool {
+        matches!(self.through_wrapper(), Self::Array { .. })
+    }
+
+    /// Whether the type doesn't have a statically known size.
+    ///
+    /// These requires `extern type` in some shape or form to emit correctly.
+    pub(crate) fn is_unsized(&self) -> bool {
+        match self.through_wrapper() {
+            Self::Array {
+                num_elements: None, ..
+            } => true,
+            // The only time where you'd realistically use a 0- or 1-sized
+            // array in C (apart from in macro-heavy code) would be if you
+            // cannot express actual size in the type system.
+            //
+            // These uses _should_ just use incomplete arrays (i.e. the size
+            // shouldn't be specified), but Apple's headers don't seem to do
+            // that very often.
+            //
+            // As such, we assume that 0- and 1-sized arrays are "unsized".
+            Self::Array {
+                num_elements: Some(0) | Some(1),
+                ..
+            } => true,
+            Self::Array { element_type, .. } => element_type.is_unsized(),
+            Self::Union { fields, .. } => fields.iter().any(|(_, field)| field.is_unsized()),
+            // Sized-ness is "infectious", so structs are unsized if just one
+            // of their fields are.
+            Self::Struct { fields, .. } => fields.iter().any(|(_, field)| field.is_unsized()),
+            _ => false,
         }
     }
 
@@ -3126,8 +3166,8 @@ impl Ty {
             // Only arrays up to size 32 implement Default.
             Self::Array {
                 element_type,
-                num_elements,
-            } if *num_elements <= 32 => element_type.has_zero_default(),
+                num_elements: Some(0..=32),
+            } => element_type.has_zero_default(),
             // Almost all enums have a default, and the type-system will catch
             // errors here, so let's keep the check simple.
             Self::Enum { id, ty } if id.name != "MIDINotificationMessageID" => {
@@ -3192,7 +3232,7 @@ impl Ty {
                         // it will be for all of Apple's frameworks.
                         write!(f, "unsafe extern \"C-unwind\" fn(")?;
                         for arg in arguments {
-                            write!(f, "{},", arg.plain(allow_generic_param))?;
+                            write!(f, "{},", arg.argument(allow_generic_param))?;
                         }
                         if *is_variadic {
                             write!(f, "...")?;
@@ -3226,11 +3266,18 @@ impl Ty {
                 Self::Array {
                     element_type,
                     num_elements,
-                } => write!(
-                    f,
-                    "[{}; {num_elements}]",
-                    element_type.plain(allow_generic_param)
-                ),
+                } => {
+                    // TODO: Use `extern type` here when `self.is_unsized()`.
+                    //
+                    // For now, we emit unsized types as `[T; N]`, and instead
+                    // require the user to offset the pointer correctly by
+                    // making unsized types only accessible through pointers.
+                    //
+                    // Note that incomplete arrays fall back to a 0-sized
+                    // array here, this is the same as done in type-encodings.
+                    let n = num_elements.unwrap_or(0);
+                    write!(f, "[{}; {n}]", element_type.plain(allow_generic_param))
+                }
                 Self::Struct { id, .. } => {
                     write!(f, "{}", id.path())
                 }
@@ -3256,6 +3303,41 @@ impl Ty {
         FormatterFn(move |f| match self {
             Self::Primitive(Primitive::Void) => write!(f, "c_void"),
             Self::Pointee(pointee) => write!(f, "{}", pointee.behind_pointer(allow_generic_param)),
+            _ => write!(f, "{}", self.plain(allow_generic_param)),
+        })
+    }
+
+    fn argument(&self, allow_generic_param: bool) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| match self {
+            Self::Pointer {
+                nullability,
+                read,
+                written,
+                lifetime: _,
+                bounds: _,
+                pointee,
+            } if pointee.is_unsized() => {
+                let pointee = maybemaybeuninit(
+                    *read,
+                    FormatterFn(|f| {
+                        match &**pointee {
+                            // Unsized arrays in fn pointer arguments are just emitted as
+                            // the element type.
+                            Self::Array { element_type, .. } => {
+                                write!(f, "{}", element_type.behind_pointer(allow_generic_param))
+                            }
+                            _ => write!(f, "{}", pointee.behind_pointer(allow_generic_param)),
+                        }
+                    }),
+                );
+                if *nullability == Nullability::NonNull {
+                    write!(f, "NonNull<{pointee}>")
+                } else if *written {
+                    write!(f, "*mut {pointee}")
+                } else {
+                    write!(f, "*const {pointee}")
+                }
+            }
             _ => write!(f, "{}", self.plain(allow_generic_param)),
         })
     }
@@ -3791,7 +3873,9 @@ impl Ty {
                 lifetime,
                 bounds: PointerBounds::Single,
                 pointee,
-            } if !matches!(**pointee, Self::Pointee(PointeeTy::Fn { .. })) => {
+            } if !matches!(**pointee, Self::Pointee(PointeeTy::Fn { .. }))
+                && !pointee.is_unsized() =>
+            {
                 if *lifetime == Lifetime::Autoreleasing {
                     error!(?self, "autoreleasing in fn argument");
                 }
@@ -3810,7 +3894,7 @@ impl Ty {
                     write!(f, "Option<&{mut_}{inner}>")
                 }
             }
-            _ => write!(f, "{}", self.plain(allow_generic_param)),
+            _ => write!(f, "{}", self.argument(allow_generic_param)),
         })
     }
 

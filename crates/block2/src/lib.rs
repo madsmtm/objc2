@@ -366,6 +366,7 @@
 #![no_std]
 #![allow(rustdoc::broken_intra_doc_links)] // FIXME link to objc2::topics
 #![warn(missing_docs)]
+#![warn(missing_copy_implementations)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::missing_errors_doc)]
 #![warn(clippy::missing_panics_doc)]
