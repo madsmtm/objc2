@@ -35,6 +35,10 @@ const.MPSNDArrayConstantMultiDestSrcAddressingIndex.skipped = false
 const.MPSNDArrayConstantMultiDestDstAddressingIndex.skipped = false
 const.MPSUserAvailableFunctionConstantStartIndex.skipped = false
 
+# Used to add availability information, but the actual availability
+# information we want is on the protocol implementation...
+class.MPSImageDescriptor.methods."copyWithZone:".skipped = true
+
 ##
 ## Safety
 ##

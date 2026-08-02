@@ -73,3 +73,8 @@ class.NSValue.unsafe = true
 # Must be unsafe, non-block parameters have `NS_SWIFT_SENDABLE` which we don't
 # know how to handle.
 class.AVContentKeySession.methods."processContentKeyRequestWithIdentifier:initializationData:options:".unsafe = true
+
+# We don't really care about this being nonisolated.
+class.AVPlayerItem.methods."copyWithZone:".skipped = true
+# Ignore the extra docs on when this throws.
+class.AVCaptionRegion.methods."mutableCopyWithZone:".skipped = true

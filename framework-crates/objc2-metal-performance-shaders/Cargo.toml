@@ -311,7 +311,6 @@ MPSImage = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSZone",
     "objc2-metal/MTLAllocation",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLDevice",

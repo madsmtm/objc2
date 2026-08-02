@@ -462,7 +462,6 @@ AVCaption = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSZone",
 ]
 AVCaptionConversionValidator = [
     "objc2-foundation/NSArray",
@@ -751,7 +750,6 @@ AVPlayerItem = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
-    "objc2-foundation/NSZone",
 ]
 AVPlayerItemIntegratedTimeline = [
     "objc2-foundation/NSArray",
