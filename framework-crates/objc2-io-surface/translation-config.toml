@@ -42,9 +42,11 @@ class.IOSurface.methods."setPurgeable:oldState:".arguments.1.bounds = "single"
 # SAFETY: IOSurface methods and functions are well-behaved.
 unsafe-default-safety.documentation-is-reviewed = true
 
-# TODO(breaking): Maybe mark as `unsafe`? Takes `AnyObject` generic.
-class.IOSurface.methods."initWithProperties:".unsafe = false
-class.IOSurface.methods."setAllAttachments:".unsafe = false
+# Surface properties must be specified correctly, especially `kIOSurfaceCacheMode`.
+#
+# Changing surface _values_ (which are distinct from properties) is fine though.
+fn.IOSurfaceCreate.unsafe = true
+class.IOSurface.methods."initWithProperties:".unsafe = true
 
 # Unsure if `task_id_token_t` means that this remaps the underlying memory
 # somehow?
