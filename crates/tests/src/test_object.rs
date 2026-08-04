@@ -82,7 +82,7 @@ extern_conformance!(
     unsafe impl MyTestProtocol for MyTestObject {}
 );
 
-#[cfg(all(target_vendor = "apple", target_arch = "aarch64"))]
+#[cfg(all(target_vendor = "apple", not(target_arch = "x86")))]
 #[used]
 static FIX_LINKING: &AnyClass = {
     extern "C" {

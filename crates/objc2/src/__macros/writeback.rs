@@ -103,10 +103,6 @@ impl<T: Message> Drop for WritebackOnDrop<T> {
         // value as was given (and it would be unnecessary work to write that
         // value back into `ptr` again).
         let _new = ManuallyDrop::new(new);
-        #[cfg(debug_assertions)]
-        if _new.is_none() {
-            panic!("found that NULL was written to `&mut Retained<_>`, which is UB! You should handle this with `&mut Option<Retained<_>>` instead");
-        }
 
         // SAFETY: The old pointer was valid when it was constructed.
         //
@@ -115,6 +111,13 @@ impl<T: Message> Drop for WritebackOnDrop<T> {
         // or the message send didn't modify the pointer and we instead have
         // +1 retain count from the `retain` above.
         let _: Retained<T> = unsafe { Retained::new_nonnull(self.old) };
+
+        // Check for NULL in new value _after_ we've released the old value,
+        // so that we don't leak it in that case.
+        #[cfg(debug_assertions)]
+        if _new.is_none() {
+            panic!("found that NULL was written to `&mut Retained<_>`, which is UB! You should handle this with `&mut Option<Retained<_>>` instead");
+        }
     }
 }
 

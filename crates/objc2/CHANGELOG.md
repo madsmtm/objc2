@@ -110,6 +110,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Allow declaring classes with ivars that require high alignment.
 * Allow `return` in methods defined in `define_class!`.
 * Improved Rust-Analyzer support in `define_class!`.
+* Fixed leak when triggering debug assertion in writeback parameters.
 
 
 ## [0.6.4] - 2026-02-26
