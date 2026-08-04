@@ -387,6 +387,9 @@ fn.NSDecimalMultiplyByPowerOf10.arguments.1.bounds = "single"
 fn.NSDecimalString.arguments.0.bounds = "single"
 class.NSDecimalNumber.methods.objCType.return.bounds = "unsafe" # TODO: null-terminated, but unknown lifetime?
 
+fn.NSSetUncaughtExceptionHandler.arguments.0.bounds = "unsafe" # Incorrect type for function pointer
+fn.NSGetUncaughtExceptionHandler.return.bounds = "unsafe" # Incorrect type for function pointer
+
 protocol.NSFastEnumeration.methods."countByEnumeratingWithState:objects:count:".arguments.0.bounds = "single"
 protocol.NSFastEnumeration.methods."countByEnumeratingWithState:objects:count:".arguments.1.bounds.counted-by = "len"
 
@@ -440,11 +443,10 @@ class.NSMethodSignature.methods."signatureWithObjCTypes:".arguments.0.bounds = "
 class.NSMethodSignature.methods."getArgumentTypeAtIndex:".return.bounds = "unsafe" # Lifetime: bound to self or autoreleased?
 class.NSMethodSignature.methods.methodReturnType.return.bounds = "unsafe" # Lifetime: bound to self or autoreleased?
 
-# TODO: Re-enable once we no longer emit this method as `extern "C"`
-# fn.NSGetSizeAndAlignment.arguments.0.bounds = "unsafe"
+fn.NSGetSizeAndAlignment.arguments.0.bounds = "null-terminated"
 fn.NSGetSizeAndAlignment.arguments.1.bounds = "single"
 fn.NSGetSizeAndAlignment.arguments.2.bounds = "single"
-fn.NSGetSizeAndAlignment.return.bounds = "unsafe" # Lifetime: bound to argument `type_ptr` (and still null-terminated)
+fn.NSGetSizeAndAlignment.return.bounds = "unsafe" # null-terminated + lifetime bound to argument `type_ptr`
 
 class.NSPropertyListSerialization.methods."propertyListWithData:options:format:error:".arguments.2.bounds = "single"
 class.NSPropertyListSerialization.methods."propertyListWithStream:options:format:error:".arguments.2.bounds = "single"

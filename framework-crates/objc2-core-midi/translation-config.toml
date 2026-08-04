@@ -34,3 +34,69 @@ fn.MIDIGetSerialPortDrivers.arguments.0.lifetime = "out-pointer-retained"
 fn.MIDIObjectGetDictionaryProperty.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.MIDIObjectSetDictionaryProperty.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.MIDIGetSerialPortDrivers.arguments.0.generics = ["CoreFoundation.CFString.CFString"]
+
+##
+## Pointer bounds
+##
+
+fn.MIDIClientCreate.arguments.3.bounds = "single"
+fn.MIDIClientCreateWithBlock.arguments.1.bounds = "single"
+fn.MIDIInputPortCreateWithProtocol.arguments.3.bounds = "single"
+fn.MIDIInputPortCreate.arguments.4.bounds = "single"
+fn.MIDIInputPortCreateWithBlock.arguments.2.bounds = "single"
+fn.MIDIOutputPortCreate.arguments.2.bounds = "single"
+fn.MIDIEntityGetDevice.arguments.1.bounds = "single"
+fn.MIDIEndpointGetEntity.arguments.1.bounds = "single"
+fn.MIDIDestinationCreateWithProtocol.arguments.3.bounds = "single"
+fn.MIDIDestinationCreate.arguments.4.bounds = "single"
+fn.MIDIDestinationCreateWithBlock.arguments.2.bounds = "single"
+fn.MIDISourceCreateWithProtocol.arguments.3.bounds = "single"
+fn.MIDISourceCreate.arguments.2.bounds = "single"
+fn.MIDIObjectGetIntegerProperty.arguments.2.bounds = "single"
+fn.MIDIObjectFindByUniqueID.arguments.1.bounds = "single"
+fn.MIDIObjectFindByUniqueID.arguments.2.bounds = "single"
+fn.MIDISendEventList.arguments.2.bounds = "single"
+fn.MIDISend.arguments.2.bounds = "single"
+fn.MIDISendSysex.arguments.0.bounds = "single"
+fn.MIDISendUMPSysex.arguments.0.bounds = "single"
+fn.MIDISendUMPSysex8.arguments.0.bounds = "single"
+fn.MIDIEventPacketSysexBytesForGroup.arguments.0.bounds = "unsafe" # MIDIEventPacket
+fn.MIDIReceivedEventList.arguments.1.bounds = "single"
+fn.MIDIReceived.arguments.1.bounds = "single"
+fn.MIDIEventPacketNext.arguments.0.bounds = "unsafe" # MIDIEventPacket
+fn.MIDIEventPacketNext.return.bounds = "unsafe" # MIDIEventPacket
+fn.MIDIEventListInit.arguments.0.bounds = "single"
+fn.MIDIEventListInit.return.bounds = "unsafe" # MIDIEventPacket
+fn.MIDIEventListAdd.arguments.0.bounds = "single"
+fn.MIDIEventListAdd.arguments.2.bounds = "unsafe" # MIDIEventPacket
+fn.MIDIEventListAdd.arguments.5.bounds.counted-by = "word_count"
+fn.MIDIEventListAdd.return.bounds = "unsafe" # MIDIEventPacket
+fn.MIDIPacketNext.arguments.0.bounds = "unsafe" # MIDIPacket
+fn.MIDIPacketNext.return.bounds = "unsafe" # MIDIPacket
+fn.MIDIPacketListInit.arguments.0.bounds = "single"
+fn.MIDIPacketListInit.return.bounds = "unsafe" # MIDIPacket
+fn.MIDIPacketListAdd.arguments.0.bounds = "single"
+fn.MIDIPacketListAdd.arguments.2.bounds = "unsafe" # MIDIPacket
+fn.MIDIPacketListAdd.arguments.5.bounds.counted-by = "n_data"
+fn.MIDIPacketListAdd.return.bounds = "unsafe" # MIDIPacket
+
+fn.MIDISetupCreate.arguments.0.bounds = "single"
+fn.MIDISetupGetCurrent.arguments.0.bounds = "single"
+fn.MIDISetupFromData.arguments.1.bounds = "single"
+fn.MIDIDeviceNewEntity.arguments.6.bounds = "single"
+fn.MIDIDeviceAddEntity.arguments.5.bounds = "single"
+fn.MIDIExternalDeviceCreate.arguments.3.bounds = "single"
+
+fn.MIDIThruConnectionParamsSize.arguments.0.bounds = "single"
+fn.MIDIThruConnectionParamsInitialize.arguments.0.bounds = "single"
+fn.MIDIThruConnectionCreate.arguments.2.bounds = "single"
+
+fn.MIDIDeviceCreate.arguments.4.bounds = "single"
+fn.MIDIEndpointGetRefCons.arguments.1.bounds = "single"
+fn.MIDIEndpointGetRefCons.arguments.2.bounds = "single"
+fn.MIDI1UPSysExArray.arguments.2.bounds = "unsafe" # begin
+fn.MIDI1UPSysExArray.arguments.3.bounds = "unsafe" # end
+fn.MIDI2StreamMessageFromData.arguments.2.bounds.sized-by = "length"
+fn.MIDI2EndpointNameNotificationMessage.arguments.1.bounds.sized-by = "length"
+fn.MIDI2EndpointProductInstanceIDNotificationMessage.arguments.1.bounds.sized-by = "length"
+fn.MIDI2FunctionBlockNameNotificationMessage.arguments.2.bounds.sized-by = "length"

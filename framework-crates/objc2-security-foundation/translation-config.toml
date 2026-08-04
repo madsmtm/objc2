@@ -4,3 +4,15 @@ required-crates = ["objc2", "objc2-foundation"]
 custom-lib-rs = true
 macos = "10.3"
 maccatalyst = "13.0"
+
+# Pointer bounds
+class.SFAuthorization.methods."authorizationWithFlags:rights:environment:".arguments.1.bounds = "single"
+class.SFAuthorization.methods."authorizationWithFlags:rights:environment:".arguments.2.bounds = "single"
+class.SFAuthorization.methods."initWithFlags:rights:environment:".arguments.1.bounds = "single"
+class.SFAuthorization.methods."initWithFlags:rights:environment:".arguments.2.bounds = "single"
+class.SFAuthorization.methods."obtainWithRights:flags:environment:authorizedRights:error:".arguments.0.bounds = "single"
+class.SFAuthorization.methods."obtainWithRights:flags:environment:authorizedRights:error:".arguments.2.bounds = "single"
+class.SFAuthorization.methods."obtainWithRights:flags:environment:authorizedRights:error:".arguments.3.bounds = "single"
+class.SFAuthorization.methods."permitWithRights:flags:environment:authorizedRights:".arguments.0.bounds = "single"
+class.SFAuthorization.methods."permitWithRights:flags:environment:authorizedRights:".arguments.2.bounds = "single"
+class.SFAuthorization.methods."permitWithRights:flags:environment:authorizedRights:".arguments.3.bounds = "single"

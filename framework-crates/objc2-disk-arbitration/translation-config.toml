@@ -34,3 +34,6 @@ fn.DARegisterDiskMountApprovalCallback.arguments.1.generics = ["CoreFoundation.C
 fn.DARegisterDiskUnmountApprovalCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.DARegisterDiskEjectApprovalCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.DARegisterDiskPeekCallback.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+fn.DADiskCreateFromBSDName.arguments.2.bounds = "null-terminated"
+fn.DADiskGetBSDName.return.bounds = "unsafe" # null-terminated but unclear lifetime

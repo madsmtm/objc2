@@ -12,6 +12,38 @@ external.CHHapticEngine.module = "CoreHaptics.CHHapticEngine"
 # Needs `IOHIDDeviceRef` from IOKit
 class.GCController.methods."supportsHIDDevice:".skipped = true
 
+fn.NSDataFromGCGamepadSnapShotDataV100.implementor = "GameController.GCGamepadSnapshot.GCGamepadSnapShotDataV100"
+fn.NSDataFromGCGamepadSnapShotDataV100.renamed = "to_ns_data"
+fn.NSDataFromGCExtendedGamepadSnapshotData.implementor = "GameController.GCExtendedGamepadSnapshot.GCExtendedGamepadSnapshotData"
+fn.NSDataFromGCExtendedGamepadSnapshotData.renamed = "to_ns_data"
+fn.NSDataFromGCExtendedGamepadSnapShotDataV100.implementor = "GameController.GCExtendedGamepadSnapshot.GCExtendedGamepadSnapShotDataV100"
+fn.NSDataFromGCExtendedGamepadSnapShotDataV100.renamed = "to_ns_data"
+fn.NSDataFromGCMicroGamepadSnapshotData.implementor = "GameController.GCMicroGamepadSnapshot.GCMicroGamepadSnapshotData"
+fn.NSDataFromGCMicroGamepadSnapshotData.renamed = "to_ns_data"
+fn.NSDataFromGCMicroGamepadSnapShotDataV100.implementor = "GameController.GCMicroGamepadSnapshot.GCMicroGamepadSnapShotDataV100"
+fn.NSDataFromGCMicroGamepadSnapShotDataV100.renamed = "to_ns_data"
+
+##
+## Pointer bounds
+##
+
+fn.GCGamepadSnapShotDataV100FromNSData.arguments.0.bounds = "single"
+fn.NSDataFromGCGamepadSnapShotDataV100.arguments.0.bounds = "single"
+fn.GCExtendedGamepadSnapshotDataFromNSData.arguments.0.bounds = "single"
+fn.NSDataFromGCExtendedGamepadSnapshotData.arguments.0.bounds = "single"
+fn.GCExtendedGamepadSnapShotDataV100FromNSData.arguments.0.bounds = "single"
+fn.NSDataFromGCExtendedGamepadSnapShotDataV100.arguments.0.bounds = "single"
+fn.GCMicroGamepadSnapshotDataFromNSData.arguments.0.bounds = "single"
+fn.NSDataFromGCMicroGamepadSnapshotData.arguments.0.bounds = "single"
+fn.GCMicroGamepadSnapShotDataV100FromNSData.arguments.0.bounds = "single"
+fn.NSDataFromGCMicroGamepadSnapShotDataV100.arguments.0.bounds = "single"
+
+fn.NSDataFromGCGamepadSnapShotDataV100.arguments.0.written = false
+fn.NSDataFromGCExtendedGamepadSnapshotData.arguments.0.written = false
+fn.NSDataFromGCExtendedGamepadSnapShotDataV100.arguments.0.written = false
+fn.NSDataFromGCMicroGamepadSnapshotData.arguments.0.written = false
+fn.NSDataFromGCMicroGamepadSnapShotDataV100.arguments.0.written = false
+
 ##
 ## Safety
 ##

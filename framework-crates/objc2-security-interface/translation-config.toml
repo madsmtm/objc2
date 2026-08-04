@@ -7,3 +7,12 @@ macos = "10.3"
 # Uses NSCancelButton and NSOKButton, which have a different type in AppKit.
 const.SFButtonTypeCancel.use-value = true
 const.SFButtonTypeOK.use-value = true
+
+# Pointer bounds
+class.SFAuthorizationPluginView.methods."initWithCallbacks:andEngineRef:".arguments.0.bounds = "single"
+class.SFAuthorizationPluginView.methods.callbacks.return.bounds = "single"
+class.SFAuthorizationView.methods."setAuthorizationRights:".arguments.0.bounds = "single"
+class.SFAuthorizationView.methods.authorizationRights.return.bounds = "single"
+class.SFKeychainSettingsPanel.methods."runModalForSettings:keychain:".arguments.0.bounds = "single"
+class.SFKeychainSettingsPanel.methods."beginSheetForWindow:modalDelegate:didEndSelector:contextInfo:settings:keychain:".arguments.4.bounds = "single"
+# TODO: SecKeychainSettings in above method might need 'static lifetime?

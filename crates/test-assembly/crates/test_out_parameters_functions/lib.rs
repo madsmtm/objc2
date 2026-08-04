@@ -21,14 +21,19 @@ fn strong_some_none(trust: &SecTrust) -> Option<CFRetained<CFError>> {
 #[export_name = "fn3_autoreleasing_none"]
 fn autoreleasing_none(clock: &CMClock) -> i32 {
     // We should have a branch and a CFRetain here.
-    unsafe { CMAudioDeviceClockGetAudioDevice(clock, None, &mut 0, &mut 0) }
+    unsafe { CMAudioDeviceClockGetAudioDevice(clock, None, Some(&mut 0), Some(&mut 0)) }
 }
 
 #[export_name = "fn4_autoreleasing_some_none"]
 fn autoreleasing_some_none(clock: &CMClock) -> Option<CFRetained<CFString>> {
     let mut device_uid_out = None;
     let _ = unsafe {
-        CMAudioDeviceClockGetAudioDevice(clock, Some(&mut device_uid_out), &mut 0, &mut 0)
+        CMAudioDeviceClockGetAudioDevice(
+            clock,
+            Some(&mut device_uid_out),
+            Some(&mut 0),
+            Some(&mut 0),
+        )
     };
     // We should have a branch and a CFRetain here.
     device_uid_out

@@ -7,3 +7,10 @@ maccatalyst = "6.0"
 ios = "6.0"
 tvos = "9.0"
 visionos = "1.0"
+
+# Pointer bounds
+fn.MTAudioProcessingTapCreate.arguments.1.bounds = "single"
+fn.MTAudioProcessingTapGetSourceAudio.arguments.2.bounds = "single"
+fn.MTAudioProcessingTapGetSourceAudio.arguments.3.bounds = "single"
+fn.MTAudioProcessingTapGetSourceAudio.arguments.4.bounds = "single"
+fn.MTAudioProcessingTapGetSourceAudio.arguments.5.bounds = "single"

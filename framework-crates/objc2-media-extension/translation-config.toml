@@ -3,3 +3,16 @@ crate = "objc2-media-extension"
 required-crates = ["objc2", "objc2-foundation"]
 macos = "15.0"
 maccatalyst = "18.0"
+
+# Pointer bounds
+protocol.MESampleCursor.methods."refineSampleLocation:refinementData:refinementDataLength:refinedLocation:error:".arguments.1.bounds.sized-by = "refinement_data_length"
+protocol.MESampleCursor.methods."refineSampleLocation:refinementData:refinementDataLength:refinedLocation:error:".arguments.3.bounds = "single"
+class.MEByteSource.methods."readDataOfLength:fromOffset:toDestination:bytesRead:error:".arguments.3.bounds.sized-by = "length"
+class.MERAWProcessingBooleanParameter.methods."hasNeutralValue:".arguments.0.bounds = "single"
+class.MERAWProcessingBooleanParameter.methods."hasCameraValue:".arguments.0.bounds = "single"
+class.MERAWProcessingIntegerParameter.methods."hasNeutralValue:".arguments.0.bounds = "single"
+class.MERAWProcessingIntegerParameter.methods."hasCameraValue:".arguments.0.bounds = "single"
+class.MERAWProcessingFloatParameter.methods."hasNeutralValue:".arguments.0.bounds = "single"
+class.MERAWProcessingFloatParameter.methods."hasCameraValue:".arguments.0.bounds = "single"
+class.MERAWProcessingListParameter.methods."hasNeutralValue:".arguments.0.bounds = "single"
+class.MERAWProcessingListParameter.methods."hasCameraValue:".arguments.0.bounds = "single"

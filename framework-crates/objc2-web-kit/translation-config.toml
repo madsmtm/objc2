@@ -10,3 +10,6 @@ typedef.NSAttributedStringCompletionHandler.sendable = true
 
 # Not marked as nullable, but should be.
 class.WKNavigationAction.methods.sourceFrame.return.nullability = "nullable"
+
+class.NSObject.methods."webScriptNameForKey:".arguments.0.bounds = "null-terminated"
+class.NSObject.methods."isKeyExcludedFromWebScript:".arguments.0.bounds = "null-terminated"

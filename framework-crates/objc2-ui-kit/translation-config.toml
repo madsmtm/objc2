@@ -183,8 +183,38 @@ class.UITextDragPreviewRenderer.methods."adjustFirstLineRect:bodyRect:lastLineRe
 class.UITextDragPreviewRenderer.methods."adjustFirstLineRect:bodyRect:lastLineRect:textOrigin:".arguments.1.bounds = "single"
 class.UITextDragPreviewRenderer.methods."adjustFirstLineRect:bodyRect:lastLineRect:textOrigin:".arguments.2.bounds = "single"
 
-# TODO: class.NSLayoutManager.methods.*.bounds = "...", probably same as in AppKit.
+
+class.NSLayoutManager.methods."setGlyphs:properties:characterIndexes:font:forGlyphRange:".arguments.0.bounds = "unsafe" # Possibly font.numberOfGlyphs()?
+class.NSLayoutManager.methods."setGlyphs:properties:characterIndexes:font:forGlyphRange:".arguments.1.bounds = "unsafe" # Possibly font.numberOfGlyphs()?
+class.NSLayoutManager.methods."setGlyphs:properties:characterIndexes:font:forGlyphRange:".arguments.2.bounds = "unsafe" # Possibly font.numberOfGlyphs()?
+class.NSLayoutManager.methods."CGGlyphAtIndex:isValidIndex:".arguments.1.bounds = "single"
+class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".arguments.1.bounds.counted-by = "glyphRange.length"
+class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".arguments.2.bounds.counted-by = "glyphRange.length"
+class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".arguments.3.bounds.counted-by = "glyphRange.length"
+class.NSLayoutManager.methods."getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:".arguments.4.bounds.counted-by = "glyphRange.length"
+class.NSLayoutManager.methods."getFirstUnlaidCharacterIndex:glyphIndex:".arguments.0.bounds = "single"
+class.NSLayoutManager.methods."getFirstUnlaidCharacterIndex:glyphIndex:".arguments.1.bounds = "single"
+class.NSLayoutManager.methods."glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:".arguments.2.bounds = "single"
+class.NSLayoutManager.methods."characterIndexForPoint:inTextContainer:fractionOfDistanceBetweenInsertionPoints:".arguments.2.bounds = "single"
+class.NSLayoutManager.methods."getLineFragmentInsertionPointsForCharacterAtIndex:alternatePositions:inDisplayOrder:positions:characterIndexes:".arguments.3.bounds = "unsafe" # Unclear?
+class.NSLayoutManager.methods."getLineFragmentInsertionPointsForCharacterAtIndex:alternatePositions:inDisplayOrder:positions:characterIndexes:".arguments.4.bounds = "unsafe" # Unclear?
+class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:".arguments.0.bounds.counted-by = "glyph_count"
+class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:".arguments.1.bounds.counted-by = "glyph_count"
+class.NSLayoutManager.methods."fillBackgroundRectArray:count:forCharacterRange:color:".arguments.0.bounds.counted-by = "rect_count"
+class.NSLayoutManager.methods."glyphAtIndex:isValidIndex:".arguments.1.bounds = "single"
+class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:matrix:attributes:inContext:".arguments.0.bounds.counted-by = "glyph_count"
+class.NSLayoutManager.methods."showCGGlyphs:positions:count:font:matrix:attributes:inContext:".arguments.1.bounds.counted-by = "glyph_count"
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".arguments.1.bounds = "unsafe" # Possibly font.numberOfGlyphs()?
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".arguments.2.bounds = "unsafe" # Possibly font.numberOfGlyphs()?
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:".arguments.3.bounds = "unsafe" # Possibly font.numberOfGlyphs()?
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldSetLineFragmentRect:lineFragmentUsedRect:baselineOffset:inTextContainer:forGlyphRange:".arguments.1.bounds = "single"
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldSetLineFragmentRect:lineFragmentUsedRect:baselineOffset:inTextContainer:forGlyphRange:".arguments.2.bounds = "single"
+protocol.NSLayoutManagerDelegate.methods."layoutManager:shouldSetLineFragmentRect:lineFragmentUsedRect:baselineOffset:inTextContainer:forGlyphRange:".arguments.3.bounds = "single"
+
 class.NSTextContainer.methods."lineFragmentRectForProposedRect:atIndex:writingDirection:remainingRect:".arguments.3.bounds = "single"
+
+class.NSString.methods."sizeWithFont:minFontSize:actualFontSize:forWidth:lineBreakMode:".arguments.2.bounds = "single"
+class.NSString.methods."drawAtPoint:forWidth:withFont:minFontSize:actualFontSize:lineBreakMode:baselineAdjustment:".arguments.4.bounds = "single"
 
 ###
 ### Safety

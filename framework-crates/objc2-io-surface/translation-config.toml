@@ -27,16 +27,20 @@ fn.IOSurfaceCreate.arguments.0.generics = ["CoreFoundation.CFString.CFString", "
 fn.IOSurfaceSetValues.arguments.1.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.IOSurfaceCopyAllValues.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 
+# Pointer bounds
+fn.IOSurfaceLock.arguments.2.bounds = "single"
+fn.IOSurfaceUnlock.arguments.2.bounds = "single"
+fn.IOSurfaceSetPurgeable.arguments.2.bounds = "single"
+class.IOSurface.methods."lockWithOptions:seed:".arguments.1.bounds = "single"
+class.IOSurface.methods."unlockWithOptions:seed:".arguments.1.bounds = "single"
+class.IOSurface.methods."setPurgeable:oldState:".arguments.1.bounds = "single"
+
 ##
 ## Safety
 ##
 
 # SAFETY: IOSurface methods and functions are well-behaved.
 unsafe-default-safety.documentation-is-reviewed = true
-
-# TODO(breaking): Mark as unsafe (takes pointer)
-class.IOSurface.methods."lockWithOptions:seed:".unsafe = false
-class.IOSurface.methods."unlockWithOptions:seed:".unsafe = false
 
 # TODO(breaking): Maybe mark as `unsafe`? Takes `AnyObject` generic.
 class.IOSurface.methods."initWithProperties:".unsafe = false
@@ -45,3 +49,7 @@ class.IOSurface.methods."setAllAttachments:".unsafe = false
 # Unsure if `task_id_token_t` means that this remaps the underlying memory
 # somehow?
 fn.IOSurfaceSetOwnershipIdentity.unsafe = true
+
+# Making a surface purgeable can likely cause problems elsewhere.
+fn.IOSurfaceSetPurgeable.unsafe = true
+class.IOSurface.methods."setPurgeable:oldState:".unsafe = true

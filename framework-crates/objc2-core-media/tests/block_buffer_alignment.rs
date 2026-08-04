@@ -25,11 +25,13 @@ fn main() {
     let data = data.leak(); // we free this at `free_block`
 
     let mut ref_data = 42;
-    let mut source: CMBlockBufferCustomBlockSource = unsafe { std::mem::zeroed() };
-    source.version = kCMBlockBufferCustomBlockSourceVersion;
-    source.FreeBlock = Some(free_block);
     let ref_data: *mut i32 = &mut ref_data;
-    source.refCon = ref_data.cast::<c_void>();
+    let source = CMBlockBufferCustomBlockSource {
+        version: kCMBlockBufferCustomBlockSourceVersion,
+        AllocateBlock: None,
+        FreeBlock: Some(free_block),
+        refCon: ref_data.cast::<c_void>(),
+    };
 
     let mut block_buffer = None;
     let status = unsafe {
@@ -38,7 +40,7 @@ fn main() {
             data.as_mut_ptr().cast(),
             data_size,
             kCFAllocatorNull,
-            &source,
+            Some(&source),
             0,
             data_size,
             0,

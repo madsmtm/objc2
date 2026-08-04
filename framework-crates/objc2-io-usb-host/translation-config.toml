@@ -27,3 +27,88 @@ const.IOUSBHostCITransferCompletionMessageData1TransferStructure.skipped = true
 # Fix generics.
 class.IOUSBHostDevice.methods."createMatchingDictionaryWithVendorID:productID:bcdDevice:deviceClass:deviceSubclass:deviceProtocol:speed:productIDArray:".return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 class.IOUSBHostInterface.methods."createMatchingDictionaryWithVendorID:productID:bcdDevice:interfaceNumber:configurationValue:interfaceClass:interfaceSubclass:interfaceProtocol:speed:productIDArray:".return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+##
+## Pointer bounds
+##
+
+# AppleUSBDescriptorParsing.h
+# Safety of e.g. IOUSBConfigurationDescriptor and IOUSBDescriptorHeader as
+# references is unclear, perhaps these types should be opaque?
+#
+# Also unclear if the getter methods could be safe, they might go beoynd the
+# formal bounds of the types internally to parse stuff?
+#
+# fn.IOUSB*Descriptor.arguments.*.bounds = "unsafe"
+
+# All null-terminated, but needs to also have static lifetime
+fn.IOUSBHostCIMessageTypeToString.return.bounds = "unsafe"
+fn.IOUSBHostCIMessageStatusToString.return.bounds = "unsafe"
+fn.IOUSBHostCILinkStateToString.return.bounds = "unsafe"
+fn.IOUSBHostCIDeviceSpeedToString.return.bounds = "unsafe"
+fn.IOUSBHostCIExceptionTypeToString.return.bounds = "unsafe"
+fn.IOUSBHostCIControllerStateToString.return.bounds = "unsafe"
+fn.IOUSBHostCIPortStateToString.return.bounds = "unsafe"
+fn.IOUSBHostCIDeviceStateToString.return.bounds = "unsafe"
+fn.IOUSBHostCIEndpointStateToString.return.bounds = "unsafe"
+
+class.IOUSBHostObject.methods."sendDeviceRequest:data:bytesTransferred:completionTimeout:error:".arguments.2.bounds = "single"
+class.IOUSBHostObject.methods."sendDeviceRequest:data:bytesTransferred:error:".arguments.2.bounds = "single"
+class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:requestType:requestRecipient:error:".arguments.1.bounds = "single"
+class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:requestType:requestRecipient:error:".return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:error:".arguments.1.bounds = "single"
+class.IOUSBHostObject.methods."descriptorWithType:length:index:languageID:error:".return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostObject.methods."descriptorWithType:length:error:".arguments.1.bounds = "single"
+class.IOUSBHostObject.methods."descriptorWithType:length:error:".return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostObject.methods.deviceDescriptor.return.bounds = "single"
+class.IOUSBHostObject.methods.capabilityDescriptors.return.bounds = "single"
+class.IOUSBHostObject.methods."configurationDescriptorWithIndex:error:".return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostObject.methods."configurationDescriptorWithConfigurationValue:error:".return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostObject.methods."frameNumberWithTime:".arguments.0.bounds = "single"
+class.IOUSBHostObject.methods."currentMicroframeWithTime:error:".arguments.0.bounds = "single"
+class.IOUSBHostObject.methods."referenceMicroframeWithTime:error:".arguments.0.bounds = "single"
+
+class.IOUSBHostDevice.methods.configurationDescriptor.return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+
+class.IOUSBHostInterface.methods.configurationDescriptor.return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostInterface.methods.interfaceDescriptor.return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+
+class.IOUSBHostPipe.methods.originalDescriptors.return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostPipe.methods.descriptors.return.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostPipe.methods."adjustPipeWithDescriptors:error:".arguments.0.bounds = "unsafe" # See AppleUSBDescriptorParsing.h above
+class.IOUSBHostPipe.methods."sendControlRequest:data:bytesTransferred:completionTimeout:error:".arguments.2.bounds = "single"
+class.IOUSBHostPipe.methods."sendControlRequest:data:bytesTransferred:error:".arguments.2.bounds = "single"
+class.IOUSBHostPipe.methods."sendIORequestWithData:bytesTransferred:completionTimeout:error:".arguments.1.bounds = "single"
+class.IOUSBHostPipe.methods."sendIORequestWithData:frameList:frameListCount:firstFrameNumber:error:".arguments.1.bounds.counted-by = "frame_list_count"
+class.IOUSBHostPipe.methods."enqueueIORequestWithData:frameList:frameListCount:firstFrameNumber:error:completionHandler:".arguments.1.bounds.counted-by = "frame_list_count"
+class.IOUSBHostPipe.methods."sendIORequestWithData:transactionList:transactionListCount:firstFrameNumber:options:error:".arguments.1.bounds.counted-by = "frame_list_count"
+class.IOUSBHostPipe.methods."enqueueIORequestWithData:transactionList:transactionListCount:firstFrameNumber:options:error:completionHandler:".arguments.1.bounds.counted-by = "frame_list_count"
+
+class.IOUSBHostStream.methods."sendIORequestWithData:bytesTransferred:error:".arguments.1.bounds = "single"
+
+class.IOUSBHostCIControllerStateMachine.methods."inspectCommand:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIControllerStateMachine.methods."respondToCommand:status:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIControllerStateMachine.methods."respondToCommand:status:frame:timestamp:error:".arguments.0.bounds = "single"
+
+class.IOUSBHostCIPortStateMachine.methods."inspectCommand:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIPortStateMachine.methods."respondToCommand:status:error:".arguments.0.bounds = "single"
+
+class.IOUSBHostControllerInterface.methods."enqueueInterrupt:error:".arguments.0.bounds = "single"
+class.IOUSBHostControllerInterface.methods."enqueueInterrupt:expedite:error:".arguments.0.bounds = "single"
+class.IOUSBHostControllerInterface.methods."enqueueInterrupts:count:error:".arguments.0.bounds.counted-by = "count"
+class.IOUSBHostControllerInterface.methods."enqueueInterrupts:count:expedite:error:".arguments.0.bounds.counted-by = "count"
+class.IOUSBHostControllerInterface.methods."descriptionForMessage:".arguments.0.bounds = "single"
+class.IOUSBHostControllerInterface.methods."getPortStateMachineForCommand:error:".arguments.0.bounds = "single"
+class.IOUSBHostControllerInterface.methods.capabilities.return.bounds = "single" # Unclear lifetime, maybe 'self?
+class.IOUSBHostControllerInterface.methods."capabilitiesForPort:".return.bounds = "single" # Unclear lifetime, maybe 'self?
+
+class.IOUSBHostCIDeviceStateMachine.methods."initWithInterface:command:error:".arguments.1.bounds = "single"
+class.IOUSBHostCIDeviceStateMachine.methods."inspectCommand:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIDeviceStateMachine.methods."respondToCommand:status:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIDeviceStateMachine.methods."respondToCommand:status:deviceAddress:error:".arguments.0.bounds = "single"
+
+class.IOUSBHostCIEndpointStateMachine.methods."initWithInterface:command:error:".arguments.1.bounds = "single"
+class.IOUSBHostCIEndpointStateMachine.methods."inspectCommand:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIEndpointStateMachine.methods."respondToCommand:status:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIEndpointStateMachine.methods."enqueueTransferCompletionForMessage:status:transferLength:error:".arguments.0.bounds = "single"
+class.IOUSBHostCIEndpointStateMachine.methods.currentTransferMessage.return.bounds = "single"

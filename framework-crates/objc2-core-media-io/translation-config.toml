@@ -14,3 +14,32 @@ typedef.CMIOHardwarePlugInRef.skipped = true
 fn.CMIOObjectCreate.skipped = true
 fn.CMIOObjectsPublishedAndDied.skipped = true
 fn.CMIOObjectPropertiesChanged.skipped = true
+
+##
+## Pointer bounds
+##
+
+fn.CMIODeviceProcessAVCCommand.arguments.1.bounds = "single"
+fn.CMIODeviceProcessRS422Command.arguments.1.bounds = "single"
+
+fn.CMIOObjectHasProperty.arguments.1.bounds = "single"
+fn.CMIOObjectIsPropertySettable.arguments.1.bounds = "single"
+fn.CMIOObjectIsPropertySettable.arguments.2.bounds = "single"
+fn.CMIOObjectGetPropertyDataSize.arguments.1.bounds = "single"
+fn.CMIOObjectGetPropertyDataSize.arguments.3.bounds.sized-by = "qualifier_data_size"
+fn.CMIOObjectGetPropertyDataSize.arguments.4.bounds = "single"
+fn.CMIOObjectGetPropertyData.arguments.1.bounds = "single"
+fn.CMIOObjectGetPropertyData.arguments.3.bounds.sized-by = "qualifier_data_size"
+fn.CMIOObjectGetPropertyData.arguments.5.bounds = "single"
+fn.CMIOObjectGetPropertyData.arguments.6.bounds.sized-by = "data_size"
+fn.CMIOObjectSetPropertyData.arguments.1.bounds = "single"
+fn.CMIOObjectSetPropertyData.arguments.3.bounds.sized-by = "qualifier_data_size"
+fn.CMIOObjectSetPropertyData.arguments.5.bounds.sized-by = "data_size"
+fn.CMIOObjectAddPropertyListener.arguments.1.bounds = "single"
+fn.CMIOObjectRemovePropertyListener.arguments.1.bounds = "single"
+fn.CMIOObjectAddPropertyListenerBlock.arguments.1.bounds = "single"
+fn.CMIOObjectRemovePropertyListenerBlock.arguments.1.bounds = "single"
+
+fn.CMIOSampleBufferCreate.arguments.5.bounds.counted-by = "num_sample_timing_entries"
+fn.CMIOSampleBufferCreate.arguments.7.bounds.counted-by = "num_sample_size_entries"
+fn.CMIOSampleBufferCreateForImageBuffer.arguments.3.bounds = "single"

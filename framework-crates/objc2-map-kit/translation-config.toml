@@ -21,6 +21,23 @@ class.MKMapItemRequest.methods.mapFeatureAnnotation.skipped = true
 class.MKMapItemRequest.methods.featureAnnotation.skipped = true
 
 ##
+## Pointer bounds
+##
+
+fn.MKMapRectDivide.arguments.1.bounds = "single"
+fn.MKMapRectDivide.arguments.2.bounds = "single"
+class.MKMultiPoint.methods.points.return.bounds.counted-by = "self.pointCount()"
+class.MKMultiPoint.methods."getCoordinates:range:".arguments.0.bounds.counted-by = "range.length"
+class.MKPolyline.methods."polylineWithPoints:count:".arguments.0.bounds.counted-by = "count"
+class.MKPolyline.methods."polylineWithCoordinates:count:".arguments.0.bounds.counted-by = "count"
+class.MKPolygon.methods."polygonWithPoints:count:".arguments.0.bounds.counted-by = "count"
+class.MKPolygon.methods."polygonWithPoints:count:interiorPolygons:".arguments.0.bounds.counted-by = "count"
+class.MKPolygon.methods."polygonWithCoordinates:count:".arguments.0.bounds.counted-by = "count"
+class.MKPolygon.methods."polygonWithCoordinates:count:interiorPolygons:".arguments.0.bounds.counted-by = "count"
+class.MKGeodesicPolyline.methods."polylineWithPoints:count:".arguments.0.bounds.counted-by = "count"
+class.MKGeodesicPolyline.methods."polylineWithCoordinates:count:".arguments.0.bounds.counted-by = "count"
+
+##
 ## Safety
 ##
 

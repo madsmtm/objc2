@@ -6,3 +6,11 @@ maccatalyst = "13.0"
 ios = "9.0"
 tvos = "9.0"
 visionos = "1.0"
+
+# Pointer bounds
+class.GKPolygonObstacle.methods."obstacleWithPoints:count:".arguments.0.bounds.counted-by = "numPoints"
+class.GKPolygonObstacle.methods."initWithPoints:count:".arguments.0.bounds.counted-by = "numPoints"
+class.GKPath.methods."pathWithPoints:count:radius:cyclical:".arguments.0.bounds.counted-by = "count"
+class.GKPath.methods."initWithPoints:count:radius:cyclical:".arguments.0.bounds.counted-by = "count"
+class.GKPath.methods."pathWithFloat3Points:count:radius:cyclical:".arguments.0.bounds.counted-by = "count"
+class.GKPath.methods."initWithFloat3Points:count:radius:cyclical:".arguments.0.bounds.counted-by = "count"

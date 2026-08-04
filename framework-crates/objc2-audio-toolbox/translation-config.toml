@@ -226,6 +226,7 @@ fn.AudioConverterFillBuffer.arguments.4.bounds.sized-by = "*io_output_data_size"
 
 # AudioFile
 fn.NextAudioFileRegion.arguments.0.bounds = "unsafe" # Unclear
+fn.NextAudioFileRegion.return.bounds = "unsafe" # Unclear
 fn.AudioFileCreateWithURL.arguments.2.bounds = "single"
 fn.AudioFileCreateWithURL.arguments.4.bounds = "single"
 fn.AudioFileOpenURL.arguments.3.bounds = "single"
@@ -380,6 +381,7 @@ fn.AUParameterValueFromLinear.arguments.1.bounds = "single"
 fn.AUParameterValueToLinear.arguments.1.bounds = "single"
 fn.AUParameterFormatValue.arguments.1.bounds = "single"
 fn.AUParameterFormatValue.arguments.2.bounds = "unsafe" # at least 32
+fn.AUParameterFormatValue.return.bounds = "unsafe" # Lifetime bound to in_text_buffer
 
 # AUComponents
 fn.AudioUnitGetPropertyInfo.arguments.4.bounds = "single"
@@ -395,11 +397,14 @@ fn.AudioUnitGetParameter.arguments.4.bounds = "single"
 fn.AudioUnitRender.arguments.1.bounds = "single"
 fn.AudioUnitRender.arguments.2.bounds = "single"
 fn.AudioUnitRender.arguments.5.bounds = "single"
+fn.AudioUnitProcess.arguments.1.bounds = "single"
+fn.AudioUnitProcess.arguments.2.bounds = "single"
+fn.AudioUnitProcess.arguments.4.bounds = "single"
 fn.AudioUnitProcessMultiple.arguments.1.bounds = "single"
 fn.AudioUnitProcessMultiple.arguments.2.bounds = "single"
 fn.AudioUnitProcessMultiple.arguments.5.bounds.sized-by = "in_number_input_buffer_lists"
 fn.AudioUnitProcessMultiple.arguments.7.bounds.sized-by = "in_number_output_buffer_lists"
-fn.AudioOutputUnitPublish.arguments.1.bounds = "single"
+fn.AudioOutputUnitPublish.arguments.0.bounds = "single"
 
 # AUGraph
 fn.NewAUGraph.arguments.0.bounds = "single"
@@ -576,6 +581,7 @@ fn.AudioFileComponentSetUserData.arguments.4.bounds.sized-by = "in_user_data_siz
 fn.AudioFileComponentExtensionIsThisFormat.arguments.2.bounds = "single"
 fn.AudioFileComponentFileDataIsThisFormat.arguments.2.bounds.sized-by = "in_data_byte_size"
 fn.AudioFileComponentFileDataIsThisFormat.arguments.3.bounds = "single"
+fn.AudioFileComponentFileIsThisFormat.arguments.2.bounds = "single"
 fn.AudioFileComponentDataIsThisFormat.arguments.1.bounds = "unsafe" # fn pointer arg
 fn.AudioFileComponentDataIsThisFormat.arguments.6.bounds = "single"
 fn.AudioFileComponentGetGlobalInfoSize.arguments.3.bounds.sized-by = "in_specifier_size"
@@ -601,6 +607,9 @@ fn.CAClockBarBeatTimeToBeats.arguments.2.bounds = "single"
 fn.CAClockParseMIDI.arguments.1.bounds = "single"
 fn.CopyNameFromSoundBank.arguments.1.bounds = "single"
 fn.CopyInstrumentInfoFromSoundBank.arguments.1.bounds = "single"
+
+# CAShow
+fn.CAShowFile.arguments.1.bounds = "unsafe" # libc::FILE should always be behind a pointer
 
 ##
 ## Fixing generics.

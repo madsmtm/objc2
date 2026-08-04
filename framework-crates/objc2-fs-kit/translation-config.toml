@@ -20,3 +20,8 @@ class.FSItemAttributes.methods.birthTime.skipped = true
 class.FSItemAttributes.methods."setBirthTime:".skipped = true
 class.FSItemAttributes.methods.backupTime.skipped = true
 class.FSItemAttributes.methods."setBackupTime:".skipped = true
+
+class.FSFileName.methods."initWithCString:".arguments.0.bounds = "null-terminated"
+class.FSFileName.methods."initWithBytes:length:".arguments.0.bounds.sized-by = "length"
+class.FSFileName.methods."nameWithCString:".arguments.0.bounds = "null-terminated"
+class.FSFileName.methods."nameWithBytes:length:".arguments.0.bounds.sized-by = "length"

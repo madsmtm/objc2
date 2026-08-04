@@ -16,3 +16,22 @@ typedef.GLKTextureLoaderCallback.sendable = true
 
 # Uses constants from OpenGL.
 enum.GLKTextureTarget.use-value = true
+
+##
+## Pointer bounds
+##
+
+fn.GLKQuaternionRotateVector3Array.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKQuaternionRotateVector4Array.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKMatrix3Invert.arguments.1.bounds = "single"
+fn.GLKMatrix3InvertAndTranspose.arguments.1.bounds = "single"
+fn.GLKMatrix3MultiplyVector3Array.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKMatrix4Invert.arguments.1.bounds = "single"
+fn.GLKMatrix4InvertAndTranspose.arguments.1.bounds = "single"
+fn.GLKMatrix4MultiplyVector3Array.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKMatrix4MultiplyVector3ArrayWithTranslation.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKMatrix4MultiplyAndProjectVector3Array.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKMatrix4MultiplyVector4Array.arguments.1.bounds.counted-by = "vector_count"
+fn.GLKMathProject.arguments.3.bounds.counted-by = "4"
+fn.GLKMathUnproject.arguments.3.bounds.counted-by = "4"
+fn.GLKMathUnproject.arguments.4.bounds = "single"

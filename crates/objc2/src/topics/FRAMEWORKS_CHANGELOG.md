@@ -43,22 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
-* **BREAKING**: Fixed a bunch of nullability, bounds and generics information in:
-  - `AudioToolbox` / `objc2-audio-toolbox`.
-  - `AppKit` / `objc2-app-kit`.
-  - `CoreAudio` / `objc2-core-audio`.
-  - `CoreFoundation` / `objc2-core-foundation`.
-  - `CoreGraphics` / `objc2-core-graphics`.
-  - `CoreText` / `objc2-core-text`.
-  - `CoreVideo` / `objc2-core-video`.
-  - `Foundation` / `objc2-foundation`.
-  - `HealthKit` / `objc2-health-kit`.
-  - `IOKit` / `objc2-io-kit`.
-  - `Metal` / `objc2-metal`.
-  - `QuartzCore` / `objc2-quartz-core`.
-  - `Security` / `objc2-security`.
-  - `SystemConfiguration` / `objc2-system-configuration`.
-  - `UIKit` / `objc2-ui-kit`.
+* **BREAKING**: Fixed a bunch of nullability, bounds and generics information in various frameworks.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
 * **BREAKING**: Renamed some deprecated `objc2-network-extension` classes to have a `NE` prefix instead of `NW` (to not clash with the types from `objc2-network`).
 * **BREAKING**: Renamed `BAAssetPackManager::getStatusOfAssetPackWithIdentifier_completionHandler` to `getLocalStatusOfAssetPackWithIdentifier_completionHandler`.

@@ -89,6 +89,8 @@ default.extend-identifiers.IMAGEIO_PNG_FILTER_PAETH = "IMAGEIO_PNG_FILTER_PAETH"
 # In framework-crates/objc2-io-bluetooth/translation-config.toml
 default.extend-identifiers.kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent = "kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEvent"
 default.extend-identifiers.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent = "kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent"
+# In framework-crates/objc2-core-services/translation-config.toml
+default.extend-identifiers.FSGetVolumeParms = "FSGetVolumeParms"
 
 # Used in framework crates.
 [workspace.dependencies]

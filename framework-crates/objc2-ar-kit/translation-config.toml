@@ -20,3 +20,20 @@ protocol.ARSKViewDelegate.methods."view:didUpdateNode:forAnchor:".skipped = true
 protocol.ARSKViewDelegate.methods."view:didRemoveNode:forAnchor:".skipped = true
 class.ARSKView.methods."anchorForNode:".skipped = true
 class.ARSKView.methods."nodeForAnchor:".skipped = true
+
+##
+## Pointer bounds
+##
+
+class.ARSkeleton3D.methods.jointModelTransforms.return.bounds.counted-by = "self.jointCount()"
+class.ARSkeleton3D.methods.jointLocalTransforms.return.bounds.counted-by = "self.jointCount()"
+class.ARSkeleton2D.methods.jointLandmarks.return.bounds.counted-by = "self.jointCount()"
+class.ARFaceGeometry.methods.vertices.return.bounds.counted-by = "self.vertexCount()"
+class.ARFaceGeometry.methods.textureCoordinates.return.bounds.counted-by = "self.textureCoordinateCount()"
+class.ARFaceGeometry.methods.triangleIndices.return.bounds.counted-by = "self.triangleCount()"
+class.ARPlaneGeometry.methods.vertices.return.bounds.counted-by = "self.vertexCount()"
+class.ARPlaneGeometry.methods.textureCoordinates.return.bounds.counted-by = "self.textureCoordinateCount()"
+class.ARPlaneGeometry.methods.triangleIndices.return.bounds.counted-by = "self.triangleCount()"
+class.ARPlaneGeometry.methods.boundaryVertices.return.bounds.counted-by = "self.boundaryVertexCount()"
+class.ARPointCloud.methods.points.return.bounds.counted-by = "self.count()"
+class.ARPointCloud.methods.identifiers.return.bounds.counted-by = "self.count()"

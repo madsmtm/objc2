@@ -2,3 +2,5 @@ framework = "QuickLookUI"
 crate = "objc2-quick-look-ui"
 required-crates = ["objc2", "objc2-foundation"]
 macos = "12.0"
+
+protocol.QLPreviewPanelDelegate.methods."previewPanel:transitionImageForPreviewItem:contentRect:".arguments.2.bounds = "single"

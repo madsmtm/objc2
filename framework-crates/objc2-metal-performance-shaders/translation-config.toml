@@ -40,9 +40,159 @@ const.MPSUserAvailableFunctionConstantStartIndex.skipped = false
 class.MPSImageDescriptor.methods."copyWithZone:".skipped = true
 
 ##
+## Pointer bounds
+##
+
+# NSZone
+class.MPSKernel.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSKernel.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixSoftMax.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixSoftMax.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixSoftMaxGradient.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixSoftMaxGradient.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixFindTopK.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixFindTopK.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSNDArrayMultiaryBase.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSNDArrayMultiaryBase.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSAccelerationStructure.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSAccelerationStructure.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSAccelerationStructure.methods."copyWithZone:group:".arguments.0.written = false
+class.MPSAccelerationStructure.methods."copyWithZone:group:".arguments.0.bounds = "single"
+class.MPSSVGF.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSSVGF.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSTemporalAA.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSTemporalAA.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSRayIntersector.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSRayIntersector.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSRNNMatrixTrainingLayer.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSRNNMatrixTrainingLayer.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixNeuron.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixNeuron.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixNeuronGradient.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixNeuronGradient.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixFullyConnected.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixFullyConnected.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixFullyConnectedGradient.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixFullyConnectedGradient.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixBatchNormalization.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixBatchNormalization.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSMatrixBatchNormalizationGradient.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSMatrixBatchNormalizationGradient.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSRNNImageInferenceLayer.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSRNNImageInferenceLayer.methods."copyWithZone:device:".arguments.0.bounds = "single"
+class.MPSRNNMatrixInferenceLayer.methods."copyWithZone:device:".arguments.0.written = false
+class.MPSRNNMatrixInferenceLayer.methods."copyWithZone:device:".arguments.0.bounds = "single"
+protocol.MPSCNNConvolutionDataSource.methods."copyWithZone:device:".arguments.0.written = false
+protocol.MPSCNNConvolutionDataSource.methods."copyWithZone:device:".arguments.0.bounds = "single"
+protocol.MPSCNNBatchNormalizationDataSource.methods."copyWithZone:device:".arguments.0.written = false
+protocol.MPSCNNBatchNormalizationDataSource.methods."copyWithZone:device:".arguments.0.bounds = "single"
+protocol.MPSCNNInstanceNormalizationDataSource.methods."copyWithZone:device:".arguments.0.written = false
+protocol.MPSCNNInstanceNormalizationDataSource.methods."copyWithZone:device:".arguments.0.bounds = "single"
+protocol.MPSCNNGroupNormalizationDataSource.methods."copyWithZone:device:".arguments.0.written = false
+protocol.MPSCNNGroupNormalizationDataSource.methods."copyWithZone:device:".arguments.0.bounds = "single"
+
+class.MPSNDArrayDescriptor.methods."permuteWithDimensionOrder:".arguments.0.bounds.counted-by = "self.numberOfDimensions()"
+class.MPSNDArrayDescriptor.methods."descriptorWithDataType:dimensionCount:dimensionSizes:".arguments.2.bounds.counted-by = "number_of_dimensions"
+class.MPSNDArrayDescriptor.methods."reshapeWithDimensionCount:dimensionSizes:".arguments.1.bounds.counted-by = "number_of_dimensions"
+class.MPSNDArray.methods."arrayViewWithDimensionCount:dimensionSizes:strides:".arguments.1.bounds.counted-by = "number_of_dimensions"
+class.MPSNDArray.methods."arrayViewWithDimensionCount:dimensionSizes:strides:".arguments.2.bounds.counted-by = "number_of_dimensions"
+class.MPSNDArray.methods."exportDataWithCommandBuffer:toBuffer:destinationDataType:offset:rowStrides:".arguments.4.bounds.counted-by = "self.numberOfDimensions() - 1"
+class.MPSNDArray.methods."importDataWithCommandBuffer:fromBuffer:sourceDataType:offset:rowStrides:".arguments.4.bounds.counted-by = "self.numberOfDimensions() - 1"
+class.MPSNDArray.methods."readBytes:strideBytes:".arguments.1.bounds.counted-by = "self.numberOfDimensions()"
+class.MPSNDArray.methods."writeBytes:strideBytes:".arguments.1.bounds.counted-by = "self.numberOfDimensions()"
+class.MPSNDArrayIdentity.methods."reshapeWithCommandBuffer:sourceArray:dimensionCount:dimensionSizes:destinationArray:".arguments.3.bounds.counted-by = "number_of_dimensions"
+class.MPSNDArrayIdentity.methods."reshapeWithCommandEncoder:commandBuffer:sourceArray:dimensionCount:dimensionSizes:destinationArray:".arguments.4.bounds.counted-by = "number_of_dimensions"
+
+class.MPSImageConversion.methods."initWithDevice:srcAlpha:destAlpha:backgroundColor:conversionInfo:".arguments.3.bounds = "unsafe" # Bounded by color space
+class.MPSImageConvolution.methods."initWithDevice:kernelWidth:kernelHeight:weights:".arguments.3.bounds.counted-by = "kernel_width * kernel_height"
+class.MPSImageSobel.methods."initWithDevice:linearGrayColorTransform:".arguments.1.bounds.counted-by = "3"
+class.MPSImageSobel.methods.colorTransform.return.bounds.counted-by = "3"
+class.MPSImageCanny.methods."initWithDevice:linearToGrayScaleTransform:sigma:".arguments.1.bounds.counted-by = "3"
+class.MPSImageCanny.methods.colorTransform.return.bounds.counted-by = "3"
+class.MPSImagePyramid.methods."initWithDevice:kernelWidth:kernelHeight:weights:".arguments.3.bounds.counted-by = "kernel_width * kernel_height"
+class.MPSImageFindKeypoints.methods."initWithDevice:info:".arguments.1.bounds = "single"
+class.MPSImageFindKeypoints.methods."encodeToCommandBuffer:sourceTexture:regions:numberOfRegions:keypointCountBuffer:keypointCountBufferOffset:keypointDataBuffer:keypointDataBufferOffset:".arguments.2.bounds.counted-by = "number_of_regions"
+class.MPSImageHistogram.methods."initWithDevice:histogramInfo:".arguments.1.bounds = "single"
+class.MPSImageNormalizedHistogram.methods."initWithDevice:histogramInfo:".arguments.1.bounds = "single"
+class.MPSImageHistogramEqualization.methods."initWithDevice:histogramInfo:".arguments.1.bounds = "single"
+class.MPSImageHistogramSpecification.methods."initWithDevice:histogramInfo:".arguments.1.bounds = "single"
+class.MPSImageDilate.methods."initWithDevice:kernelWidth:kernelHeight:values:".arguments.3.bounds.counted-by = "kernel_width * kernel_height"
+class.MPSImageScale.methods.scaleTransform.return.bounds = "single"
+class.MPSImageScale.methods."setScaleTransform:".arguments.0.bounds = "single"
+class.MPSImageThresholdBinary.methods."initWithDevice:thresholdValue:maximumValue:linearGrayColorTransform:".arguments.3.bounds.counted-by = "3"
+class.MPSImageThresholdBinary.methods.transform.return.bounds.counted-by = "3"
+class.MPSImageThresholdBinaryInverse.methods."initWithDevice:thresholdValue:maximumValue:linearGrayColorTransform:".arguments.3.bounds.counted-by = "3"
+class.MPSImageThresholdBinaryInverse.methods.transform.return.bounds.counted-by = "3"
+class.MPSImageThresholdTruncate.methods."initWithDevice:thresholdValue:linearGrayColorTransform:".arguments.2.bounds.counted-by = "3"
+class.MPSImageThresholdTruncate.methods.transform.return.bounds.counted-by = "3"
+class.MPSImageThresholdToZero.methods."initWithDevice:thresholdValue:linearGrayColorTransform:".arguments.2.bounds.counted-by = "3"
+class.MPSImageThresholdToZero.methods.transform.return.bounds.counted-by = "3"
+class.MPSImageThresholdToZeroInverse.methods."initWithDevice:thresholdValue:linearGrayColorTransform:".arguments.2.bounds.counted-by = "3"
+class.MPSImageThresholdToZeroInverse.methods.transform.return.bounds.counted-by = "3"
+
+class.MPSCNNNeuronPReLU.methods."initWithDevice:a:count:".arguments.1.bounds.counted-by = "count"
+class.MPSCNNConvolutionDescriptor.methods."setBatchNormalizationParametersForInferenceWithMean:variance:gamma:beta:epsilon:".arguments.0.bounds.counted-by = "self.outputFeatureChannels()"
+class.MPSCNNConvolutionDescriptor.methods."setBatchNormalizationParametersForInferenceWithMean:variance:gamma:beta:epsilon:".arguments.1.bounds.counted-by = "self.outputFeatureChannels()"
+class.MPSCNNConvolutionDescriptor.methods."setBatchNormalizationParametersForInferenceWithMean:variance:gamma:beta:epsilon:".arguments.2.bounds.counted-by = "self.outputFeatureChannels()"
+class.MPSCNNConvolutionDescriptor.methods."setBatchNormalizationParametersForInferenceWithMean:variance:gamma:beta:epsilon:".arguments.3.bounds.counted-by = "self.outputFeatureChannels()"
+protocol.MPSCNNConvolutionDataSource.methods.biasTerms.return.bounds.counted-by = "self.outputFeatureChannels()"
+protocol.MPSCNNConvolutionDataSource.methods.rangesForUInt8Kernel.return.bounds.counted-by = "self.outputChannelCount()"
+protocol.MPSCNNConvolutionDataSource.methods.lookupTableForUInt8Kernel.return.bounds.counted-by = "256"
+class.MPSCNNConvolution.methods."initWithDevice:convolutionDescriptor:kernelWeights:biasTerms:flags:".arguments.2.bounds = "unsafe" # inputFeatureChannels * outputFeatureChannels * kernelHeight * kernelWidth?
+class.MPSCNNConvolution.methods."initWithDevice:convolutionDescriptor:kernelWeights:biasTerms:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNFullyConnected.methods."initWithDevice:convolutionDescriptor:kernelWeights:biasTerms:flags:".arguments.2.bounds = "unsafe" # inputFeatureChannels * outputFeatureChannels * kernelHeight * kernelWidth?
+class.MPSCNNFullyConnected.methods."initWithDevice:convolutionDescriptor:kernelWeights:biasTerms:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolution.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.2.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolution.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolution.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.4.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryConvolution.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.5.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryFullyConnected.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.2.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryFullyConnected.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryFullyConnected.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.4.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryFullyConnected.methods."initWithDevice:convolutionData:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.5.bounds.counted-by = "inputFeatureChannels"
+protocol.MPSCNNBatchNormalizationDataSource.methods.gamma.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNBatchNormalizationDataSource.methods.beta.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNBatchNormalizationDataSource.methods.mean.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNBatchNormalizationDataSource.methods.variance.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNInstanceNormalizationDataSource.methods.gamma.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNInstanceNormalizationDataSource.methods.beta.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNGroupNormalizationDataSource.methods.gamma.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+protocol.MPSCNNGroupNormalizationDataSource.methods.beta.return.bounds.counted-by = "self.numberOfFeatureChannels()"
+class.MPSRNNMatrixInferenceLayer.methods."encodeSequenceToCommandBuffer:sourceMatrices:sourceOffsets:destinationMatrices:destinationOffsets:recurrentInputState:recurrentOutputStates:".arguments.2.bounds.counted-by = "source_matrices.count()"
+class.MPSRNNMatrixInferenceLayer.methods."encodeSequenceToCommandBuffer:sourceMatrices:sourceOffsets:destinationMatrices:destinationOffsets:recurrentInputState:recurrentOutputStates:".arguments.4.bounds.counted-by = "destination_matrices.count()"
+class.MPSRNNMatrixTrainingLayer.methods."encodeForwardSequenceToCommandBuffer:sourceMatrices:sourceOffsets:destinationMatrices:destinationOffsets:trainingStates:recurrentInputState:recurrentOutputStates:weights:".arguments.2.bounds.counted-by = "source_matrices.count()"
+class.MPSRNNMatrixTrainingLayer.methods."encodeForwardSequenceToCommandBuffer:sourceMatrices:sourceOffsets:destinationMatrices:destinationOffsets:trainingStates:recurrentInputState:recurrentOutputStates:weights:".arguments.4.bounds.counted-by = "destination_matrices.count()"
+class.MPSRNNMatrixTrainingLayer.methods."encodeGradientSequenceToCommandBuffer:forwardSources:forwardSourceOffsets:sourceGradients:sourceGradientOffsets:destinationGradients:destinationOffsets:weightGradients:trainingStates:recurrentInputState:recurrentOutputStates:weights:".arguments.2.bounds.counted-by = "forward_sources.count()"
+class.MPSRNNMatrixTrainingLayer.methods."encodeGradientSequenceToCommandBuffer:forwardSources:forwardSourceOffsets:sourceGradients:sourceGradientOffsets:destinationGradients:destinationOffsets:weightGradients:trainingStates:recurrentInputState:recurrentOutputStates:weights:".arguments.4.bounds.counted-by = "source_gradients.count()"
+class.MPSRNNMatrixTrainingLayer.methods."encodeGradientSequenceToCommandBuffer:forwardSources:forwardSourceOffsets:sourceGradients:sourceGradientOffsets:destinationGradients:destinationOffsets:weightGradients:trainingStates:recurrentInputState:recurrentOutputStates:weights:".arguments.6.bounds.counted-by = "destination_gradients.count()"
+class.MPSNNCropAndResizeBilinear.methods.regions.return.bounds.counted-by = "self.numberOfRegions()"
+class.MPSNNCropAndResizeBilinear.methods."initWithDevice:resizeWidth:resizeHeight:numberOfRegions:regions:".arguments.4.bounds.counted-by = "number_of_regions"
+class.MPSCNNBinaryConvolutionNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.2.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolutionNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolutionNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.4.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryConvolutionNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.5.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryConvolutionNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.2.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolutionNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryConvolutionNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.4.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryConvolutionNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.5.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryFullyConnectedNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.2.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryFullyConnectedNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryFullyConnectedNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.4.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryFullyConnectedNode.methods."nodeWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.5.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryFullyConnectedNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.2.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryFullyConnectedNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.3.bounds = "unsafe" # numberOfOutputFeatureMaps?
+class.MPSCNNBinaryFullyConnectedNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.4.bounds.counted-by = "inputFeatureChannels"
+class.MPSCNNBinaryFullyConnectedNode.methods."initWithSource:weights:outputBiasTerms:outputScaleTerms:inputBiasTerms:inputScaleTerms:type:flags:".arguments.5.bounds.counted-by = "inputFeatureChannels"
+class.MPSNNGraph.methods."initWithDevice:resultImages:resultsAreNeeded:".arguments.2.bounds.counted-by = "result_images.count()"
+class.MPSNNGraph.methods."graphWithDevice:resultImages:resultsAreNeeded:".arguments.2.bounds.counted-by = "result_images.count()"
+
+##
 ## Safety
 ##
 
 # Unarchival may be unsafe if not requiring secure encoding, so let's
 # be conservative in what we mark safe for now.
 class.MPSKeyedUnarchiver.unsafe = true
+
+# Unsure if calling `setOutputFeatureChannels` invalidates the lengths in this?
+class.MPSCNNConvolutionDescriptor.methods."setBatchNormalizationParametersForInferenceWithMean:variance:gamma:beta:epsilon:".unsafe = true

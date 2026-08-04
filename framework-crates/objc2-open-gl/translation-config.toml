@@ -62,3 +62,40 @@ external.__GLIFunctionDispatchRec.module = "OpenGL"
 external.GLIFunctionDispatch.module = "OpenGL"
 external._CGLPrivateObject.module = "OpenGL"
 external.CGLPrivateObj.module = "OpenGL"
+
+##
+## Pointer bounds
+##
+
+fn.CGLChoosePixelFormat.arguments.0.bounds = "unsafe" # Need to parse to know size
+fn.CGLChoosePixelFormat.arguments.1.bounds = "single"
+fn.CGLChoosePixelFormat.arguments.2.bounds = "single"
+fn.CGLDescribePixelFormat.arguments.3.bounds = "single"
+fn.CGLQueryRendererInfo.arguments.1.bounds = "single"
+fn.CGLQueryRendererInfo.arguments.2.bounds = "single"
+fn.CGLDescribeRenderer.arguments.3.bounds = "single"
+fn.CGLCreateContext.arguments.2.bounds = "single"
+fn.CGLCreatePBuffer.arguments.5.bounds = "single"
+fn.CGLDescribePBuffer.arguments.1.bounds = "single"
+fn.CGLDescribePBuffer.arguments.2.bounds = "single"
+fn.CGLDescribePBuffer.arguments.3.bounds = "single"
+fn.CGLDescribePBuffer.arguments.4.bounds = "single"
+fn.CGLDescribePBuffer.arguments.5.bounds = "single"
+fn.CGLGetOffScreen.arguments.1.bounds = "single"
+fn.CGLGetOffScreen.arguments.2.bounds = "single"
+fn.CGLGetOffScreen.arguments.3.bounds = "single"
+fn.CGLGetOffScreen.arguments.4.bounds = "single"
+fn.CGLGetPBuffer.arguments.1.bounds = "single"
+fn.CGLGetPBuffer.arguments.2.bounds = "single"
+fn.CGLGetPBuffer.arguments.3.bounds = "single"
+fn.CGLGetPBuffer.arguments.4.bounds = "single"
+fn.CGLIsEnabled.arguments.2.bounds = "single"
+fn.CGLSetParameter.arguments.2.bounds = "unsafe" # Size and type depends on CGLContextParameter
+fn.CGLGetParameter.arguments.2.bounds = "unsafe" # Size and type depends on CGLContextParameter
+fn.CGLGetVirtualScreen.arguments.1.bounds = "single"
+fn.CGLSetGlobalOption.arguments.1.bounds = "unsafe" # Size and type probably depends on CGLGlobalOption
+fn.CGLGetGlobalOption.arguments.1.bounds = "unsafe" # Size and type probably depends on CGLGlobalOption
+fn.CGLGetOption.arguments.1.bounds = "single"
+fn.CGLGetVersion.arguments.0.bounds = "single"
+fn.CGLGetVersion.arguments.1.bounds = "single"
+fn.CGLErrorString.return.bounds = "unsafe" # TODO: null-terminated + 'static lifetime

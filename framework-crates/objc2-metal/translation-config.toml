@@ -72,8 +72,7 @@ class.MTL4RenderPassDescriptor.methods."getSamplePositions:count:".arguments.0.b
 
 class.MTLTensorExtents.methods."initWithRank:values:".arguments.1.bounds.counted-by = "rank"
 
-# TODO: Re-enable once we no longer emit this method as `extern "C"`
-# fn.MTLIOCreateCompressionContext.arguments.0.bounds = "null-terminated"
+fn.MTLIOCreateCompressionContext.arguments.0.bounds = "null-terminated"
 
 ###
 ### Safety

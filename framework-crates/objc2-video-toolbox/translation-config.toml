@@ -15,6 +15,31 @@ const.kVTDecodeFrame_1xRealTimePlayback.renamed = "Frame_1xRealTimePlayback"
 const.kVTDecodeFrame_EnableTemporalProcessing.renamed = "Frame_EnableTemporalProcessing"
 
 ##
+## Pointer bounds
+##
+
+fn.VTCompressionSessionEncodeFrame.arguments.6.bounds = "single"
+fn.VTCompressionSessionEncodeFrameWithOutputHandler.arguments.5.bounds = "single"
+fn.VTCompressionSessionEncodeMultiImageFrame.arguments.6.bounds = "single"
+fn.VTCompressionSessionEncodeMultiImageFrameWithOutputHandler.arguments.5.bounds = "single"
+fn.VTCompressionSessionBeginPass.arguments.2.bounds = "unsafe" # Reserved
+fn.VTCompressionSessionEndPass.arguments.1.bounds = "single"
+fn.VTCompressionSessionEndPass.arguments.2.bounds = "unsafe" # Reserved
+fn.VTCompressionSessionGetTimeRangesForNextPass.arguments.1.bounds = "single"
+fn.VTCompressionSessionGetTimeRangesForNextPass.arguments.2.bounds = "single"
+
+fn.VTDecompressionSessionCreate.arguments.4.bounds = "single"
+fn.VTDecompressionSessionDecodeFrame.arguments.4.bounds = "single"
+fn.VTDecompressionSessionDecodeFrameWithOutputHandler.arguments.3.bounds = "single"
+fn.VTDecompressionSessionDecodeFrameWithMultiImageCapableOutputHandler.arguments.3.bounds = "single"
+fn.VTDecompressionSessionDecodeFrameWithOptions.arguments.5.bounds = "single"
+fn.VTDecompressionSessionDecodeFrameWithOptionsAndOutputHandler.arguments.4.bounds = "single"
+
+fn.VTFrameSiloSetTimeRangesForNextPass.arguments.2.bounds.counted-by = "time_range_count"
+fn.VTFrameSiloGetProgressOfCurrentPass.arguments.1.bounds = "single"
+
+
+##
 ## Generics
 ##
 

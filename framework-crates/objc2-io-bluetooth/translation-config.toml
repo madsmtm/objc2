@@ -56,6 +56,45 @@ const.kBluetoothHCIEventMaskRemoteHostSupportedFeaturesNotificationEvent.skipped
 const.kBluetoothHCIEventMaskLEMetaEvent.skipped = true
 
 ##
+## Pointer bounds
+##
+
+fn.IOBluetoothNSStringToDeviceAddress.arguments.1.bounds = "single"
+fn.IOBluetoothNSStringFromDeviceAddress.arguments.0.bounds = "single"
+fn.IOBluetoothNSStringFromDeviceAddressColon.arguments.0.bounds = "single"
+fn.IOBluetoothFindNumberOfRegistryEntriesOfClassName.arguments.0.bounds = "null-terminated"
+class.IOBluetoothDevice.methods."deviceWithAddress:".arguments.0.bounds = "single"
+class.IOBluetoothDevice.methods."withAddress:".arguments.0.bounds = "single"
+class.IOBluetoothDevice.methods.getAddress.return.bounds = "single"
+class.IOBluetoothDevicePair.methods."replyPINCode:PINCode:".arguments.1.bounds = "single" # Not counted by `pin_code_size`, only limited by it
+class.NSObject.methods."readRSSIForDeviceComplete:device:info:error:".arguments.2.bounds = "single"
+class.NSObject.methods."readLinkQualityForDeviceComplete:device:info:error:".arguments.2.bounds = "single"
+class.IOBluetoothRFCOMMChannel.methods."writeSimple:length:sleep:bytesSent:".arguments.0.bounds.sized-by = "length"
+class.IOBluetoothRFCOMMChannel.methods."writeSimple:length:sleep:bytesSent:".arguments.3.bounds = "single"
+class.IOBluetoothSDPServiceRecord.methods."getRFCOMMChannelID:".arguments.0.bounds = "single"
+class.IOBluetoothSDPServiceRecord.methods."getL2CAPPSM:".arguments.0.bounds = "single"
+class.IOBluetoothSDPServiceRecord.methods."getServiceRecordHandle:".arguments.0.bounds = "single"
+
+fn.OBEXSessionHasOpenOBEXConnection.arguments.1.bounds = "single"
+fn.OBEXSessionGetMaxPacketLength.arguments.1.bounds = "single"
+fn.OBEXSessionGetAvailableCommandPayloadLength.arguments.2.bounds = "single"
+fn.OBEXSessionGetAvailableCommandResponsePayloadLength.arguments.2.bounds = "single"
+fn.OBEXCreateVEvent.arguments.0.bounds.counted-by = "in_charset_length"
+fn.OBEXCreateVEvent.arguments.2.bounds.counted-by = "in_encoding_length"
+fn.OBEXCreateVEvent.arguments.4.bounds.counted-by = "in_event_start_date_length"
+fn.OBEXCreateVEvent.arguments.6.bounds.counted-by = "in_event_end_date_length"
+fn.OBEXCreateVEvent.arguments.8.bounds.counted-by = "in_alarm_date_length"
+fn.OBEXCreateVEvent.arguments.10.bounds.counted-by = "in_category_length"
+fn.OBEXCreateVEvent.arguments.12.bounds.counted-by = "in_summary_length"
+fn.OBEXCreateVEvent.arguments.14.bounds.counted-by = "in_location_length"
+fn.OBEXCreateVEvent.arguments.16.bounds.counted-by = "in_xirmcluid_length"
+fn.IOBluetoothOBEXSessionCreateWithIOBluetoothSDPServiceRecordRef.arguments.1.bounds = "single"
+fn.IOBluetoothOBEXSessionCreateWithIOBluetoothDeviceRefAndChannelNumber.arguments.2.bounds = "single"
+fn.IOBluetoothOBEXSessionCreateWithIncomingIOBluetoothRFCOMMChannel.arguments.3.bounds = "single"
+class.OBEXSession.methods."serverHandleIncomingData:".arguments.0.bounds = "single"
+class.OBEXSession.methods."clientHandleIncomingData:".arguments.0.bounds = "single"
+
+##
 ## Generics
 ##
 

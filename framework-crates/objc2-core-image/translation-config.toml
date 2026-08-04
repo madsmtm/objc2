@@ -21,3 +21,8 @@ class.CIImage.categories.AVSemanticSegmentationMatte.skipped = true
 
 # Reserved for future use, pass NULL.
 class.CIContext.methods."createCGLayerWithSize:info:".arguments.1.generics = []
+
+# Pointer bounds
+class.CIVector.methods."vectorWithValues:count:".arguments.0.bounds.counted-by = "count"
+class.CIVector.methods."initWithValues:count:".arguments.0.bounds.counted-by = "count"
+class.CIColor.methods.components.return.bounds.counted-by = "self.numberOfComponents()"

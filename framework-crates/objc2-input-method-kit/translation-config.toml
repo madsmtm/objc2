@@ -15,6 +15,8 @@ static.IMKControllerClass.nullability = "nonnull"
 static.IMKDelegateClass.nullability = "nonnull"
 static.IMKModeDictionary.nullability = "nonnull"
 
+protocol.IMKMouseHandling.methods."mouseDownOnCharacterIndex:coordinate:withModifier:continueTracking:client:".arguments.3.bounds = "single"
+
 # Needs `IMKTextInput`, which is defined in `Carbon` for some reason
 class.IMKInputController.methods.client.skipped = true
 

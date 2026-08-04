@@ -22,3 +22,13 @@ class.SK3DNode.methods."setPointOfView:".skipped = true
 
 # Custom simd definition
 typedef.vector_float3.skipped = true
+
+# Pointer bounds
+class.SKWarpGeometryGrid.methods."gridWithColumns:rows:sourcePositions:destPositions:".arguments.2.bounds.counted-by = "(cols + 1) * (rows + 1)"
+class.SKWarpGeometryGrid.methods."gridWithColumns:rows:sourcePositions:destPositions:".arguments.3.bounds.counted-by = "(cols + 1) * (rows + 1)"
+class.SKWarpGeometryGrid.methods."initWithColumns:rows:sourcePositions:destPositions:".arguments.2.bounds.counted-by = "(cols + 1) * (rows + 1)"
+class.SKWarpGeometryGrid.methods."initWithColumns:rows:sourcePositions:destPositions:".arguments.3.bounds.counted-by = "(cols + 1) * (rows + 1)"
+class.SKWarpGeometryGrid.methods."gridByReplacingSourcePositions:".arguments.0.bounds.counted-by = "self.vertexCount()"
+class.SKWarpGeometryGrid.methods."gridByReplacingDestPositions:".arguments.0.bounds.counted-by = "self.vertexCount()"
+class.SKShapeNode.methods."shapeNodeWithPoints:count:".arguments.0.bounds.counted-by = "num_points"
+class.SKShapeNode.methods."shapeNodeWithSplinePoints:count:".arguments.0.bounds.counted-by = "num_points"

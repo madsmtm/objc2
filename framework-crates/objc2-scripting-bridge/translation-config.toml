@@ -4,6 +4,8 @@ required-crates = ["objc2", "objc2-foundation"]
 macos = "10.5"
 maccatalyst = "13.0"
 
+protocol.SBApplicationDelegate.methods."eventDidFail:withError:".arguments.0.bounds = "unsafe"
+
 # Unsure what this returns.
 class.SBElementArray.skipped-protocols = ["NSCopying", "NSMutableCopying"]
 

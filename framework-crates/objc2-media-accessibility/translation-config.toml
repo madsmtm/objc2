@@ -13,3 +13,15 @@ fn.MACaptionAppearanceCopySelectedLanguages.return.generics = ["CoreFoundation.C
 fn.MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics.return.generics = ["CoreFoundation.CFString.CFString"]
 fn.MACaptionAppearanceCopyProfileIDs.return.generics = ["CoreFoundation.CFString.CFString"]
 fn.MAAudibleMediaCopyPreferredCharacteristics.return.generics = ["CoreFoundation.CFString.CFString"]
+
+# Pointer bounds
+fn.MACaptionAppearanceCopyForegroundColor.arguments.1.bounds = "single"
+fn.MACaptionAppearanceCopyBackgroundColor.arguments.1.bounds = "single"
+fn.MACaptionAppearanceCopyWindowColor.arguments.1.bounds = "single"
+fn.MACaptionAppearanceGetForegroundOpacity.arguments.1.bounds = "single"
+fn.MACaptionAppearanceGetBackgroundOpacity.arguments.1.bounds = "single"
+fn.MACaptionAppearanceGetWindowOpacity.arguments.1.bounds = "single"
+fn.MACaptionAppearanceGetWindowRoundedCornerRadius.arguments.1.bounds = "single"
+fn.MACaptionAppearanceCopyFontDescriptorForStyle.arguments.1.bounds = "single"
+fn.MACaptionAppearanceGetRelativeCharacterSize.arguments.1.bounds = "single"
+fn.MACaptionAppearanceGetTextEdgeStyle.arguments.1.bounds = "single"

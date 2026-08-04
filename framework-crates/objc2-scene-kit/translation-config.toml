@@ -23,6 +23,19 @@ protocol.SCNSceneRenderer.methods."presentScene:withTransition:incomingPointOfVi
 protocol.SCNSceneRenderer.methods."overlaySKScene".skipped = true
 protocol.SCNSceneRenderer.methods."setOverlaySKScene:".skipped = true
 
+# Pointer bounds
+protocol.SCNBoundingVolume.methods."getBoundingBoxMin:max:".arguments.0.bounds = "single"
+protocol.SCNBoundingVolume.methods."getBoundingBoxMin:max:".arguments.1.bounds = "single"
+protocol.SCNBoundingVolume.methods."setBoundingBoxMin:max:".arguments.0.written = false
+protocol.SCNBoundingVolume.methods."setBoundingBoxMin:max:".arguments.0.bounds = "single"
+protocol.SCNBoundingVolume.methods."setBoundingBoxMin:max:".arguments.1.written = false
+protocol.SCNBoundingVolume.methods."setBoundingBoxMin:max:".arguments.1.bounds = "single"
+protocol.SCNBoundingVolume.methods."getBoundingSphereCenter:radius:".arguments.0.bounds = "single"
+protocol.SCNBoundingVolume.methods."getBoundingSphereCenter:radius:".arguments.1.bounds = "single"
+class.SCNGeometrySource.methods."geometrySourceWithVertices:count:".arguments.0.bounds.counted-by = "count"
+class.SCNGeometrySource.methods."geometrySourceWithNormals:count:".arguments.0.bounds.counted-by = "count"
+class.SCNGeometrySource.methods."geometrySourceWithTextureCoordinates:count:".arguments.0.bounds.counted-by = "count"
+
 ##
 ## Safety
 ##

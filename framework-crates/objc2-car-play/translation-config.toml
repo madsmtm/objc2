@@ -3,3 +3,10 @@ crate = "objc2-car-play"
 required-crates = ["objc2", "objc2-foundation"]
 maccatalyst = "14.0"
 ios = "12.0"
+
+# Pointer bounds
+class.CPRouteSegment.methods."initWithOrigin:destination:maneuvers:laneGuidances:currentManeuvers:currentLaneGuidance:tripTravelEstimates:maneuverTravelEstimates:coordinates:coordinatesCount:".arguments.8.bounds.counted-by = "coordinates_count"
+class.CPRouteSegment.methods.coordinates.return.bounds.counted-by = "self.coordinatesCount()"
+class.CPNavigationWaypoint.methods.entryPoints.return.bounds.counted-by = "self.entryPointsCount()"
+class.CPNavigationWaypoint.methods."initWithCenterPoint:locationThreshold:name:address:entryPoints:entryPointsCount:timeZone:".arguments.4.bounds.counted-by = "entry_points_count"
+class.CPNavigationWaypoint.methods."initWithMapItem:locationThreshold:entryPoints:entryPointsCount:".arguments.2.bounds.counted-by = "entry_points_count"

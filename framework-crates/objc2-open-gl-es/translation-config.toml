@@ -17,3 +17,7 @@ module.ES3.skipped = true
 module.gltypes.skipped = true
 # Macro-only module
 module.OpenGLESAvailability.skipped = true
+
+# Pointer bounds
+fn.EAGLGetVersion.arguments.0.bounds = "single"
+fn.EAGLGetVersion.arguments.1.bounds = "single"

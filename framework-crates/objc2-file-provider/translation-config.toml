@@ -10,3 +10,6 @@ external.UTType.module = "UniformTypeIdentifiers.UTType"
 
 # Protocol that has a typedef defined for it for ease of use
 protocol.NSFileProviderItem.renamed = "NSFileProviderItemProtocol"
+
+class.NSFileProviderManager.methods."checkDomainsCanBeStored:onVolumeAtURL:unsupportedReason:error:".arguments.0.bounds = "single"
+class.NSFileProviderManager.methods."checkDomainsCanBeStored:onVolumeAtURL:unsupportedReason:error:".arguments.2.bounds = "single"

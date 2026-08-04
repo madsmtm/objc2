@@ -18,6 +18,15 @@ class.VNTrackingRequest.methods."supportedNumberOfTrackersAndReturnError:".skipp
 # apinotes are being weird here
 class.VNRecognizedText.methods."boundingBoxForRange:error:".skipped = true
 
+# Pointer bounds
+class.VNFaceLandmarkRegion2D.methods.normalizedPoints.return.bounds.counted-by = "self.pointCount()"
+class.VNFaceLandmarkRegion2D.methods."pointsInImageOfSize:".return.bounds.counted-by = "self.pointCount()"
+class.VNContour.methods.normalizedPoints.return.bounds.counted-by = "self.pointCount()"
+class.VNFeaturePrintObservation.methods."computeDistance:toFeaturePrintObservation:error:".arguments.0.bounds = "single"
+class.VNHumanBodyPose3DObservation.methods."getCameraRelativePosition:forJointName:error:".arguments.0.bounds = "single"
+class.VNGeometryUtils.methods."boundingCircleForSIMDPoints:pointCount:error:".arguments.0.bounds.counted-by = "point_count"
+class.VNGeometryUtils.methods."calculateArea:forContour:orientedArea:error:".arguments.0.bounds = "single"
+class.VNGeometryUtils.methods."calculatePerimeter:forContour:error:".arguments.0.bounds = "single"
 
 ###
 ### Safety

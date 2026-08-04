@@ -9,6 +9,42 @@ tvos = "9.0"
 visionos = "1.0"
 
 ##
+## Pointer bounds
+##
+
+fn.CFHostStartInfoResolution.arguments.2.bounds = "single"
+fn.CFHostGetAddressing.arguments.1.bounds = "single"
+fn.CFHostGetNames.arguments.1.bounds = "single"
+fn.CFHostGetReachability.arguments.1.bounds = "single"
+fn.CFHostSetClient.arguments.2.bounds = "single"
+
+fn.CFNetServiceRegisterWithOptions.arguments.2.bounds = "single"
+fn.CFNetServiceResolveWithTimeout.arguments.2.bounds = "single"
+fn.CFNetServiceSetClient.arguments.2.bounds = "single"
+fn.CFNetServiceMonitorCreate.arguments.3.bounds = "single"
+fn.CFNetServiceMonitorStart.arguments.2.bounds = "single"
+fn.CFNetServiceMonitorStop.arguments.1.bounds = "single"
+fn.CFNetServiceBrowserCreate.arguments.2.bounds = "single"
+fn.CFNetServiceBrowserSearchForDomains.arguments.2.bounds = "single"
+fn.CFNetServiceBrowserSearchForServices.arguments.3.bounds = "single"
+fn.CFNetServiceBrowserStopSearch.arguments.1.bounds = "single"
+fn.CFNetServiceRegister.arguments.1.bounds = "single"
+fn.CFNetServiceResolve.arguments.1.bounds = "single"
+
+fn.CFSocketStreamSOCKSGetErrorSubdomain.arguments.0.bounds = "single"
+fn.CFSocketStreamSOCKSGetError.arguments.0.bounds = "single"
+
+fn.CFFTPCreateParsedResourceListing.arguments.1.bounds.counted-by = "buffer_length"
+
+fn.CFHTTPMessageAppendBytes.arguments.1.bounds.counted-by = "num_bytes"
+fn.CFHTTPAuthenticationIsValid.arguments.1.bounds = "single"
+fn.CFHTTPMessageApplyCredentials.arguments.4.bounds = "single"
+fn.CFHTTPMessageApplyCredentialDictionary.arguments.3.bounds = "single"
+
+fn.CFNetworkExecuteProxyAutoConfigurationScript.arguments.3.bounds = "single"
+fn.CFNetworkExecuteProxyAutoConfigurationURL.arguments.3.bounds = "single"
+
+##
 ## Generics
 ##
 

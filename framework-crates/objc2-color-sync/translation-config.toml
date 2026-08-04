@@ -37,3 +37,20 @@ fn.ColorSyncCreateCodeFragment.arguments.1.generics = ["CoreFoundation.CFString.
 fn.ColorSyncRegisterDevice.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.ColorSyncDeviceSetCustomProfiles.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.ColorSyncDeviceCopyDeviceInfo.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+##
+## Pointer bounds
+##
+
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.1.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.2.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.3.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.4.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.5.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.6.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.7.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.8.bounds = "single"
+fn.ColorSyncProfileGetDisplayTransferFormulaFromVCGT.arguments.9.bounds = "single"
+fn.ColorSyncProfileCreateDisplayTransferTablesFromVCGT.arguments.1.bounds = "single"
+fn.ColorSyncIterateInstalledProfiles.arguments.1.bounds = "single"
+fn.ColorSyncIterateInstalledProfilesWithOptions.arguments.1.bounds = "single"

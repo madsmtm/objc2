@@ -9,3 +9,5 @@ watchos = "5.0"
 visionos = "1.0"
 
 external.MLModel.module = "CoreML.MLModel"
+
+class.NLEmbedding.methods."getVector:forString:".arguments.0.bounds.counted-by = "self.dimension()"

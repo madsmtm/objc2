@@ -78,3 +78,35 @@ class.AVContentKeySession.methods."processContentKeyRequestWithIdentifier:initia
 class.AVPlayerItem.methods."copyWithZone:".skipped = true
 # Ignore the extra docs on when this throws.
 class.AVCaptionRegion.methods."mutableCopyWithZone:".skipped = true
+
+##
+## Pointer bounds
+##
+
+class.AVAssetImageGenerator.methods."copyCGImageAtTime:actualTime:error:".arguments.1.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getTransformRampForTime:startTransform:endTransform:timeRange:".arguments.1.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getTransformRampForTime:startTransform:endTransform:timeRange:".arguments.2.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getTransformRampForTime:startTransform:endTransform:timeRange:".arguments.3.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getOpacityRampForTime:startOpacity:endOpacity:timeRange:".arguments.1.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getOpacityRampForTime:startOpacity:endOpacity:timeRange:".arguments.2.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getOpacityRampForTime:startOpacity:endOpacity:timeRange:".arguments.3.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getCropRectangleRampForTime:startCropRectangle:endCropRectangle:timeRange:".arguments.1.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getCropRectangleRampForTime:startCropRectangle:endCropRectangle:timeRange:".arguments.2.bounds = "single"
+class.AVVideoCompositionLayerInstruction.methods."getCropRectangleRampForTime:startCropRectangle:endCropRectangle:timeRange:".arguments.3.bounds = "single"
+class.AVAudioMixInputParameters.methods."getVolumeRampForTime:startVolume:endVolume:timeRange:".arguments.1.bounds = "single"
+class.AVAudioMixInputParameters.methods."getVolumeRampForTime:startVolume:endVolume:timeRange:".arguments.2.bounds = "single"
+class.AVAudioMixInputParameters.methods."getVolumeRampForTime:startVolume:endVolume:timeRange:".arguments.3.bounds = "single"
+class.AVCaption.methods."textColorAtIndex:range:".arguments.1.bounds = "single"
+class.AVCaption.methods."backgroundColorAtIndex:range:".arguments.1.bounds = "single"
+class.AVCaption.methods."fontWeightAtIndex:range:".arguments.1.bounds = "single"
+class.AVCaption.methods."fontStyleAtIndex:range:".arguments.1.bounds = "single"
+class.AVCaption.methods."decorationAtIndex:range:".arguments.1.bounds = "single"
+class.AVCaption.methods."textCombineAtIndex:range:".arguments.1.bounds = "single"
+class.AVCaption.methods."rubyAtIndex:range:".arguments.1.bounds = "single"
+class.AVMutableMovieTrack.methods."appendSampleBuffer:decodeTime:presentationTime:error:".arguments.1.bounds = "single"
+class.AVMutableMovieTrack.methods."appendSampleBuffer:decodeTime:presentationTime:error:".arguments.2.bounds = "single"
+class.AVPlayerVideoOutput.methods."copyTaggedBufferGroupForHostTime:presentationTimeStamp:activeConfiguration:".arguments.1.bounds = "single"
+class.AVPlayerItemVideoOutput.methods."copyPixelBufferForItemTime:itemTimeForDisplay:".arguments.1.bounds = "single"
+class.AVPlayerItemIntegratedTimelineSnapshot.methods."mapTime:toSegment:atSegmentOffset:".arguments.2.bounds = "single"
+class.AVSampleCursor.methods."stepByDecodeTime:wasPinned:".arguments.1.bounds = "single"
+class.AVSampleCursor.methods."stepByPresentationTime:wasPinned:".arguments.1.bounds = "single"
