@@ -125,6 +125,10 @@ const.kFSFileSecurityRemoveACL.skipped = true
 # it's fine to just use the value.
 const.kPEFFirstSectionHeaderOffset.use-value = true
 
+# Takes list as first param, so makes sense to have on the list.
+fn.LSSharedFileListItemMove.implementor = "Security.LSSharedFileList.LSSharedFileList"
+fn.LSSharedFileListItemRemove.implementor = "Security.LSSharedFileList.LSSharedFileList"
+
 ##
 ## Nullability
 ##
