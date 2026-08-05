@@ -16,7 +16,6 @@ use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::expr::Expr;
-use crate::fn_utils::follows_create_rule;
 use crate::id::cfg_gate_ln;
 use crate::id::ItemIdentifier;
 use crate::id::ItemTree;
@@ -25,7 +24,8 @@ use crate::immediate_children;
 use crate::method::Method;
 use crate::name_translation::handle_keyword;
 use crate::name_translation::{
-    enum_prefix, is_likely_bounds_affecting, param_name, split_words, to_snake_case,
+    enum_prefix, follows_create_rule, is_likely_bounds_affecting, param_name, split_words,
+    to_snake_case,
 };
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;

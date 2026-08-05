@@ -1,15 +1,21 @@
-//! # Name translation algorithms
+//! # Name translation and parsing algorithms
 //!
 //! See <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md>.
 //!
 //! Kinda ugly and under-tested, may not work for all cases.
 #![allow(clippy::if_same_then_else)]
 
-use std::{borrow::Cow, collections::VecDeque, iter::FusedIterator};
+use std::borrow::Cow;
+use std::collections::VecDeque;
+use std::iter::FusedIterator;
+use std::sync::LazyLock;
 
 use itertools::Itertools;
+use regex::Regex;
 
-use crate::{id::ItemTree, rust_type::Ty, Location};
+use crate::id::ItemTree;
+use crate::rust_type::Ty;
+use crate::Location;
 
 /// Split a string according to Swift's word boundary algorithm.
 ///
@@ -628,6 +634,26 @@ pub(crate) fn handle_keyword(name: &str) -> &str {
     keyword(name).unwrap_or(name)
 }
 
+/// Algorithm described in:
+/// <https://clang.llvm.org/docs/AutomaticReferenceCounting.html#auditing-of-c-retainable-pointer-interfaces>
+///
+/// > A function obeys the create/copy naming convention if its name
+/// > contains as a substring:
+/// > - either “Create” or “Copy” not followed by a lowercase letter, or
+/// > - either “create” or “copy” not followed by a lowercase letter and
+/// >   not preceded by any letter, whether uppercase or lowercase.
+///
+/// See also Clang's implementation:
+/// <https://github.com/llvm/llvm-project/blob/llvmorg-19.1.6/clang/lib/Analysis/CocoaConventions.cpp#L97-L145>
+/// <https://github.com/llvm/llvm-project/blob/llvmorg-19.1.6/clang/lib/Analysis/RetainSummaryManager.cpp>
+pub(crate) fn follows_create_rule(name: &str) -> bool {
+    static RE: LazyLock<Regex> = LazyLock::new(|| {
+        Regex::new(r"(Create|Copy)([^a-z]|$)|([^a-zA-Z]|^)(create|copy)([^a-z]|$)").unwrap()
+    });
+
+    RE.is_match(name)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -882,5 +908,33 @@ mod tests {
         assert_eq!(to_snake_case("_"), "_");
         assert_eq!(to_snake_case("___Foo"), "___foo");
         assert_eq!(to_snake_case("fooBar"), "foo_bar");
+    }
+
+    #[test]
+    fn test_follows_create_rule() {
+        assert!(follows_create_rule("ThingCreate"));
+        assert!(follows_create_rule("CreateThing"));
+        assert!(follows_create_rule("CopyCreateThing"));
+        assert!(follows_create_rule("create_thing"));
+        assert!(follows_create_rule("thing_create"));
+
+        assert!(!follows_create_rule("Created"));
+        assert!(!follows_create_rule("created"));
+        assert!(!follows_create_rule("GetAbc"));
+        assert!(!follows_create_rule("recreate"));
+
+        assert!(follows_create_rule("CreatedCopy"));
+
+        // A few real-world examples
+        assert!(follows_create_rule("dispatch_data_create"));
+        assert!(follows_create_rule("dispatch_data_create_map"));
+        assert!(!follows_create_rule("dispatch_data_get_size"));
+        assert!(follows_create_rule("MTLCreateSystemDefaultDevice"));
+        assert!(follows_create_rule("MTLCopyAllDevices"));
+        assert!(!follows_create_rule("MTLRemoveDeviceObserver"));
+        assert!(follows_create_rule("CFArrayCreate"));
+        assert!(follows_create_rule("CFArrayCreateCopy"));
+        assert!(!follows_create_rule("CFArrayGetCount"));
+        assert!(!follows_create_rule("CFArrayGetValues"));
     }
 }
