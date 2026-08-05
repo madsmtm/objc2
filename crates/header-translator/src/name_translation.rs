@@ -429,6 +429,11 @@ pub(crate) fn shorten_name_when_on_parent(
 
 /// Whether the function is a candidate for being a method.
 fn is_method_candidate(fn_name: &str, type_name: &str) -> bool {
+    // Things shouldn't be implemented on FSRef.
+    if matches!(type_name, "FS" | "FSRef") {
+        return false;
+    }
+
     // Things like CGDisplayModelNumber should not be mapped on CGDisplayMode,
     // so compare on a word-basis instead of just `str::starts_with`.
     //
