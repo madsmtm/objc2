@@ -247,13 +247,18 @@ macro_rules! impl_fn_to_extern_inner {
                 // the receiver is guaranteed to be valid by the runtime.
                 let $receiver_name = unsafe { MethodFamily::prepare_defined_method(receiver) };
 
-                // Convert each parameter.
-                $(let $param = $param_ty::__from_defined_param($param);)*
+                let result = {
+                    // Convert each parameter.
+                    $(let ($param, _helper) = $param_ty::__from_defined_param($param);)*
 
-                // Call the method.
-                let result = $actual_method_call;
+                    // Call the method.
+                    $actual_method_call
+
+                    // Drop parameter converters.
+                };
 
                 // Convert the result.
+                // Must be the last thing we do, to allow autoreleasing to work properly.
                 MethodFamily::convert_defined_return(result)
             }
 

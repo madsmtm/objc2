@@ -588,6 +588,37 @@ impl<T: Message> Retained<T> {
         unsafe { Self::from_raw(res) }
     }
 
+    #[inline]
+    pub(crate) fn autorelease_option(this: Option<Self>) -> *mut T {
+        let ptr: *mut T = this
+            .map(|this| ManuallyDrop::new(this).ptr.as_ptr())
+            .unwrap_or_else(ptr::null_mut);
+
+        // SAFETY:
+        // - The `ptr` is guaranteed to be valid or NULL and have at least one
+        //   retain count.
+        // - Because of the ManuallyDrop, we don't call the Drop
+        //   implementation, so the object won't also be released there.
+        let res: *mut T = unsafe { ffi::objc_autorelease(ptr.cast()) }.cast();
+        debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
+        res
+    }
+
+    #[inline]
+    pub(crate) fn autorelease_return_option(this: Option<Self>) -> *mut T {
+        let ptr: *mut T = this
+            .map(|this| ManuallyDrop::new(this).ptr.as_ptr())
+            .unwrap_or_else(ptr::null_mut);
+
+        // SAFETY: Same as `autorelease_inner`, this is just an optimization.
+        let res: *mut T = unsafe { ffi::objc_autoreleaseReturnValue(ptr.cast()) }.cast();
+        debug_assert_eq!(
+            res, ptr,
+            "objc_autoreleaseReturnValue did not return the same pointer"
+        );
+        res
+    }
+
     /// Autoreleases the [`Retained`], returning a pointer.
     ///
     /// The object is not immediately released, but will be when the innermost
@@ -609,15 +640,7 @@ impl<T: Message> Retained<T> {
     #[must_use = "if you don't intend to use the object any more, drop it as usual"]
     #[inline]
     pub fn autorelease_ptr(this: Self) -> *mut T {
-        let ptr = ManuallyDrop::new(this).ptr.as_ptr();
-        // SAFETY:
-        // - The `ptr` is guaranteed to be valid and have at least one
-        //   retain count.
-        // - Because of the ManuallyDrop, we don't call the Drop
-        //   implementation, so the object won't also be released there.
-        let res: *mut T = unsafe { ffi::objc_autorelease(ptr.cast()) }.cast();
-        debug_assert_eq!(res, ptr, "objc_autorelease did not return the same pointer");
-        res
+        Self::autorelease_option(Some(this))
     }
 
     /// Autoreleases the [`Retained`], returning a reference bound to the pool.
@@ -641,21 +664,6 @@ impl<T: Message> Retained<T> {
         let ptr = Self::autorelease_ptr(this);
         // SAFETY: The pointer is valid as a reference
         unsafe { pool.ptr_as_ref(ptr) }
-    }
-
-    #[inline]
-    pub(crate) fn autorelease_return_option(this: Option<Self>) -> *mut T {
-        let ptr: *mut T = this
-            .map(|this| ManuallyDrop::new(this).ptr.as_ptr())
-            .unwrap_or_else(ptr::null_mut);
-
-        // SAFETY: Same as `autorelease_inner`, this is just an optimization.
-        let res: *mut T = unsafe { ffi::objc_autoreleaseReturnValue(ptr.cast()) }.cast();
-        debug_assert_eq!(
-            res, ptr,
-            "objc_autoreleaseReturnValue did not return the same pointer"
-        );
-        res
     }
 
     /// Autoreleases and prepares the [`Retained`] to be returned to Objective-C.

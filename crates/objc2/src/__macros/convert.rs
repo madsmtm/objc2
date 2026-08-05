@@ -18,32 +18,43 @@ mod argument_private {
 ///
 /// This is also done specially for `&mut Retained<_>`-like arguments, to
 /// allow using those as "out" / pass-by-writeback parameters.
-pub trait ConvertArgument: argument_private::Sealed {
+pub trait ConvertArgument: argument_private::Sealed + Sized {
     /// The inner type that this can be converted to and from.
     #[doc(hidden)]
     type __Inner: EncodeArgument;
 
-    /// A helper type for out parameters.
+    /// A helper type for out parameters in `msg_send!`/`extern_methods!`.
     ///
     /// When dropped, this will process any necessary change to the
-    /// parameters.
+    /// parameters before the message send returns.
     #[doc(hidden)]
-    type __WritebackOnDrop: Sized;
+    type __DropAfterMsgSend: Sized;
 
+    /// A helper type for out parameters in `define_class!`.
+    ///
+    /// When dropped, this will process any necessary change to the
+    /// parameters before the method returns.
     #[doc(hidden)]
-    fn __from_defined_param(inner: Self::__Inner) -> Self;
+    type __DropBeforeReturn: Sized;
 
     /// # Safety
     ///
-    /// The `__WritebackOnDrop` return type must not be leaked, and the
-    /// `__Inner` pointer must not be used after the `__WritebackOnDrop` has
-    /// dropped.
+    /// The `__OnDropAfterMsgSend` return type must not be leaked, and the
+    /// `__Inner` pointer must not be used after the `__OnDropAfterMsgSend`
+    /// has dropped.
     ///
     /// NOTE: The standard way to ensure such a thing is with closures, but
     /// using those would interact poorly with backtraces of the message send,
     /// so we're forced to ensure this out of band.
     #[doc(hidden)]
-    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop);
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__DropAfterMsgSend);
+
+    /// # Safety
+    ///
+    /// The returned value must not be used after the `__OnDropBeforeReturn`
+    /// has dropped.
+    #[doc(hidden)]
+    fn __from_defined_param(inner: Self::__Inner) -> (Self, Self::__DropBeforeReturn);
 }
 
 // Implemented in writeback.rs
@@ -56,16 +67,17 @@ impl<T: EncodeArgument> argument_private::Sealed for T {}
 impl<T: EncodeArgument> ConvertArgument for T {
     type __Inner = Self;
 
-    type __WritebackOnDrop = ();
+    type __DropAfterMsgSend = ();
+    type __DropBeforeReturn = ();
 
     #[inline]
-    fn __from_defined_param(inner: Self::__Inner) -> Self {
-        inner
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__DropAfterMsgSend) {
+        (self, ())
     }
 
     #[inline]
-    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
-        (self, ())
+    fn __from_defined_param(inner: Self::__Inner) -> (Self, Self::__DropBeforeReturn) {
+        (inner, ())
     }
 }
 
@@ -73,16 +85,17 @@ impl argument_private::Sealed for bool {}
 impl ConvertArgument for bool {
     type __Inner = Bool;
 
-    type __WritebackOnDrop = ();
+    type __DropAfterMsgSend = ();
+    type __DropBeforeReturn = ();
 
     #[inline]
-    fn __from_defined_param(inner: Self::__Inner) -> Self {
-        inner.as_bool()
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__DropAfterMsgSend) {
+        (Bool::new(self), ())
     }
 
     #[inline]
-    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
-        (Bool::new(self), ())
+    fn __from_defined_param(inner: Self::__Inner) -> (Self, Self::__DropBeforeReturn) {
+        (inner.as_bool(), ())
     }
 }
 
@@ -90,19 +103,20 @@ impl argument_private::Sealed for &CStr {}
 impl ConvertArgument for &CStr {
     type __Inner = NonNull<c_char>;
 
-    type __WritebackOnDrop = ();
+    type __DropAfterMsgSend = ();
+    type __DropBeforeReturn = ();
 
     #[inline]
-    fn __from_defined_param(inner: Self::__Inner) -> Self {
-        // SAFETY: The pointer comes from the caller, and the signature the
-        // user wrote for the defined method denotes the lifetime.
-        unsafe { CStr::from_ptr(inner.as_ptr()) }
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__DropAfterMsgSend) {
+        let ptr = NonNull::new(self.as_ptr().cast_mut()).unwrap();
+        (ptr, ())
     }
 
     #[inline]
-    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
-        let ptr = NonNull::new(self.as_ptr().cast_mut()).unwrap();
-        (ptr, ())
+    fn __from_defined_param(inner: Self::__Inner) -> (Self, Self::__DropBeforeReturn) {
+        // SAFETY: The pointer comes from the caller, and the signature the
+        // user wrote for the defined method denotes the lifetime.
+        (unsafe { CStr::from_ptr(inner.as_ptr()) }, ())
     }
 }
 
@@ -110,19 +124,20 @@ impl argument_private::Sealed for Option<&CStr> {}
 impl ConvertArgument for Option<&CStr> {
     type __Inner = Option<NonNull<c_char>>;
 
-    type __WritebackOnDrop = ();
+    type __DropAfterMsgSend = ();
+    type __DropBeforeReturn = ();
 
     #[inline]
-    fn __from_defined_param(inner: Self::__Inner) -> Self {
-        // SAFETY: The pointer comes from the caller, and the signature the
-        // user wrote for the defined method denotes the lifetime.
-        inner.map(|x| unsafe { CStr::from_ptr(x.as_ptr()) })
+    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__DropAfterMsgSend) {
+        let ptr = self.map(|x| NonNull::new(x.as_ptr().cast_mut()).unwrap());
+        (ptr, ())
     }
 
     #[inline]
-    unsafe fn __into_argument(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
-        let ptr = self.map(|x| NonNull::new(x.as_ptr().cast_mut()).unwrap());
-        (ptr, ())
+    fn __from_defined_param(inner: Self::__Inner) -> (Self, Self::__DropBeforeReturn) {
+        // SAFETY: The pointer comes from the caller, and the signature the
+        // user wrote for the defined method denotes the lifetime.
+        (inner.map(|x| unsafe { CStr::from_ptr(x.as_ptr()) }), ())
     }
 }
 
@@ -274,10 +289,10 @@ pub trait ConvertArguments {
     type __Inner: EncodeArguments;
 
     #[doc(hidden)]
-    type __WritebackOnDrop: Sized;
+    type __DropAfterMsgSend: Sized;
 
     #[doc(hidden)]
-    unsafe fn __into_arguments(self) -> (Self::__Inner, Self::__WritebackOnDrop);
+    unsafe fn __into_arguments(self) -> (Self::__Inner, Self::__DropAfterMsgSend);
 }
 
 pub trait TupleExtender<T> {
@@ -292,10 +307,10 @@ macro_rules! args_impl {
         impl<$($t: ConvertArgument),*> ConvertArguments for ($($t,)*) {
             type __Inner = ($($t::__Inner,)*);
 
-            type __WritebackOnDrop = ($($t::__WritebackOnDrop,)*);
+            type __DropAfterMsgSend = ($($t::__DropAfterMsgSend,)*);
 
             #[inline]
-            unsafe fn __into_arguments(self) -> (Self::__Inner, Self::__WritebackOnDrop) {
+            unsafe fn __into_arguments(self) -> (Self::__Inner, Self::__DropAfterMsgSend) {
                 let ($($a,)*) = self;
                 // SAFETY: Upheld by caller
                 $(let $a = unsafe { ConvertArgument::__into_argument($a) };)*
@@ -349,7 +364,7 @@ mod tests {
             TypeId::of::<<i32 as ConvertArgument>::__Inner>(),
             TypeId::of::<i32>()
         );
-        assert_eq!(<i32 as ConvertArgument>::__from_defined_param(42), 42);
+        assert_eq!(<i32 as ConvertArgument>::__from_defined_param(42).0, 42);
         assert_eq!(unsafe { ConvertArgument::__into_argument(42i32).0 }, 42);
     }
 
@@ -359,7 +374,7 @@ mod tests {
             TypeId::of::<<i8 as ConvertArgument>::__Inner>(),
             TypeId::of::<i8>()
         );
-        assert_eq!(<i8 as ConvertArgument>::__from_defined_param(-3), -3);
+        assert_eq!(<i8 as ConvertArgument>::__from_defined_param(-3).0, -3);
         assert_eq!(unsafe { ConvertArgument::__into_argument(-3i32).0 }, -3);
     }
 
@@ -368,8 +383,8 @@ mod tests {
         let receiver_ptr = ptr::null_mut::<AnyObject>();
         let sel = sel!(foo);
 
-        assert!(!<bool as ConvertArgument>::__from_defined_param(Bool::NO));
-        assert!(<bool as ConvertArgument>::__from_defined_param(Bool::YES));
+        assert!(!<bool as ConvertArgument>::__from_defined_param(Bool::NO).0);
+        assert!(<bool as ConvertArgument>::__from_defined_param(Bool::YES).0);
         assert!(!unsafe {
             <bool as ConvertReturn<()>>::convert_message_return(Bool::NO, receiver_ptr, sel)
         });
