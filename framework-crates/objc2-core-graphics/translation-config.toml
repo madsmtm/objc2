@@ -73,6 +73,14 @@ fn.CGColorSpaceCopyBaseColorSpace.renamed = "copy_base_color_space"
 fn.__CGBitmapContextCreateWithData.skipped = true
 fn.__CGBitmapContextCreate.skipped = true
 
+# Aliases with typos.
+const.kCGEventSupressionStateSupressionInterval.skipped = true
+const.kCGEventSupressionStateRemoteMouseDrag.skipped = true
+const.kCGNumberOfEventSupressionStates.skipped = true
+
+# Placed on CGEventFilterMask instead of being a separate `const`.
+const.kCGEventFilterMaskPermitAllEvents.skipped = true
+
 ##
 ## Fix bounds information.
 ##

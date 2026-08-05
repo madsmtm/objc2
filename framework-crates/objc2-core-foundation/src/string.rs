@@ -38,7 +38,7 @@ impl CFString {
                 None,
                 string.as_ptr(),
                 len,
-                CFStringBuiltInEncodings::EncodingUTF8.0,
+                CFStringBuiltInEncodings::UTF8.0,
                 false,
             )
         };
@@ -73,7 +73,7 @@ impl CFString {
                 None,
                 string.as_ptr(),
                 len,
-                CFStringBuiltInEncodings::EncodingUTF8.0,
+                CFStringBuiltInEncodings::UTF8.0,
                 false,
                 kCFAllocatorNull,
             )
@@ -99,7 +99,7 @@ impl CFString {
     #[doc(alias = "CFStringGetCStringPtr")]
     pub unsafe fn as_str_unchecked(&self) -> Option<&str> {
         // SAFETY: The encoding is an 8-bit encoding.
-        let bytes = unsafe { self.c_string_ptr(CFStringBuiltInEncodings::EncodingASCII.0) };
+        let bytes = unsafe { self.c_string_ptr(CFStringBuiltInEncodings::ASCII.0) };
         NonNull::new(bytes as *mut c_char).map(|bytes| {
             // NOTE: The returned string may contain interior NUL bytes:
             // https://github.com/swiftlang/swift-corelibs-foundation/issues/5200
@@ -154,7 +154,7 @@ impl fmt::Display for CFString {
                         location: location_utf16,
                         length: len_utf16 - location_utf16,
                     },
-                    CFStringBuiltInEncodings::EncodingUTF8.0,
+                    CFStringBuiltInEncodings::UTF8.0,
                     0, // No conversion character
                     false,
                     buf.as_mut_ptr(),
@@ -227,19 +227,11 @@ mod tests {
         let table = [
             (
                 b"abc\xf8xyz\0" as &[u8],
-                CFStringBuiltInEncodings::EncodingISOLatin1,
+                CFStringBuiltInEncodings::ISOLatin1,
                 "abcøxyz",
             ),
-            (
-                b"\x26\x65\0",
-                CFStringBuiltInEncodings::EncodingUTF16BE,
-                "♥",
-            ),
-            (
-                b"\x65\x26\0",
-                CFStringBuiltInEncodings::EncodingUTF16LE,
-                "♥",
-            ),
+            (b"\x26\x65\0", CFStringBuiltInEncodings::UTF16BE, "♥"),
+            (b"\x65\x26\0", CFStringBuiltInEncodings::UTF16LE, "♥"),
         ];
         for (cstr, encoding, expected) in table {
             let cstr = CStr::from_bytes_with_nul(cstr).unwrap();
@@ -255,7 +247,7 @@ mod tests {
                 None,
                 b"\xd8\x3d\xde".as_ptr(),
                 3,
-                CFStringBuiltInEncodings::EncodingUTF16BE.0,
+                CFStringBuiltInEncodings::UTF16BE.0,
                 false,
             )
             .unwrap()
@@ -283,7 +275,7 @@ mod tests {
             s.c_string(
                 buf.as_mut_ptr().cast(),
                 buf.len() as _,
-                CFStringBuiltInEncodings::EncodingUTF8.0,
+                CFStringBuiltInEncodings::UTF8.0,
             )
         });
         // All the data is copied to the buffer.
@@ -336,7 +328,7 @@ mod tests {
             CFString::with_c_string(
                 None,
                 CStr::from_bytes_with_nul_unchecked(b"\x65\x26\0"),
-                CFStringBuiltInEncodings::EncodingUnicode.0,
+                CFStringBuiltInEncodings::Unicode.0,
             )
         }
         .unwrap();
@@ -350,7 +342,7 @@ mod tests {
             s.c_string(
                 buf.as_mut_ptr().cast(),
                 buf.len() as _,
-                CFStringBuiltInEncodings::EncodingUTF8.0,
+                CFStringBuiltInEncodings::UTF8.0,
             )
         });
         let cstr = CStr::from_bytes_until_nul(&buf).unwrap();
@@ -359,7 +351,7 @@ mod tests {
         // `CFStringGetCStringPtr` completely ignores the requested UTF-8 conversion.
         assert_eq!(unsafe { s.as_str_unchecked() }, Some("e"));
         assert_eq!(
-            unsafe { CStr::from_ptr(s.c_string_ptr(CFStringBuiltInEncodings::EncodingUTF8.0,)) },
+            unsafe { CStr::from_ptr(s.c_string_ptr(CFStringBuiltInEncodings::UTF8.0,)) },
             CStr::from_bytes_with_nul(b"e&\0").unwrap()
         );
     }

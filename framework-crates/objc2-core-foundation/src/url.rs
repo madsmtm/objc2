@@ -256,7 +256,7 @@ impl CFURL {
         debug_assert!(s.len() < CFIndex::MAX as usize);
         let len = s.len() as CFIndex;
 
-        let encoding = crate::CFStringBuiltInEncodings::EncodingUTF8;
+        let encoding = crate::CFStringBuiltInEncodings::UTF8;
         // SAFETY: The pointer and length are valid, and the encoding is a
         // superset of ASCII.
         //

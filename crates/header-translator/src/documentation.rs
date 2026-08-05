@@ -135,7 +135,7 @@ impl Documentation {
             }
 
             if let Some(alias) = &self.alias {
-                writeln!(f, "#[doc(alias = {alias:?})]")?;
+                writeln!(f, "        #[doc(alias = {alias:?})]")?;
             }
 
             Ok(())

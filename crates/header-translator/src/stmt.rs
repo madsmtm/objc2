@@ -476,6 +476,30 @@ pub(crate) fn parse_param_children(
     (sendable, no_escape, out_pointer_retained)
 }
 
+/// Get enum cases that participate in computing the common prefix.
+pub(crate) fn non_deprecated_enum_cases(entity: &Entity<'_>, context: &Context<'_>) -> Vec<String> {
+    let mut variants = vec![];
+    immediate_children(entity, |entity, _span| {
+        if let EntityKind::EnumConstantDecl = entity.get_kind() {
+            let name = entity.get_name().expect("enum constant name");
+            let availability = Availability::parse(&entity, context);
+            variants.push((name, availability));
+        }
+    });
+
+    let has_only_deprecated_variants = variants
+        .iter()
+        .all(|(_, availability)| !availability.is_available_non_deprecated());
+
+    variants
+        .into_iter()
+        .filter(move |(_, availability)| {
+            has_only_deprecated_variants || availability.is_available_non_deprecated()
+        })
+        .map(|(name, _)| name)
+        .collect()
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Abi {
     C,
@@ -1712,6 +1736,14 @@ impl Stmt {
                     return vec![];
                 }
 
+                let cases;
+                let prefix = if let Some(name) = &id.name {
+                    cases = non_deprecated_enum_cases(entity, context);
+                    enum_prefix(name, cases.iter().map(|s| &**s))
+                } else {
+                    ""
+                };
+
                 let ty = entity.get_enum_underlying_type().expect("enum type");
                 let mut ty = Ty::parse_enum(ty, context);
                 let is_signed = ty.is_signed().unwrap_or_else(|| {
@@ -1724,6 +1756,8 @@ impl Stmt {
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::EnumConstantDecl => {
+                        let c_name = entity.get_name().unwrap();
+
                         let id = ItemIdentifier::new(&entity, context);
                         let const_data = context.library(&id).get(&entity);
                         let availability = Availability::parse(&entity, context);
@@ -1775,13 +1809,23 @@ impl Stmt {
                             });
                         };
 
-                        let documentation = Documentation::from_entity(&entity, context);
+                        let mut documentation = Documentation::from_entity(&entity, context);
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());
                         }
 
-                        variants.push((id.name, documentation, availability, expr, value.0 == 0));
+                        let mut name = id.name;
+                        if c_name == name {
+                            // If name is not overwritten already, strip the
+                            // prefix from it.
+                            name = c_name.strip_prefix(prefix).unwrap_or(&c_name).to_string();
+                            if c_name != name {
+                                documentation.set_alias(c_name);
+                            }
+                        }
+
+                        variants.push((name, documentation, availability, expr, value.0 == 0));
                     }
                     EntityKind::UnexposedAttr => {
                         if let Some(attr) = UnexposedAttr::parse(&entity, context) {
@@ -2183,36 +2227,6 @@ impl Stmt {
         let mut mapping = HashMap::new();
 
         match self {
-            Stmt::EnumDecl {
-                id,
-                ty,
-                kind,
-                variants,
-                ..
-            } => {
-                let mut relevant_enum_cases = variants
-                    .iter()
-                    .filter(|(_, _, availability, _, _)| availability.is_available_non_deprecated())
-                    .map(|(name, _, _, _, _)| &**name)
-                    .peekable();
-                let prefix = if relevant_enum_cases.peek().is_some() {
-                    enum_prefix(&id.name, relevant_enum_cases)
-                } else {
-                    enum_prefix(&id.name, variants.iter().map(|(name, _, _, _, _)| &**name))
-                };
-
-                for (name, ..) in variants {
-                    mapping.insert(
-                        name.clone(),
-                        Expr::Enum {
-                            id: id.clone(),
-                            variant: name.strip_prefix(prefix).unwrap_or(name).to_string(),
-                            ty: ty.clone(),
-                            attrs: kind.iter().cloned().collect(),
-                        },
-                    );
-                }
-            }
             Stmt::ConstDecl { id, ty, .. } => {
                 mapping.insert(
                     id.name.clone(),
@@ -3146,19 +3160,6 @@ impl Stmt {
                 } => {
                     write!(f, "{}", documentation.fmt(Some(id)))?;
 
-                    let mut relevant_enum_cases = variants
-                        .iter()
-                        .filter(|(_, _, availability, _, _)| {
-                            availability.is_available_non_deprecated()
-                        })
-                        .map(|(name, _, _, _, _)| &**name)
-                        .peekable();
-                    let prefix = if relevant_enum_cases.peek().is_some() {
-                        enum_prefix(&id.name, relevant_enum_cases)
-                    } else {
-                        enum_prefix(&id.name, variants.iter().map(|(name, _, _, _, _)| &**name))
-                    };
-
                     let has_zero_variant = variants.iter().any(|(_, _, _, _, is_zero)| *is_zero);
 
                     match kind {
@@ -3212,13 +3213,9 @@ impl Stmt {
 
                         for (name, documentation, availability, expr, _) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
-                            if pretty_name != name {
-                                writeln!(f, "    #[doc(alias = \"{name}\")]")?;
-                            }
                             write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "    {availability}")?;
-                            writeln!(f, "    pub const {pretty_name}: Self = Self({expr});")?;
+                            writeln!(f, "    pub const {name}: Self = Self({expr});")?;
                         }
                         writeln!(f, "}}")?;
                         writeln!(f)?;
@@ -3245,13 +3242,9 @@ impl Stmt {
 
                         for (name, documentation, availability, expr, _) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
-                            if pretty_name != name {
-                                writeln!(f, "        #[doc(alias = \"{name}\")]")?;
-                            }
                             write!(f, "{}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "{availability}")?;
-                            writeln!(f, "        const {pretty_name} = {expr};")?;
+                            writeln!(f, "        const {name} = {expr};")?;
                         }
 
                         // Set externally defined flags, since ABI-wise there
@@ -3281,16 +3274,12 @@ impl Stmt {
 
                         for (name, documentation, availability, expr, is_zero) in variants {
                             write!(f, "{}", documentation.fmt(None))?;
-                            let pretty_name = name.strip_prefix(prefix).unwrap_or(name);
-                            if pretty_name != name {
-                                writeln!(f, "    #[doc(alias = \"{name}\")]")?;
-                            }
                             write!(f, "    {}", self.cfg_gate_ln_inner(expr.required_items(), config))?;
                             write!(f, "    {availability}")?;
                             if *is_zero {
                                 write!(f, "    #[default]")?;
                             }
-                            writeln!(f, "    {pretty_name} = {expr},")?;
+                            writeln!(f, "    {name} = {expr},")?;
                         }
                         writeln!(f, "}}")?;
                         writeln!(f)?;

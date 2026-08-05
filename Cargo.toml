@@ -91,6 +91,10 @@ default.extend-identifiers.kBluetoothHCIEvnetMaskLinkSupervisionTimeoutChangedEv
 default.extend-identifiers.kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent = "kBluetoothHCIEvnetMaskEnhancedFlushCompleteEvent"
 # In framework-crates/objc2-core-services/translation-config.toml
 default.extend-identifiers.FSGetVolumeParms = "FSGetVolumeParms"
+# In framework-crates/objc2-core-graphics/translation-config.toml
+default.extend-identifiers.kCGEventSupressionStateSupressionInterval = "kCGEventSupressionStateSupressionInterval"
+default.extend-identifiers.kCGEventSupressionStateRemoteMouseDrag = "kCGEventSupressionStateRemoteMouseDrag"
+default.extend-identifiers.kCGNumberOfEventSupressionStates = "kCGNumberOfEventSupressionStates"
 
 # Used in framework crates.
 [workspace.dependencies]

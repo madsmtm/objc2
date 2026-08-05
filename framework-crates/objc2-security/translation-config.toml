@@ -182,6 +182,10 @@ struct.CSSM_TP_APPLE_EVIDENCE_INFO.skipped = true
 fn.SSLNewContext.renamed = "new_deprecated" # Replaced by SSLCreateContext
 fn.SSLDisposeContext.renamed = "__dispose"
 
+# Remove redundant underscore from name, to allow prefix-stripping to work.
+enum._SecureDownloadTrustCallbackResult.renamed = "SecureDownloadTrustCallbackResult"
+enum.__CE_CrlDistributionPointNameType.renamed = "CE_CrlDistributionPointNameType"
+
 ##
 ## Generics
 ##

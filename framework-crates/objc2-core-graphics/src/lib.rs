@@ -53,3 +53,14 @@ pub const kCGMinimumWindowLevel: CGWindowLevel =
 #[cfg(feature = "CGWindowLevel")]
 /// [Apple's documentation](https://developer.apple.com/documentation/coregraphics/kcgmaximumwindowlevel?language=objc)
 pub const kCGMaximumWindowLevel: CGWindowLevel = i32::MAX - kCGNumReservedWindowLevels;
+
+#[cfg(feature = "CGRemoteOperation")]
+impl CGEventFilterMask {
+    #[doc(alias = "kCGEventFilterMaskPermitAllEvents")]
+    #[allow(non_upper_case_globals)]
+    pub const PermitAllEvents: Self = Self(
+        Self::PermitLocalMouseEvents.0
+            | Self::PermitLocalKeyboardEvents.0
+            | Self::PermitSystemDefinedEvents.0,
+    );
+}

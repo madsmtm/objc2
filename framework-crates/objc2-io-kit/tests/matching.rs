@@ -29,7 +29,7 @@ fn matching_ethernet_interface() {
 /// A smaller helper function to construct a `CFString` from a UTF-8 `CStr`.
 // TODO: Make this use-case easier in `objc2-core-foundation`?
 unsafe fn cstr(s: &CStr) -> CFRetained<CFString> {
-    unsafe { CFString::with_c_string(None, s, CFStringBuiltInEncodings::EncodingUTF8.0).unwrap() }
+    unsafe { CFString::with_c_string(None, s, CFStringBuiltInEncodings::UTF8.0).unwrap() }
 }
 
 fn main_port() -> libc::mach_port_t {

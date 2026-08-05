@@ -206,23 +206,23 @@ pub(crate) fn enum_prefix<'a>(
     // original C name (rather than its Swift name).
     let mut ep = common_prefix([cp, enum_name]);
 
-    // 5. If the next word of CP after EP is ...
-    let next_word_enum = split_words(enum_name.strip_prefix(ep).unwrap())
-        .next()
-        .unwrap_or("");
-    let next_word_cp = split_words(cp.strip_prefix(ep).unwrap())
-        .next()
-        .unwrap_or("");
-
-    // ...
+    // 5. If the next word of CP after EP is:
     // - the next word of the type's original C name minus "s" ("URL" vs. "URLs")
     // - the next word of the type's original C name minus "es" ("Address" vs. "Addresses")
     // - the next word of the type's original C name with "ies" replaced by "y" ("Property" vs. "Properties")
     // ...
-    if next_word_enum.strip_suffix("s") == Some(next_word_cp)
-        || next_word_enum.strip_suffix("es") == Some(next_word_cp)
-        || (next_word_enum.strip_suffix("ies").is_some()
-            && next_word_enum.strip_suffix("ies") == next_word_cp.strip_suffix("y"))
+    //
+    // NOTE: We differ from the spec in that we use the _last_ word of the
+    // type's original C name, not the next! This is similar to what Swift actually does.
+    let last_word_enum = split_words(enum_name).last().unwrap_or("");
+    let next_word_cp = split_words(cp.strip_prefix(ep).unwrap())
+        .next()
+        .unwrap_or("");
+    if last_word_enum == next_word_cp
+        || last_word_enum.strip_suffix("s") == Some(next_word_cp)
+        || last_word_enum.strip_suffix("es") == Some(next_word_cp)
+        || (last_word_enum.strip_suffix("ies").is_some()
+            && last_word_enum.strip_suffix("ies") == next_word_cp.strip_suffix("y"))
     {
         // ... add the next word of CP to EP.
         ep = cp.split_at(ep.len() + next_word_cp.len()).0;
@@ -704,6 +704,10 @@ mod tests {
             ],
         );
         check("UTF__8", &["UTF", "_", "_", "8"]);
+        check(
+            "CFStringBuiltInEncodings",
+            &["CF", "String", "Built", "In", "Encodings"],
+        );
     }
 
     #[test]
@@ -808,6 +812,37 @@ mod tests {
                 "NEHotspotConfigurationEAPTLSVersion_1_2",
             ],
             "NEHotspotConfigurationEAPTLSVersion_",
+        );
+
+        check(
+            "CFStringBuiltInEncodings",
+            [
+                "kCFStringEncodingMacRoman",
+                "kCFStringEncodingWindowsLatin1",
+                "kCFStringEncodingISOLatin1",
+                "kCFStringEncodingNextStepLatin",
+            ],
+            "kCFStringEncoding",
+        );
+
+        check(
+            "SecureDownloadTrustCallbackResult",
+            [
+                "kSecureDownloadDoNotEvaluateSigner",
+                "kSecureDownloadEvaluateSigner",
+                "kSecureDownloadFailEvaluation",
+            ],
+            "kSecureDownload",
+        );
+
+        check(
+            "_XCTAssertionType",
+            [
+                "_XCTAssertion_Fail",
+                "_XCTAssertion_Nil",
+                "_XCTAssertion_NotNil",
+            ],
+            "_XCTAssertion_",
         );
     }
 

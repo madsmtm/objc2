@@ -63,6 +63,9 @@ external.GLIFunctionDispatch.module = "OpenGL"
 external._CGLPrivateObject.module = "OpenGL"
 external.CGLPrivateObj.module = "OpenGL"
 
+# Remove redundant underscore from name, to allow renaming algorithms to work.
+enum._CGLError.renamed = "CGLError"
+
 ##
 ## Pointer bounds
 ##
