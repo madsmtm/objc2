@@ -57,6 +57,7 @@ objc2-foundation = { path = "../../framework-crates/objc2-foundation", default-f
     "std",
     "NSError",
 ] }
+static_assertions = "1.1.0"
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"

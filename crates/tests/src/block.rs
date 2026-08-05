@@ -141,7 +141,7 @@ fn test_int_block() {
     invoke_assert(&RcBlock::new(|| 6), 6);
     invoke_assert(&StackBlock::with_encoding::<VoidToInt>(|| 10), 10);
     invoke_assert(&RcBlock::with_encoding::<_, VoidToInt>(|| 6), 6);
-    invoke_assert(&GLOBAL_BLOCK, 42);
+    invoke_assert(GLOBAL_BLOCK.as_ref(), 42);
 }
 
 #[test]
@@ -167,7 +167,7 @@ fn test_add_block() {
     invoke_assert(&RcBlock::new(|a: i32| a + 6), 11);
     invoke_assert(&StackBlock::with_encoding::<IntToInt>(|a: i32| a + 6), 11);
     invoke_assert(&RcBlock::with_encoding::<_, IntToInt>(|a: i32| a + 6), 11);
-    invoke_assert(&GLOBAL_BLOCK, 47);
+    invoke_assert(GLOBAL_BLOCK.as_ref(), 47);
 }
 
 #[test]
@@ -209,7 +209,7 @@ fn test_add_12() {
     invoke_assert(&RcBlock::new(closure), 78);
     invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 78);
     invoke_assert(&RcBlock::with_encoding::<_, Enc>(closure), 78);
-    invoke_assert(&GLOBAL_BLOCK, 120);
+    invoke_assert(GLOBAL_BLOCK.as_ref(), 120);
 }
 
 #[test]
@@ -249,7 +249,10 @@ fn test_large_struct_block() {
     new_data.mutate();
 
     assert_eq!(BLOCK.call(data), new_data);
-    assert_eq!(unsafe { invoke_large_struct_block(&BLOCK, data) }, new_data);
+    assert_eq!(
+        unsafe { invoke_large_struct_block(BLOCK.as_ref(), data) },
+        new_data
+    );
 
     let block = StackBlock::new(|mut x: LargeStruct| {
         x.mutate();
@@ -304,7 +307,7 @@ fn test_array() {
     invoke_assert(&RcBlock::new(closure), 10);
     invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 10);
     invoke_assert(&RcBlock::with_encoding::<_, Enc>(closure), 10);
-    invoke_assert(&GLOBAL_BLOCK, 10);
+    invoke_assert(GLOBAL_BLOCK.as_ref(), 10);
 }
 
 #[test]
@@ -430,8 +433,8 @@ fn stack_new_clone_drop() {
         }};
     }
 
-    test_with!(StackBlock::new);
-    test_with!(StackBlock::with_encoding::<VoidToVoid>);
+    test_with!(StackBlock::<'_, _, _>::new);
+    test_with!(StackBlock::<'_, _, _>::with_encoding::<VoidToVoid>);
 }
 
 #[test]
@@ -463,8 +466,8 @@ fn rc_new_clone_drop() {
         }};
     }
 
-    test_with!(RcBlock::new);
-    test_with!(RcBlock::with_encoding::<_, VoidToVoid>);
+    test_with!(RcBlock::<'_, _>::new);
+    test_with!(RcBlock::<'_, _>::with_encoding::<_, VoidToVoid>);
 }
 
 #[test]
@@ -512,8 +515,8 @@ fn stack_to_rc() {
         }};
     }
 
-    test_with!(StackBlock::new);
-    test_with!(StackBlock::with_encoding::<VoidToVoid>);
+    test_with!(StackBlock::<'_, _, _>::new);
+    test_with!(StackBlock::<'_, _, _>::with_encoding::<VoidToVoid>);
 }
 
 #[test]

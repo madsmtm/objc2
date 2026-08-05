@@ -1,3 +1,4 @@
+use core::any::Any;
 use core::ffi::c_ulong;
 use core::ffi::c_void;
 use core::fmt;
@@ -13,6 +14,7 @@ use crate::abi::{
     BlockDescriptorPtr, BlockDescriptorSignature, BlockFlags, BlockHeader,
 };
 use crate::debug::debug_block_header;
+use crate::traits::BoundedBy;
 use crate::traits::{
     BlockSignature, ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified,
 };
@@ -39,6 +41,8 @@ use crate::{ffi, Block, IntoBlock};
 ///
 /// - The lifetime `'b`, which is the lifetime of the block/closure.
 /// - The parameter `Signature`, which is the signature of the block/closure.
+/// - The parameter `ThreadKind`, which is used to specify whether the block
+///   is `Send` and `Sync`.
 /// - The parameter `Closure`, which is the contained closure type. This is
 ///   usually not nameable, and you will have to use `_`, `impl Fn()` or
 ///   similar.
@@ -51,11 +55,11 @@ use crate::{ffi, Block, IntoBlock};
 /// That said, it will always be safe to reinterpret pointers to this as a
 /// pointer to a [`Block`] with the corresponding lifetime and signature.
 #[repr(C)]
-pub struct StackBlock<'b, Signature, Closure> {
+pub struct StackBlock<'b, Signature, Closure, ThreadKind: ?Sized = dyn Any> {
     /// For correct variance of the other type parameters.
     ///
     /// We add extra auto traits such that they depend on the closure instead.
-    p: PhantomData<(&'b (), Signature)>, // TODO: Variance???
+    p: PhantomData<(&'b (), Signature, ThreadKind)>, // TODO: Variance???
     header: BlockHeader,
     /// The block's closure.
     ///
@@ -66,18 +70,41 @@ pub struct StackBlock<'b, Signature, Closure> {
     pub(crate) closure: Closure,
 }
 
+// SAFETY: The block's thread kind and the closure is `Send`.
+unsafe impl<'b, Signature: BlockSignature, Closure: Send> Send
+    for StackBlock<'b, Signature, Closure, dyn Send + Sync>
+{
+}
+// SAFETY: Same as above.
+unsafe impl<'b, Signature: BlockSignature, Closure: Send> Send
+    for StackBlock<'b, Signature, Closure, dyn Send>
+{
+}
+
+// SAFETY: The block's thread kind and the closure is `Sync`.
+unsafe impl<'b, Signature: BlockSignature, Closure: Sync> Sync
+    for StackBlock<'b, Signature, Closure, dyn Send + Sync>
+{
+}
+// SAFETY: Same as above.
+unsafe impl<'b, Signature: BlockSignature, Closure: Sync> Sync
+    for StackBlock<'b, Signature, Closure, dyn Sync>
+{
+}
+
 // SAFETY: Pointers to the stack block is always safe to reinterpret as an
 // ordinary block pointer.
-unsafe impl<'b, Signature, Closure> RefEncode for StackBlock<'b, Signature, Closure>
+unsafe impl<'b, Signature, Closure, ThreadKind: ?Sized> RefEncode
+    for StackBlock<'b, Signature, Closure, ThreadKind>
 where
     Signature: BlockSignature,
-    Closure: IntoBlock<'b, Signature>,
+    Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
 {
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
 // Basic constants and helpers.
-impl<Signature, Closure> StackBlock<'_, Signature, Closure> {
+impl<Signature, Closure, ThreadKind: ?Sized> StackBlock<'_, Signature, Closure, ThreadKind> {
     /// The size of the block header and the trailing closure.
     ///
     /// This ensures that the closure that the block contains is also moved to
@@ -114,7 +141,7 @@ impl<Signature, Closure> StackBlock<'_, Signature, Closure> {
 }
 
 // `StackBlock::new`
-impl<Signature, Closure: Clone> StackBlock<'_, Signature, Closure> {
+impl<Signature, Closure: Clone, ThreadKind: ?Sized> StackBlock<'_, Signature, Closure, ThreadKind> {
     // Clone the closure from one block to another.
     unsafe extern "C-unwind" fn clone_closure(dst: *mut c_void, src: *const c_void) {
         let dst: *mut Self = dst.cast();
@@ -150,10 +177,10 @@ impl<Signature, Closure: Clone> StackBlock<'_, Signature, Closure> {
     };
 }
 
-impl<'b, Signature, Closure> StackBlock<'b, Signature, Closure>
+impl<'b, Signature, Closure, ThreadKind: ?Sized> StackBlock<'b, Signature, Closure, ThreadKind>
 where
     Signature: BlockSignature,
-    Closure: IntoBlock<'b, Signature> + Clone,
+    Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind> + Clone,
 {
     /// Construct a `StackBlock` with the given closure.
     ///
@@ -170,14 +197,17 @@ where
     /// ## Example
     ///
     /// ```
-    /// use block2::StackBlock;
-    /// #
-    /// # extern "C" fn check_addition(block: &block2::Block<'_, fn(i32, i32) -> i32>) {
-    /// #     assert_eq!(block.call(5, 8), 13);
+    /// # struct ExampleObject;
+    /// # impl ExampleObject {
+    /// #     fn someMethod(&self, block: &block2::Block<'_, fn(i32, i32) -> i32>) {
+    /// #         assert_eq!(block.call(5, 8), 13);
+    /// #     }
     /// # }
+    /// # let obj = ExampleObject;
+    /// #
+    /// use block2::StackBlock;
     ///
-    /// let block = StackBlock::new(|a, b| a + b);
-    /// check_addition(&block);
+    /// obj.someMethod(&StackBlock::new(|a, b| a + b));
     /// ```
     #[inline]
     pub fn new(closure: Closure) -> Self {
@@ -239,7 +269,7 @@ where
     ///     };
     /// }
     ///
-    /// let my_block = StackBlock::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
+    /// let my_block = StackBlock::<_, _>::with_encoding::<MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
     /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
@@ -311,7 +341,7 @@ where
 }
 
 // `RcBlock::with_encoding`
-impl<'b, Signature, Closure> StackBlock<'b, Signature, Closure> {
+impl<'b, Signature, Closure, ThreadKind: ?Sized> StackBlock<'b, Signature, Closure, ThreadKind> {
     unsafe extern "C-unwind" fn empty_clone_closure(_dst: *mut c_void, _src: *const c_void) {
         // We do nothing, the closure has been `memmove`'d already, and
         // ownership will be passed in `RcBlock::with_encoding`.
@@ -331,7 +361,7 @@ impl<'b, Signature, Closure> StackBlock<'b, Signature, Closure> {
     pub(crate) unsafe fn new_no_clone<E>(closure: Closure) -> Self
     where
         Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
+        Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
         E: ManualBlockEncodingExt<Signature = Signature>,
     {
         // TODO: Re-consider calling `crate::traits::debug_assert_block_encoding`.
@@ -414,10 +444,11 @@ trait EncodedDescriptors<E: ManualBlockEncoding> {
     const DESCRIPTOR_WITH_DROP_AND_ENCODING: BlockDescriptorCopyDisposeSignature;
 }
 
-impl<'b, Signature, Closure, E> EncodedDescriptors<E> for StackBlock<'b, Signature, Closure>
+impl<'b, Signature, Closure, E, ThreadKind: ?Sized> EncodedDescriptors<E>
+    for StackBlock<'b, Signature, Closure, ThreadKind>
 where
     Signature: BlockSignature,
-    Closure: IntoBlock<'b, Signature>,
+    Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
     E: ManualBlockEncoding<Signature = Signature>,
 {
     /// [`Self::DESCRIPTOR_BASIC`] with the signature added from `E`.
@@ -444,10 +475,11 @@ trait EncodedCloneDescriptors<E: ManualBlockEncoding> {
     const DESCRIPTOR_WITH_CLONE_AND_ENCODING: BlockDescriptorCopyDisposeSignature;
 }
 
-impl<'b, Signature, Closure, E> EncodedCloneDescriptors<E> for StackBlock<'b, Signature, Closure>
+impl<'b, Signature, Closure, E, ThreadKind: ?Sized> EncodedCloneDescriptors<E>
+    for StackBlock<'b, Signature, Closure, ThreadKind>
 where
     Signature: BlockSignature,
-    Closure: IntoBlock<'b, Signature> + Clone,
+    Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind> + Clone,
     E: ManualBlockEncoding<Signature = Signature>,
 {
     /// [`Self::DESCRIPTOR_WITH_CLONE`] with the signature added from `E`.
@@ -461,7 +493,9 @@ where
         };
 }
 
-impl<Signature, Closure: Clone> Clone for StackBlock<'_, Signature, Closure> {
+impl<Signature, Closure: Clone, ThreadKind: ?Sized> Clone
+    for StackBlock<'_, Signature, Closure, ThreadKind>
+{
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -472,19 +506,20 @@ impl<Signature, Closure: Clone> Clone for StackBlock<'_, Signature, Closure> {
     }
 }
 
-impl<Signature, Closure: Copy> Copy for StackBlock<'_, Signature, Closure> {}
-
-impl<'b, Signature, Closure> Deref for StackBlock<'b, Signature, Closure>
-where
-    Signature: BlockSignature,
-    Closure: IntoBlock<'b, Signature>,
+impl<Signature, Closure: Copy, ThreadKind: ?Sized> Copy
+    for StackBlock<'_, Signature, Closure, ThreadKind>
 {
-    type Target = Block<'b, Signature>;
+}
+
+impl<'b, Signature, Closure, ThreadKind: ?Sized> Deref
+    for StackBlock<'b, Signature, Closure, ThreadKind>
+{
+    type Target = Block<'b, Signature, ThreadKind>;
 
     #[inline]
     fn deref(&self) -> &Self::Target {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: NonNull<Block<'b, Signature>> = ptr.cast();
+        let ptr: NonNull<Block<'b, Signature, ThreadKind>> = ptr.cast();
         // SAFETY: A pointer to `StackBlock` is always safe to convert to a
         // pointer to `Block`, and the reference will be valid as long the
         // stack block exists.
@@ -495,7 +530,38 @@ where
     }
 }
 
-impl<Signature, Closure> fmt::Debug for StackBlock<'_, Signature, Closure> {
+/// Convert from one [`StackBlock`] to another with a different thread kind.
+impl<'b, Signature, Closure, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
+    AsRef<StackBlock<'b, Signature, Closure, ThreadKindTo>>
+    for StackBlock<'b, Signature, Closure, ThreadKindFrom>
+where
+    ThreadKindFrom: BoundedBy<ThreadKindTo>,
+{
+    #[inline]
+    fn as_ref(&self) -> &StackBlock<'b, Signature, Closure, ThreadKindTo> {
+        // SAFETY: The thread kind is just an extra bound, we can safely erase
+        // that (similar to how you can go from `impl Fn() + Send + Sync + 'b`
+        // to `impl Fn() + 'b`).
+        unsafe { core::mem::transmute(self) }
+    }
+}
+
+/// Get a [`Block`] reference from the [`StackBlock`].
+impl<'b, Signature, Closure, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
+    AsRef<Block<'b, Signature, ThreadKindTo>> for StackBlock<'b, Signature, Closure, ThreadKindFrom>
+where
+    ThreadKindFrom: BoundedBy<ThreadKindTo>,
+{
+    #[inline]
+    fn as_ref(&self) -> &Block<'b, Signature, ThreadKindTo> {
+        // `Deref` to `Block` + `AsRef` to any `Block` thread kind.
+        (**self).as_ref()
+    }
+}
+
+impl<Signature, Closure, ThreadKind: ?Sized> fmt::Debug
+    for StackBlock<'_, Signature, Closure, ThreadKind>
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("StackBlock");
         debug_block_header(&self.header, &mut f);
@@ -525,4 +591,11 @@ mod tests {
     ) -> StackBlock<'b, fn(), impl Fn() + 'c> {
         b
     }
+
+    static_assertions::assert_not_impl_any!(StackBlock<'_, fn(), fn(), dyn Any>: Send, Sync);
+    static_assertions::assert_not_impl_any!(StackBlock<'_, fn(), fn(), dyn Send>: Sync);
+    static_assertions::assert_not_impl_any!(StackBlock<'_, fn(), fn(), dyn Sync>: Send);
+    static_assertions::assert_impl_all!(StackBlock<'_, fn(), fn(), dyn Send>: Send);
+    static_assertions::assert_impl_all!(StackBlock<'_, fn(), fn(), dyn Sync>: Sync);
+    static_assertions::assert_impl_all!(StackBlock<'_, fn(), fn(), dyn Send + Sync>: Send, Sync);
 }

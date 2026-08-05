@@ -34,15 +34,37 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_b
 	ret
 
 	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::clone_closure, 0):
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0):
+	ldr	x0, [x0, #32]
+	mov	w1, #4
+	mov	w2, #4
+	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
+
+	.p2align	2
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0):
 	ret
 
 	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::clone_closure, 0):
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0):
 	ret
 
 	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::clone_closure, 0):
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0):
+	ldr	x0, [x0, #32]
+	mov	w1, #4
+	mov	w2, #4
+	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
+
+	.p2align	2
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}, dyn core[CRATE_ID]::any::Any>>::clone_closure, 0):
+	ret
+
+	.p2align	2
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}, dyn core[CRATE_ID]::any::Any>>::clone_closure, 0):
+	ret
+
+	.p2align	2
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::clone_closure, 0):
 	stp	x20, x19, [sp, #-32]!
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -52,43 +74,21 @@ SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::c
 	mov	w0, #4
 	mov	w1, #4
 	bl	SYM(__rustc[CRATE_ID]::__rust_alloc, 0)
-	cbz	x0, LBB8_2
+	cbz	x0, LBB12_2
 	ldr	w8, [x20]
 	str	w8, [x0]
 	str	x0, [x19, #32]
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
 	ret
-LBB8_2:
+LBB12_2:
 	mov	w0, #4
 	mov	w1, #4
 	bl	SYM(alloc[CRATE_ID]::alloc::handle_alloc_error, 0)
 
 	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0):
+SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::empty_clone_closure, 0):
 	ret
-
-	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::drop_closure, 0):
-	ldr	x0, [x0, #32]
-	mov	w1, #4
-	mov	w2, #4
-	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
-
-	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0):
-	ret
-
-	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::drop_closure, 0):
-	ret
-
-	.p2align	2
-SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::drop_closure, 0):
-	ldr	x0, [x0, #32]
-	mov	w1, #4
-	mov	w2, #4
-	b	SYM(__rustc[CRATE_ID]::__rust_dealloc, 0)
 
 	.globl	_fn1_stack_block_to_rc
 	.p2align	2
@@ -299,26 +299,26 @@ LBB19_2:
 	.p2align	3, 0x0
 l_anon.[ID].0:
 	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>>::drop_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}, dyn core[CRATE_ID]::any::Any>>::clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].1:
 	.asciz	"\000\000\000\000\000\000\000\000 \000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>>::drop_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}, dyn core[CRATE_ID]::any::Any>>::clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].2:
 	.asciz	"\000\000\000\000\000\000\000\000(\000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>>::drop_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0)
 
 	.p2align	3, 0x0
 l_anon.[ID].3:
 	.asciz	"\000\000\000\000\000\000\000\000(\000\000\000\000\000\000"
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::empty_clone_closure, 0)
-	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>>::drop_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::empty_clone_closure, 0)
+	.quad	SYM(<block2[CRATE_ID]::stack::StackBlock<fn(i32) -> i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}, dyn core[CRATE_ID]::any::Any>>::drop_closure, 0)
 
 	.section	__TEXT,__literal16,16byte_literals
 	.p2align	3, 0x0

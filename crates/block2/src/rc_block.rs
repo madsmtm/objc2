@@ -1,3 +1,4 @@
+use core::any::Any;
 use core::fmt;
 use core::mem::ManuallyDrop;
 use core::ops::Deref;
@@ -6,7 +7,8 @@ use core::ptr::NonNull;
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
 use crate::traits::{
-    BlockSignature, ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding, UserSpecified,
+    BlockSignature, BoundedBy, ManualBlockEncoding, ManualBlockEncodingExt, NoBlockEncoding,
+    UserSpecified,
 };
 use crate::{ffi, Block, IntoBlock, StackBlock};
 
@@ -15,8 +17,8 @@ use crate::{ffi, Block, IntoBlock, StackBlock};
 /// This is a smart pointer that [`Deref`]s to [`Block`], and releases it on
 /// `Drop`.
 ///
-/// The lifetime `'b` and generic `Signature` are the same as described in
-/// [`Block`]'s documentation.
+/// The lifetime `'b`, generic `Signature` and generic `ThreadKind` are the
+/// same as described in [`Block`]'s documentation.
 ///
 ///
 /// # Memory-layout
@@ -33,25 +35,81 @@ use crate::{ffi, Block, IntoBlock, StackBlock};
     feature = "unstable-coerce-pointee",
     derive(std::marker::CoercePointee)
 )]
-pub struct RcBlock<'b, Signature> {
+pub struct RcBlock<'b, Signature, ThreadKind: ?Sized = dyn Any> {
     // Covariant
-    ptr: NonNull<Block<'b, Signature>>,
+    ptr: NonNull<Block<'b, Signature, ThreadKind>>,
 }
 
-impl<'b, Signature> RcBlock<'b, Signature> {
+// SAFETY: The block's thread kind is `Send + Sync`. Both of those are
+// required, `RcBlock` acts like `Arc<T>`, and for that to be `Send`, `T` must
+// be `Send + Sync`.
+unsafe impl<'b, Signature: BlockSignature> Send for RcBlock<'b, Signature, dyn Send + Sync> {}
+// SAFETY: The block's thread kind is `Send + Sync`. Both of those are
+// required, `RcBlock` acts like `Arc<T>`, and for that to be `Sync`, `T` must
+// be `Send + Sync`.
+unsafe impl<'b, Signature: BlockSignature> Sync for RcBlock<'b, Signature, dyn Send + Sync> {}
+
+impl<'b, Signature, ThreadKind: ?Sized> RcBlock<'b, Signature, ThreadKind> {
     /// Construct a `RcBlock` with the given closure.
     ///
     /// The closure will be coped to the heap on construction.
     ///
     /// When the block is called, it will return the value that results from
     /// calling the closure.
+    ///
+    ///
+    /// ## Examples
+    ///
+    /// Creating a new block an passing it to a method.
+    ///
+    /// ```
+    /// # struct ExampleObject;
+    /// # impl ExampleObject {
+    /// #     fn someMethod(&self, block: &block2::Block<'_, fn(i32, i32) -> i32>) {
+    /// #         assert_eq!(block.call(5, 8), 13);
+    /// #     }
+    /// # }
+    /// # let obj = ExampleObject;
+    /// #
+    /// use block2::RcBlock;
+    ///
+    /// obj.someMethod(&RcBlock::new(|a, b| a + b));
+    /// ```
+    ///
+    /// In some cases, you might need to specify the types of the arguments:
+    ///
+    /// ```
+    /// # struct ExampleObject;
+    /// # impl ExampleObject {
+    /// #     fn someMethod(&self, block: &block2::Block<'_, fn(i32, i32) -> i32>) {
+    /// #         assert_eq!(block.call(5, 8), 13);
+    /// #     }
+    /// # }
+    /// # let obj = ExampleObject;
+    /// #
+    /// use block2::RcBlock;
+    ///
+    /// let block = RcBlock::new(|a: i32, b: i32| a + b);
+    /// obj.someMethod(&block);
+    /// ```
+    ///
+    /// In other cases, the compiler might complain about the thread kind
+    /// being unknown. You can force it to the default `dyn Any` by using the
+    /// turbofish `::<_>`.
+    ///
+    /// ```
+    /// use block2::RcBlock;
+    ///
+    /// let block = RcBlock::<_>::new(|a, b| a + b);
+    /// assert_eq!(block.call(5, 8), 13);
+    /// ```
     // Note: Unsure if this should be #[inline], but I think it may be able to
     // benefit from not being completely so.
     #[inline]
     pub fn new<Closure>(closure: Closure) -> Self
     where
         Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
+        Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
     {
         Self::maybe_encoded::<Closure, NoBlockEncoding<Signature>>(closure)
     }
@@ -80,7 +138,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     ///     };
     /// }
     ///
-    /// let my_block = RcBlock::with_encoding::<_, MyBlockEncoding>(|_err: *mut NSError| {
+    /// let my_block = RcBlock::<_>::with_encoding::<_, MyBlockEncoding>(|_err: *mut NSError| {
     ///     42i32
     /// });
     /// assert_eq!(my_block.call(core::ptr::null_mut()), 42);
@@ -89,7 +147,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     pub fn with_encoding<Closure, E>(closure: Closure) -> Self
     where
         Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
+        Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
         E: ManualBlockEncoding<Signature = Signature>,
     {
         Self::maybe_encoded::<Closure, UserSpecified<E>>(closure)
@@ -98,7 +156,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     fn maybe_encoded<Closure, E>(closure: Closure) -> Self
     where
         Signature: BlockSignature,
-        Closure: IntoBlock<'b, Signature>,
+        Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
         E: ManualBlockEncodingExt<Signature = Signature>,
     {
         // SAFETY: The stack block is copied once below.
@@ -113,8 +171,8 @@ impl<'b, Signature> RcBlock<'b, Signature> {
 
         // Transfer ownership from the stack to the heap.
         let mut block = ManuallyDrop::new(block);
-        let ptr: *mut StackBlock<'b, Signature, Closure> = &mut *block;
-        let ptr: *mut Block<'b, Signature> = ptr.cast();
+        let ptr: *mut StackBlock<'b, Signature, Closure, ThreadKind> = &mut *block;
+        let ptr: *mut Block<'b, Signature, ThreadKind> = ptr.cast();
         // SAFETY: The block will be moved to the heap, and we forget the
         // original block because the heap block will drop in our dispose
         // helper.
@@ -128,7 +186,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     /// This is an associated method, and must be called as
     /// `RcBlock::as_ptr(&block)`.
     #[inline]
-    pub fn as_ptr(this: &Self) -> *mut Block<'b, Signature> {
+    pub fn as_ptr(this: &Self) -> *mut Block<'b, Signature, ThreadKind> {
         this.ptr.as_ptr()
     }
 
@@ -149,7 +207,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     /// ```
     /// use block2::RcBlock;
     ///
-    /// let add2 = RcBlock::new(|x: i32| -> i32 {
+    /// let add2 = RcBlock::<_>::new(|x: i32| -> i32 {
     ///     x + 2
     /// });
     /// let ptr = RcBlock::into_raw(add2);
@@ -157,7 +215,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     /// let add2 = unsafe { RcBlock::from_raw(ptr) }.unwrap();
     /// ```
     #[inline]
-    pub fn into_raw(this: Self) -> *mut Block<'b, Signature> {
+    pub fn into_raw(this: Self) -> *mut Block<'b, Signature, ThreadKind> {
         let this = ManuallyDrop::new(this);
         this.ptr.as_ptr()
     }
@@ -177,7 +235,7 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     /// Additionally, the block must be safe to call (or, if it is not, then
     /// you must treat every call to the block as `unsafe`).
     #[inline]
-    pub unsafe fn from_raw(ptr: *mut Block<'b, Signature>) -> Option<Self> {
+    pub unsafe fn from_raw(ptr: *mut Block<'b, Signature, ThreadKind>) -> Option<Self> {
         NonNull::new(ptr).map(|ptr| Self { ptr })
     }
 
@@ -203,14 +261,15 @@ impl<'b, Signature> RcBlock<'b, Signature> {
     #[doc(alias = "Block_copy")]
     #[doc(alias = "_Block_copy")]
     #[inline]
-    pub unsafe fn copy(ptr: *mut Block<'b, Signature>) -> Option<Self> {
-        let ptr: *mut Block<'b, Signature> = unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
+    pub unsafe fn copy(ptr: *mut Block<'b, Signature, ThreadKind>) -> Option<Self> {
+        let ptr: *mut Block<'b, Signature, ThreadKind> =
+            unsafe { ffi::_Block_copy(ptr.cast()) }.cast();
         // SAFETY: We just copied the block, so the reference count is +1
         unsafe { Self::from_raw(ptr) }
     }
 }
 
-impl<'b, Signature> Clone for RcBlock<'b, Signature> {
+impl<'b, Signature, ThreadKind: ?Sized> Clone for RcBlock<'b, Signature, ThreadKind> {
     /// Increase the reference-count of the block.
     #[doc(alias = "Block_copy")]
     #[doc(alias = "_Block_copy")]
@@ -237,12 +296,12 @@ fn rc_clone_fail() -> ! {
     unreachable!("cloning a RcBlock bumps the reference count, which should be infallible")
 }
 
-impl<'b, Signature> Deref for RcBlock<'b, Signature> {
+impl<'b, Signature, ThreadKind: ?Sized> Deref for RcBlock<'b, Signature, ThreadKind> {
     /// The lifetime and signature of the block is the same.
-    type Target = Block<'b, Signature>;
+    type Target = Block<'b, Signature, ThreadKind>;
 
     #[inline]
-    fn deref(&self) -> &Block<'b, Signature> {
+    fn deref(&self) -> &Block<'b, Signature, ThreadKind> {
         // SAFETY: The pointer is valid, as ensured by creation methods, and
         // will be so for as long as the `RcBlock` is, since that holds +1
         // reference count.
@@ -250,7 +309,7 @@ impl<'b, Signature> Deref for RcBlock<'b, Signature> {
     }
 }
 
-impl<'b, Signature> Drop for RcBlock<'b, Signature> {
+impl<'b, Signature, ThreadKind: ?Sized> Drop for RcBlock<'b, Signature, ThreadKind> {
     /// Release the block, decreasing the reference-count by 1.
     ///
     /// The `Drop` method of the underlying closure will be called once the
@@ -265,7 +324,35 @@ impl<'b, Signature> Drop for RcBlock<'b, Signature> {
     }
 }
 
-impl<'b, Signature> fmt::Debug for RcBlock<'b, Signature> {
+/// Convert from one [`RcBlock`] to another with a different thread kind.
+impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
+    AsRef<RcBlock<'b, Signature, ThreadKindTo>> for RcBlock<'b, Signature, ThreadKindFrom>
+where
+    ThreadKindFrom: BoundedBy<ThreadKindTo>,
+{
+    #[inline]
+    fn as_ref(&self) -> &RcBlock<'b, Signature, ThreadKindTo> {
+        // SAFETY: The thread kind is just an extra bound, we can safely erase
+        // that (similar to how you can go from
+        // `Arc<dyn Fn() + Send + Sync + 'b>` to `Arc<dyn Fn() + 'b>`).
+        unsafe { core::mem::transmute(self) }
+    }
+}
+
+/// Get a [`Block`] reference from the [`RcBlock`].
+impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
+    AsRef<Block<'b, Signature, ThreadKindTo>> for RcBlock<'b, Signature, ThreadKindFrom>
+where
+    ThreadKindFrom: BoundedBy<ThreadKindTo>,
+{
+    #[inline]
+    fn as_ref(&self) -> &Block<'b, Signature, ThreadKindTo> {
+        // `Deref` to `Block` + `AsRef` to any `Block` thread kind.
+        (**self).as_ref()
+    }
+}
+
+impl<'b, Signature, ThreadKind: ?Sized> fmt::Debug for RcBlock<'b, Signature, ThreadKind> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("RcBlock");
         let header = unsafe { self.ptr.cast::<BlockHeader>().as_ref() };
@@ -355,4 +442,9 @@ mod tests {
         assert_eq!(block.call(10), 55);
         assert_eq!(block.call(19), 4181);
     }
+
+    static_assertions::assert_not_impl_any!(RcBlock<'_, fn(), dyn Any>: Send, Sync);
+    static_assertions::assert_not_impl_any!(RcBlock<'_, fn(), dyn Send>: Send, Sync);
+    static_assertions::assert_not_impl_any!(RcBlock<'_, fn(), dyn Sync>: Send, Sync);
+    static_assertions::assert_impl_all!(RcBlock<'_, fn(), dyn Send + Sync>: Send, Sync);
 }

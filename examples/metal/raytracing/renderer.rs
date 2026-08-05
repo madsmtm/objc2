@@ -433,7 +433,7 @@ impl Renderer {
         let block = block2::RcBlock::new(move |_| {
             sem.release();
         });
-        unsafe { command_buffer.addCompletedHandler(&block) };
+        command_buffer.addCompletedHandler(&block);
         let width = self.size.get().width as NSUInteger;
         let height = self.size.get().height as NSUInteger;
         let threads_per_thread_group = MTLSize {

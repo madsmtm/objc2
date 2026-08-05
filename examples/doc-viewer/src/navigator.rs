@@ -3,6 +3,7 @@ use std::ptr::NonNull;
 
 use apple_doc::{external_dir, Kind, NavigatorItem, NavigatorTree};
 use block2::RcBlock;
+use dispatch2::MainThreadBound;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, ProtocolObject};
 use objc2::{define_class, msg_send, AnyThread, Ivars, MainThreadMarker, MainThreadOnly, Message};
@@ -100,8 +101,11 @@ impl Navigator {
 
         self.setView(&scroll);
 
-        let this = self.retain();
+        let this = MainThreadBound::new(self.retain(), mtm);
         let block = RcBlock::new(move |notification: NonNull<NSNotification>| {
+            let mtm = MainThreadMarker::new().unwrap();
+            let this = this.get(mtm);
+
             let notification = unsafe { notification.as_ref() };
             let outline_view = notification
                 .object()

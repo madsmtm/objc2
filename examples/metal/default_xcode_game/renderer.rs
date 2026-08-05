@@ -321,11 +321,9 @@ impl Renderer {
         command_buffer.setLabel(Some(ns_string!("MyCommand")));
 
         let block_sema = self.in_flight_semaphore().clone();
-        unsafe {
-            command_buffer.addCompletedHandler(&RcBlock::new(move |_buffer| {
-                block_sema.signal();
-            }))
-        };
+        command_buffer.addCompletedHandler(&RcBlock::new(move |_buffer| {
+            block_sema.signal();
+        }));
 
         self.update_dynamic_buffer_state();
 

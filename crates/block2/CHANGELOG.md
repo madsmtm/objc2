@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+* **BREAKING**: Added `SendableBlock` type alias and the ability in general
+  for blocks to be thread-safe through their `ThreadKind` generic parameter.
+* Added `AsRef` conversions between `RcBlock`/`StackBlock` and `Block`.
+
 ### Changed
 * **BREAKING**: Removed extra parentheses when invoking `Block::call`.
 * **BREAKING**: Changed signature of blocks to now need `fn()` instead of `dyn Fn()`.

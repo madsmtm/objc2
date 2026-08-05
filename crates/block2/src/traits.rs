@@ -1,3 +1,4 @@
+use core::any::Any;
 use core::ffi::CStr;
 use core::marker::PhantomData;
 use core::mem;
@@ -7,6 +8,21 @@ use objc2::encode::EncodeArguments;
 use objc2::encode::{EncodeArgument, EncodeReturn};
 
 use crate::{Block, StackBlock};
+
+// This is `pub`, but isn't re-exported, so it's effectively sealed.
+pub trait BoundedBy<ThreadKind: ?Sized> {}
+
+impl<T: ?Sized> BoundedBy<dyn Any + '_> for T {}
+impl<T: ?Sized + Sync> BoundedBy<dyn Sync + '_> for T {}
+impl<T: ?Sized + Send> BoundedBy<dyn Send + '_> for T {}
+impl<T: ?Sized + Send + Sync> BoundedBy<dyn Send + Sync + '_> for T {}
+
+// TODO: `dyn MainThreadOnly` for `@MainActor` blocks? Would make the type
+// `!Send + !Sync`, with `RcBlock::new_main_thread(mtm)`?
+//
+// An alternative would be to add `mtm: MainThreadMarker` as an argument to
+// the block, though that wouldn't make the block unsafe to construct from off
+// the main thread.
 
 mod private_signature {
     pub trait Sealed {}
@@ -88,6 +104,10 @@ macro_rules! impl_traits {
             #[inline]
             fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn() {
                 unsafe extern "C-unwind" fn invoke<'b, $($t,)* R, Closure>(
+                    // Use a StackBlock without any thread kind. This is safe
+                    // because the thread kind doesn't change the layout, and
+                    // because it's the responsibility of other layers to
+                    // ensure that this is called on the right thread.
                     block: *mut StackBlock<'b, fn($($t,)*) -> R, Closure>,
                     $($a: $t,)*
                 ) -> R

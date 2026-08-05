@@ -626,7 +626,7 @@ fn pad_generics<'a>(
     generics.iter().chain(iter::repeat_n(pad_with, missing))
 }
 
-/// Only allow `*SENDABLE` attributes, not `*NON_SENDABLE`.
+/// Only allow `*SENDABLE` attributes, not `*NONSENDABLE`.
 fn only_positive_sendable(sendable: Option<bool>) -> bool {
     match sendable {
         Some(true) => true,
@@ -804,14 +804,18 @@ impl PointeeTy {
                 .chain(arguments.iter().flat_map(|arg| arg.required_items()))
                 .collect(),
             Self::Block {
-                sendable: _,
+                sendable,
                 no_escape: _,
                 arguments,
                 result_type,
-            } => iter::once(ItemTree::block())
-                .chain(result_type.required_items())
-                .chain(arguments.iter().flat_map(|arg| arg.required_items()))
-                .collect(),
+            } => iter::once(if *sendable == Some(true) {
+                ItemTree::sendable_block()
+            } else {
+                ItemTree::block()
+            })
+            .chain(result_type.required_items())
+            .chain(arguments.iter().flat_map(|arg| arg.required_items()))
+            .collect(),
             Self::CFTypeDef {
                 id, generics, to, ..
             } => iter::once(ItemTree::new(
@@ -970,13 +974,18 @@ impl PointeeTy {
                 write!(f, "core::ffi::c_void /* TODO: Should be a function. */")
             }
             Self::Block {
-                sendable: _,
+                sendable,
                 no_escape,
                 arguments,
                 result_type,
             } => {
+                let ty = if *sendable == Some(true) {
+                    "SendableBlock"
+                } else {
+                    "Block"
+                };
                 let lifetime = if *no_escape { "_" } else { "static" };
-                write!(f, "block2::Block<'{lifetime}, fn(")?;
+                write!(f, "block2::{ty}<'{lifetime}, fn(")?;
                 for arg in arguments {
                     write!(f, "{}, ", arg.argument(allow_generic_param))?;
                 }
@@ -1325,12 +1334,6 @@ impl PointeeTy {
             Self::AnyProtocol => {
                 TypeSafety::unknown_in_argument("possibly has further requirements")
             }
-            // Sendable blocks are not yet propagate in the API, and so are
-            // not safe: https://github.com/madsmtm/objc2/issues/572
-            Self::Block {
-                sendable: Some(true),
-                ..
-            } => TypeSafety::always_unsafe("block must be sendable"),
             Self::Block {
                 sendable: _,
                 arguments,
@@ -4498,8 +4501,26 @@ impl Ty {
         Self::parse_method_return(ty, false, context)
     }
 
-    pub(crate) fn parse_typedef(ty: Type<'_>, context: &Context<'_>) -> Self {
-        Self::parse(ty, false, context)
+    pub(crate) fn parse_typedef(
+        ty: Type<'_>,
+        context: &Context<'_>,
+        override_sendable: Option<bool>,
+    ) -> Self {
+        let mut ty = Self::parse(ty, false, context);
+
+        if let Some(override_sendable) = override_sendable {
+            if let Self::Pointer { pointee, .. } = &mut ty {
+                if let Self::Pointee(PointeeTy::Block { sendable, .. }) = &mut **pointee {
+                    *sendable = Some(override_sendable);
+                } else {
+                    error!(?ty, "invalid typedef sendable override");
+                }
+            } else {
+                error!(?ty, "invalid typedef sendable override");
+            }
+        }
+
+        ty
     }
 
     pub(crate) fn parse_property_getter(

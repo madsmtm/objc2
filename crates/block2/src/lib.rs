@@ -9,12 +9,13 @@
 //! At a high level, this crate contains four types, each representing
 //! different kinds of blocks, and different kinds of ownership.
 //!
-//! | `block2` type                            | Equivalent Rust type  |
-//! | ---------------------------------------- | --------------------- |
-//! | `&'p Block<'b, fn()>`                    | `&'p (dyn Fn() + 'b)` |
-//! | `RcBlock<'b, fn()>`                      | `Arc<dyn Fn() + 'b>`  |
-//! | `StackBlock<'b, fn(), impl Fn() + 'b>`   | `impl Fn() + 'b`      |
-//! | `GlobalBlock<fn()>`                      | [`fn` item]           |
+//! | `block2` type                            | Equivalent Rust type                |
+//! | ---------------------------------------- | ----------------------------------- |
+//! | `&'p Block<'b, fn()>`                    | `&'p (dyn Fn() + 'b)`               |
+//! | `&'p SendableBlock<'b, fn()>`            | `&'p (dyn Fn() + Send + Sync + 'b)` |
+//! | `RcBlock<'b, fn()>`                      | `Arc<dyn Fn() + 'b>`                |
+//! | `StackBlock<'b, fn(), impl Fn() + 'b>`   | `impl Fn() + 'b`                    |
+//! | `GlobalBlock<fn()>`                      | [`fn` item]                         |
 //!
 //! For more information on the specifics of the block implementation, see the
 //! [C language specification][lang] and the [ABI specification][ABI].
@@ -31,17 +32,15 @@
 //! allows calling functions or Objective-C methods that takes `&Block<...>`:
 //!
 //! ```
-//! use block2::RcBlock;
-//! #
 //! # struct ExampleObject;
-//! #
 //! # impl ExampleObject {
 //! #     fn someMethod(&self, block: &block2::Block<'_, fn(i32, i32) -> i32>) {
 //! #         assert_eq!(block.call(5, 8), 18);
 //! #     }
 //! # }
-//! #
 //! # let obj = ExampleObject;
+//! #
+//! use block2::RcBlock;
 //!
 //! let val = 5;
 //! // `&RcBlock<...>` dereferences to `&Block<...>` which `someMethod` takes.
@@ -52,7 +51,7 @@
 //! [`global_block!`].
 //!
 //!
-//! ## My block isn't being run?
+//! ## My block isn't being called?
 //!
 //! Most of the time, blocks are used to do asynchronous work; but just like
 //! futures in Rust don't do anything unless polled, a lot of Apple APIs won't
@@ -95,17 +94,87 @@
 //! [`Arc`] (if the block is sent to another thread) to pass data into your
 //! block.
 //!
+//! ```
+//! # struct Handler(Option<block2::RcBlock<'static, fn()>>);
+//! # impl Handler {
+//! #     fn set_block(&mut self, block: &block2::Block<'static, fn()>) {
+//! #         self.0 = Some(block.copy());
+//! #     }
+//! #     fn call_block(&self) {
+//! #         self.0.as_ref().unwrap().call();
+//! #     }
+//! # }
+//! # let mut handler = Handler(None);
+//! #
+//! use block2::RcBlock;
+//! use std::rc::Rc;
+//! use std::cell::RefCell;
+//!
+//! // Use `Rc` to make the block `'static`.
+//! let count = Rc::new(RefCell::new(0));
+//!
+//! // Create a clone of the count, and move it into the block.
+//! let count_clone = count.clone();
+//! // Store the block on an object, which requires `'static`.
+//! handler.set_block(&RcBlock::new(move || {
+//!     // Increment each time the block is called.
+//!     *count_clone.borrow_mut() += 1;
+//! }));
+//!
+//! // Do some operation that ends up calling the block.
+//! handler.call_block();
+//! handler.call_block();
+//!
+//! // At a later point, read the call count.
+//! assert_eq!(*count.borrow(), 2);
+//! ```
+//!
 //! [`Rc`]: std::rc::Rc
 //! [`Arc`]: std::sync::Arc
 //!
 //!
 //! ## Thread safety
 //!
-//! Thread-safe blocks are [not yet][#572] representable in `block2`, and as
-//! such any function that requires a thread-safe block must be marked
-//! `unsafe`.
+//! The default [`Block`] is not thread-safe, but many APIs send the block to
+//! another thread to perform the work there. This is communicated with
+//! [`SendableBlock`], which makes sure that the closure you provide in
+//! [`RcBlock::new`] or similar implements [`Send`] + [`Sync`].
 //!
-//! [#572]: https://github.com/madsmtm/objc2/issues/572
+//! This is commonly used for completion handlers (which are also often
+//! [escaping](#escaping-blocks)).
+//!
+//! You can use [Rust's thread-safe primitives][std::sync] to share data
+//! between the block's caller and your code:
+//!
+//! ```
+//! # struct SomeScheduler;
+//! # impl SomeScheduler {
+//! #     fn scheduleWithBlock(&self, block: &block2::SendableBlock<'static, fn()>) {
+//! #         block.call();
+//! #         block.call();
+//! #     }
+//! #     fn startThread(&self) {}
+//! # }
+//! # let scheduler = SomeScheduler;
+//! #
+//! use block2::RcBlock;
+//! use std::sync::{Arc, Mutex};
+//!
+//! // Use `Arc<Mutex<T>>` to make the value `'static`, `Send` and `Sync`.
+//! let count = Arc::new(Mutex::new(0));
+//!
+//! // Create a clone of the count, and move it into the block.
+//! let count_clone = count.clone();
+//! scheduler.scheduleWithBlock(&RcBlock::new(move || {
+//!     // Increment each time the block is called.
+//!     *count_clone.lock().unwrap() += 1;
+//! }));
+//!
+//! scheduler.startThread();
+//!
+//! // At a later point
+//! assert_eq!(*count.lock().unwrap(), 2);
+//! ```
 //!
 //!
 //! ## Mutability
@@ -135,6 +204,14 @@
 //! [`UnsafeCell`]: core::cell::UnsafeCell
 //!
 //! ```
+//! # struct ExampleObject;
+//! # impl ExampleObject {
+//! #     fn someMethod(&self, block: &block2::Block<'_, fn()>) {
+//! #         block.call();
+//! #     }
+//! # }
+//! # let obj = ExampleObject;
+//! #
 //! use std::cell::RefCell;
 //! use block2::RcBlock;
 //!
@@ -151,8 +228,8 @@
 //! let b = RcBlock::new(fnmut_to_fn(|| {
 //!     x += 1;
 //! }));
-//! b.call();
-//! b.call();
+//! obj.someMethod(&b);
+//! obj.someMethod(&b);
 //! drop(b);
 //! assert_eq!(x, 2);
 //! ```
@@ -189,7 +266,7 @@
 //! }
 //!
 //! let v = vec![1, 2, 3];
-//! let b = RcBlock::new(fnonce_to_fn(move || {
+//! let b = RcBlock::<_>::new(fnonce_to_fn(move || {
 //!     drop(v);
 //! }));
 //! b.call();
@@ -233,6 +310,9 @@
 //! `NS_NOESCAPE` ([`__attribute__((noescape))`][noescape]), we would use an
 //! inferred `'_` lifetime instead.
 //!
+//! If the block was marked with `NS_SWIFT_SENDABLE`, we would use a
+//! [`SendableBlock`] instead of [`Block`].
+//!
 //! This can similarly be done for Objective-C methods declared with
 //! [`objc2::extern_methods!`] (though most of the time, the [framework
 //! crates][framework-crates] will take care of that for you).
@@ -257,7 +337,7 @@
 //! ```
 //!
 //! If the function/method allows passing `NULL` blocks, the type should be
-//! `Option<&Block<fn(i32, i32) -> i32>>` instead.
+//! `Option<&Block<...>>` instead.
 //!
 //! [noescape]: https://clang.llvm.org/docs/AttributeReference.html#noescape
 //! [framework-crates]: objc2::topics::frameworks_list
@@ -444,11 +524,12 @@ mod rc_block;
 mod stack;
 mod traits;
 
-pub use self::block::Block;
+pub use self::block::{Block, SendableBlock};
 pub use self::global::GlobalBlock;
 pub use self::rc_block::RcBlock;
 pub use self::stack::StackBlock;
 pub use self::traits::{BlockSignature, IntoBlock, ManualBlockEncoding};
+// Intentionally don't yet expose `BoundedBy`.
 
 /// Deprecated alias for a `'static` `StackBlock`.
 #[deprecated = "renamed to `StackBlock`"]

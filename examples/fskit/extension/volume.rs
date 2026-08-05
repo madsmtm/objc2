@@ -106,7 +106,7 @@ define_class!(
         fn activateWithOptions_replyHandler(
             &self,
             options: &FSTaskOptions,
-            reply: &block2::Block<'static, fn(*mut FSItem, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItem, *mut NSError)>,
         ) {
             trace!(taskOptions = ?unsafe { options.taskOptions() }, "activate");
             let item = Item::new(FSItemID::RootDirectory).into_super();
@@ -117,7 +117,7 @@ define_class!(
         fn deactivateWithOptions_replyHandler(
             &self,
             options: FSDeactivateOptions,
-            reply: &block2::Block<'static, fn(*mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             trace!(?options, "deactivate");
             reply.call(null_mut());
@@ -127,14 +127,14 @@ define_class!(
         fn mountWithOptions_replyHandler(
             &self,
             options: &FSTaskOptions,
-            reply: &block2::Block<'static, fn(*mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             trace!(taskOptions = ?unsafe { options.taskOptions() }, "mount");
             reply.call(null_mut());
         }
 
         #[unsafe(method(unmountWithReplyHandler:))]
-        fn unmountWithReplyHandler(&self, reply: &block2::Block<'static, fn()>) {
+        fn unmountWithReplyHandler(&self, reply: &block2::SendableBlock<'static, fn()>) {
             trace!("unmount");
             reply.call();
         }
@@ -143,7 +143,7 @@ define_class!(
         fn synchronizeWithFlags_replyHandler(
             &self,
             flags: FSSyncFlags,
-            reply: &block2::Block<'static, fn(*mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             trace!(?flags, "synchronize");
             reply.call(null_mut());
@@ -154,7 +154,7 @@ define_class!(
             &self,
             desired_attributes: &FSItemGetAttributesRequest,
             item: &FSItem,
-            reply: &block2::Block<'static, fn(*mut FSItemAttributes, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItemAttributes, *mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(wantedAttributes = ?unsafe { desired_attributes.wantedAttributes() }, ?item, "attributes");
@@ -167,7 +167,7 @@ define_class!(
             &self,
             new_attributes: &FSItemSetAttributesRequest,
             item: &FSItem,
-            reply: &block2::Block<'static, fn(*mut FSItemAttributes, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItemAttributes, *mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(?new_attributes, ?item, "setAttributes");
@@ -181,7 +181,7 @@ define_class!(
             &self,
             name: &FSFileName,
             directory: &FSItem,
-            reply: &block2::Block<'static, fn(*mut FSItem, *mut FSFileName, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItem, *mut FSFileName, *mut NSError)>,
         ) {
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?name, ?directory, "lookupItem");
@@ -192,7 +192,7 @@ define_class!(
         fn reclaimItem_replyHandler(
             &self,
             item: &FSItem,
-            reply: &block2::Block<'static, fn(*mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(?item, "reclaimItem");
@@ -203,7 +203,7 @@ define_class!(
         fn readSymbolicLink_replyHandler(
             &self,
             item: &FSItem,
-            reply: &block2::Block<'static, fn(*mut FSFileName, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSFileName, *mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             trace!(?item, "readSymbolicLink");
@@ -217,7 +217,7 @@ define_class!(
             r#type: FSItemType,
             directory: &FSItem,
             new_attributes: &FSItemSetAttributesRequest,
-            reply: &block2::Block<'static, fn(*mut FSItem, *mut FSFileName, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItem, *mut FSFileName, *mut NSError)>,
         ) {
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?name, ?r#type, ?directory, ?new_attributes, "createItem");
@@ -231,7 +231,7 @@ define_class!(
             directory: &FSItem,
             new_attributes: &FSItemSetAttributesRequest,
             contents: &FSFileName,
-            reply: &block2::Block<'static, fn(*mut FSItem, *mut FSFileName, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItem, *mut FSFileName, *mut NSError)>,
         ) {
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(
@@ -250,7 +250,7 @@ define_class!(
             item: &FSItem,
             name: &FSFileName,
             directory: &FSItem,
-            reply: &block2::Block<'static, fn(*mut FSFileName, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSFileName, *mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             let directory = directory.downcast_ref::<Item>().unwrap();
@@ -264,7 +264,7 @@ define_class!(
             item: &FSItem,
             name: &FSFileName,
             directory: &FSItem,
-            reply: &block2::Block<'static, fn(*mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             let directory = directory.downcast_ref::<Item>().unwrap();
@@ -282,7 +282,7 @@ define_class!(
             destination_name: &FSFileName,
             destination_directory: &FSItem,
             over_item: Option<&FSItem>,
-            reply: &block2::Block<'static, fn(*mut FSFileName, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSFileName, *mut NSError)>,
         ) {
             let item = item.downcast_ref::<Item>().unwrap();
             let source_directory = source_directory.downcast_ref::<Item>().unwrap();
@@ -307,7 +307,7 @@ define_class!(
             verifier: FSDirectoryVerifier,
             attributes: Option<&FSItemGetAttributesRequest>,
             packer: &FSDirectoryEntryPacker,
-            reply: &block2::Block<'static, fn(FSDirectoryVerifier, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(FSDirectoryVerifier, *mut NSError)>,
         ) {
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(

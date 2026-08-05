@@ -847,6 +847,13 @@ impl ItemTree {
         Self::from_id(ItemIdentifier::nserror())
     }
 
+    pub fn sendable_block() -> Self {
+        Self::from_id(ItemIdentifier {
+            name: "SendableBlock".into(),
+            location: Location::new("block"),
+        })
+    }
+
     pub fn block() -> Self {
         Self::from_id(ItemIdentifier {
             name: "Block".into(),

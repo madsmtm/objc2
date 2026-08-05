@@ -3,10 +3,10 @@ error[E0597]: `x` does not live long enough
   |
   |         let x = 2;
   |             - binding `x` declared here
-  |         RcBlock::new(|| x + 2)
-  |                      -- ^ borrowed value does not live long enough
-  |                      |
-  |                      value captured here
+  |         RcBlock::<_>::new(|| x + 2)
+  |                           -- ^ borrowed value does not live long enough
+  |                           |
+  |                           value captured here
   |     };
   |     - `x` dropped here while still borrowed
 
@@ -15,11 +15,11 @@ error[E0597]: `x` does not live long enough
    |
    |         let x = 2;
    |             - binding `x` declared here
-   |         RcBlock::new(|| x + 2).clone()
-   |         ----------------^-----
-   |         |            |  |
-   |         |            |  borrowed value does not live long enough
-   |         |            value captured here
+   |         RcBlock::<_>::new(|| x + 2).clone()
+   |         ---------------------^-----
+   |         |                 |  |
+   |         |                 |  borrowed value does not live long enough
+   |         |                 value captured here
    |         a temporary with access to the borrow is created here ...
    |     };
    |     -- ... and the borrow might be used here, when that temporary is dropped and runs the `Drop` code for type `RcBlock`
@@ -28,18 +28,18 @@ error[E0597]: `x` does not live long enough
    |
 help: consider adding semicolon after the expression so its temporaries are dropped sooner, before the local variables declared by the block are dropped
    |
-18 |         RcBlock::new(|| x + 2).clone();
-   |                                       +
+18 |         RcBlock::<_>::new(|| x + 2).clone();
+   |                                            +
 
 error[E0597]: `x` does not live long enough
  --> ui/lifetime_of_closure_tied_to_block.rs
   |
   |         let x = 2;
   |             - binding `x` declared here
-  |         RcBlock::with_encoding::<_, VoidToI32>(|| x + 2)
-  |                                                -- ^ borrowed value does not live long enough
-  |                                                |
-  |                                                value captured here
+  |         RcBlock::<_>::with_encoding::<_, VoidToI32>(|| x + 2)
+  |                                                     -- ^ borrowed value does not live long enough
+  |                                                     |
+  |                                                     value captured here
   |     };
   |     - `x` dropped here while still borrowed
 
@@ -48,11 +48,11 @@ error[E0597]: `x` does not live long enough
    |
    |         let x = 2;
    |             - binding `x` declared here
-   |         RcBlock::with_encoding::<_, VoidToI32>(|| x + 2).clone()
-   |         ------------------------------------------^-----
-   |         |                                      |  |
-   |         |                                      |  borrowed value does not live long enough
-   |         |                                      value captured here
+   |         RcBlock::<_>::with_encoding::<_, VoidToI32>(|| x + 2).clone()
+   |         -----------------------------------------------^-----
+   |         |                                           |  |
+   |         |                                           |  borrowed value does not live long enough
+   |         |                                           value captured here
    |         a temporary with access to the borrow is created here ...
    |     };
    |     -- ... and the borrow might be used here, when that temporary is dropped and runs the `Drop` code for type `RcBlock`
@@ -61,18 +61,18 @@ error[E0597]: `x` does not live long enough
    |
 help: consider adding semicolon after the expression so its temporaries are dropped sooner, before the local variables declared by the block are dropped
    |
-28 |         RcBlock::with_encoding::<_, VoidToI32>(|| x + 2).clone();
-   |                                                                 +
+28 |         RcBlock::<_>::with_encoding::<_, VoidToI32>(|| x + 2).clone();
+   |                                                                      +
 
 error[E0597]: `x` does not live long enough
  --> ui/lifetime_of_closure_tied_to_block.rs
   |
   |         let x = 2;
   |             - binding `x` declared here
-  |         StackBlock::new(|| x + 2)
-  |                         -- ^ borrowed value does not live long enough
-  |                         |
-  |                         value captured here
+  |         StackBlock::<_, _>::new(|| x + 2)
+  |                                 -- ^ borrowed value does not live long enough
+  |                                 |
+  |                                 value captured here
   |     };
   |     - `x` dropped here while still borrowed
 
@@ -81,10 +81,10 @@ error[E0597]: `x` does not live long enough
   |
   |         let x = 2;
   |             - binding `x` declared here
-  |         StackBlock::new(|| x + 2).copy()
-  |                         -- ^ borrowed value does not live long enough
-  |                         |
-  |                         value captured here
+  |         StackBlock::<_, _>::new(|| x + 2).copy()
+  |                                 -- ^ borrowed value does not live long enough
+  |                                 |
+  |                                 value captured here
   |     };
   |     - `x` dropped here while still borrowed
 
@@ -93,10 +93,10 @@ error[E0597]: `x` does not live long enough
   |
   |         let x = 2;
   |             - binding `x` declared here
-  |         StackBlock::with_encoding::<VoidToI32>(|| x + 2)
-  |                                                -- ^ borrowed value does not live long enough
-  |                                                |
-  |                                                value captured here
+  |         StackBlock::<_, _>::with_encoding::<VoidToI32>(|| x + 2)
+  |                                                        -- ^ borrowed value does not live long enough
+  |                                                        |
+  |                                                        value captured here
   |     };
   |     - `x` dropped here while still borrowed
 
@@ -105,9 +105,9 @@ error[E0597]: `x` does not live long enough
   |
   |         let x = 2;
   |             - binding `x` declared here
-  |         StackBlock::with_encoding::<VoidToI32>(|| x + 2).copy()
-  |                                                -- ^ borrowed value does not live long enough
-  |                                                |
-  |                                                value captured here
+  |         StackBlock::<_, _>::with_encoding::<VoidToI32>(|| x + 2).copy()
+  |                                                        -- ^ borrowed value does not live long enough
+  |                                                        |
+  |                                                        value captured here
   |     };
   |     - `x` dropped here while still borrowed

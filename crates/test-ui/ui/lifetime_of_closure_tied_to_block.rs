@@ -10,41 +10,41 @@ unsafe impl ManualBlockEncoding for VoidToI32 {
 fn main() {
     let _ = {
         let x = 2;
-        RcBlock::new(|| x + 2)
+        RcBlock::<_>::new(|| x + 2)
     };
 
     let _ = {
         let x = 2;
-        RcBlock::new(|| x + 2).clone()
+        RcBlock::<_>::new(|| x + 2).clone()
     };
 
     let _ = {
         let x = 2;
-        RcBlock::with_encoding::<_, VoidToI32>(|| x + 2)
+        RcBlock::<_>::with_encoding::<_, VoidToI32>(|| x + 2)
     };
 
     let _ = {
         let x = 2;
-        RcBlock::with_encoding::<_, VoidToI32>(|| x + 2).clone()
+        RcBlock::<_>::with_encoding::<_, VoidToI32>(|| x + 2).clone()
     };
 
     let _ = {
         let x = 2;
-        StackBlock::new(|| x + 2)
+        StackBlock::<_, _>::new(|| x + 2)
     };
 
     let _ = {
         let x = 2;
-        StackBlock::new(|| x + 2).copy()
+        StackBlock::<_, _>::new(|| x + 2).copy()
     };
 
     let _ = {
         let x = 2;
-        StackBlock::with_encoding::<VoidToI32>(|| x + 2)
+        StackBlock::<_, _>::with_encoding::<VoidToI32>(|| x + 2)
     };
 
     let _ = {
         let x = 2;
-        StackBlock::with_encoding::<VoidToI32>(|| x + 2).copy()
+        StackBlock::<_, _>::with_encoding::<VoidToI32>(|| x + 2).copy()
     };
 }

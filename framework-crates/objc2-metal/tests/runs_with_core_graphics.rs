@@ -21,7 +21,7 @@ fn get_all() {
 #[test]
 fn get_all_with_observer() {
     let mut observer = None;
-    let _ = autoreleasepool(|_| unsafe {
+    let _ = autoreleasepool(|_| {
         objc2_metal::MTLCopyAllDevicesWithObserver(
             &mut observer,
             &RcBlock::new(|_device, _notification| {}),

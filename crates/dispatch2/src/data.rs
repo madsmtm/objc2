@@ -62,15 +62,24 @@ impl DispatchData {
     #[cfg(feature = "block2")]
     #[inline]
     pub fn from_boxed(data: alloc::boxed::Box<[u8]>) -> DispatchRetained<Self> {
+        #[derive(Copy, Clone)]
+        struct SendablePtr(*mut [u8]);
+        // SAFETY: This is just a wrapper for `Box<[u8]>` that doesn't assert
+        // validity.
+        unsafe impl Send for SendablePtr {}
+        // SAFETY: Same as above.
+        unsafe impl Sync for SendablePtr {}
+
         let data_len = data.len();
-        let raw = alloc::boxed::Box::into_raw(data);
-        let ptr = NonNull::new(raw).unwrap().cast();
+        let raw = SendablePtr(alloc::boxed::Box::into_raw(data));
+        let ptr = NonNull::new(raw.0).unwrap().cast();
 
         let destructor = block2::RcBlock::new(move || {
+            let raw = raw;
             // SAFETY: The fat pointer (plus size) was retrieved from
             // `Box::into_raw()`, and its ownership was *not* consumed by
             // dispatch_data_create().
-            let _ = unsafe { alloc::boxed::Box::<[u8]>::from_raw(raw) };
+            let _ = unsafe { alloc::boxed::Box::<[u8]>::from_raw(raw.0) };
         });
 
         // We don't care which queue ends up running the destructor.

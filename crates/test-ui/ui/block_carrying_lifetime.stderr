@@ -4,8 +4,9 @@ error[E0521]: borrowed data escapes outside of function
   |   fn tries_to_retain_past_given_lifetime(block: &Block<'_, fn()>) {
   |                                          -----
   |                                          |
+  |                                          `block` declared here, outside of the function body
   |                                          `block` is a reference that is only valid in the function body
-  |                                          has type `&Block<'1, fn()>`
+  |                                          has type `&Block<'1, fn(), dyn Any>`
 ...
   | /     BLOCK.with(|thread_local| {
   | |         thread_local.set(block.copy()).unwrap();

@@ -1,3 +1,4 @@
+use core::any::Any;
 use core::fmt;
 use core::marker::PhantomData;
 use core::ptr::NonNull;
@@ -6,6 +7,7 @@ use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
 
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
+use crate::traits::BoundedBy;
 use crate::{BlockSignature, RcBlock};
 
 /// An opaque type that holds an Objective-C block.
@@ -25,6 +27,19 @@ use crate::{BlockSignature, RcBlock};
 /// As an example, you may have the type `Block<'_, fn(u8, u8) -> i32>`, and
 /// that would be a non-escaping block that takes two `u8`s, and returns an
 /// `i32`.
+///
+/// Finally, the generic type `ThreadKind` describes the thread-safety of the
+/// block's data. These are used to bound the closures that the block can be
+/// created from in [`RcBlock::new`] and similar. Supported values include:
+/// - `dyn Any`, indicating that the block is not thread-safe (default).
+/// - `dyn Send`, indicating that the block can be dropped on another thread.
+///   Very niche.
+/// - `dyn Sync`, indicating that the block can be used from on another thread
+///   (but must be dropped on this thread). Very niche.
+/// - `dyn Send + Sync`, indicating that the block is thread-safe.
+///
+/// For `dyn Send + Sync`, a convenience alias [`SendableBlock`] is provided
+/// to avoid having to spell that out all the time.
 ///
 /// ["escaping"]: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/closures/#Escaping-Closures
 /// [`EncodeArgument`]: objc2::encode::EncodeArgument
@@ -60,7 +75,7 @@ use crate::{BlockSignature, RcBlock};
 //
 // TODO: Potentially restrict to `Signature: BlockSignature`, for better error messages?
 #[repr(C)]
-pub struct Block<'b, Signature> {
+pub struct Block<'b, Signature, ThreadKind: ?Sized = dyn Any> {
     _inner: [u8; 0],
     /// We store `BlockHeader` + the closure captures, but `Block` has to
     /// remain an empty type because we don't know the size of the closure,
@@ -70,17 +85,35 @@ pub struct Block<'b, Signature> {
     /// This is possible to improve once we have extern types.
     _header: PhantomData<BlockHeader>,
     // Covariant over both lifetime and signature.
-    _p: PhantomData<(&'b (), Signature)>,
+    _p: PhantomData<(&'b (), Signature, ThreadKind)>,
 }
+
+/// A [`Block`] that is `Send` and `Sync`.
+///
+/// This is a convenience type alias, and can be created from [`RcBlock`],
+/// [`StackBlock`] or [`GlobalBlock`] in the same manner as [`Block`] (with
+/// the required addition that the closure is `Send` and `Sync` of course).
+pub type SendableBlock<'b, Signature> = Block<'b, Signature, dyn Send + Sync>;
+
+// SAFETY: The block's thread kind is `Send`.
+unsafe impl<'b, Signature: BlockSignature> Send for Block<'b, Signature, dyn Send + Sync> {}
+// SAFETY: The block's thread kind is `Send`.
+unsafe impl<'b, Signature: BlockSignature> Send for Block<'b, Signature, dyn Send> {}
+// SAFETY: The block's thread kind is `Sync`.
+unsafe impl<'b, Signature: BlockSignature> Sync for Block<'b, Signature, dyn Send + Sync> {}
+// SAFETY: The block's thread kind is `Sync`.
+unsafe impl<'b, Signature: BlockSignature> Sync for Block<'b, Signature, dyn Sync> {}
 
 // SAFETY: Pointers to `Block` is an Objective-C block.
 // This is only valid when `Signature: BlockSignature`, as that bounds the parameters and
 // return type to be encodable too.
-unsafe impl<'b, Signature: BlockSignature> RefEncode for Block<'b, Signature> {
+unsafe impl<'b, Signature: BlockSignature, ThreadKind: ?Sized> RefEncode
+    for Block<'b, Signature, ThreadKind>
+{
     const ENCODING_REF: Encoding = Encoding::Block;
 }
 
-impl<'b, Signature> Block<'b, Signature> {
+impl<'b, Signature, ThreadKind: ?Sized> Block<'b, Signature, ThreadKind> {
     fn header(&self) -> &BlockHeader {
         let ptr: NonNull<Self> = NonNull::from(self);
         let ptr: NonNull<BlockHeader> = ptr.cast();
@@ -100,10 +133,11 @@ impl<'b, Signature> Block<'b, Signature> {
     /// [`StackBlock`]: crate::StackBlock
     #[doc(alias = "Block_copy")]
     #[doc(alias = "_Block_copy")]
+    #[doc(alias = "retain")]
     #[inline]
-    pub fn copy(&self) -> RcBlock<'b, Signature> {
+    pub fn copy(&self) -> RcBlock<'b, Signature, ThreadKind> {
         let ptr: *const Self = self;
-        let ptr: *mut Block<'b, Signature> = ptr as *mut _;
+        let ptr: *mut Block<'b, Signature, ThreadKind> = ptr as *mut _;
         // SAFETY: The lifetime of the block is extended from `&self` to that
         // of the `RcBlock`, which is fine, because the lifetime `'b` of the
         // contained closure is still carried along to the `RcBlock`.
@@ -125,7 +159,7 @@ impl<'b, Signature> Block<'b, Signature> {
 // is the only way to avoid redundant parentheses when calling blocks.
 macro_rules! call_block {
     ($num_args:literal; $($a:ident: $t:ident),*) => {
-        impl<'b, $($t: EncodeArgument,)* R: EncodeReturn> Block<'b, fn($($t),*) -> R> {
+        impl<'b, $($t: EncodeArgument,)* R: EncodeReturn, ThreadKind: ?Sized> Block<'b, fn($($t),*) -> R, ThreadKind> {
             #[doc = concat!("Call the block with ", $num_args, " arguments.")]
             ///
             /// The return value is the output of the block.
@@ -165,7 +199,22 @@ call_block!(10; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, 
 call_block!(11; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11);
 call_block!(12; t1: T1, t2: T2, t3: T3, t4: T4, t5: T5, t6: T6, t7: T7, t8: T8, t9: T9, t10: T10, t11: T11, t12: T12);
 
-impl<'b, Signature> fmt::Debug for Block<'b, Signature> {
+/// Convert from one [`Block`] to another with a different thread kind.
+impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
+    AsRef<Block<'b, Signature, ThreadKindTo>> for Block<'b, Signature, ThreadKindFrom>
+where
+    ThreadKindFrom: BoundedBy<ThreadKindTo>,
+{
+    #[inline]
+    fn as_ref(&self) -> &Block<'b, Signature, ThreadKindTo> {
+        // SAFETY: The thread kind is just an extra bound, we can safely erase
+        // that (similar to how you can go from `dyn Fn() + Send + Sync + 'b`
+        // to `dyn Fn() + 'b`).
+        unsafe { core::mem::transmute(self) }
+    }
+}
+
+impl<'b, Signature, ThreadKind: ?Sized> fmt::Debug for Block<'b, Signature, ThreadKind> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut f = f.debug_struct("Block");
         debug_block_header(self.header(), &mut f);
@@ -184,6 +233,8 @@ fn block_copy_fail() -> ! {
 mod tests {
     use core::cell::Cell;
     use core::sync::atomic::{AtomicUsize, Ordering};
+
+    use crate::StackBlock;
 
     use super::*;
 
@@ -282,5 +333,42 @@ mod tests {
         b: &'p Block<'static, fn(&'a i32) -> &'static i32>,
     ) -> &'p Block<'b, fn(&'static i32) -> &'r i32> {
         b
+    }
+
+    static_assertions::assert_not_impl_any!(Block<'_, fn(), dyn Any>: Send, Sync);
+    static_assertions::assert_not_impl_any!(Block<'_, fn(), dyn Send>: Sync);
+    static_assertions::assert_not_impl_any!(Block<'_, fn(), dyn Sync>: Send);
+    static_assertions::assert_impl_all!(Block<'_, fn(), dyn Send>: Send);
+    static_assertions::assert_impl_all!(Block<'_, fn(), dyn Sync>: Sync);
+    static_assertions::assert_impl_all!(Block<'_, fn(), dyn Send + Sync>: Send, Sync);
+    static_assertions::assert_impl_all!(SendableBlock<'_, fn()>: Send, Sync); // Just for clarity
+
+    // Consequence: using `dyn Send` is basically the same as `dyn Any`.
+    static_assertions::assert_impl_all!(&Block<'_, fn(), dyn Sync>: Send, Sync);
+    static_assertions::assert_not_impl_any!(&Block<'_, fn(), dyn Send>: Send, Sync);
+
+    #[test]
+    fn as_ref() {
+        let block: RcBlock<'_, _, dyn Send + Sync> = RcBlock::new(|| {});
+
+        let _: &RcBlock<'_, _, dyn Any> = block.as_ref();
+        let _: &RcBlock<'_, _, dyn Send> = block.as_ref();
+        let _: &RcBlock<'_, _, dyn Sync> = block.as_ref();
+        let _: &RcBlock<'_, _, dyn Send + Sync> = block.as_ref();
+        let _: &Block<'_, _, dyn Any> = block.as_ref();
+        let _: &Block<'_, _, dyn Send> = block.as_ref();
+        let _: &Block<'_, _, dyn Sync> = block.as_ref();
+        let _: &Block<'_, _, dyn Send + Sync> = block.as_ref();
+
+        let block: StackBlock<'_, _, _, dyn Send + Sync> = StackBlock::new(|| {});
+
+        let _: &StackBlock<'_, _, _, dyn Any> = block.as_ref();
+        let _: &StackBlock<'_, _, _, dyn Send> = block.as_ref();
+        let _: &StackBlock<'_, _, _, dyn Sync> = block.as_ref();
+        let _: &StackBlock<'_, _, _, dyn Send + Sync> = block.as_ref();
+        let _: &Block<'_, _, dyn Any> = block.as_ref();
+        let _: &Block<'_, _, dyn Send> = block.as_ref();
+        let _: &Block<'_, _, dyn Sync> = block.as_ref();
+        let _: &Block<'_, _, dyn Send + Sync> = block.as_ref();
     }
 }

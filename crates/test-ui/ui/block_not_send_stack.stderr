@@ -1,0 +1,24 @@
+error[E0277]: `Rc<i32>` cannot be shared between threads safely
+ --> ui/block_not_send_stack.rs
+  |
+  |     foo(&StackBlock::new(|| println!("{non_send}")));
+  |          --------------- ^^^^^^^^^^^^^^^^^^^^^^^^^ `Rc<i32>` cannot be shared between threads safely
+  |          |
+  |          required by a bound introduced by this call
+  |
+  = help: the trait `Sync` is not implemented for `Rc<i32>`
+  = note: required for `&Rc<i32>` to implement `Send`
+note: required because it's used within this closure
+ --> ui/block_not_send_stack.rs
+  |
+  |     foo(&StackBlock::new(|| println!("{non_send}")));
+  |                          ^^
+  = note: required for `{closure@$DIR/ui/block_not_send_stack.rs:8:26: 8:28}` to implement `block2::traits::BoundedBy<dyn Send + Sync>`
+note: required by a bound in `StackBlock::<'b, Signature, Closure, ThreadKind>::new`
+ --> $WORKSPACE/crates/block2/src/stack.rs
+  |
+  |     Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind> + Clone,
+  |                                         ^^^^^^^^^^^^^^^^^^^^^ required by this bound in `StackBlock::<'b, Signature, Closure, ThreadKind>::new`
+...
+  |     pub fn new(closure: Closure) -> Self {
+  |            --- required by a bound in this associated function

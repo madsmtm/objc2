@@ -1,0 +1,59 @@
+error[E0283]: type annotations needed for `RcBlock<'_, fn(), _>`
+ --> ui/block_unbound_thread_kind.rs
+  |
+  |     let _block = RcBlock::new(|| {});
+  |         ^^^^^^   ------------ ----- type must be known at this point
+  |                  |
+  |                  required by a bound introduced by this call
+  |
+  = note: multiple `impl`s satisfying `{closure@$DIR/ui/block_unbound_thread_kind.rs:4:31: 4:33}: block2::traits::BoundedBy<_>` found in the `block2` crate:
+          - impl<T> block2::traits::BoundedBy<dyn Any> for T
+            where T: ?Sized;
+          - impl<T> block2::traits::BoundedBy<dyn Send + Sync> for T
+            where T: Send, T: Sync, T: ?Sized;
+          - impl<T> block2::traits::BoundedBy<dyn Send> for T
+            where T: Send, T: ?Sized;
+          - impl<T> block2::traits::BoundedBy<dyn Sync> for T
+            where T: Sync, T: ?Sized;
+note: required by a bound in `RcBlock::<'b, Signature, ThreadKind>::new`
+ --> $WORKSPACE/crates/block2/src/rc_block.rs
+  |
+  |     pub fn new<Closure>(closure: Closure) -> Self
+  |            --- required by a bound in this associated function
+...
+  |         Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind>,
+  |                                             ^^^^^^^^^^^^^^^^^^^^^ required by this bound in `RcBlock::<'b, Signature, ThreadKind>::new`
+help: consider giving `_block` an explicit type, where the type for type parameter `ThreadKind` is specified
+  |
+4 |     let _block: RcBlock<'_, _, ThreadKind> = RcBlock::new(|| {});
+  |               ++++++++++++++++++++++++++++
+
+error[E0283]: type annotations needed for `StackBlock<'_, fn(), {closure@$DIR/ui/block_unbound_thread_kind.rs:5:34: 5:36}, _>`
+ --> ui/block_unbound_thread_kind.rs
+  |
+  |     let _block = StackBlock::new(|| {});
+  |         ^^^^^^   --------------- ----- type must be known at this point
+  |                  |
+  |                  required by a bound introduced by this call
+  |
+  = note: multiple `impl`s satisfying `{closure@$DIR/ui/block_unbound_thread_kind.rs:5:34: 5:36}: block2::traits::BoundedBy<_>` found in the `block2` crate:
+          - impl<T> block2::traits::BoundedBy<dyn Any> for T
+            where T: ?Sized;
+          - impl<T> block2::traits::BoundedBy<dyn Send + Sync> for T
+            where T: Send, T: Sync, T: ?Sized;
+          - impl<T> block2::traits::BoundedBy<dyn Send> for T
+            where T: Send, T: ?Sized;
+          - impl<T> block2::traits::BoundedBy<dyn Sync> for T
+            where T: Sync, T: ?Sized;
+note: required by a bound in `StackBlock::<'b, Signature, Closure, ThreadKind>::new`
+ --> $WORKSPACE/crates/block2/src/stack.rs
+  |
+  |     Closure: IntoBlock<'b, Signature> + BoundedBy<ThreadKind> + Clone,
+  |                                         ^^^^^^^^^^^^^^^^^^^^^ required by this bound in `StackBlock::<'b, Signature, Closure, ThreadKind>::new`
+...
+  |     pub fn new(closure: Closure) -> Self {
+  |            --- required by a bound in this associated function
+help: consider giving `_block` an explicit type, where the type for type parameter `ThreadKind` is specified
+  |
+5 |     let _block: StackBlock<'_, _, _, ThreadKind> = StackBlock::new(|| {});
+  |               ++++++++++++++++++++++++++++++++++

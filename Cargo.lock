@@ -195,6 +195,7 @@ version = "0.6.2"
 dependencies = [
  "objc2",
  "objc2-foundation",
+ "static_assertions",
 ]
 
 [[package]]
@@ -545,6 +546,7 @@ version = "0.0.0"
 dependencies = [
  "apple-doc",
  "block2",
+ "dispatch2",
  "objc2",
  "objc2-app-kit",
  "objc2-core-foundation",

@@ -8,7 +8,8 @@ use core::ptr::{self, NonNull};
 
 use crate::abi::{BlockDescriptor, BlockDescriptorPtr, BlockFlags, BlockHeader};
 use crate::debug::debug_block_header;
-use crate::{Block, BlockSignature};
+use crate::traits::BoundedBy;
+use crate::{Block, BlockSignature, SendableBlock};
 
 // TODO: Should this be a static to help the compiler deduplicating them?
 const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
@@ -21,7 +22,7 @@ const GLOBAL_DESCRIPTOR: BlockDescriptor = BlockDescriptor {
 /// This can be used as an optimization of [`RcBlock`] if your closure doesn't
 /// capture any variables.
 ///
-/// This is a smart pointer that [`Deref`]s to [`Block`].
+/// This is a smart pointer that [`Deref`]s to [`SendableBlock`].
 ///
 /// It can created and stored in static memory using the [`global_block!`]
 /// macro.
@@ -36,7 +37,9 @@ pub struct GlobalBlock<Signature> {
     f: PhantomData<Signature>,
 }
 
-// TODO: Document safety.
+// Global blocks don't store any state, so they're trivially `Send` + `Sync`.
+//
+// See below for reason behind `BlockSignature` bound.
 unsafe impl<Signature: BlockSignature> Sync for GlobalBlock<Signature> {}
 unsafe impl<Signature: BlockSignature> Send for GlobalBlock<Signature> {}
 
@@ -78,18 +81,31 @@ impl<Signature> GlobalBlock<Signature> {
 }
 
 impl<Signature> Deref for GlobalBlock<Signature> {
-    /// Global blocks are escaping.
-    type Target = Block<'static, Signature>;
+    /// Global blocks are escaping and sendable.
+    type Target = SendableBlock<'static, Signature>;
 
     #[inline]
     fn deref(&self) -> &Self::Target {
         let ptr: NonNull<Self> = NonNull::from(self);
-        let ptr: NonNull<Block<'static, Signature>> = ptr.cast();
-        // SAFETY: This has the same layout as `Block`
+        let ptr: NonNull<SendableBlock<'static, Signature>> = ptr.cast();
+        // SAFETY: This has the same layout as `SendableBlock`
         //
         // A global block does not hold any data, so it is safe to call
-        // immutably.
+        // immutably and share across threads.
         unsafe { ptr.as_ref() }
+    }
+}
+
+/// Get a [`Block`] reference from the [`GlobalBlock`].
+impl<Signature, ThreadKind: ?Sized> AsRef<Block<'static, Signature, ThreadKind>>
+    for GlobalBlock<Signature>
+where
+    dyn Send + Sync: BoundedBy<ThreadKind>,
+{
+    #[inline]
+    fn as_ref(&self) -> &Block<'static, Signature, ThreadKind> {
+        // `Deref` to `Block` + `AsRef` to any `Block` thread kind.
+        (**self).as_ref()
     }
 }
 
@@ -307,4 +323,6 @@ mod tests {
         );
         assert_eq!(format!("{NOOP_BLOCK:#?}"), expected);
     }
+
+    static_assertions::assert_impl_all!(GlobalBlock<fn()>: Send, Sync);
 }

@@ -41,7 +41,7 @@ define_class!(
         fn probe_resource_reply_handler(
             &self,
             resource: &FSResource,
-            reply: &block2::Block<'static, fn(*mut FSProbeResult, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSProbeResult, *mut NSError)>,
         ) {
             let Some(resource) = resource.downcast_ref::<FSBlockDeviceResource>() else {
                 info!(?resource, "resource was not FSBlockDeviceResource");
@@ -74,7 +74,7 @@ define_class!(
             &self,
             resource: &FSResource,
             options: &FSTaskOptions,
-            reply: &block2::Block<'static, fn(*mut FSVolume, *mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut FSVolume, *mut NSError)>,
         ) {
             let Some(resource) = resource.downcast_ref::<FSBlockDeviceResource>() else {
                 info!("resource was not FSBlockDeviceResource");
@@ -108,7 +108,7 @@ define_class!(
             &self,
             resource: &FSResource,
             options: &FSTaskOptions,
-            reply: &block2::Block<'static, fn(*mut NSError)>,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             let Some(resource) = resource.downcast_ref::<FSBlockDeviceResource>() else {
                 error!("resource was not FSBlockDeviceResource");
