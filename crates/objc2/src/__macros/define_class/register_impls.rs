@@ -276,7 +276,7 @@ macro_rules! __define_class_register_method {
                 ($($sel)*)
                 ($($params)*)
 
-                ($crate::__declare_class_register_thunk)
+                ($crate::__define_class_register_thunk)
 
                 ($builder)
                 ($for)
@@ -295,7 +295,7 @@ macro_rules! __define_class_register_method {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_register_thunk {
+macro_rules! __define_class_register_thunk {
     {
         ($builder:ident)
         ($for:ty)
@@ -319,7 +319,7 @@ macro_rules! __declare_class_register_thunk {
 
         type __RetainSemantics = $crate::__method_family!(($($method_family)*) ($($sel)*));
 
-        type __Kind<'cls> = $crate::__declare_class_get_kind!(
+        type __Kind<'cls> = $crate::__define_class_get_kind!(
             $fn_or_fn_result($($_receiver: $receiver_ty)?)
         );
 
@@ -364,7 +364,7 @@ macro_rules! __declare_class_register_thunk {
         };
 
         unsafe {
-            $crate::__declare_class_call_builder_method! {
+            $crate::__define_class_call_builder_method! {
                 ($builder)
                 ($crate::sel!($($sel)*))
                 (<Self as $crate::__macros::ConvertDefinedFn<'_, __FnMarker, __RetainSemantics, __Kind<'_>>>::THUNK)
@@ -377,7 +377,7 @@ macro_rules! __declare_class_register_thunk {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_get_kind {
+macro_rules! __define_class_get_kind {
     (fn()) => {
         $crate::__macros::ClassFnKind<&'cls $crate::runtime::AnyClass>
     };
@@ -394,7 +394,7 @@ macro_rules! __declare_class_get_kind {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __declare_class_call_builder_method {
+macro_rules! __define_class_call_builder_method {
     // Class method
     {
         ($builder:ident)

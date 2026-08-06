@@ -27,7 +27,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
  --> ui/define_class_invalid_type.rs
@@ -57,7 +57,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
  --> ui/define_class_invalid_type.rs
@@ -96,7 +96,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
  --> ui/define_class_invalid_type.rs
@@ -120,7 +120,7 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
           and $N others
   = note: required for `Vec<()>` to implement `EncodeReturn`
   = note: required for `Vec<()>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
  --> ui/define_class_invalid_type.rs
@@ -144,7 +144,7 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
           and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
   = note: required for `Box<u32>` to implement `objc2::__macros::ConvertArgument`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
  --> ui/define_class_invalid_type.rs
@@ -177,4 +177,4 @@ help: the trait `Encode` is not implemented for `CustomObject`
           and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
   = note: required for `CustomObject` to implement `objc2::__macros::ConvertArgument`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -2,7 +2,7 @@
 //!
 //! These are... quite complex, especially the larger ones. Some of this
 //! complexity is inherent, the function rewriting that we have do in
-//! `declare_class!` for example _is_ weird and special, but a lot of it also
+//! `define_class!` for example _is_ weird and special, but a lot of it also
 //! just comes from not using procedural macros (which is a requirement for
 //! keeping compile-times down, and to reduce the number of things we run at
 //! build-time).

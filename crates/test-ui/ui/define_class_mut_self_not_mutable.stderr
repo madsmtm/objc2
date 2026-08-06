@@ -48,7 +48,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&'__function mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
@@ -74,7 +74,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
@@ -94,7 +94,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, &mut CustomObject, objc2::__macros::KindDefined>`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
@@ -114,7 +114,7 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, (), objc2::__macros::KindDefined>`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisfied
  --> ui/define_class_mut_self_not_mutable.rs
@@ -134,4 +134,4 @@ error[E0277]: the trait bound `&mut CustomObject: MessageReceiver` is not satisf
             NonNull<T>
   = note: `MessageReceiver` is implemented for `&CustomObject`, but not for `&mut CustomObject`
   = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&mut CustomObject, Retained<CustomObject>, objc2::__macros::KindDefined>`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

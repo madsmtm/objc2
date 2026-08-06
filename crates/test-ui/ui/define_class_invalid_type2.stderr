@@ -21,7 +21,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
  --> ui/define_class_invalid_type2.rs
@@ -52,7 +52,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |
   |     type Func: FnToExternFn<FnMarker, MethodFamily, Kind, Self>;
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not satisfied
  --> ui/define_class_invalid_type2.rs
@@ -71,7 +71,7 @@ error[E0277]: the trait bound `Allocated<CustomObject>: MessageReceiver` is not 
             *mut T
             NonNull<T>
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<CustomObject>, Retained<NSObject>, objc2::__macros::KindDefined>`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: EncodeReturn` is not satisfied
  --> ui/define_class_invalid_type2.rs
@@ -95,4 +95,4 @@ error[E0277]: the trait bound `Retained<NSObject>: EncodeReturn` is not satisfie
           and $N others
   = note: required for `Retained<NSObject>` to implement `EncodeReturn`
   = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
-  = note: this error originates in the macro `$crate::__declare_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
