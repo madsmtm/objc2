@@ -95,40 +95,39 @@ macro_rules! impl_traits {
             Closure: Fn($($t),*) -> R + 'b,
         {}
 
-        unsafe impl<'b, $($t,)* R, Closure> IntoBlock<'b, fn($($t,)*) -> R> for Closure
-        where
-            $($t: EncodeArgument,)*
-            R: EncodeReturn,
-            Closure: Fn($($t),*) -> R + 'b,
-        {
-            #[inline]
-            fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn() {
-                unsafe extern "C-unwind" fn invoke<'b, $($t,)* R, Closure>(
-                    // Use a StackBlock without any thread kind. This is safe
-                    // because the thread kind doesn't change the layout, and
-                    // because it's the responsibility of other layers to
-                    // ensure that this is called on the right thread.
-                    block: *mut StackBlock<'b, fn($($t,)*) -> R, Closure>,
-                    $($a: $t,)*
-                ) -> R
-                where
-                    Closure: Fn($($t),*) -> R + 'b
-                {
-                    // SAFETY: Validity of the StackBlock is upheld by caller.
-                    let closure = unsafe { &*ptr::addr_of!((*block).closure) };
-                    (closure)($($a),*)
-                }
+        const _: () = {
+            unsafe extern "C-unwind" fn invoke<'b, $($t,)* R, Closure: Fn($($t),*) -> R + 'b>(
+                // Use a StackBlock without any thread kind. This is safe
+                // because the thread kind doesn't change the layout, and
+                // because it's the responsibility of other layers to
+                // ensure that this is called on the right thread.
+                block: *mut StackBlock<'b, fn($($t,)*) -> R, Closure>,
+                $($a: $t,)*
+            ) -> R {
+                // SAFETY: Validity of the StackBlock is upheld by caller.
+                let closure = unsafe { &*ptr::addr_of!((*block).closure) };
+                (closure)($($a),*)
+            }
 
-                // SAFETY: Erasing signature is sound, we won't call the
-                // function without transmuting the signature back.
-                unsafe {
-                    mem::transmute::<
-                        unsafe extern "C-unwind" fn(*mut StackBlock<'b, fn($($t,)*) -> R, Closure>, $($t,)*) -> R,
-                        unsafe extern "C-unwind" fn(),
-                    >(invoke)
+            unsafe impl<'b, $($t,)* R, Closure> IntoBlock<'b, fn($($t,)*) -> R> for Closure
+            where
+                $($t: EncodeArgument,)*
+                R: EncodeReturn,
+                Closure: Fn($($t),*) -> R + 'b,
+            {
+                #[inline]
+                fn __get_invoke_stack_block() -> unsafe extern "C-unwind" fn() {
+                    // SAFETY: Erasing signature is sound, we won't call the
+                    // function without transmuting the signature back.
+                    unsafe {
+                        mem::transmute::<
+                            unsafe extern "C-unwind" fn(*mut StackBlock<'b, fn($($t,)*) -> R, Closure>, $($t,)*) -> R,
+                            unsafe extern "C-unwind" fn(),
+                        >(invoke)
+                    }
                 }
             }
-        }
+        };
 
         // Intentionally no bounds, for better backwards compatibility.
         unsafe impl<'b, $($t,)* R> __DynToBlock for dyn Fn($($t,)*) -> R + 'b {

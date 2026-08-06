@@ -1,7 +1,7 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.intel_syntax noprefix
 	.p2align	4
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0):
+SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
 	mov	eax, esi
@@ -11,7 +11,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_b
 	ret
 
 	.p2align	4
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0):
+SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
 	lea	eax, [rsi + 2]
@@ -19,7 +19,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_b
 	ret
 
 	.p2align	4
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0):
+SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
 	lea	eax, [rsi + 2]
@@ -27,7 +27,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_b
 	ret
 
 	.p2align	4
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0):
+SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
 	lea	eax, [rsi + 2]
@@ -35,7 +35,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_b
 	ret
 
 	.p2align	4
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0):
+SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
 	mov	eax, esi
@@ -45,7 +45,7 @@ SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_b
 	ret
 
 	.p2align	4
-SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0):
+SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0):
 	push	rbp
 	mov	rbp, rsp
 	lea	eax, [rsi + 2]
@@ -142,7 +142,7 @@ _fn1_stack_block_to_rc:
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
 	mov	qword ptr [rbp - 32], rax
 	mov	qword ptr [rbp - 24], 33554432
-	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)]
+	lea	rax, [rip + SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::stack_block_to_rc::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 16], rax
 	lea	rax, [rip + l_anon.[ID].0]
 	mov	qword ptr [rbp - 8], rax
@@ -165,7 +165,7 @@ _fn2_rc_block:
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
 	mov	qword ptr [rbp - 32], rax
 	mov	qword ptr [rbp - 24], 0
-	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)]
+	lea	rax, [rip + SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::rc_block::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 16], rax
 	lea	rax, [rip + L_anon.[ID].4]
 	mov	qword ptr [rbp - 8], rax
@@ -188,7 +188,7 @@ _fn3_rc_block_drop:
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
 	mov	qword ptr [rbp - 40], rax
 	mov	qword ptr [rbp - 32], 33554432
-	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)]
+	lea	rax, [rip + SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::rc_block_drop::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 24], rax
 	lea	rax, [rip + l_anon.[ID].3]
 	mov	qword ptr [rbp - 16], rax
@@ -212,7 +212,7 @@ _fn4_create_and_use_stack_block:
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
 	mov	qword ptr [rbp - 32], rax
 	mov	qword ptr [rbp - 24], 33554432
-	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)]
+	lea	rax, [rip + SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 16], rax
 	lea	rax, [rip + l_anon.[ID].1]
 	mov	qword ptr [rbp - 8], rax
@@ -233,7 +233,7 @@ _fn5_create_and_use_stack_block_drop:
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
 	mov	qword ptr [rbp - 48], rax
 	mov	qword ptr [rbp - 40], 33554432
-	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)]
+	lea	rax, [rip + SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_stack_block_drop::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 32], rax
 	lea	rax, [rip + l_anon.[ID].2]
 	mov	qword ptr [rbp - 24], rax
@@ -259,7 +259,7 @@ _fn6_create_and_use_rc_block:
 	mov	rax, qword ptr [rip + __NSConcreteStackBlock@GOTPCREL]
 	mov	qword ptr [rbp - 40], rax
 	mov	qword ptr [rbp - 32], 0
-	lea	rax, [rip + SYM(<_ as block2[CRATE_ID]::traits::IntoBlock<fn(_) -> _>>::__get_invoke_stack_block::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)]
+	lea	rax, [rip + SYM(block2[CRATE_ID]::traits::_::invoke::<i32, i32, test_block[CRATE_ID]::create_and_use_rc_block::{closure#0}>, 0)]
 	mov	qword ptr [rbp - 24], rax
 	lea	rax, [rip + L_anon.[ID].4]
 	mov	qword ptr [rbp - 16], rax
