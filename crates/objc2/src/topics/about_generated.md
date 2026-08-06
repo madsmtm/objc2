@@ -14,8 +14,25 @@ Objective-C classes and protocols. They also use the [`block2`] crate in
 the public API, check out the documentation for that for how to call such
 methods using a Rust closure.
 
+## Naming
+
+The framework crates generally use Objective-C selector names, rather than
+the names shown in Apple's default Swift documentation. For example, Swift
+presents the shared application as `NSApplication.shared`, while the
+Objective-C API is `+[NSApplication sharedApplication]`; objc2 exposes it as
+`NSApplication::sharedApplication`.
+
+When comparing APIs with Apple's documentation, select the Objective-C
+language view in the top right, for example [NSApplication.sharedApplication][nsapplication-shared-application].
+
+This naming policy prioritizes a direct correspondence with Objective-C
+headers, selectors, and documentation. For the rationale and exceptions, see
+[the naming scheme policy discussion][naming-policy].
+
 See [the topics section][super] for more details.
 
 [apple-doc-index]: https://developer.apple.com/documentation/technologies
 [#309]: https://github.com/madsmtm/objc2/issues/309
 [`block2`]: https://docs.rs/block2
+[nsapplication-shared-application]: https://developer.apple.com/documentation/appkit/nsapplication/shared?language=objc
+[naming-policy]: https://github.com/madsmtm/objc2/issues/284
