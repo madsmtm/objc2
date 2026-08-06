@@ -18,7 +18,8 @@ use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
     global_analysis, load_config, load_skipped, run_cargo_fmt, Config, Context, EntryExt, Library,
-    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, HOST_MACOS, VERSION,
+    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS,
+    HOST_MACOS, VERSION,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -509,6 +510,11 @@ fn get_translation_unit<'i: 'c, 'c>(
         data.framework.clone()
     };
 
+    let comment_block_commands = format!(
+        "-fcomment-block-commands={}",
+        EXTRA_BLOCK_COMMANDS.join(",")
+    );
+
     let cache_path = format!("-fmodules-cache-path={}", tempdir.to_str().unwrap());
     let module_name = format!("-fmodule-name={module}");
     let mut arguments = vec![
@@ -528,6 +534,8 @@ fn get_translation_unit<'i: 'c, 'c>(
         //
         // See: https://clang.llvm.org/docs/UsersManual.html#comment-parsing-options
         "-fretain-comments-from-system-headers",
+        // Make Clang a bit better at parsing Apple's documentation.
+        &comment_block_commands,
         // Tell Clang to parse non-doc comments too.
         // "-fparse-all-comments",
         // Explicitly pass the sysroot (we aren't invoked through

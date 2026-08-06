@@ -75,6 +75,7 @@ impl Documentation {
 
     pub fn fmt<'a>(&'a self, doc_id: Option<&'a ItemIdentifier>) -> impl fmt::Display + 'a {
         FormatterFn(move |f| {
+            let _span = debug_span!("documentation", ?self).entered();
             let mut from_header = String::new();
 
             for child in &self.from_header {
@@ -161,8 +162,37 @@ fn fix_code_blocks(s: &str) -> String {
     ret
 }
 
+/// Extra commands to pass to `-fcomment-block-commands=`
+pub const EXTRA_BLOCK_COMMANDS: &[&str] = &[
+    "NOTE",
+    "DeprecationSummary",
+    "TabNavigator",
+    "Tab",
+    "decription",
+    "summary",
+    "field",
+    "super",
+    "availability",
+    "group",
+    "memberof",
+    "pparam",
+    "praram",
+    "parameter",
+    "parameters",
+    "other",
+    "define",
+    "defined",
+    "key",
+    "options",
+    "block",
+    "error",
+    "reserved",
+    "header",
+];
+
 fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
     FormatterFn(move |f| {
+        let _span = debug_span!("child", ?child).entered();
         match child {
             CommentChild::BlockCommand(BlockCommand {
                 command,
@@ -176,33 +206,56 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                     // @abstract is an alternate name for @brief
                     "brief" | "abstract" => {}
                     // @description and @details are alternate names for @discussion
-                    "discussion" | "description" | "details" => {}
+                    "discussion" | "description" | "decription" | "details" => {}
                     "remark" | "remarks" => {}
+                    "summary" => {}
+                    "helps" => {}
                     "see" => write!(f, "See: ")?,
                     "seealso" | "sa" => write!(f, "See also: ")?,
-                    "note" => write!(f, "Note: ")?,
+                    "note" | "NOTE" => write!(f, "Note: ")?,
                     "warning" => write!(f, "Warning: ")?,
                     "dependency" => write!(f, "Dependencies: ")?,
                     "result" | "return" | "returns" => write!(f, "Returns: ")?,
                     // TODO: Convert to # Panic section?
                     "throws" => write!(f, "Throws a ")?,
                     "performance" => write!(f, "Performance: ")?,
+                    "field" => write!(f, "Field: ")?,
+                    "super" => write!(f, "Super: ")?,
+                    "availability" => write!(f, "Availability: ")?,
+                    "copyright" => write!(f, "Copyright: ")?,
                     // For some odd reason, @host is parsed to post here?
                     "post" => write!(f, "@host")?,
                     // Ignore
-                    "superclass" => return Ok(()),
-                    // This is just the name of the thing we're parsing, so ignore.
-                    "defined" => return Ok(()),
+                    "superclass" | "coclass" => return Ok(()),
                     // Ignore for now, though in the future we should perhaps
                     // integrate this with `Availability`.
-                    "deprecated" => return Ok(()),
+                    "deprecated" | "DeprecationSummary" => return Ok(()),
                     // List
                     "li" => {}
+                    // Apple-specific extension to allow code blocks to be
+                    // dependent on
+                    "TabNavigator" => write!(f, "@TabNavigator")?,
+                    "Tab" => write!(f, "@Tab")?,
+                    // Grouping
+                    "group" | "memberof" => {}
+                    // Alternative for @param that isn't parsed into ParamCommand (?)
+                    "pparam" | "praram" | "parameter" => write!(f, "Parameter ")?,
+                    "parameters" => write!(f, "Parameters ")?,
+                    "other" => write!(f, "Parameter `other`: ")?,
+                    // This is just the name of the thing we're parsing, so ignore.
+                    "define" | "defined" | "key" | "options" | "block" => return Ok(()),
+                    // Unsure, it's used differently in GLKit and Security.
+                    "error" => write!(f, "@error ")?,
+                    // Already says "Reserved" in text, so no need to add that.
+                    "reserved" => {}
+                    // Shouldn't actually be hit, but is for some reason?
+                    "header" => {}
                     _ => warn!(?child, "unknown documentation command"),
                 }
 
-                if !arguments.is_empty() {
-                    error!(?child, "BlockCommand had arguments");
+                for arg in arguments {
+                    // Seems to only be relevant for `@throws`?
+                    write!(f, "{arg} ")?;
                 }
 
                 for child in children {
@@ -241,25 +294,20 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                     ("autoreleasepool", &[]) => write!(f, "objc2::rc::autoreleasepool")?,
                     ("selector", &[]) => write!(f, "sel!")?,
                     ("MainActor", &[]) => write!(f, "MainThreadOnly")?,
-                    // Boolean values (Written as @YES and @NO).
-                    ("YES", &[]) => write!(f, "`true`")?,
-                    ("NO", &[]) => write!(f, "`false`")?,
-                    // Grouping
-                    ("group" | "memberof", _) => {}
-                    // Alternative for @param that isn't parsed into ParamCommand (?)
-                    ("pparam" | "parameter", &[]) => write!(f, "Parameter ")?,
-                    ("parameters", &[]) => write!(f, "Parameters ")?,
-                    // Not parsed into a block
-                    ("field", &[]) => write!(f, "Field: ")?,
-                    ("super", _) => write!(f, "Super: ")?,
-                    ("availability", _) => write!(f, "Availability: ")?,
-                    // This is just the name of the thing we're parsing, so ignore.
-                    ("define" | "defined" | "key" | "options", _) => {}
-                    // Shouldn't actually be hit, but is for some reason?
-                    ("header", _) => {}
-                    ("description", _) => {}
+                    // Boolean values (Written as @YES and @NO, and sometimes
+                    // as @true and @false).
+                    ("YES" | "true", &[]) => write!(f, "`true`")?,
+                    ("NO" | "false", &[]) => write!(f, "`false`")?,
+                    // Insides of code blocks that is incorrectly parsed.
+                    ("objc" | "implementation" | "end" | "escaping", []) => {
+                        write!(f, "@{command} ")?
+                    }
                     // ImageCaptureCore uses enums with things like `@ICMediaPresentation`.
                     (ic, _) if ic.starts_with("IC") => {}
+                    // Constants like `@kAUPresetTypeKey` incorrectly parsed.
+                    (command, []) if command.starts_with("k") => write!(f, "@{command}")?,
+                    // `/pci@f0000000/usb@5` incorrectly parsed.
+                    ("f0000000", _) => write!(f, "@f0000000")?,
                     _ => warn!(?child, "unknown documentation command"),
                 }
             }
