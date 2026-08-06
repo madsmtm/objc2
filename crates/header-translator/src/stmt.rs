@@ -3849,7 +3849,7 @@ impl Stmt {
                     writeln!(
                         f,
                         "impl{} {}{} {{",
-                        // Requires Sized for now
+                        // Requires Sized and 'static for now
                         GenericParamsHelper(generics, "Sized"),
                         item.id().path(),
                         generic_ty(generics),
@@ -4106,7 +4106,12 @@ fn add_generic_cast_helpers(
         writeln!(f)?;
         writeln!(f, "    /// Convert to the opaque/untyped variant.")?;
         writeln!(f, "    #[inline]")?;
-        writeln!(f, "    pub fn as_opaque(&self) -> &{} {{", id.path())?;
+        writeln!(f, "    pub fn as_opaque(&self) -> &{}", id.path())?;
+        writeln!(f, "    where")?;
+        for (generic, _) in generics {
+            writeln!(f, "        {generic}: 'static,")?;
+        }
+        writeln!(f, "    {{")?;
         // SAFETY: CF collections store objects behind a reference, and can
         // all be represented by `objc2_core_foundation::opaque::Opaque`.
         //

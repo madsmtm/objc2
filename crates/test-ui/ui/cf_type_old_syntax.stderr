@@ -7,5 +7,5 @@ error: no rules expected `#`
 note: while trying to match keyword `unsafe`
  --> $WORKSPACE/framework-crates/objc2-core-foundation/src/cf_type.rs
   |
-  | ...   unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? $ty:ident $(<$($generic_param:ident),* $(,)?>)? $(: $superclass:ty...
+  | ...   unsafe impl $(<$($generic:ident : ?$sized:ident),* $(,)?>)? $ty:ident $(<$($generic_param:ident),* $(,)?>)? $(: $superclass:id...
   |       ^^^^^^

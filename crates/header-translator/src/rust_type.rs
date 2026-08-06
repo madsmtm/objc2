@@ -4167,9 +4167,9 @@ impl Ty {
                         .any(|generic| matches!(generic, PointeeTy::GenericParam { .. }))
                     {
                         if *nullability == Nullability::NonNull {
-                            writeln!(f, "let {arg_to} = {arg}.as_opaque();")
+                            writeln!(f, "let {arg_to} = unsafe {{ {arg}.cast_unchecked() }};")
                         } else {
-                            writeln!(f, "let {arg_to} = {arg}.map(|obj| obj.as_opaque());")
+                            writeln!(f, "let {arg_to} = {arg}.map(|obj| unsafe {{ obj.cast_unchecked() }});")
                         }
                     } else {
                         Ok(())

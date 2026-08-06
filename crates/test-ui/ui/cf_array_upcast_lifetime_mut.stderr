@@ -1,0 +1,12 @@
+error[E0597]: `foo` does not live long enough
+ --> ui/cf_array_upcast_lifetime_mut.rs
+  |
+  |     let foo = 42;
+  |         --- binding `foo` declared here
+  |     let arr = get_foo_array(&foo);
+  |                             ^^^^ borrowed value does not live long enough
+...
+  |     let _: &CFType = arr.as_ref();
+  |                      ------------ argument requires that `foo` is borrowed for `'static`
+  | }
+  | - `foo` dropped here while still borrowed

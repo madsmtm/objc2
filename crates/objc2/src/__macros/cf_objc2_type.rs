@@ -28,7 +28,7 @@ macro_rules! cf_objc2_type {
 
         // Allow converting to AnyObject.
         // Similar to __extern_class_impl_as_ref_borrow!
-        impl $(<$($generic : ?$sized),*>)? $crate::__macros::AsRef<$crate::runtime::AnyObject> for $ty {
+        impl $(<$($generic : ?$sized + 'static),*>)? $crate::__macros::AsRef<$crate::runtime::AnyObject> for $ty {
             #[inline]
             fn as_ref(&self) -> &$crate::runtime::AnyObject {
                 // SAFETY: CF types are valid to re-interpret as AnyObject.
@@ -36,7 +36,7 @@ macro_rules! cf_objc2_type {
             }
         }
 
-        impl $(<$($generic : ?$sized),*>)? $crate::__macros::Borrow<$crate::runtime::AnyObject> for $ty {
+        impl $(<$($generic : ?$sized + 'static),*>)? $crate::__macros::Borrow<$crate::runtime::AnyObject> for $ty {
             #[inline]
             fn borrow(&self) -> &$crate::runtime::AnyObject {
                 <Self as $crate::__macros::AsRef<$crate::runtime::AnyObject>>::as_ref(self)

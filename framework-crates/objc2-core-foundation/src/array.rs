@@ -488,24 +488,24 @@ impl<T: Type> ExactSizeIterator for CFArrayIterUnchecked<'_, T> {}
 
 // Allow easy conversion from `&CFArray<T>` to `&CFArray`.
 // Requires `T: Type` because of reflexive impl in `cf_type!`.
-impl<T: ?Sized + Type> AsRef<CFArray> for CFArray<T> {
+impl<T: ?Sized + Type + 'static> AsRef<CFArray> for CFArray<T> {
     fn as_ref(&self) -> &CFArray {
         self.as_opaque()
     }
 }
-impl<T: ?Sized + Type> AsRef<CFMutableArray> for CFMutableArray<T> {
+impl<T: ?Sized + Type + 'static> AsRef<CFMutableArray> for CFMutableArray<T> {
     fn as_ref(&self) -> &CFMutableArray {
         self.as_opaque()
     }
 }
 
 // `Eq`, `Ord` and `Hash` have the same semantics.
-impl<T: ?Sized + Type> Borrow<CFArray> for CFArray<T> {
+impl<T: ?Sized + Type + 'static> Borrow<CFArray> for CFArray<T> {
     fn borrow(&self) -> &CFArray {
         self.as_opaque()
     }
 }
-impl<T: ?Sized + Type> Borrow<CFMutableArray> for CFMutableArray<T> {
+impl<T: ?Sized + Type + 'static> Borrow<CFMutableArray> for CFMutableArray<T> {
     fn borrow(&self) -> &CFMutableArray {
         self.as_opaque()
     }

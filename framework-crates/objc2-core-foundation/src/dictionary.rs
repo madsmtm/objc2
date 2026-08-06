@@ -320,24 +320,32 @@ impl<K, V> CFMutableDictionary<K, V> {
 
 // Allow easy conversion from `&CFDictionary<T>` to `&CFDictionary`.
 // Requires `Type` bound because of reflexive impl in `cf_type!`.
-impl<K: ?Sized + Type, V: ?Sized + Type> AsRef<CFDictionary> for CFDictionary<K, V> {
+impl<K: ?Sized + Type + 'static, V: ?Sized + Type + 'static> AsRef<CFDictionary>
+    for CFDictionary<K, V>
+{
     fn as_ref(&self) -> &CFDictionary {
         self.as_opaque()
     }
 }
-impl<K: ?Sized + Type, V: ?Sized + Type> AsRef<CFMutableDictionary> for CFMutableDictionary<K, V> {
+impl<K: ?Sized + Type + 'static, V: ?Sized + Type + 'static> AsRef<CFMutableDictionary>
+    for CFMutableDictionary<K, V>
+{
     fn as_ref(&self) -> &CFMutableDictionary {
         self.as_opaque()
     }
 }
 
 // `Eq`, `Ord` and `Hash` have the same semantics.
-impl<K: ?Sized + Type, V: ?Sized + Type> Borrow<CFDictionary> for CFDictionary<K, V> {
+impl<K: ?Sized + Type + 'static, V: ?Sized + Type + 'static> Borrow<CFDictionary>
+    for CFDictionary<K, V>
+{
     fn borrow(&self) -> &CFDictionary {
         self.as_opaque()
     }
 }
-impl<K: ?Sized + Type, V: ?Sized + Type> Borrow<CFMutableDictionary> for CFMutableDictionary<K, V> {
+impl<K: ?Sized + Type + 'static, V: ?Sized + Type + 'static> Borrow<CFMutableDictionary>
+    for CFMutableDictionary<K, V>
+{
     fn borrow(&self) -> &CFMutableDictionary {
         self.as_opaque()
     }
