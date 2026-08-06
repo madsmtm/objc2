@@ -18,8 +18,6 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
-#[doc(hidden)]
-pub mod __cf_macro_helpers;
 #[cfg(feature = "unstable-allocator-api")]
 mod allocator;
 #[cfg(feature = "CFArray")]
@@ -72,6 +70,10 @@ pub use self::generated::*;
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
 pub use self::type_traits::{ConcreteType, Type};
+
+// Expose `$crate::__core` for macros.
+#[doc(hidden)]
+pub use core as __core;
 
 // This is not exposed publicly, so the only way to use this in types with
 // generics is to use it through the default type (e.g. the user should write
