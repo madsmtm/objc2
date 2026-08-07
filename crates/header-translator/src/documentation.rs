@@ -27,7 +27,7 @@ impl Documentation {
         }
     }
 
-    /// Construct from an entity, possible one that has been renamed (such
+    /// Construct from an entity, possibly one that has been renamed (such
     /// that we'll want a doc alias to the entity's actual name).
     pub fn from_entity(entity: &Entity<'_>, context: &Context<'_>) -> Self {
         let from_header = if let Some(comment) = entity.get_comment() {
@@ -59,6 +59,72 @@ impl Documentation {
             extras: vec![],
             alias,
         }
+    }
+
+    /// Get documentation for enum constant / variant.
+    ///
+    /// Removes documentation from the enum if it contains stuff like
+    /// `@constant variant_name`, and adds it to the variant instead.
+    pub fn enum_constant(&mut self, entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let variant_name = entity.get_name().unwrap();
+
+        let mut documentation = Self::from_entity(entity, context);
+
+        // Find range from `VerbatimLineCommand("{variant_name} ...")` to next
+        // `VerbatimLineCommand(...)`.
+        let mut start = None;
+        let mut end = None;
+        let mut line_command_text = None;
+        for (i, child) in self.from_header.iter().enumerate() {
+            if let CommentChild::VerbatimLineCommand(line_command) = child {
+                let line_command = line_command.trim();
+                if start.is_some() {
+                    end = Some(i);
+                    break;
+                } else {
+                    // VerbatimLineCommand doesn't have any structure, but
+                    // "{name} ..rest" seems fairly common, so let's parse it
+                    // like that.
+                    let (line_command, text) = line_command
+                        .split_once(' ')
+                        .map(|(id, text)| (id, Some(text)))
+                        .unwrap_or((line_command, None));
+                    if line_command == variant_name {
+                        start = Some(i);
+                        line_command_text = text;
+                    }
+                }
+            }
+        }
+
+        if let Some(start) = start {
+            // Insert the remaining text from the `VerbatimLineCommand`.
+            if let Some(line_command_text) = line_command_text {
+                documentation
+                    .from_header
+                    .push(CommentChild::Text(line_command_text.to_string()));
+            }
+
+            let drain = if let Some(end) = end {
+                self.from_header.drain(start..end)
+            } else {
+                // There was no `VerbatimLineCommand(...)` that could be used
+                // to mark the end (likely because this is the last variant).
+                //
+                // In that case, just grab the next element. This suboptimal,
+                // but it's better than nothing.
+                let mut end = start + 1;
+                if self.from_header.get(end).is_none() {
+                    end = start;
+                }
+                self.from_header.drain(start..=end)
+            };
+
+            // Skip the now redundant `VerbatimLineCommand`.
+            documentation.from_header.extend(drain.skip(1));
+        }
+
+        documentation
     }
 
     pub fn set_first(&mut self, doc: impl Into<String>) {
@@ -370,7 +436,7 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
             CommentChild::VerbatimLineCommand(_) => {
                 // Often comes from @member or similar that just name the item
                 // again.
-                // writeln!(f, "{}", verbatim_line.trim())?;
+                // writeln!(f, "{verbatim_line}")?;
             }
         }
 

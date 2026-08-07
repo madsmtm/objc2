@@ -1827,7 +1827,7 @@ impl Stmt {
                             });
                         };
 
-                        let mut documentation = Documentation::from_entity(&entity, context);
+                        let mut documentation = documentation.enum_constant(&entity, context);
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());
