@@ -18,11 +18,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Use `&CStr` instead of `&str` in `DispatchQueue` and `DispatchWorkloop` creation methods.
 - **BREAKING**: Renamed `WaitError` to `TimeoutError`.
 - **BREAKING**: `DispatchGroupGuard` and `DispatchSemaphoreGuard` now include a lifetime.
+- **BREAKING**: Moved `dispatch_read` to `DispatchIO::read_from_file_descriptor`.
+- **BREAKING**: Moved `dispatch_write` to `DispatchIO::write_to_file_descriptor`.
+- **BREAKING**: Merged `dispatch_source_type_s` and `dispatch_source_type_s` into `DispatchSourceType`.
+- **BREAKING**: Moved `_dispatch_source_type_*` to `DispatchSourceType::*`.
+- **BREAKING**: Renamed `dispatch_function_t` to `DispatchFunction`.
+- **BREAKING**: Renamed `dispatch_block_t` to `DispatchBlock`.
+- **BREAKING**: Renamed `dispatch_data_applier_t` to `DispatchDataApplier`.
+- **BREAKING**: Renamed `dispatch_io_handler_t` to `DispatchIOHandler`.
+- **BREAKING**: Renamed `dispatch_source_mach_recv_flags_t` to `DispatchSourceMachReceiveFlags`.
+- **BREAKING**: Renamed `dispatch_source_mach_send_flags_t` to `DispatchSourceMachSendFlags`.
+- **BREAKING**: Renamed `dispatch_source_memorypressure_flags_t` to `DispatchSourceMemoryPressureFlags`.
+- **BREAKING**: Renamed `dispatch_source_proc_flags_t` to `DispatchSourceProcessFlags`.
+- **BREAKING**: Renamed `dispatch_source_timer_flags_t` to `DispatchSourceTimerFlags`.
+- **BREAKING**: Renamed `dispatch_source_vnode_flags_t` to `DispatchSourceFileSystemFlags`.
 
 ### Removed
 - **BREAKING**: Removed `QueueAfterError`.
 - **BREAKING**: Removed incorrect `TryFrom<Duration>` impl on `DispatchTime`.
 - **BREAKING**: Removed deprecated aliases.
+- **BREAKING**: Removed `dispatch_once_t` alias.
+- **BREAKING**: Removed `dispatch_fd_t` alias.
+- **BREAKING**: Removed redundant `DISPATCH_*` prefix from enum variants.
+
+### Fixed
+- Added `DispatchBlockFlags` (wasn't previously exposed).
 
 
 ## [0.3.1] - 2026-02-26

@@ -124,7 +124,8 @@ impl Location {
             name if name.starts_with("Darwin.hfs") => "CoreServices.Files".into(),
 
             // int8_t, int16_t etc., translated to i8, i16 etc.
-            "_Builtin_stdint" | "_stdint" => "__builtin__".into(),
+            "_Builtin_stdint" => "__builtin__".into(),
+            name if name.starts_with("_stdint") => "__builtin__".into(),
             name if name.starts_with("_Builtin_stddef") => "__builtin__".into(),
             // Implementation of the above
             name if name.starts_with("types.machine_types") => "__builtin__".into(),

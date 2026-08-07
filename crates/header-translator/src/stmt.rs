@@ -1504,6 +1504,24 @@ impl Stmt {
                                     superclass,
                                 });
                             }
+                            EntityKind::StructDecl if data.opaque => {
+                                let struct_name = entity.get_name().unwrap();
+
+                                // If not renamed already
+                                if id.name == c_name {
+                                    documentation.set_alias(struct_name.clone());
+                                }
+
+                                // Emit opaque decl representing both struct
+                                // and typedef.
+                                stmts.push(Self::OpaqueDecl {
+                                    id: ItemIdentifier::new(&entity, context),
+                                    encoding_name: struct_name.to_string(),
+                                    availability: availability.clone(),
+                                    documentation: documentation.clone(),
+                                    sendable,
+                                });
+                            }
                             EntityKind::StructDecl => {
                                 // Handle structs without fields as opaque decls.
                                 let mut has_fields = false;

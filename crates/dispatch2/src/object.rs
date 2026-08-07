@@ -3,8 +3,8 @@ use core::ptr::NonNull;
 
 use alloc::boxed::Box;
 
-use crate::dispatch_function_t;
 use crate::generated::dispatch_get_context;
+use crate::DispatchFunction;
 use crate::{
     generated::{
         dispatch_activate, dispatch_resume, dispatch_set_context, dispatch_set_finalizer_f,
@@ -105,7 +105,7 @@ pub unsafe trait DispatchObject {
     /// TODO.
     #[doc(alias = "dispatch_set_finalizer_f")]
     #[inline]
-    unsafe fn set_finalizer_f(&self, finalizer: dispatch_function_t) {
+    unsafe fn set_finalizer_f(&self, finalizer: DispatchFunction) {
         // SAFETY: Upheld by the caller.
         unsafe { dispatch_set_finalizer_f(self.as_raw(), finalizer) }
     }
@@ -184,8 +184,10 @@ pub unsafe trait DispatchObject {
 
     #[inline]
     #[doc(hidden)]
-    fn as_raw(&self) -> NonNull<dispatch_object_s> {
-        NonNull::from(self).cast()
+    fn as_raw(&self) -> &__DispatchObject {
+        // SAFETY: All DispatchObject implementors are safe to convert to
+        // the raw `__DispatchObject`.
+        unsafe { NonNull::from(self).cast().as_ref() }
     }
 }
 
@@ -203,7 +205,7 @@ mod private {
     #[allow(non_camel_case_types)]
     #[repr(C)]
     #[derive(Debug)]
-    pub struct dispatch_object_s {
+    pub struct __DispatchObject {
         /// opaque value
         _inner: [u8; 0],
         // OpaqueData
@@ -212,9 +214,9 @@ mod private {
 
     #[cfg(feature = "objc2")]
     // SAFETY: Dispatch types are internally objects.
-    unsafe impl objc2::encode::RefEncode for dispatch_object_s {
+    unsafe impl objc2::encode::RefEncode for __DispatchObject {
         const ENCODING_REF: objc2::encode::Encoding = objc2::encode::Encoding::Object;
     }
 }
 
-pub(crate) use private::dispatch_object_s;
+pub(crate) use private::__DispatchObject;

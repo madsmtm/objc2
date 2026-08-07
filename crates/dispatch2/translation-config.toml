@@ -38,8 +38,13 @@ const.DISPATCH_WALLTIME_NOW.skipped = true
 
 # `dispatch_object_t` is a special union that declares all the different kinds
 # of dispatch objects, but that won't work in Rust.
+#
+# Instead, we manually make it into a trait.
 union.dispatch_object_t.skipped = true
 typedef.dispatch_object_t.skipped = true
+typedef.dispatch_object_t.opaque = true
+struct.dispatch_object_s.renamed = "__DispatchObject"
+typedef.dispatch_object_t.renamed = "__DispatchObject"
 
 # Marked as noreturn, but header-translator doesn't handle that yet.
 fn.dispatch_main.skipped = true
@@ -80,15 +85,35 @@ struct.dispatch_data_s.renamed = "DispatchData"
 typedef.dispatch_data_t.renamed = "DispatchData"
 typedef.dispatch_io_t.renamed = "DispatchIO"
 typedef.dispatch_workloop_t.renamed = "DispatchWorkloop"
+typedef.dispatch_block_t.renamed = "DispatchBlock"
+typedef.dispatch_data_applier_t.renamed = "DispatchDataApplier"
+typedef.dispatch_io_handler_t.renamed = "DispatchIOHandler"
+typedef.dispatch_once_t.renamed = "DispatchOnce"
+typedef.dispatch_function_t.renamed = "DispatchFunction"
+typedef.dispatch_fd_t.renamed = "DispatchFd"
 
 # Rename enums.
 typedef.dispatch_queue_priority_t.renamed = "DispatchQueueGlobalPriority"
 typedef.dispatch_qos_class_t.renamed = "DispatchQoS"
 enum.dispatch_autorelease_frequency_t.renamed = "DispatchAutoReleaseFrequency"
 typedef.dispatch_autorelease_frequency_t.renamed = "DispatchAutoReleaseFrequency"
-const.DISPATCH_AUTORELEASE_FREQUENCY_INHERIT.renamed = "INHERIT"
-const.DISPATCH_AUTORELEASE_FREQUENCY_WORK_ITEM.renamed = "WORK_ITEM"
-const.DISPATCH_AUTORELEASE_FREQUENCY_NEVER.renamed = "NEVER"
+const.DISPATCH_AUTORELEASE_FREQUENCY_INHERIT.renamed = "Inherit"
+const.DISPATCH_AUTORELEASE_FREQUENCY_WORK_ITEM.renamed = "WorkItem"
+const.DISPATCH_AUTORELEASE_FREQUENCY_NEVER.renamed = "Never"
+typedef.dispatch_source_mach_send_flags_t.renamed = "DispatchSourceMachSendFlags"
+typedef.dispatch_source_mach_recv_flags_t.renamed = "DispatchSourceMachReceiveFlags"
+typedef.dispatch_source_memorypressure_flags_t.renamed = "DispatchSourceMemoryPressureFlags"
+typedef.dispatch_source_proc_flags_t.renamed = "DispatchSourceProcessFlags"
+typedef.dispatch_source_vnode_flags_t.renamed = "DispatchSourceFileSystemFlags"
+typedef.dispatch_source_timer_flags_t.renamed = "DispatchSourceTimerFlags"
+enum.dispatch_block_flags_t.renamed = "DispatchBlockFlags"
+typedef.dispatch_block_flags_t.renamed = "DispatchBlockFlags"
+const.DISPATCH_BLOCK_BARRIER.renamed = "Barrier"
+const.DISPATCH_BLOCK_DETACHED.renamed = "Detached"
+const.DISPATCH_BLOCK_ASSIGN_CURRENT.renamed = "AssignCurrentContext"
+const.DISPATCH_BLOCK_NO_QOS_CLASS.renamed = "NoQoS"
+const.DISPATCH_BLOCK_INHERIT_QOS_CLASS.renamed = "InheritQoS"
+const.DISPATCH_BLOCK_ENFORCE_QOS_CLASS.renamed = "EnforceQoS"
 
 # DispatchIO enums.
 enum.dispatch_io_type_t.renamed = "DispatchIOStreamType"
@@ -104,8 +129,11 @@ typedef.dispatch_time_t.renamed = "DispatchTime"
 
 # Dispatch sources types should perhaps be mapped as a trait,
 # similar to what Swift does for `DispatchSourceProtocol`?
-struct.dispatch_source_type_s.skipped = true
-typedef.dispatch_source_type_t.skipped = true
+#
+# But for now, it at the very least makes sense to map it as opaque.
+typedef.dispatch_source_type_t.opaque = true
+struct.dispatch_source_type_s.renamed = "DispatchSourceType"
+typedef.dispatch_source_type_t.renamed = "DispatchSourceType"
 
 # Inline, defined manually for now
 fn.dispatch_get_main_queue.skipped = true
@@ -200,8 +228,21 @@ fn.dispatch_once.renamed = "once_with_block"
 fn.dispatch_once_f.implementor = "Dispatch.DispatchOnce"
 fn.dispatch_once_f.renamed = "once_f"
 
+# Map IO functions
+fn.dispatch_read.implementor = "Dispatch.DispatchIO"
+fn.dispatch_read.renamed = "read_from_file_descriptor"
+fn.dispatch_write.implementor = "Dispatch.DispatchIO"
+fn.dispatch_write.renamed = "write_to_file_descriptor"
+
 # Used in various ways, most of them either not or dubiously thread-safe.
 typedef.dispatch_block_t.sendable = true
+
+# Redefined to use `UnsafeCell`/`AtomicIsize` internally.
+typedef.dispatch_once_t.skipped = true
+
+# We don't want to expose this simple type alias, having the functions use
+# `c_int` is preferred here.
+typedef.dispatch_fd_t.skipped = true
 
 ##
 ## Bounds information
@@ -225,6 +266,10 @@ fn.dispatch_io_create_with_path.arguments.1.bounds = "null-terminated"
 
 fn.dispatch_workloop_create.arguments.0.bounds = "null-terminated"
 fn.dispatch_workloop_create_inactive.arguments.0.bounds = "null-terminated"
+
+# Memory management
+fn.dispatch_retain.arguments.0.bounds = "unsafe"
+fn.dispatch_release.arguments.0.bounds = "unsafe"
 
 ##
 ## Safety
@@ -250,13 +295,10 @@ fn.dispatch_io_create_with_io.unsafe = true
 # then given your Dispatch object to someone else, and
 # then _they_ set a context, which would give you an
 # invalid pointer in your finalizer.
-fn.dispatch_get_context.unsafe = false
 fn.dispatch_set_context.unsafe = true
 fn.dispatch_set_finalizer_f.unsafe = true
-fn.dispatch_activate.unsafe = false
-fn.dispatch_suspend.unsafe = false
-fn.dispatch_resume.unsafe = false
-fn.dispatch_set_qos_class_floor.unsafe = true # Undefined to pass incorrect type (though maybe not UB?)
+# Undefined to pass incorrect type (though maybe not UB?)
+fn.dispatch_set_qos_class_floor.unsafe = true
 
 # Must be no cycles. Is it UB if there is?
 fn.dispatch_set_target_queue.unsafe = true

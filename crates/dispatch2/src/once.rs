@@ -1,11 +1,8 @@
-use core::cell::UnsafeCell;
 use core::ffi::c_void;
 use core::fmt;
 use core::panic::{RefUnwindSafe, UnwindSafe};
 use core::ptr::NonNull;
 use core::sync::atomic::{AtomicIsize, Ordering};
-
-use crate::generated::dispatch_once_t;
 
 /// A low-level synchronization primitive for one-time global execution.
 ///
@@ -35,8 +32,14 @@ use crate::generated::dispatch_once_t;
 ///
 #[cfg_attr(not(feature = "std"), doc = "[`std::sync::Once`]: #std-not-enabled")]
 #[doc(alias = "dispatch_once_t")]
+#[repr(transparent)]
 pub struct DispatchOnce {
-    predicate: UnsafeCell<dispatch_once_t>,
+    /// `dispatch_once_t` is an `intptr_t`, but to uphold the rules set by the
+    /// Rust AM, we use it as an atomic to avoid a possible tear, even though
+    /// the equivalent C code just accesses the predicate un-atomically.
+    ///
+    /// At the very least, this should be `UnsafeCell<isize>`.
+    predicate: AtomicIsize,
 }
 
 // This is intentionally `extern "C"`, since libdispatch will not propagate an
@@ -63,7 +66,7 @@ where
     cold,
     inline(never)
 )]
-fn invoke_dispatch_once<F>(predicate: NonNull<dispatch_once_t>, closure: F)
+fn invoke_dispatch_once<F>(predicate: NonNull<DispatchOnce>, closure: F)
 where
     F: FnOnce(),
 {
@@ -107,7 +110,7 @@ impl DispatchOnce {
     #[allow(clippy::new_without_default)] // `std::sync::Once` doesn't have it either
     pub const fn new() -> Self {
         Self {
-            predicate: UnsafeCell::new(0),
+            predicate: AtomicIsize::new(0),
         }
     }
 
@@ -130,9 +133,6 @@ impl DispatchOnce {
     where
         F: FnOnce(),
     {
-        // Unwrap is fine, the pointer is valid so can never be NULL.
-        let predicate = NonNull::new(self.predicate.get()).unwrap();
-
         // DISPATCH_ONCE_INLINE_FASTPATH
         if cfg!(any(
             target_arch = "x86",
@@ -152,20 +152,12 @@ impl DispatchOnce {
             //     }
             //     DISPATCH_COMPILER_CAN_ASSUME(*predicate == ~0l);
 
-            // NOTE: To uphold the rules set by the Rust AM, we use an atomic
-            // comparison here to avoid a possible tear, even though the
-            // equivalent C code just loads the predicate un-atomically.
-            //
-            // SAFETY: The predicate is a valid atomic pointer.
-            // TODO: Use `AtomicIsize::from_ptr` once in MSRV.
-            let atomic_predicate: &AtomicIsize = unsafe { predicate.cast().as_ref() };
-
             // We use an acquire load, as that's what's done internally in
             // libdispatch, and matches what's done in Rust's std too:
             // <https://github.com/swiftlang/swift-corelibs-libdispatch/blob/swift-6.0.3-RELEASE/src/once.c#L57>
             // <https://github.com/rust-lang/rust/blob/1.83.0/library/std/src/sys/sync/once/queue.rs#L130>
-            if atomic_predicate.load(Ordering::Acquire) != !0 {
-                invoke_dispatch_once(predicate, work);
+            if self.predicate.load(Ordering::Acquire) != !0 {
+                invoke_dispatch_once(NonNull::from(self), work);
             }
 
             // NOTE: Unlike in C, we cannot use `core::hint::assert_unchecked`,
@@ -174,9 +166,9 @@ impl DispatchOnce {
             // (something about the _COMM_PAGE_CPU_QUIESCENT_COUNTER?)
             //
             // TODO: Investigate this further!
-            // core::hint::assert_unchecked(atomic_predicate.load(Ordering::Acquire) == !0);
+            // core::hint::assert_unchecked(self.predicate.load(Ordering::Acquire) == !0);
         } else {
-            invoke_dispatch_once(predicate, work);
+            invoke_dispatch_once(NonNull::from(self), work);
         }
     }
 }
@@ -240,7 +232,7 @@ mod tests {
         }
 
         let once = DispatchOnce {
-            predicate: UnsafeCell::new(once.predicate.into_inner()),
+            predicate: once.predicate,
         };
         for _ in 0..10 {
             once.call_once(|| call_count += 1);

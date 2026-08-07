@@ -21,7 +21,7 @@ impl DispatchData {
     #[inline]
     pub fn from_bytes(data: &[u8]) -> DispatchRetained<Self> {
         // TODO: Autogenerate?
-        const DISPATCH_DATA_DESTRUCTOR_DEFAULT: Option<&crate::dispatch_block_t> = None;
+        const DISPATCH_DATA_DESTRUCTOR_DEFAULT: Option<&crate::DispatchBlock> = None;
 
         let ptr = NonNull::new(data.as_ptr().cast_mut()).unwrap().cast();
 

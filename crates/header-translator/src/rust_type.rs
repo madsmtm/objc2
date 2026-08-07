@@ -696,6 +696,9 @@ pub enum PointeeTy {
     NetworkTypeDef {
         id: ItemIdentifier,
     },
+    OpaqueTypeDef {
+        id: ItemIdentifier,
+    },
     TypeDef {
         id: ItemIdentifier,
         to: Box<PointeeTy>,
@@ -830,6 +833,9 @@ impl PointeeTy {
             Self::NetworkTypeDef { id } => {
                 vec![ItemTree::from_id(id.clone())]
             }
+            Self::OpaqueTypeDef { id } => {
+                vec![ItemTree::from_id(id.clone())]
+            }
             Self::CFOpaque => vec![],
             Self::TypeDef { id, to } => {
                 vec![ItemTree::new(id.clone(), to.required_items())]
@@ -891,6 +897,7 @@ impl PointeeTy {
             Self::CFOpaque => false,
             Self::DispatchTypeDef { .. } => false,
             Self::NetworkTypeDef { .. } => false,
+            Self::OpaqueTypeDef { .. } => false,
             Self::TypeDef { to, .. } => to.requires_mainthreadmarker(self_requires),
         }
     }
@@ -1014,6 +1021,7 @@ impl PointeeTy {
             Self::CFOpaque => write!(f, "Opaque"),
             Self::DispatchTypeDef { id } => write!(f, "{}", id.path()),
             Self::NetworkTypeDef { id } => write!(f, "{}", id.path()),
+            Self::OpaqueTypeDef { id } => write!(f, "{}", id.path()),
             Self::TypeDef { id, .. } => write!(f, "{}", id.path()),
         })
     }
@@ -1317,6 +1325,8 @@ impl PointeeTy {
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
             // Same for Network types.
             Self::NetworkTypeDef { .. } => TypeSafety::SAFE,
+            // Probably the same for opaque types.
+            Self::OpaqueTypeDef { .. } => TypeSafety::SAFE,
             // Taking `&AnyClass` can be perilous if the method tries to
             // assume it can e.g. create new instances of the class. Some uses
             // are safe though, such as `NSStringFromClass`.
@@ -1394,9 +1404,10 @@ impl PointeeTy {
                 id.clone(),
                 to.iter().flat_map(|to| to.implementable()),
             )),
-            Self::Class { id, .. } | Self::DispatchTypeDef { id } | Self::NetworkTypeDef { id } => {
-                Some(ItemTree::from_id(id.clone()))
-            }
+            Self::Class { id, .. }
+            | Self::DispatchTypeDef { id }
+            | Self::NetworkTypeDef { id }
+            | Self::OpaqueTypeDef { id } => Some(ItemTree::from_id(id.clone())),
             // We shouldn't encounter this here, since `Self` is only on
             // Objective-C methods, but if we do, it's very unclear how we
             // should translate it.
@@ -1437,6 +1448,10 @@ impl PointeeTy {
 
     fn is_network_type(&self) -> bool {
         matches!(self.through_typedef(), Self::NetworkTypeDef { .. })
+    }
+
+    fn is_opaque_type(&self) -> bool {
+        matches!(self.through_typedef(), Self::OpaqueTypeDef { .. })
     }
 
     fn is_block_type(&self) -> bool {
@@ -2086,6 +2101,9 @@ impl Ty {
                 let lifetime = parser.lifetime();
                 parser.check();
 
+                let id = ItemIdentifier::new(&declaration, context);
+                let data = context.library(&id).get(&declaration);
+
                 match &*typedef_name {
                     "BOOL" => return Self::Primitive(Primitive::ObjcBool),
                     "IMP" => return Self::Primitive(Primitive::Imp),
@@ -2196,7 +2214,7 @@ impl Ty {
                     // Workaround for this otherwise requiring libc.
                     "dispatch_qos_class_t" => {
                         return Self::TypeDef {
-                            id: ItemIdentifier::new(&declaration, context),
+                            id,
                             to: Box::new(Self::Primitive(Primitive::Int)),
                         }
                     }
@@ -2237,27 +2255,10 @@ impl Ty {
                         }
                     }
 
-                    // Emit `dispatch_object_t` as a raw pointer (at least for now,
-                    // since we currently treat `DispatchObject` as a trait).
-                    "dispatch_object_t" => {
-                        return Self::Pointer {
-                            nullability,
-                            read: true,
-                            written: !is_const,
-                            lifetime,
-                            bounds: PointerBounds::Unsafe,
-                            pointee: Box::new(Self::TypeDef {
-                                id: ItemIdentifier::builtin("dispatch_object_s"),
-                                to: Box::new(Self::Primitive(Primitive::PtrDiff)),
-                            }),
-                        };
-                    }
-
                     // Handle other Dispatch Objective-C objects.
                     name if name.starts_with("dispatch_")
                         && inner.get_kind() == TypeKind::ObjCObjectPointer =>
                     {
-                        let id = ItemIdentifier::new(&declaration, context);
                         let id = context.replace_typedef_name(id, false);
                         let pointee = Box::new(Self::Pointee(PointeeTy::DispatchTypeDef { id }));
                         return Self::Pointer {
@@ -2274,7 +2275,6 @@ impl Ty {
                     name if name.starts_with("nw_")
                         && inner.get_kind() == TypeKind::ObjCObjectPointer =>
                     {
-                        let id = ItemIdentifier::new(&declaration, context);
                         let id = context.replace_typedef_name(id, false);
                         let pointee = Box::new(Self::Pointee(PointeeTy::NetworkTypeDef { id }));
                         return Self::Pointer {
@@ -2304,10 +2304,19 @@ impl Ty {
                     };
                 }
 
-                let mut inner = Self::parse(inner, false, context);
+                if data.opaque {
+                    let pointee = Box::new(Self::Pointee(PointeeTy::OpaqueTypeDef { id }));
+                    return Self::Pointer {
+                        nullability,
+                        read: true,
+                        written: !is_const,
+                        lifetime,
+                        bounds: PointerBounds::Single,
+                        pointee,
+                    };
+                }
 
-                let id = ItemIdentifier::new(&declaration, context);
-                let data = context.library(&id).get(&declaration);
+                let mut inner = Self::parse(inner, false, context);
 
                 if let Some(sendable) = sendable {
                     if data.sendable != Some(sendable) {
@@ -2926,6 +2935,7 @@ impl Ty {
             || self.is_cf_type()
             || self.is_dispatch_type()
             || self.is_network_type()
+            || self.is_opaque_type()
             || self.is_block_type()
     }
 
@@ -2960,6 +2970,15 @@ impl Ty {
     fn is_network_type(&self) -> bool {
         if let Self::Pointee(pointee_ty) = self.through_wrapper() {
             pointee_ty.is_network_type()
+        } else {
+            false
+        }
+    }
+
+    /// Determine whether the pointee inside a `Pointer` is an explicitly Opaque type.
+    fn is_opaque_type(&self) -> bool {
+        if let Self::Pointee(pointee_ty) = self.through_wrapper() {
+            pointee_ty.is_opaque_type()
         } else {
             false
         }
