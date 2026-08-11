@@ -167,6 +167,7 @@ default = [
     "UIBarButtonItemGroup",
     "UIBarCommon",
     "UIBarItem",
+    "UIBarMinimization",
     "UIBehavioralStyle",
     "UIBezierPath",
     "UIBlurEffect",
@@ -880,6 +881,7 @@ UIBarItem = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UIBarMinimization = ["objc2-foundation/NSObject"]
 UIBehavioralStyle = []
 UIBezierPath = ["objc2-foundation/NSObject"]
 UIBlurEffect = ["objc2-foundation/NSObject"]

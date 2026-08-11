@@ -87,6 +87,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed `drawWithRect_options_attributes` and `boundingRectWithSize_options_attributes` AppKit extension methods on `NSString`.
 * **BREAKING**: Removed `loadBroadcastingApplicationInfoWithCompletion` and `completeRequestWithBroadcastURL_setupInfo` ReplayKit extension methods on `NSExtensionContext`.
 * **BREAKING**: Removed `FSDirectoryVerifier` and `ParavirtualizedGraphicsVersion*`.
+* **BREAKING**: Removed `NSAttributedStringNSStringDrawingDeprecated`.
 
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.
