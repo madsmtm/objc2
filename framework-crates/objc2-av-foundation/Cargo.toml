@@ -823,7 +823,11 @@ AVPortraitEffectsMatte = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
-AVProVideoStorage = []
+AVProVideoStorage = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
 AVQueuedSampleBufferRendering = []
 AVRenderedCaptionImage = []
 AVRouteDetector = [
