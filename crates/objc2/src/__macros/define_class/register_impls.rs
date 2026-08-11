@@ -80,7 +80,7 @@ macro_rules! __define_class_register_impls {
             ($(#[$($m)*])*)
 
             // Implement protocol
-            #[allow(unused_mut)]
+            #[allow(unused_mut, deprecated)]
             let mut __objc2_protocol_builder = $builder.add_protocol_methods::<dyn $protocol>();
 
             $crate::__define_class_register_methods! {
