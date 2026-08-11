@@ -272,6 +272,7 @@ PKPassLibrary = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
 PKPassRelevantDate = [
     "objc2-foundation/NSDate",

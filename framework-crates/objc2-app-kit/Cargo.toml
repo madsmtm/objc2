@@ -2236,6 +2236,7 @@ NSWritingToolsCoordinator = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSRange",
+    "objc2-foundation/NSTextCheckingResult",
     "objc2-foundation/NSUUID",
     "objc2-foundation/NSValue",
     "objc2-foundation/objc2-core-foundation",
