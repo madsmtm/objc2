@@ -576,6 +576,7 @@ impl LibraryConfig {
             | EntityKind::ObjCPropertyDecl => None,
             EntityKind::MacroDefinition | EntityKind::MacroExpansion => None,
             EntityKind::UnexposedDecl => None,
+            EntityKind::TemplateTypeParameter => None,
             kind => {
                 error!(
                     ?kind,
