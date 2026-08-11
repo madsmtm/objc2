@@ -226,7 +226,6 @@ default = [
     "WKImmersiveEnvironment",
     "WKImmersiveEnvironmentDelegate",
     "WKJSHandle",
-    "WKJSScriptingBuffer",
     "WKJSSerializedNode",
     "WKNavigation",
     "WKNavigationAction",
@@ -770,7 +769,6 @@ WKHTTPCookieStore = [
 WKImmersiveEnvironment = []
 WKImmersiveEnvironmentDelegate = ["objc2-foundation/NSError"]
 WKJSHandle = ["objc2-foundation/NSObject"]
-WKJSScriptingBuffer = ["objc2-foundation/NSData"]
 WKJSSerializedNode = []
 WKNavigation = []
 WKNavigationAction = ["objc2-foundation/NSURLRequest"]
@@ -810,6 +808,7 @@ WKURLSchemeTask = [
 ]
 WKUserContentController = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
