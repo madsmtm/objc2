@@ -118,6 +118,9 @@ impl Location {
             "Darwin.net.if_media" => "__builtin__".into(),
             "XPC" => "__builtin__".into(),
             "dnssd" => "__builtin__".into(),
+            // Prevent OSLog from requiring dependency on os
+            "os.activity" => "__builtin__".into(),
+            "os.signpost" => "__builtin__".into(),
 
             // We don't emit the `hfs`, so let's act as-if CoreServices is the
             // one that defines the types in there (such as HFSUniStr255).
@@ -127,6 +130,8 @@ impl Location {
             "_Builtin_stdint" => "__builtin__".into(),
             name if name.starts_with("_stdint") => "__builtin__".into(),
             name if name.starts_with("_Builtin_stddef") => "__builtin__".into(),
+            // u_int32_t
+            name if name.starts_with("unsigned_types") => "__builtin__".into(),
             // Implementation of the above
             name if name.starts_with("types.machine_types") => "__builtin__".into(),
             // UINT_MAX, FLT_MIN, DBL_MAX, etc.
