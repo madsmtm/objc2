@@ -367,7 +367,10 @@ CPNowPlayingTemplate = [
 ]
 CPPanel = ["objc2-foundation/NSObject"]
 CPPanelButtonConfiguration = ["objc2-foundation/NSObject"]
-CPPanelItem = ["objc2-foundation/NSObject"]
+CPPanelItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
 CPPlaybackConfiguration = ["objc2-foundation/NSObject"]
 CPPointOfInterest = [
     "objc2-foundation/NSObject",

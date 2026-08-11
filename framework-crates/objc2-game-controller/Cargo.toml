@@ -20,7 +20,6 @@ bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 dispatch2 = { workspace = true, optional = true, features = [
     "alloc",
-    "block2",
     "objc2",
 ] }
 objc2 = { workspace = true, features = ["std"] }
