@@ -82,6 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed unavailable methods.
 * **BREAKING**: Removed `CSSearchableItemAttributeSet::moveFrom`.
 * **BREAKING**: Removed various `kUSBHostBillboardDeviceProperty*` consts.
+* **BREAKING**: Removed `kUSBHostPortPropertyUsbCPortNumber` const.
 * **BREAKING**: Removed `CFGetRetainCount`, `CFEqual` and `CFHash`; these are now only available directly on `CFType`.
 * **BREAKING**: Removed inherent `initWithCoder:` methods, these are available on `NSCoding`.
 * **BREAKING**: Removed `drawWithRect_options_attributes` and `boundingRectWithSize_options_attributes` AppKit extension methods on `NSString`.
