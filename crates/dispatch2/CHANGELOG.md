@@ -40,10 +40,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Removed `dispatch_once_t` alias.
 - **BREAKING**: Removed `dispatch_fd_t` alias.
 - **BREAKING**: Removed redundant `DISPATCH_*` prefix from enum variants.
+- **BREAKING**: Removed `GlobalQueueIdentifier` in favour of two methods on `DispatchQueue`.
 
 ### Fixed
 - Added `DispatchBlockFlags` (wasn't previously exposed).
 - Made `dispatch_main` `unsafe`.
+- Fixed the value of `DispatchQueueGlobalPriority::Background`.
 
 
 ## [0.3.1] - 2026-02-26

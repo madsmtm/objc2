@@ -25,38 +25,32 @@ enum_with_val! {
         Low = -0x2,
         /// Background priority.
         #[doc(alias = "DISPATCH_QUEUE_PRIORITY_BACKGROUND")]
-        Background = u16::MIN as c_long,
-    }
-}
-
-/// Global queue identifier definition for [`DispatchQueue::global_queue`].
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum GlobalQueueIdentifier {
-    /// Standard priority based queue.
-    Priority(DispatchQueueGlobalPriority),
-    /// Quality of service priority based queue.
-    QualityOfService(DispatchQoS),
-}
-
-impl GlobalQueueIdentifier {
-    /// Convert and consume [GlobalQueueIdentifier] into its raw value.
-    #[inline]
-    pub fn to_identifier(self) -> isize {
-        match self {
-            GlobalQueueIdentifier::Priority(queue_priority) => queue_priority.0 as isize,
-            GlobalQueueIdentifier::QualityOfService(qos_class) => qos_class.0 as isize,
-        }
+        Background = i16::MIN as c_long,
     }
 }
 
 impl DispatchQueue {
-    /// Return a system-defined global concurrent [`DispatchQueue`] with the priority derived from [GlobalQueueIdentifier].
+    /// A well-known global concurrent queue with a given quality of service.
     #[inline]
-    pub fn global_queue(identifier: GlobalQueueIdentifier) -> DispatchRetained<Self> {
-        let raw_identifier = identifier.to_identifier();
+    pub fn global_from_qos(qos: DispatchQoS) -> DispatchRetained<Self> {
+        // The identifier is valid and the flags are reserved.
+        Self::__global(qos.0 as isize, 0)
+    }
 
-        // Safety: raw_identifier cannot be invalid, flags is reserved.
-        Self::__global(raw_identifier, 0)
+    /// A well-known global concurrent queue with a given priority.
+    ///
+    /// It is recommended to use quality of service values to identify the
+    /// well-known global concurrent queues, see [`Self::global_from_qos`],
+    /// but the global concurrent queues may instead be identified by their
+    /// priority, which map to the following QOS classes:
+    /// - [`DispatchQueueGlobalPriority::High`]       -> [`DispatchQoS::UserInitiated`]
+    /// - [`DispatchQueueGlobalPriority::Default`]    -> [`DispatchQoS::Default`]
+    /// - [`DispatchQueueGlobalPriority::Low`]        -> [`DispatchQoS::Utility`]
+    /// - [`DispatchQueueGlobalPriority::Background`] -> [`DispatchQoS::Background`]
+    #[inline]
+    pub fn global_from_priority(priority: DispatchQueueGlobalPriority) -> DispatchRetained<Self> {
+        // The identifier is valid and the flags are reserved.
+        Self::__global(priority.0 as isize, 0)
     }
 
     /// Return the main queue.
@@ -198,9 +192,9 @@ impl DispatchQueueAttr {
     #[doc(alias = "DISPATCH_QUEUE_SERIAL")]
     pub const SERIAL: Option<&Self> = None;
 
-    // TODO(msrv): Expose this once
+    // TODO(msrv): Expose this instead of a function once we bump MSRV to 1.83.
     // #[doc(alias = "DISPATCH_QUEUE_CONCURRENT")]
-    // pub static CONCURRENT: Option<&Self> = {
+    // pub const CONCURRENT: Option<&Self> = {
     //     // Safety: immutable external definition
     //     unsafe { Some(&_dispatch_queue_attr_concurrent) }
     // };
@@ -208,7 +202,7 @@ impl DispatchQueueAttr {
     /// A dispatch queue that executes blocks concurrently.
     #[inline]
     pub fn concurrent() -> Option<&'static Self> {
-        // SAFETY: Queues are
+        // SAFETY: Queue attributes are safe to access.
         unsafe { Some(&_dispatch_queue_attr_concurrent) }
     }
 }
@@ -289,11 +283,33 @@ mod tests {
     }
 
     #[test]
+    fn test_global_queues() {
+        let _qos_user_interactive = DispatchQueue::global_from_qos(DispatchQoS::UserInteractive);
+        let qos_user_initiated = DispatchQueue::global_from_qos(DispatchQoS::UserInitiated);
+        let qos_default = DispatchQueue::global_from_qos(DispatchQoS::Default);
+        let qos_utility = DispatchQueue::global_from_qos(DispatchQoS::Utility);
+        let qos_background = DispatchQueue::global_from_qos(DispatchQoS::Background);
+        let qos_unspecified = DispatchQueue::global_from_qos(DispatchQoS::Unspecified);
+
+        assert_eq!(qos_unspecified, qos_default);
+
+        let global_high = DispatchQueue::global_from_priority(DispatchQueueGlobalPriority::High);
+        let global_default =
+            DispatchQueue::global_from_priority(DispatchQueueGlobalPriority::Default);
+        let global_low = DispatchQueue::global_from_priority(DispatchQueueGlobalPriority::Low);
+        let global_background =
+            DispatchQueue::global_from_priority(DispatchQueueGlobalPriority::Background);
+
+        assert_eq!(global_high, qos_user_initiated);
+        assert_eq!(global_default, qos_default);
+        assert_eq!(global_low, qos_utility);
+        assert_eq!(global_background, qos_background);
+    }
+
+    #[test]
     #[cfg(feature = "std")]
     fn test_global_default_queue() {
-        let queue = DispatchQueue::global_queue(GlobalQueueIdentifier::QualityOfService(
-            DispatchQoS::Default,
-        ));
+        let queue = DispatchQueue::global_from_qos(DispatchQoS::Default);
         let (tx, rx) = std::sync::mpsc::channel();
         queue.exec_async(move || {
             tx.send(()).unwrap();

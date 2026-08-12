@@ -75,7 +75,7 @@ pub use self::object::{
     DispatchObject, DispatchQoS, QualityOfServiceClassFloorError, QOS_MIN_RELATIVE_PRIORITY,
 };
 pub use self::once::DispatchOnce;
-pub use self::queue::{dispatch_main, DispatchQueueGlobalPriority, GlobalQueueIdentifier};
+pub use self::queue::{dispatch_main, DispatchQueueGlobalPriority};
 pub use self::retained::DispatchRetained;
 pub use self::semaphore::DispatchSemaphoreGuard;
 pub use self::source::{
