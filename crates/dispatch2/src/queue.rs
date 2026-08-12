@@ -220,10 +220,20 @@ impl DispatchQueueAttr {
 ///
 /// Applications that call NSApplicationMain() or CFRunLoopRun() on the
 /// main thread do not need to call dispatch_main().
+///
+/// # Safety
+///
+/// The program must not rely on blocks submitted to the main queue to execute
+/// on the main thread, see [dispatch#20] for details.
+///
+/// This includes e.g. [`run_on_main`][crate::run_on_main] and
+/// [`MainThreadBound`][crate::MainThreadBound].
+///
+/// [dispatch#20]: https://github.com/SSheldon/rust-dispatch/issues/20
 #[inline]
 // Doesn't take `MainThreadMarker` even though it probably should; we want to
 // be able to use this without depending on `objc2`.
-pub fn dispatch_main() -> ! {
+pub unsafe fn dispatch_main() -> ! {
     extern "C" {
         // `dispatch_main` is marked DISPATCH_NOTHROW.
         fn dispatch_main() -> !;
