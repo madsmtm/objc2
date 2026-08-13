@@ -69,7 +69,7 @@ pub fn be_memory_inline_jit_restrict_with_witness_supported() -> bool {
 ///
 /// [the documentation]: https://developer.apple.com/documentation/browserenginekit/protecting-code-compiled-just-in-time?language=objc
 #[inline(always)]
-pub extern "C" fn be_memory_inline_jit_restrict_rwx_to_rw_with_witness() {
+pub fn be_memory_inline_jit_restrict_rwx_to_rw_with_witness() {
     // SAFETY: This is correctly translated from C, see comments below.
     //
     // The C code for this is as follows:
@@ -203,7 +203,7 @@ pub extern "C" fn be_memory_inline_jit_restrict_rwx_to_rw_with_witness() {
 
 /// See [`be_memory_inline_jit_restrict_rwx_to_rw_with_witness`].
 #[inline(always)]
-pub extern "C" fn be_memory_inline_jit_restrict_rwx_to_rx_with_witness() {
+pub fn be_memory_inline_jit_restrict_rwx_to_rx_with_witness() {
     // SAFETY: See `be_memory_inline_jit_restrict_rwx_to_rw_with_witness`,
     // this works mostly the same, only simpler.
     //
