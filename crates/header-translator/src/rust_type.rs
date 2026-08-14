@@ -4342,25 +4342,9 @@ impl Ty {
         self.plain(true)
     }
 
-    fn fn_contains_bool(&self) -> bool {
+    fn is_fn_ptr(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self.through_wrapper() {
-            if let Self::Pointee(PointeeTy::Fn {
-                arguments,
-                result_type,
-                ..
-            }) = &**pointee
-            {
-                if arguments
-                    .iter()
-                    .any(|arg| matches!(arg, Self::Primitive(Primitive::C99Bool)))
-                {
-                    return true;
-                }
-                if matches!(**result_type, Self::Primitive(Primitive::C99Bool)) {
-                    return true;
-                }
-            }
-            false
+            matches!(&**pointee, Self::Pointee(PointeeTy::Fn { .. }))
         } else {
             false
         }
@@ -4371,10 +4355,9 @@ impl Ty {
             Self::Primitive(Primitive::C99Bool) => write!(f, "Encoding::Bool"),
             Self::Primitive(Primitive::Long) => write!(f, "Encoding::C_LONG"),
             Self::Primitive(Primitive::ULong) => write!(f, "Encoding::C_ULONG"),
-            // TODO: Make all function pointers be encode, regardless of arguments
-            _ if self.fn_contains_bool() => {
-                write!(f, "Encoding::Pointer(&Encoding::Unknown)")
-            }
+            // Make all function pointers encodable in structs, regardless of
+            // their arguments (this is not feasible to do in `objc2`).
+            _ if self.is_fn_ptr() => write!(f, "Encoding::Pointer(&Encoding::Unknown)"),
             _ => write!(f, "<{}>::ENCODING", self.record()),
         })
     }
