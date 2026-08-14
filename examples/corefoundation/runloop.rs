@@ -151,18 +151,15 @@ unsafe fn create_observer_unchecked<F: Fn(&CFRunLoopObserver, CFRunLoopActivity)
     }
 
     unsafe extern "C-unwind" fn callout<F: Fn(&CFRunLoopObserver, CFRunLoopActivity)>(
-        observer: *mut CFRunLoopObserver,
+        observer: Option<&CFRunLoopObserver>,
         activity: CFRunLoopActivity,
         info: *mut c_void,
     ) {
-        // SAFETY: The observer is valid for at least the duration of the callback.
-        let observer = unsafe { &*observer };
-
         // SAFETY: The pointer was passed to `CFRunLoopObserverContext.info` below.
         let callback = unsafe { &*info.cast::<F>() };
 
         // Call the provided closure.
-        callback(observer, activity);
+        callback(observer.unwrap(), activity);
     }
 
     let context = CFRunLoopObserverContext {
@@ -231,17 +228,14 @@ unsafe fn create_timer_unchecked<F: Fn(&CFRunLoopTimer) + 'static>(
     }
 
     unsafe extern "C-unwind" fn callout<F: Fn(&CFRunLoopTimer)>(
-        timer: *mut CFRunLoopTimer,
+        timer: Option<&CFRunLoopTimer>,
         info: *mut c_void,
     ) {
-        // SAFETY: The timer is valid for at least the duration of the callback.
-        let timer = unsafe { &*timer };
-
         // SAFETY: The pointer was passed to `CFRunLoopTimerContext.info` below.
         let callback = unsafe { &*info.cast::<F>() };
 
         // Call the provided closure.
-        callback(timer);
+        callback(timer.unwrap());
     }
 
     let context = CFRunLoopTimerContext {
@@ -317,30 +311,28 @@ fn create_source<F: Fn(SourceData<'_>) + Send + Sync + 'static>(
 
     unsafe extern "C-unwind" fn schedule<F: Fn(SourceData<'_>)>(
         info: *mut c_void,
-        rl: *mut CFRunLoop,
-        mode: *const CFRunLoopMode,
+        rl: Option<&CFRunLoop>,
+        mode: Option<&CFRunLoopMode>,
     ) {
-        // SAFETY: The data is valid for at least the duration of the callback.
-        let rl = unsafe { &*rl };
-        let mode = unsafe { &*mode };
-
         // SAFETY: The pointer was passed to `CFRunLoopSourceContext.info` below.
         let signaller = unsafe { &*info.cast::<F>() };
-        (signaller)(SourceData::Schedule { rl, mode });
+        (signaller)(SourceData::Schedule {
+            rl: rl.unwrap(),
+            mode: mode.unwrap(),
+        });
     }
 
     unsafe extern "C-unwind" fn cancel<F: Fn(SourceData<'_>)>(
         info: *mut c_void,
-        rl: *mut CFRunLoop,
-        mode: *const CFRunLoopMode,
+        rl: Option<&CFRunLoop>,
+        mode: Option<&CFRunLoopMode>,
     ) {
-        // SAFETY: The data is valid for at least the duration of the callback.
-        let rl = unsafe { &*rl };
-        let mode = unsafe { &*mode };
-
         // SAFETY: The pointer was passed to `CFRunLoopSourceContext.info` below.
         let signaller = unsafe { &*info.cast::<F>() };
-        (signaller)(SourceData::Cancel { rl, mode });
+        (signaller)(SourceData::Cancel {
+            rl: rl.unwrap(),
+            mode: mode.unwrap(),
+        });
     }
 
     unsafe extern "C-unwind" fn perform<F: Fn(SourceData<'_>)>(info: *mut c_void) {

@@ -37,3 +37,9 @@ pub(crate) type IOItemCount = u32; // UInt32
 pub(crate) type Boolean = u8;
 #[allow(dead_code)]
 pub(crate) type ByteCount = core::ffi::c_ulong;
+
+/// [Apple's documentation](https://developer.apple.com/documentation/iobluetooth/iobluetoothobexsessionopenconnectioncallback?language=objc)
+#[cfg(feature = "OBEXBluetooth")]
+#[cfg(feature = "OBEX")]
+pub type IOBluetoothOBEXSessionOpenConnectionCallback =
+    Option<unsafe extern "C-unwind" fn(*mut OBEXSessionRef, OBEXError, *mut core::ffi::c_void)>;

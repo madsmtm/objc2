@@ -57,6 +57,9 @@ const.kBluetoothHCIEventMaskLEMetaEvent.skipped = true
 
 typedef.OBEXSessionRef.renamed = "OBEXSessionRef" # TODO: Merge OBEXSession and OBEXSessionRef somehow
 
+# Redefined to avoid encoding error when used in `setOBEXSessionOpenConnectionCallback:refCon:`
+typedef.IOBluetoothOBEXSessionOpenConnectionCallback.skipped = true
+
 ##
 ## Pointer bounds
 ##

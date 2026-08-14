@@ -3260,7 +3260,7 @@ impl Ty {
                         // it will be for all of Apple's frameworks.
                         write!(f, "unsafe extern \"C-unwind\" fn(")?;
                         for arg in arguments {
-                            write!(f, "{},", arg.argument(allow_generic_param))?;
+                            write!(f, "{},", arg.fn_argument(allow_generic_param))?;
                         }
                         if *is_variadic {
                             write!(f, "...")?;
@@ -4277,6 +4277,41 @@ impl Ty {
                 } else {
                     write!(f, "Option<&mut {inner}>")
                 }
+            }
+            Self::Pointer {
+                nullability,
+                pointee,
+                bounds: PointerBounds::Single,
+                ..
+            } if let Self::Pointee(PointeeTy::Fn {
+                is_variadic,
+                no_escape: _,
+                arguments,
+                result_type,
+            }) = &**pointee =>
+            {
+                if *nullability != Nullability::NonNull {
+                    write!(f, "Option<")?;
+                }
+                write!(f, "unsafe extern \"C-unwind\" fn(")?;
+                for arg in arguments {
+                    // Emit functions in methods without references, as those
+                    // aren't `Encode`-able.
+                    write!(f, "{},", arg.argument(true))?;
+                }
+                if *is_variadic {
+                    write!(f, "...")?;
+                }
+                write!(f, ")")?;
+                write!(
+                    f,
+                    "{}",
+                    result_type.prefix_return(result_type.fn_type_return())
+                )?;
+                if *nullability != Nullability::NonNull {
+                    write!(f, ">")?;
+                }
+                Ok(())
             }
             _ => write!(f, "{}", self.fn_argument(true)),
         })
