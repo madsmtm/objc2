@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+### Added
+- Added `Default` implementation for `DispatchOnce`.
+
 ### Changed
 - **BREAKING**: Changed `DispatchTime::walltime` to take a reference instead of a pointer. This makes it the method safe.
 - **BREAKING**: Changed `DispatchQueue::label` to return a `&CStr`.

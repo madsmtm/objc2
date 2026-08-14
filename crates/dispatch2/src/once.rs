@@ -107,7 +107,6 @@ where
 impl DispatchOnce {
     /// Creates a new `DispatchOnce`.
     #[inline]
-    #[allow(clippy::new_without_default)] // `std::sync::Once` doesn't have it either
     pub const fn new() -> Self {
         Self {
             predicate: AtomicIsize::new(0),
@@ -181,6 +180,13 @@ unsafe impl Sync for DispatchOnce {}
 
 impl UnwindSafe for DispatchOnce {}
 impl RefUnwindSafe for DispatchOnce {}
+
+impl Default for DispatchOnce {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl fmt::Debug for DispatchOnce {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
