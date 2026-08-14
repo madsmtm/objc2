@@ -340,8 +340,8 @@ fn.CFBundleCopyAuxiliaryExecutableURL.arguments.1.nullability = "nonnull"
 fn.CFBundleCopyAuxiliaryExecutableURL.return.nullability = "nullable"
 fn.CFBundleIsExecutableLoadableForURL.arguments.0.nullability = "nonnull"
 fn.CFBundleGetPlugIn.return.nullability = "nonnull" # Plugins and bundles are the same CF type
-fn.CFBundleOpenBundleResourceFiles.arguments.1.bounds.counted-by = "single"
-fn.CFBundleOpenBundleResourceFiles.arguments.2.bounds.counted-by = "single"
+fn.CFBundleOpenBundleResourceFiles.arguments.1.bounds = "single"
+fn.CFBundleOpenBundleResourceFiles.arguments.2.bounds = "single"
 
 fn.CFCalendarCreateWithIdentifier.arguments.1.nullability = "nonnull"
 fn.CFCalendarGetIdentifier.return.nullability = "nonnull"
