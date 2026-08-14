@@ -34,6 +34,12 @@ fn.CMClockMakeHostTimeFromSystemUnits.renamed = "make_host_time_from_system_unit
 # Translated as "new_empty", but it's common in Rust to just use "empty".
 fn.CMTimeMappingMakeEmpty.renamed = "empty"
 
+# Fix weird naming with "retain" in it.
+fn.CMBufferQueueDequeueAndRetain.arguments.0.bounds = "single"
+fn.CMBufferQueueDequeueAndRetain.renamed = "dequeue"
+fn.CMBufferQueueDequeueIfDataReadyAndRetain.arguments.0.bounds = "single"
+fn.CMBufferQueueDequeueIfDataReadyAndRetain.renamed = "dequeue_if_data_ready"
+
 ##
 ## Generics
 ##

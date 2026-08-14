@@ -659,6 +659,17 @@ pub(crate) fn follows_create_rule(name: &str) -> bool {
     RE.is_match(name)
 }
 
+/// Whether the function name contains a word like "retain" or "free", and
+/// thus is likely to have an effect on memory-management.
+pub(crate) fn might_manage_memory(name: &str) -> bool {
+    for word in lowercase_words(name) {
+        if matches!(&*word, "retain" | "release" | "free" | "dispose") {
+            return true;
+        }
+    }
+    false
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -534,7 +534,7 @@ impl LibraryConfig {
 
         let allowed_in = self.typedef_data.values();
         for data in all.clone().filter(filter_ptr(allowed_in)) {
-            assert_eq!(data.opaque, Default::default());
+            assert_eq!(data.opaque, false);
         }
     }
 

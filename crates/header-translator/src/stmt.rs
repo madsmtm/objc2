@@ -22,10 +22,9 @@ use crate::id::ItemTree;
 use crate::id::Location;
 use crate::immediate_children;
 use crate::method::Method;
-use crate::name_translation::handle_keyword;
 use crate::name_translation::{
-    enum_prefix, follows_create_rule, is_likely_bounds_affecting, param_name, split_words,
-    to_snake_case,
+    enum_prefix, follows_create_rule, handle_keyword, is_likely_bounds_affecting,
+    might_manage_memory, param_name, split_words, to_snake_case,
 };
 use crate::protocol::parse_direct_protocols;
 use crate::protocol::ProtocolRef;
@@ -1989,6 +1988,7 @@ impl Stmt {
                 }
 
                 let mut returns_retained = follows_create_rule(&c_name);
+                let might_manage_memory = might_manage_memory(&c_name);
 
                 immediate_children(entity, |entity, _span| match entity.get_kind() {
                     EntityKind::UnexposedAttr => {
@@ -2030,6 +2030,7 @@ impl Stmt {
                             sendable,
                             no_escape,
                             out_pointer_retained,
+                            might_manage_memory,
                             context,
                         );
                         if let Some(override_) = data.arguments.get(&arguments.len()) {

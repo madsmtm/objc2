@@ -508,6 +508,7 @@ impl Method {
                     sendable,
                     no_escape,
                     out_pointer_retained,
+                    false,
                     context,
                 );
 

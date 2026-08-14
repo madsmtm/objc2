@@ -551,6 +551,7 @@ fn.NSZoneRealloc.arguments.0.bounds = "unsafe"
 fn.NSZoneFree.arguments.0.bounds = "unsafe"
 fn.NSAllocateObject.arguments.2.bounds = "unsafe"
 fn.NSCopyObject.arguments.2.bounds = "unsafe"
+fn.NSShouldRetainWithZone.arguments.0.bounds = "single"
 fn.NSShouldRetainWithZone.arguments.1.bounds = "unsafe"
 
 # Passing NULL works, but only on later OS versions, doesn't work on e.g.

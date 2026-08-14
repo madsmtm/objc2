@@ -474,7 +474,6 @@ fn.SessionGetInfo.arguments.2.bounds = "single"
 fn.SecureDownloadCreateWithTicket.arguments.5.bounds = "single"
 fn.SecureDownloadGetDownloadSize.arguments.1.bounds = "single"
 
-fn.SSLDisposeContext.arguments.0.bounds = "unsafe" # Releases
 fn.SSLGetSessionState.arguments.1.bounds = "single"
 fn.SSLGetSessionOption.arguments.2.bounds = "single"
 fn.SSLGetProtocolVersionMin.arguments.1.bounds = "single"

@@ -143,6 +143,7 @@ fn.CFAllocatorGetContext.arguments.1.bounds = "single"
 
 fn.CFGetTypeID.arguments.0.nullability = "nonnull"
 fn.CFGetRetainCount.arguments.0.nullability = "nonnull"
+fn.CFGetRetainCount.arguments.0.bounds = "single"
 fn.CFEqual.arguments.0.nullability = "nonnull"
 fn.CFEqual.arguments.1.nullability = "nonnull"
 fn.CFHash.arguments.0.nullability = "nonnull"

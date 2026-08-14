@@ -4397,9 +4397,17 @@ impl Ty {
         mut param_sendable: Option<bool>,
         mut param_no_escape: bool,
         mut param_out_pointer_retained: Option<bool>,
+        might_manage_memory: bool,
         context: &Context<'_>,
     ) -> Self {
         let mut ty = Self::parse(ty, true, context);
+
+        if might_manage_memory {
+            if let Self::Pointer { bounds, .. } = &mut ty {
+                // Default pointer bounds to `unsafe` for memory management functions.
+                *bounds = PointerBounds::Unsafe;
+            }
+        }
 
         match &mut ty {
             Self::Pointer { pointee, .. } => match &mut **pointee {
