@@ -199,7 +199,6 @@ fn.SecAsn1AllocCopyItem.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
 fn.SecTransformSetAttributeAction.implementor = "Security.SecCustomTransform.SecTransformImplementation"
 fn.SecTransformSetDataAction.implementor = "Security.SecCustomTransform.SecTransformImplementation"
 fn.SecTransformSetTransformAction.implementor = "Security.SecCustomTransform.SecTransformImplementation"
-# fn.SecTranformCustomGetAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
 fn.SecTransformCustomGetAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
 fn.SecTransformCustomSetAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
 fn.SecTransformPushbackAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
@@ -207,6 +206,9 @@ fn.SecTransformPushbackAttribute.implementor = "Security.SecCustomTransform.SecT
 # This is closer to being a `context: *mut c_void`, so we should continue to
 # emit it as such.
 typedef.SSLConnectionRef.opaque = false
+
+# Renamed in the header to SecTransformCustomGetAttribute
+fn.SecTranformCustomGetAttribute.skipped = true
 
 ##
 ## Generics
