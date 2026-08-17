@@ -1325,8 +1325,11 @@ impl PointeeTy {
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,
             // Same for Network types.
             Self::NetworkTypeDef { .. } => TypeSafety::SAFE,
-            // Probably the same for opaque types.
-            Self::OpaqueTypeDef { .. } => TypeSafety::SAFE,
+            // The user might be manually freeing opaque types, so we can't
+            // know for certain that `&T` is valid.
+            Self::OpaqueTypeDef { .. } => {
+                TypeSafety::unknown_in_argument("might need manual memory-management")
+            }
             // Taking `&AnyClass` can be perilous if the method tries to
             // assume it can e.g. create new instances of the class. Some uses
             // are safe though, such as `NSStringFromClass`.
@@ -2296,18 +2299,6 @@ impl Ty {
                     };
                 }
 
-                if data.opaque {
-                    let pointee = Box::new(Self::Pointee(PointeeTy::OpaqueTypeDef { id }));
-                    return Self::Pointer {
-                        nullability,
-                        read: true,
-                        written: !is_const,
-                        lifetime,
-                        bounds: PointerBounds::Single,
-                        pointee,
-                    };
-                }
-
                 let mut inner = Self::parse(inner, false, context);
 
                 if let Some(sendable) = sendable {
@@ -2405,6 +2396,13 @@ impl Ty {
                             num_declaration_generics: declaration_generics.len(),
                             to,
                         });
+                        return inner;
+                    } else if data
+                        .opaque
+                        .unwrap_or_else(|| pointee.is_direct_opaque(&id.name))
+                    {
+                        let id = context.replace_typedef_name(id, true);
+                        **pointee = Self::Pointee(PointeeTy::OpaqueTypeDef { id });
                         return inner;
                     } else if pointee.is_object_like() {
                         if let Self::Pointee(pointee_ty) = &mut **pointee {
@@ -3043,9 +3041,25 @@ impl Ty {
         }
     }
 
+    fn is_direct_opaque(&self, typedef_name: &str) -> bool {
+        match self {
+            Self::Struct { .. } => typedef_name.ends_with("Ref"),
+            Self::Primitive(Primitive::Void) => typedef_name.ends_with("Ref"),
+            _ => false,
+        }
+    }
+
     pub(crate) fn is_cf_type_typedef(&self, typedef_name: &str, typedef_is_bridged: bool) -> bool {
         if let Self::Pointer { pointee, .. } = self {
             pointee.is_direct_cf_type(typedef_name, typedef_is_bridged)
+        } else {
+            false
+        }
+    }
+
+    pub(crate) fn is_opaque_typedef(&self, typedef_name: &str) -> bool {
+        if let Self::Pointer { pointee, .. } = self {
+            pointee.is_direct_opaque(typedef_name)
         } else {
             false
         }
@@ -3401,7 +3415,7 @@ impl Ty {
                 bounds: PointerBounds::Single,
                 pointee,
                 ..
-            } if pointee.is_object_like() => {
+            } if pointee.is_object_like() && !pointee.is_opaque_type() => {
                 // NOTE: We return CF types as `Retained` for now, since we
                 // don't have support for the CF wrapper in msg_send! yet.
                 if *nullability == Nullability::NonNull {
@@ -4457,13 +4471,6 @@ impl Ty {
                 Self::Pointee(PointeeTy::TypeDef { .. }) => {
                     param_no_escape = false;
                 }
-                // Hacky fix for `out_pointer_retained` in `SSLGetConnection`,
-                // we would want to assign this to the `SSLConnectionRef`, but
-                // that can't work yet because `SSLConnectionRef` is a `void*`
-                // typedef.
-                Self::TypeDef { id, .. } if id.name == "SSLConnectionRef" => {
-                    param_out_pointer_retained = None;
-                }
                 _ => {}
             },
             // Ignore `param_no_escape` on typedefs for now.
@@ -4675,7 +4682,10 @@ impl Ty {
     pub(crate) fn is_retainable(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self {
             // Unsure if static items and blocks should be considered retainable?
-            pointee.is_object_like() && !pointee.is_static_object() && !pointee.is_block_type()
+            pointee.is_object_like()
+                && !pointee.is_static_object()
+                && !pointee.is_block_type()
+                && !pointee.is_opaque_type()
         } else {
             false
         }

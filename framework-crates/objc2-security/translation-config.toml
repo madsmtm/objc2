@@ -141,7 +141,7 @@ const.callerSecuritySession.use-value = true
 # u32). So let's just emit all constants directly for now.
 enum.__anonymous__.use-value = true
 
-# Manually re-defined: see #711.
+# Manually re-defined: see #711, `arguments` type set to `NonNull<AuthorizationString>`
 fn.AuthorizationExecuteWithPrivileges.skipped = true
 
 # Does `-1 as SecCertificateRef`.
@@ -185,6 +185,28 @@ fn.SSLDisposeContext.renamed = "__dispose"
 # Remove redundant underscore from name, to allow prefix-stripping to work.
 enum._SecureDownloadTrustCallbackResult.renamed = "SecureDownloadTrustCallbackResult"
 enum.__CE_CrlDistributionPointNameType.renamed = "CE_CrlDistributionPointNameType"
+
+# Give functions more sensible implementors.
+fn.AuthorizationFreeItemSet.implementor = "Security.Authorization.AuthorizationItemSet"
+fn.AuthorizationPluginCreate.implementor = "Security.AuthorizationPlugin.AuthorizationPlugin"
+fn.SecAsn1Decode.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecAsn1DecodeData.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecAsn1EncodeItem.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecAsn1Malloc.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecAsn1AllocItem.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecAsn1AllocCopy.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecAsn1AllocCopyItem.implementor = "Security.SecAsn1Coder.SecAsn1Coder"
+fn.SecTransformSetAttributeAction.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+fn.SecTransformSetDataAction.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+fn.SecTransformSetTransformAction.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+# fn.SecTranformCustomGetAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+fn.SecTransformCustomGetAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+fn.SecTransformCustomSetAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+fn.SecTransformPushbackAttribute.implementor = "Security.SecCustomTransform.SecTransformImplementation"
+
+# This is closer to being a `context: *mut c_void`, so we should continue to
+# emit it as such.
+typedef.SSLConnectionRef.opaque = false
 
 ##
 ## Generics

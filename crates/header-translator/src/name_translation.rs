@@ -268,8 +268,6 @@ pub(crate) fn find_fn_implementor<'a>(
         // Useful for e.g. `CGEventCreateData` and `CFDateFormatterCreateDateFromString`.
         let mut first_arg_ty = first_arg_ty;
         if first_arg_ty.is_cf_allocator() && !fn_name.starts_with("CFAllocator") {
-            // TODO: Consider shuffling around so that the allocator becomes
-            // the second argument?
             if let Some((_, arg_ty)) = arguments.get(1) {
                 first_arg_ty = arg_ty;
             }
@@ -663,7 +661,10 @@ pub(crate) fn follows_create_rule(name: &str) -> bool {
 /// thus is likely to have an effect on memory-management.
 pub(crate) fn might_manage_memory(name: &str) -> bool {
     for word in lowercase_words(name) {
-        if matches!(&*word, "retain" | "release" | "free" | "dispose") {
+        if matches!(
+            &*word,
+            "retain" | "release" | "free" | "dispose" | "destroy"
+        ) {
             return true;
         }
     }

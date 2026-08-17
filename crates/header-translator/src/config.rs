@@ -534,7 +534,7 @@ impl LibraryConfig {
 
         let allowed_in = self.typedef_data.values();
         for data in all.clone().filter(filter_ptr(allowed_in)) {
-            assert_eq!(data.opaque, false);
+            assert_eq!(data.opaque, Default::default());
         }
     }
 
@@ -674,7 +674,7 @@ pub struct StmtData {
     // Typedefs
     #[serde(rename = "opaque")]
     #[serde(default)]
-    pub opaque: bool,
+    pub opaque: Option<bool>,
 }
 
 impl StmtData {

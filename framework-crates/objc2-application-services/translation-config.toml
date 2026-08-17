@@ -206,6 +206,7 @@ fn.ATSFontGetFileReference.arguments.1.bounds = "single"
 fn.ATSFontGetFontFamilyResource.arguments.3.bounds = "single"
 fn.ATSFontNotificationSubscribe.arguments.3.bounds = "single"
 fn.ATSCreateFontQueryRunLoopSource.arguments.3.bounds = "single"
+fn.ATSFontNotificationUnsubscribe.arguments.0.bounds = "unsafe" # probably deallocates
 
 fn.AXUIElementGetAttributeValueCount.arguments.2.bounds = "single"
 fn.AXUIElementIsAttributeSettable.arguments.2.bounds = "single"

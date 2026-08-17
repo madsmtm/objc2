@@ -520,6 +520,27 @@ pub enum Encoding {
     Struct { name: String },
 }
 
+/// Recurse through typedef decls looking for
+/// the inner struct name (or a void*).
+///
+/// This is neither optimal nor pretty...
+fn find_encoding(entity: &Entity<'_>) -> Encoding {
+    let mut encoding = None;
+    immediate_children(entity, |entity, _span| match entity.get_kind() {
+        EntityKind::StructDecl => {
+            encoding = Some(Encoding::Struct {
+                name: entity.get_name().unwrap(),
+            });
+        }
+        EntityKind::TypeRef => {
+            let entity = entity.get_reference().expect("ref to have reference");
+            encoding = Some(find_encoding(&entity));
+        }
+        _ => {}
+    });
+    encoding.unwrap_or(Encoding::Void)
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Stmt {
     /// @interface name: superclass <protocols*>
@@ -780,7 +801,7 @@ pub enum Stmt {
     /// typedef struct _CGDisplayConfigRef *CGDisplayConfigRef;
     OpaqueDecl {
         id: ItemIdentifier,
-        encoding_name: String,
+        encoding: Encoding,
         availability: Availability,
         documentation: Documentation,
         sendable: Option<bool>,
@@ -1503,19 +1524,24 @@ impl Stmt {
                                     superclass,
                                 });
                             }
-                            EntityKind::StructDecl if data.opaque => {
-                                let struct_name = entity.get_name().unwrap();
+                            EntityKind::StructDecl
+                                if data
+                                    .opaque
+                                    .unwrap_or_else(|| ty.is_opaque_typedef(&id.name)) =>
+                            {
+                                let id = context.replace_typedef_name(id.clone(), true);
 
-                                // If not renamed already
-                                if id.name == c_name {
-                                    documentation.set_alias(struct_name.clone());
+                                if id.name != c_name {
+                                    documentation.set_alias(c_name.clone());
                                 }
 
                                 // Emit opaque decl representing both struct
                                 // and typedef.
                                 stmts.push(Self::OpaqueDecl {
-                                    id: ItemIdentifier::new(&entity, context),
-                                    encoding_name: struct_name.to_string(),
+                                    id,
+                                    encoding: Encoding::Struct {
+                                        name: entity.get_name().unwrap().to_string(),
+                                    },
                                     availability: availability.clone(),
                                     documentation: documentation.clone(),
                                     sendable,
@@ -1532,7 +1558,9 @@ impl Stmt {
                                 if !has_fields {
                                     stmts.push(Self::OpaqueDecl {
                                         id: ItemIdentifier::new(&entity, context),
-                                        encoding_name: entity.get_name().unwrap().to_string(),
+                                        encoding: Encoding::Struct {
+                                            name: entity.get_name().unwrap().to_string(),
+                                        },
                                         availability: Availability::parse(&entity, context),
                                         documentation: Documentation::from_entity(&entity, context),
                                         sendable,
@@ -1561,31 +1589,6 @@ impl Stmt {
                                 } else {
                                     Some(context.replace_typedef_name(superclass, true))
                                 };
-
-                                /// Recurse through typedef decls looking for
-                                /// the inner struct name (or a void*).
-                                ///
-                                /// This is neither optimal nor pretty...
-                                fn find_encoding(entity: &Entity<'_>) -> Encoding {
-                                    let mut encoding = None;
-                                    immediate_children(entity, |entity, _span| {
-                                        match entity.get_kind() {
-                                            EntityKind::StructDecl => {
-                                                encoding = Some(Encoding::Struct {
-                                                    name: entity.get_name().unwrap(),
-                                                });
-                                            }
-                                            EntityKind::TypeRef => {
-                                                let entity = entity
-                                                    .get_reference()
-                                                    .expect("ref to have reference");
-                                                encoding = Some(find_encoding(&entity));
-                                            }
-                                            _ => {}
-                                        }
-                                    });
-                                    encoding.unwrap_or(Encoding::Void)
-                                }
 
                                 stmts.push(Self::CFDecl {
                                     id,
@@ -1616,6 +1619,24 @@ impl Stmt {
                     }
                     _ => error!(?entity, "unknown typedef child"),
                 });
+
+                if stmts.is_empty() && data.opaque.unwrap_or_else(|| ty.is_opaque_typedef(&c_name))
+                {
+                    let id = context.replace_typedef_name(id.clone(), true);
+
+                    if id.name != c_name {
+                        documentation.set_alias(c_name.clone());
+                    }
+
+                    stmts.push(Self::OpaqueDecl {
+                        id,
+                        // TODO
+                        encoding: Encoding::Void,
+                        availability: availability.clone(),
+                        documentation: documentation.clone(),
+                        sendable,
+                    });
+                }
 
                 if stmts.is_empty() {
                     let id = context.replace_typedef_name(id, ty.is_cf_type_ptr());
@@ -3811,7 +3832,7 @@ impl Stmt {
                 }
                 Self::OpaqueDecl {
                     id,
-                    encoding_name,
+                    encoding,
                     availability,
                     documentation,
                     sendable,
@@ -3841,11 +3862,16 @@ impl Stmt {
                     // SAFETY: The struct is a ZST type marked `#[repr(C)]`.
                     write!(f, "{cfg_encoding}")?;
                     writeln!(f, "unsafe impl RefEncode for {} {{", id.name)?;
-                    write!(f, "    const ENCODING_REF: Encoding = ")?;
-                    writeln!(f, "Encoding::Pointer(&Encoding::Struct(")?;
-                    writeln!(f, "        {encoding_name:?},")?;
-                    writeln!(f, "        &[],")?;
-                    writeln!(f, "    ));")?;
+                    write!(f, "    const ENCODING_REF: Encoding = Encoding::Pointer(&")?;
+                    match encoding {
+                        Encoding::Void => {
+                            write!(f, "Encoding::Void")?;
+                        }
+                        Encoding::Struct { name } => {
+                            write!(f, "Encoding::Struct({name:?}, &[])")?;
+                        }
+                    }
+                    writeln!(f, ");")?;
                     writeln!(f, "}}")?;
 
                     if let Some(true) = sendable {

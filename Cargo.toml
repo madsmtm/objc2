@@ -95,6 +95,8 @@ default.extend-identifiers.FSGetVolumeParms = "FSGetVolumeParms"
 default.extend-identifiers.kCGEventSupressionStateSupressionInterval = "kCGEventSupressionStateSupressionInterval"
 default.extend-identifiers.kCGEventSupressionStateRemoteMouseDrag = "kCGEventSupressionStateRemoteMouseDrag"
 default.extend-identifiers.kCGNumberOfEventSupressionStates = "kCGNumberOfEventSupressionStates"
+# In framework-crates/objc2-security/translation-config.toml
+default.extend-identifiers.SecTranformCustomGetAttribute = "SecTranformCustomGetAttribute"
 # In header-translator/src/documentation.rs
 default.extend-identifiers.decription = "decription"
 default.extend-identifiers.praram = "praram"

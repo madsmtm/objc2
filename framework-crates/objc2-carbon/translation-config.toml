@@ -157,6 +157,8 @@ fn.HIMouseTrackingGetParameters.arguments.1.bounds = "single"
 fn.HIMouseTrackingGetParameters.arguments.2.bounds = "single"
 fn.ProcessHICommand.arguments.0.bounds = "single"
 fn.RegisterEventHotKey.arguments.5.bounds = "single"
+# Unregistering the event hot key deallocates it (probably)
+fn.UnregisterEventHotKey.arguments.0.bounds = "unsafe"
 
 # HIToolbox/Controls.h
 fn.InvokeControlKeyFilterUPP.arguments.1.bounds = "single"

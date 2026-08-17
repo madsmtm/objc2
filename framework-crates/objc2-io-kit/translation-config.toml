@@ -238,6 +238,8 @@ const.kIONetworkLinkValid.use-value = true
 const.kIONetworkLinkActive.use-value = true
 const.kIONetworkLinkNoNetworkChange.use-value = true
 
+typedef.IOBlitMemory.skipped = true
+
 ##
 ## Generics.
 ##

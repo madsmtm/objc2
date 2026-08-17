@@ -12,6 +12,17 @@ visionos = "1.0"
 typedef.JSGlobalContextRef.skipped = true
 typedef.JSObjectRef.skipped = true
 
+# Not yet opaque, unsure if it's sound (JS objects are tied to their context).
+typedef.JSClassRef.opaque = false
+typedef.JSContextGroupRef.opaque = false
+typedef.JSContextRef.opaque = false
+typedef.JSPropertyNameAccumulatorRef.opaque = false
+typedef.JSPropertyNameArrayRef.opaque = false
+typedef.JSStringRef.opaque = false
+typedef.JSValueRef.opaque = false
+typedef.JSObjectRef.opaque = false
+typedef.JSGlobalContextRef.opaque = false
+
 ##
 ## Pointer bounds
 ##

@@ -27,6 +27,7 @@ fn.FSFileSecuritySetAccessControlList.skipped = true
 
 # Ends up declaring __FSEventStream twice.
 typedef.ConstFSEventStreamRef.skipped = true
+typedef.ConstFSEventStreamRef.renamed = "FSEventStreamRef"
 
 # Needs va_list
 fn.vAEBuildDesc.skipped = true
@@ -246,6 +247,11 @@ fn.AEPrintDescToHandle.arguments.1.bounds = "single"
 fn.AEStreamClose.arguments.1.bounds = "single"
 fn.AEStreamWriteAEDesc.arguments.1.bounds = "single"
 fn.AEStreamOpenEvent.arguments.0.bounds = "single"
+# Closing a stream deallocates it.
+fn.AEStreamClose.arguments.0.bounds = "unsafe"
+fn.AEStreamCloseDesc.arguments.0.bounds = "unsafe"
+fn.AEStreamCloseList.arguments.0.bounds = "unsafe"
+fn.AEStreamCloseRecord.arguments.0.bounds = "unsafe"
 
 # AE/AEMach.h
 fn.AESendMessage.arguments.0.bounds = "single"

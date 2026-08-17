@@ -29,9 +29,6 @@ pub use self::generated::*;
 #[cfg(all(feature = "CarbonCore", feature = "OSUtils"))]
 pub use self::osutils::*;
 
-#[cfg(feature = "FSEvents")]
-pub type ConstFSEventStreamRef = *const __FSEventStream;
-
 #[allow(non_upper_case_globals)]
 #[cfg(feature = "FSEvents")]
 /// [Apple's documentation](https://developer.apple.com/documentation/coreservices/kfseventstreameventidsincenow?language=objc)

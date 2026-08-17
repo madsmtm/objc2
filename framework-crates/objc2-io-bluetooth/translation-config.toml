@@ -55,6 +55,8 @@ const.kBluetoothHCIEventMaskKeypressNotificationEvent.skipped = true
 const.kBluetoothHCIEventMaskRemoteHostSupportedFeaturesNotificationEvent.skipped = true
 const.kBluetoothHCIEventMaskLEMetaEvent.skipped = true
 
+typedef.OBEXSessionRef.renamed = "OBEXSessionRef" # TODO: Merge OBEXSession and OBEXSessionRef somehow
+
 ##
 ## Pointer bounds
 ##

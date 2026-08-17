@@ -21,7 +21,7 @@ mod generated;
 pub use self::generated::*;
 
 // Manual fixes.
-#[cfg(all(feature = "libc", feature = "Authorization"))]
+#[cfg(feature = "Authorization")]
 mod authorization;
 #[cfg(feature = "CipherSuite")]
 mod cipher_suite;
@@ -29,9 +29,6 @@ mod cipher_suite;
 mod cssmapple;
 #[cfg(feature = "SecureTransport")]
 mod secure_transport;
-#[cfg(all(feature = "libc", feature = "Authorization"))]
-#[allow(unused_imports, unreachable_pub)]
-pub use self::authorization::*;
 #[cfg(feature = "CipherSuite")]
 pub use self::cipher_suite::*;
 #[cfg(feature = "cssmapple")]

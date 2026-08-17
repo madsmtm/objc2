@@ -4,7 +4,7 @@ use core::ptr;
 use objc2_core_foundation::{CFDictionary, CFRetained, CFString, CFType};
 
 use crate::{
-    io_iterator_t, io_name_t, io_service_t, IONotificationPortRef, IOServiceMatchingCallback,
+    io_iterator_t, io_name_t, io_service_t, IONotificationPort, IOServiceMatchingCallback,
 };
 
 fn consume<K, V>(matching: Option<CFRetained<CFDictionary<K, V>>>) -> *mut CFDictionary<K, V> {
@@ -108,7 +108,8 @@ pub unsafe fn IOServiceGetMatchingServices(
 ///
 /// # Safety
 ///
-/// - `notify_port` must be a valid pointer.
+/// - `notify_port` might need manual memory-management.
+/// - `notify_port` might not allow `None`.
 /// - `notification_type` might not allow `None`.
 /// - `matching` generic should be of the correct type.
 /// - `matching` might not allow `None`.
@@ -117,7 +118,7 @@ pub unsafe fn IOServiceGetMatchingServices(
 /// - `notification` must be a valid pointer.
 #[inline]
 pub unsafe fn IOServiceAddMatchingNotification(
-    notify_port: IONotificationPortRef,
+    notify_port: Option<&IONotificationPort>,
     notification_type: Option<&CStr>,
     matching: Option<CFRetained<CFDictionary<CFString, CFType>>>,
     callback: IOServiceMatchingCallback,
@@ -126,7 +127,7 @@ pub unsafe fn IOServiceAddMatchingNotification(
 ) -> libc::kern_return_t {
     extern "C-unwind" {
         fn IOServiceAddMatchingNotification(
-            notify_port: IONotificationPortRef,
+            notify_port: Option<&IONotificationPort>,
             notification_type: *const io_name_t,
             matching: *mut CFDictionary<CFString, CFType>,
             callback: IOServiceMatchingCallback,
