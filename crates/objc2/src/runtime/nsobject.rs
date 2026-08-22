@@ -173,19 +173,6 @@ pub unsafe trait NSObjectProtocol {
         unsafe { msg_send![self, isKindOfClass: cls] }
     }
 
-    /// Check if the object is an instance of the class type, or one of its
-    /// subclasses.
-    ///
-    /// See [`isKindOfClass`][Self::isKindOfClass] for details.
-    #[deprecated = "use `isKindOfClass` directly, or cast your objects with `AnyObject::downcast_ref`"]
-    // TODO: Use extern_protocol! once we get rid of this
-    fn is_kind_of<T: ClassType>(&self) -> bool
-    where
-        Self: Sized + Message,
-    {
-        self.isKindOfClass(T::class())
-    }
-
     /// Check if the object is an instance of a specific class, without
     /// checking subclasses.
     ///

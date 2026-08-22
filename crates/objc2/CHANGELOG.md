@@ -103,6 +103,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Removed `rc::AutoreleaseSafe`, it relies on unstable language features that
   are unlikely to be stabilized (auto traits) and it's not sufficient for
   making autorelease pools safe anyhow.
+* **BREAKING**: Removed the deprecated `NSObjectProtocol::is_kind_of`.
 
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.
