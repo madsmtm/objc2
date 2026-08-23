@@ -96,7 +96,6 @@
 //!
 //! `MTLBuffer` is untyped (in a similar manner as a `[u8]` slice), you must
 //! ensure that any usage of it is done with valid types.
-#![recursion_limit = "256"]
 #![allow(non_snake_case)]
 #![no_std]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]

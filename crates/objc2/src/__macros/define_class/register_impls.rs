@@ -141,14 +141,13 @@ macro_rules! __define_class_register_methods {
         ($($protocol:ty)?)
     } => {};
 
-    // Unsafe variant
     {
         ($builder:ident)
         ($for:ty)
         ($($protocol:ty)?)
 
         $(#[$($m:tt)*])*
-        unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)? $_body:block
+        $(unsafe $(__hack $unsafe_helper:ident)?)? fn $name:ident($($params:tt)*) $(-> $ret:ty)? $_body:block
 
         $($rest:tt)*
     } => {
@@ -159,40 +158,7 @@ macro_rules! __define_class_register_methods {
             ($builder)
             ($for)
             ($($protocol)?)
-            (unsafe)
-            ($name)
-            ($($params)*)
-            ($($ret)?)
-        }
-
-        $crate::__define_class_register_methods! {
-            ($builder)
-            ($for)
-            ($($protocol)?)
-
-            $($rest)*
-        }
-    };
-
-    // Safe variant
-    {
-        ($builder:ident)
-        ($for:ty)
-        ($($protocol:ty)?)
-
-        $(#[$($m:tt)*])*
-        fn $name:ident($($params:tt)*) $(-> $ret:ty)? $_body:block
-
-        $($rest:tt)*
-    } => {
-        $crate::__extract_method_attributes! {
-            ($(#[$($m)*])*)
-
-            ($crate::__define_class_register_method)
-            ($builder)
-            ($for)
-            ($($protocol)?)
-            ()
+            ($(unsafe $(__hack $unsafe_helper)?)?)
             ($name)
             ($($params)*)
             ($($ret)?)

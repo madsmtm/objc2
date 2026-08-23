@@ -158,6 +158,10 @@ macro_rules! extern_protocol {
         // The special #[name = $name:literal] attribute is supported here.
         $(#[$($attrs:tt)*])*
         $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
+            // Special method attributes:
+            // #[unsafe(method($($selector:tt)+))]
+            // #[unsafe(method_family = $family:ident)]
+            // #[optional]
             $($methods:tt)*
         }
     ) => {
@@ -265,54 +269,23 @@ macro_rules! __extern_protocol_check_no_derives {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_protocol_rewrite_methods {
-    // Base case
-    {} => {};
-
-    // Unsafe variant
-    {
+    {$(
         $(#[$($m:tt)*])*
-        $v:vis unsafe fn $name:ident($($params:tt)*) $(-> $ret:ty)?
+        // `__hack` is a workaround to allow naming the `unsafe` token, see:
+        // <https://github.com/rust-lang/rfcs/pull/3649>
+        $v:vis $(unsafe $(__hack $unsafe_helper:ident)?)? fn $name:ident($($params:tt)*) $(-> $ret:ty)?
         // TODO: Handle where bounds better
         $(where $($where:ty : $bound:path),+ $(,)?)?;
-
-        $($rest:tt)*
-    } => {
+    )*} => {$(
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
             ($crate::__extern_protocol_inner)
-            ($v unsafe fn $name($($params)*) $(-> $ret)?)
+            ($v $(unsafe $(__hack $unsafe_helper)?)? fn $name($($params)*) $(-> $ret)?)
             ($($($where: $bound,)+)?)
             ($($params)*)
         }
-
-        $crate::__extern_protocol_rewrite_methods! {
-            $($rest)*
-        }
-    };
-
-    // Safe variant
-    {
-        $(#[$($m:tt)*])*
-        $v:vis fn $name:ident($($params:tt)*) $(-> $ret:ty)?
-        // TODO: Handle where bounds better
-        $(where $($where:ty : $bound:path),+ $(,)?)?;
-
-        $($rest:tt)*
-    } => {
-        $crate::__extract_method_attributes! {
-            ($(#[$($m)*])*)
-
-            ($crate::__extern_protocol_inner)
-            ($v fn $name($($params)*) $(-> $ret)?)
-            ($($($where: $bound,)+)?)
-            ($($params)*)
-        }
-
-        $crate::__extern_protocol_rewrite_methods! {
-            $($rest)*
-        }
-    };
+    )*};
 }
 
 #[doc(hidden)]

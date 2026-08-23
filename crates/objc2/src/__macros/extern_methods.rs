@@ -211,59 +211,25 @@
 /// See the source code of `objc2-foundation` for many more examples.
 #[macro_export]
 macro_rules! extern_methods {
-    (
-        // Base case of the tt-muncher.
-    ) => {};
-
-    (
-        // Unsafe method.
-        //
+    ($(
         // Special attributes:
         // #[unsafe(method($($selector:tt)+))]
         // #[unsafe(method_family = $family:ident)]
         $(#[$($m:tt)*])*
-        $v:vis unsafe fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
-        // Optionally, a single `where` bound.
-        // TODO: Handle this better.
+        // `__hack` is a workaround to allow naming the `unsafe` token, see:
+        // <https://github.com/rust-lang/rfcs/pull/3649>
+        $v:vis $(unsafe $(__hack $unsafe_helper:ident)?)? fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
+        // Optionally, a `where` bound.
         $(where $($where:ty : $bound:path),+ $(,)?)?;
-
-        $($rest:tt)*
-    ) => {
+    )*) => {$(
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
             ($crate::__extern_methods_inner)
-            ($v unsafe fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
+            ($v $(unsafe $(__hack $unsafe_helper)?)? fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
             ($($params)*)
         }
-
-        $crate::extern_methods!($($rest)*);
-    };
-
-    (
-        // Safe method.
-        //
-        // Special attributes:
-        // #[unsafe(method($($selector:tt)+))]
-        // #[unsafe(method_family = $family:ident)]
-        $(#[$($m:tt)*])*
-        $v:vis fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
-        // Optionally, a single `where` bound.
-        // TODO: Handle this better.
-        $(where $($where:ty : $bound:path),+ $(,)?)?;
-
-        $($rest:tt)*
-    ) => {
-        $crate::__extract_method_attributes! {
-            ($(#[$($m)*])*)
-
-            ($crate::__extern_methods_inner)
-            ($v fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
-            ($($params)*)
-        }
-
-        $crate::extern_methods!($($rest)*);
-    };
+    )*};
 
     (
         // Deprecated syntax.

@@ -111,7 +111,11 @@ error: no rules expected keyword `type`
   |         type TypeAlias = Self;
   |         ^^^^ no rules expected this token in macro call
   |
-  = note: while trying to match end of macro
+note: while trying to match keyword `fn`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         $v:vis $(unsafe $(__hack $unsafe_helper:ident)?)? fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
+  |                                                           ^^
 
 error: no rules expected keyword `const`
  --> ui/extern_methods_invalid_syntax.rs
@@ -119,4 +123,8 @@ error: no rules expected keyword `const`
   |         const CONSTANT: () = ();
   |         ^^^^^ no rules expected this token in macro call
   |
-  = note: while trying to match end of macro
+note: while trying to match keyword `fn`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         $v:vis $(unsafe $(__hack $unsafe_helper:ident)?)? fn $fn_name:ident($($params:tt)*) $(-> $ret:ty)?
+  |                                                           ^^
