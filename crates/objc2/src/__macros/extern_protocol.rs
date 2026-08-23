@@ -168,7 +168,7 @@ macro_rules! extern_protocol {
         $crate::__extract_attributes! {
             ($(#[$($attrs)*])*)
 
-            ($crate::__inner_extern_protocol)
+            ($crate::__extern_protocol_inner)
             ($protocol)
             ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
                 $crate::__extern_protocol_rewrite_methods! {
@@ -181,7 +181,7 @@ macro_rules! extern_protocol {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __inner_extern_protocol {
+macro_rules! __extern_protocol_inner {
     (
         ($protocol:ident)
         ($protocol_definition:item)
@@ -280,57 +280,33 @@ macro_rules! __extern_protocol_rewrite_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
-            ($crate::__extern_protocol_inner)
+            ($crate::__parse_params)
+            ($($params)*)
+
+            ($crate::__extern_protocol_method_out)
             ($v $(unsafe $(__hack $unsafe_helper)?)? fn $name($($params)*) $(-> $ret)?)
             ($($($where: $bound,)+)?)
-            ($($params)*)
         }
     )*};
 }
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __extern_protocol_inner {
+macro_rules! __extern_protocol_method_out {
     {
         ($($function_start:tt)*)
         ($($where:ty: $bound:path,)*)
-        ($($params:tt)*)
 
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*) // TODO: Use this?
         ($($attr_method:tt)*)
         ($($__attr_use:tt)*)
-    } => {
-        $crate::__parse_sel_and_params! {
-            ($($sel)*)
-            ($($params)*)
 
-            ($crate::__extern_protocol_method_out)
-            ($($attr_method)*)
-            ($($function_start)*)
-            ($($where: $bound,)*)
-            ($($method_family)*)
-            ($method_or_method_id($($sel)*))
-        }
-    }
-}
-
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_protocol_method_out {
-    {
-        ($($attr_method:tt)*)
-        ($($function_start:tt)*)
-        ($($where:ty: $bound:path,)*)
-        ($($method_family:tt)*)
-        ($method_or_method_id:ident($($sel_unparsed:tt)*))
-
-        ($fn_or_fn_result:ident($($receiver:ident: $receiver_ty:ty)?))
-        ($($sel:tt)*)
-        ($($param:ident,)*)
+        ($($receiver:ident: $receiver_ty:ty)?)
+        ($($param:tt)*)
         ($($param_ty:tt)*)
-        ($($ignored_param:tt)*)
+        ($($ignored_param:tt,)*)
     } => {
         $crate::__extern_protocol_apply_bounds! {
             ($($receiver)?)
@@ -338,19 +314,21 @@ macro_rules! __extern_protocol_method_out {
             ($($function_start)*)
             ($($where: $bound,)*)
             ({
-                $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel_unparsed)*));
+                $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
+
+                $(let _ = $ignored_param;)*
 
                 // SAFETY: Upheld by writer of `#[unsafe(method(...))]`.
                 #[allow(unused_unsafe)]
                 unsafe {
-                    $crate::__extern_methods_call_method! {
-                        ($($method_family)*)
-
-                        ($fn_or_fn_result($($receiver: $receiver_ty)?))
+                    $crate::__parse_sel! {
                         ($($sel)*)
-                        ($($param,)*)
-                        ($($param_ty)*)
-                        ($($ignored_param)*)
+                        ($($param)*)
+
+                        ($crate::__extern_methods_call_method)
+                        ($($method_family)*)
+                        ($($receiver: $receiver_ty)?)
+                        ($($param)*)
                     }
                 }
             })

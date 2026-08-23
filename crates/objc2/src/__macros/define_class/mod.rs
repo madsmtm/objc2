@@ -555,7 +555,7 @@ macro_rules! declare_class {
         $(#[$m])*
         $v struct $name;
 
-        $crate::__macros::compile_error!("declare_class! has been renamed to define_class!, and the syntax has changed")
+        $crate::__macros::compile_error!("declare_class! has been renamed to define_class!, and the syntax has changed");
     }
 }
 

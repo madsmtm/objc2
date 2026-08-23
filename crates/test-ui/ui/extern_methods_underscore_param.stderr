@@ -1,0 +1,10 @@
+error: cannot use _ parameter here
+ --> ui/extern_methods_underscore_param.rs
+  |
+  | /     extern_methods!(
+  | |         #[unsafe(method(a:))]
+  | |         fn a(_: i32);
+  | |     );
+  | |_____^
+  |
+  = note: this error originates in the macro `$crate::__extern_methods_call_method` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

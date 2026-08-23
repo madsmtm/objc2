@@ -225,9 +225,11 @@ macro_rules! extern_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
+            ($crate::__parse_params)
+            ($($params)*)
+
             ($crate::__extern_methods_inner)
             ($v $(unsafe $(__hack $unsafe_helper)?)? fn $fn_name($($params)*) $(-> $ret)? $(where $($where : $bound ,)+)?)
-            ($($params)*)
         }
     )*};
 
@@ -258,28 +260,36 @@ macro_rules! extern_methods {
 macro_rules! __extern_methods_inner {
     {
         ($($function_start:tt)*)
-        ($($params:tt)*)
 
         ($method_or_method_id:ident($($sel:tt)*))
         ($($method_family:tt)*)
         ($($optional:tt)*)
         ($($attr_method:tt)*)
         ($($__attr_use:tt)*)
+
+        ($($receiver:ident: $receiver_ty:ty)?)
+        ($($param:tt)*)
+        ($($_param_ty:ty,)*)
+        ($($ignored_param:tt,)*)
     } => {
         $($attr_method)*
         $($function_start)* {
             $crate::__extern_methods_method_id_deprecated!($method_or_method_id($($sel)*));
             $crate::__extern_methods_no_optional!($($optional)*);
 
+            $(let _ = $ignored_param;)*
+
             // SAFETY: Upheld by writer of `#[unsafe(method(...))]`.
             #[allow(unused_unsafe)]
             unsafe {
-                $crate::__parse_sel_and_params! {
+                $crate::__parse_sel! {
                     ($($sel)*)
-                    ($($params)*)
+                    ($($param)*)
 
                     ($crate::__extern_methods_call_method)
                     ($($method_family)*)
+                    ($($receiver: $receiver_ty)?)
+                    ($($param)*)
                 }
             }
         }
@@ -296,15 +306,12 @@ macro_rules! __extern_methods_call_method {
     // Normal return
     (
         ($($method_family:tt)*)
-
-        (fn($($receiver:ident: $__receiver_ty:ty)?))
-        ($($sel:tt)*)
+        ($($receiver:ident: $receiver_ty:ty)?)
         ($($param:ident,)*)
-        ($($param_ty:tt)*)
-        ($($ignored_param:ident,)*)
-    ) => {
-        $(let _ = $ignored_param;)*
 
+        (false)
+        ($($sel:tt)*)
+    ) => {
         <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macros::MsgSend<_, _>>::send_message(
             $crate::__fallback_if_not_set!(
                 ($($receiver)?)
@@ -318,15 +325,12 @@ macro_rules! __extern_methods_call_method {
     // Error return
     (
         ($($method_family:tt)*)
-
-        (fn_result($($receiver:ident: $__receiver_ty:ty)?))
-        ($($sel:tt)*)
+        ($($receiver:ident: $receiver_ty:ty)?)
         ($($param:ident,)*)
-        ($($param_ty:tt)*)
-        ($($ignored_param:ident,)*)
-    ) => {
-        $(let _ = $ignored_param;)*
 
+        (true)
+        ($($sel:tt)*)
+    ) => {
         // Use error method
         <$crate::__method_family!(($($method_family)*) ($($sel)*)) as $crate::__macros::MsgSendError<_, _>>::send_message_error(
             $crate::__fallback_if_not_set!(
@@ -336,6 +340,17 @@ macro_rules! __extern_methods_call_method {
             $crate::sel!($($sel)*),
             ($($param,)*),
         )
+    };
+
+    (
+        ($($method_family:tt)*)
+        ($($receiver:ident: $receiver_ty:ty)?)
+        ($($param:pat_param,)*)
+
+        ($is_error:expr)
+        ($($sel:tt)*)
+    ) => {
+        $crate::__macros::compile_error!("cannot use _ parameter here")
     };
 }
 

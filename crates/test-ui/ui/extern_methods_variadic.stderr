@@ -7,7 +7,7 @@ error: variadic methods are not yet supported
   | |     );
   | |_____^
   |
-  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__parse_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: variadic methods are not yet supported
  --> ui/extern_methods_variadic.rs
@@ -18,7 +18,7 @@ error: variadic methods are not yet supported
   | |     );
   | |_____^
   |
-  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__parse_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: variadic methods are not yet supported
  --> ui/extern_methods_variadic.rs
@@ -29,28 +29,4 @@ error: variadic methods are not yet supported
   | |     );
   | |_____^
   |
-  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error: `...` is not supported for non-extern functions
- --> ui/extern_methods_variadic.rs
-  |
-  |         fn variadic_class(arg: i32, vararg: ...);
-  |                                     ^^^^^^^^^^^
-  |
-  = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
-
-error: `...` is not supported for non-extern functions
- --> ui/extern_methods_variadic.rs
-  |
-  |         fn variadic_instance(&self, arg: i32, vararg: ...);
-  |                                               ^^^^^^^^^^^
-  |
-  = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
-
-error: `...` is not supported for non-extern functions
- --> ui/extern_methods_variadic.rs
-  |
-  |         fn variadic_error(vararg: ...) -> Result<(), Retained<NSObject>>;
-  |                           ^^^^^^^^^^^
-  |
-  = help: only `extern "C"` and `extern "C-unwind"` functions may have a C variable argument list
+  = note: this error originates in the macro `$crate::__parse_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)

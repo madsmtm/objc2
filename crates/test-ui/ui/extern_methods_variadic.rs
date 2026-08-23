@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use objc2::rc::Retained;
 use objc2::runtime::NSObject;
 use objc2::{extern_class, extern_methods};

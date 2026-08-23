@@ -110,7 +110,7 @@ pub struct MethodResultKind;
 
 macro_rules! impl_fn_to_extern {
     ($($param:ident: $param_ty:ident),* $(,)?) => {
-        // Save variant
+        // Safe variant
         impl_fn_to_extern_delegate! {
             (normal)
             ()

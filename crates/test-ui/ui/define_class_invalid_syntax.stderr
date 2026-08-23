@@ -10,7 +10,7 @@ error: must specify the desired selector using `#[unsafe(method(...))]`
   |
   = note: this error originates in the macro `$crate::__extract_method_attributes_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: failed parsing selector `` or parameters ``
+error: failed parsing selector ``
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -20,7 +20,7 @@ error: failed parsing selector `` or parameters ``
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__parse_sel_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: cannot specify the `method` attribute twice
  --> ui/define_class_invalid_syntax.rs
@@ -64,7 +64,7 @@ error: expected expression, found `}`
   |         fn test_invalid_body() { a - }
   |                                      ^ expected expression
 
-error: failed parsing selector `testPattern:` or parameters `(_a, _b): (u32, i32)`
+error: failed parsing parameters `(_a, _b): (u32, i32)`
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -74,9 +74,9 @@ error: failed parsing selector `testPattern:` or parameters `(_a, _b): (u32, i32
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__parse_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error: number of arguments in function and selector did not match
+error: failed parsing parameters `self`
  --> ui/define_class_invalid_syntax.rs
   |
   | / define_class!(
@@ -86,7 +86,7 @@ error: number of arguments in function and selector did not match
   | | );
   | |_^
   |
-  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = note: this error originates in the macro `$crate::__parse_params_inner` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error: not a supported method:
        #[unsafe(method(testPub))] pub fn test_pub() {}

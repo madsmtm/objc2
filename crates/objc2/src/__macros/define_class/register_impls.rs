@@ -154,13 +154,15 @@ macro_rules! __define_class_register_methods {
         $crate::__extract_method_attributes! {
             ($(#[$($m)*])*)
 
+            ($crate::__parse_params)
+            ($($params)*)
+
             ($crate::__define_class_register_method)
             ($builder)
             ($for)
             ($($protocol)?)
             ($(unsafe $(__hack $unsafe_helper)?)?)
             ($name)
-            ($($params)*)
             ($($ret)?)
         }
 
@@ -223,7 +225,6 @@ macro_rules! __define_class_register_method {
         ($($protocol:ty)?)
         ($($qualifiers:tt)*)
         ($name:ident)
-        ($($params:tt)*)
         ($($ret:ty)?)
 
         ($method_or_method_id:ident($($sel:tt)*))
@@ -231,6 +232,11 @@ macro_rules! __define_class_register_method {
         ($($optional:tt)*)
         ($($__attr_method:tt)*)
         ($($attr_use:tt)*)
+
+        ($($receiver:ident: $receiver_ty:ty)?)
+        ($($param:tt)*)
+        ($($param_ty:ty,)*)
+        ($($ignored_param:tt)*) // TODO: How do we handle this?
     } => {
         $($attr_use)*
         {
@@ -238,22 +244,23 @@ macro_rules! __define_class_register_method {
             $crate::__define_class_invalid_selectors!($($sel)*);
             $crate::__define_class_no_optional!($($optional)*);
 
-            $crate::__parse_sel_and_params! {
+            $crate::__parse_sel! {
                 ($($sel)*)
-                ($($params)*)
+                ($($param)*)
 
                 ($crate::__define_class_register_thunk)
-
                 ($builder)
                 ($for)
                 ($($protocol)?)
                 ($($qualifiers)*)
                 ($name)
+                ($($param_ty,)*)
                 ($crate::__fallback_if_not_set! {
                     ($($ret)?)
                     (()) // unit return
                 })
                 ($($method_family)*)
+                ($($receiver: $receiver_ty)?)
             }
         }
     };
@@ -268,14 +275,13 @@ macro_rules! __define_class_register_thunk {
         ($($protocol:ty)?)
         ($($qualifiers:tt)*)
         ($name:ident)
+        ($($param_ty:ty,)*)
         ($ret:ty)
         ($($method_family:tt)*)
+        ($($_receiver:ident: $receiver_ty:ty)?)
 
-        ($fn_or_fn_result:ident($($_receiver:ident: $receiver_ty:ty)?))
+        ($is_error:ident)
         ($($sel:tt)*)
-        ($($_param:tt)*)
-        ($($param_ty:ty,)*)
-        ($($ignored_param:tt)*)
     } => (
         // Helper to make a unique `ConvertDefinedFn` for each function.
         //
@@ -286,7 +292,7 @@ macro_rules! __define_class_register_thunk {
         type __RetainSemantics = $crate::__method_family!(($($method_family)*) ($($sel)*));
 
         type __Kind<'cls> = $crate::__define_class_get_kind!(
-            $fn_or_fn_result($($_receiver: $receiver_ty)?)
+            $is_error $(, $receiver_ty)?
         );
 
         impl<'__function> $crate::__macros::ConvertDefinedFn<
@@ -344,16 +350,16 @@ macro_rules! __define_class_register_thunk {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __define_class_get_kind {
-    (fn()) => {
+    (false) => {
         $crate::__macros::ClassFnKind<&'cls $crate::runtime::AnyClass>
     };
-    (fn($_receiver:ident: $_receiver_ty:ty)) => {
+    (false, $_receiver_ty:ty) => {
         $crate::__macros::MethodKind
     };
-    (fn_result()) => {
+    (true) => {
         $crate::__macros::ClassFnResultKind<&'cls $crate::runtime::AnyClass>
     };
-    (fn_result($_receiver:ident: $_receiver_ty:ty)) => {
+    (true, $_receiver_ty:ty) => {
         $crate::__macros::MethodResultKind
     };
 }
