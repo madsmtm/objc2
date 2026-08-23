@@ -31,7 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added support for interop between `CFAllocator` and `std::alloc::Allocator` behind the `"unstable-allocator-api"` Cargo feature.
 
 ### Changed
-* Updated SDK from Xcode 26.0.1 to 26.5.
+* Updated SDK from Xcode 26.0.1 to 26.6.
 
   View the release notes to learn more details:
   - [26.1.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - [26.4](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_4-release-notes)
   - [26.4.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_4_1-release-notes)
   - [26.5](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_5-release-notes)
+  - [26.6](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_6-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
