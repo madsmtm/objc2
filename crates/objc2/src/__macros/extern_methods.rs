@@ -243,7 +243,7 @@ macro_rules! extern_methods {
         const _: () = $crate::__macros::extern_methods_unsafe_impl();
 
         $(#[$m])*
-        impl<$($t $(: $b $(+ $rest)*)?),*> $type {
+        impl $type {
             $crate::extern_methods! {
                 $($methods)*
             }
