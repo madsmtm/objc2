@@ -80,28 +80,6 @@ error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satis
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Retained<NSObject>, _>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<NSObject>: objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>` is not satisfied
- --> ui/msg_send_invalid_receiver.rs
-  |
-  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
-  |
-  = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *mut T
-            Cell<T>
-            ManuallyDrop<T>
-            MaybeUninit<T>
-            NonNull<T>
-          and $N others
-  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Retained<NSObject>, Retained<NSObject>, objc2::__macros::KindSendMessage>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Retained<NSObject>, Retained<NSObject>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error[E0277]: the trait bound `Option<Retained<NSObject>>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_receiver.rs
   |
@@ -116,28 +94,6 @@ error[E0277]: the trait bound `Option<Retained<NSObject>>: MessageReceiver` is n
             NonNull<T>
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Option<Retained<NSObject>>, _, objc2::__macros::KindSendMessage>`
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Option<Retained<NSObject>>, _>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `Retained<NSObject>: objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>` is not satisfied
- --> ui/msg_send_invalid_receiver.rs
-  |
-  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
-  |
-  = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *mut T
-            Cell<T>
-            ManuallyDrop<T>
-            MaybeUninit<T>
-            NonNull<T>
-          and $N others
-  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Option<Retained<NSObject>>, Retained<NSObject>, objc2::__macros::KindSendMessage>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Option<Retained<NSObject>>, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
 error[E0277]: the trait bound `Retained<NSObject>: MessageReceiver` is not satisfied

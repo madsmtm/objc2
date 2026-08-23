@@ -42,3 +42,32 @@ error[E0277]: the trait bound `objc2::__macros::MethodFamily<6>: objc2::__macros
             `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Retained<T>, Kind>`
   = note: required for `fn(&Retained<CustomObject>)` to implement `objc2::__macros::FnToExternFn<__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
   = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed: cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+ --> ui/define_class_invalid_receiver_retain_semantics.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+  |
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed
+ --> ui/define_class_invalid_receiver_retain_semantics.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot infer the value of the constant `_`
+  |
+note: required by a const generic parameter in `objc2::__macros::method_encoding_str_array`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/encoding.rs
+  |
+  | pub const fn method_encoding_str_array<const LEN: usize>(
+  |                                        ^^^^^^^^^^^^^^^^ required by this const generic parameter in `method_encoding_str_array`
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

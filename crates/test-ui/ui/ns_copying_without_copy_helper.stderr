@@ -1,51 +1,19 @@
-error[E0277]: the trait bound `MyObj: CopyingHelper` is not satisfied
+error[E0599]: no method named `copy` found for reference `&MyObj` in the current scope
  --> ui/ns_copying_without_copy_helper.rs
   |
   |     let _ = obj.copy();
-  |                 ^^^^ unsatisfied trait bound
+  |                 ^^^^ method cannot be called on `&MyObj` due to unsatisfied trait bounds
   |
-help: the trait `CopyingHelper` is not implemented for `MyObj`
- --> ui/ns_copying_without_copy_helper.rs
-  |
-  | / extern_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct MyObj;
-  | | );
-  | |_^
-  = help: the following other types implement trait `CopyingHelper`:
-            NSArray<ObjectType>
-            NSDictionary<KeyType, ObjectType>
-            NSDimension
-            NSError
-            NSMeasurement<UnitType>
-            NSMutableArray<ObjectType>
-            NSMutableDictionary<KeyType, ObjectType>
-            NSMutableSet<ObjectType>
-          and $N others
-  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: items from traits can only be used if the trait is implemented and in scope
+  = note: the following trait defines an item `copy`, perhaps you need to implement it:
+          candidate #1: `NSCopying`
 
-error[E0277]: the trait bound `MyObj: MutableCopyingHelper` is not satisfied
+error[E0599]: no method named `mutableCopy` found for reference `&MyObj` in the current scope
  --> ui/ns_copying_without_copy_helper.rs
   |
   |     let _ = obj.mutableCopy();
-  |                 ^^^^^^^^^^^ unsatisfied trait bound
+  |                 ^^^^^^^^^^^ method cannot be called on `&MyObj` due to unsatisfied trait bounds
   |
-help: the trait `MutableCopyingHelper` is not implemented for `MyObj`
- --> ui/ns_copying_without_copy_helper.rs
-  |
-  | / extern_class!(
-  | |     #[unsafe(super(NSObject))]
-  | |     struct MyObj;
-  | | );
-  | |_^
-  = help: the following other types implement trait `MutableCopyingHelper`:
-            NSArray<ObjectType>
-            NSDictionary<KeyType, ObjectType>
-            NSMutableArray<ObjectType>
-            NSMutableDictionary<KeyType, ObjectType>
-            NSMutableSet<ObjectType>
-            NSMutableString
-            NSSet<ObjectType>
-            NSString
-            ProtocolObject<P>
-  = note: this error originates in the macro `$crate::__extern_class_inner` which comes from the expansion of the macro `extern_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+  = help: items from traits can only be used if the trait is implemented and in scope
+  = note: the following trait defines an item `mutableCopy`, perhaps you need to implement it:
+          candidate #1: `NSMutableCopying`

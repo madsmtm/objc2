@@ -1,7 +1,7 @@
 	.intel_syntax noprefix
 	.section	.text.handle,"ax",@progbits
 	.globl	handle
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	handle,@function
 handle:
 	push	r14
@@ -21,7 +21,7 @@ handle:
 
 	.section	.text.handle_with_sel,"ax",@progbits
 	.globl	handle_with_sel
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	handle_with_sel,@function
 handle_with_sel:
 	push	r14

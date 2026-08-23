@@ -1,25 +1,16 @@
-error[E0277]: the trait bound `Retained<NSObject>: RefEncode` is not satisfied
+error[E0277]: the trait bound `objc2::__macros::MethodFamily<6>: objc2::__macros::MsgSend<&Retained<NSObject>, &mut Retained<NSObject>>` is not satisfied
  --> ui/not_writeback.rs
   |
   |     let _: &mut Retained<NSObject> = unsafe { msg_send![obj, a] };
-  |                                               ^^^^^^^^^^^^^^^^^ the trait `RefEncode` is not implemented for `Retained<NSObject>`
+  |                                               ^^^^^^^^^^^^^^^^^ unsatisfied trait bound
   |
-  = help: the following other types implement trait `RefEncode`:
-            &'a T
-            &'a mut T
-            *const T
-            *mut T
-            AnyClass
-            AnyObject
-            AnyProtocol
-            Cell<T>
-          and $N others
-  = note: required for `&mut Retained<NSObject>` to implement `Encode`
-  = note: required for `&mut Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `&mut Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<*const NSObject, &mut Retained<NSObject>, objc2::__macros::KindSendMessage>`
-  = note: 1 redundant requirement hidden
-  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&Retained<NSObject>, &mut Retained<NSObject>, objc2::__macros::KindSendMessage>`
+  = help: the trait `objc2::__macros::RetainSemantics<&Retained<NSObject>, &mut Retained<NSObject>, objc2::__macros::KindSendMessage>` is not implemented for `objc2::__macros::MethodFamily<6>`
+  = help: the following other types implement trait `objc2::__macros::RetainSemantics<Receiver, Return, Kind>`:
+            `objc2::__macros::MethodFamily<2>` implements `objc2::__macros::RetainSemantics<&AnyClass, Allocated<Return>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<Allocated<T>, Option<Retained<T>>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<Allocated<T>, Retained<T>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Option<Retained<T>>, Kind>`
+            `objc2::__macros::MethodFamily<3>` implements `objc2::__macros::RetainSemantics<PartialInit<T>, Retained<T>, Kind>`
   = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::MsgSend<&Retained<NSObject>, &mut Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 

@@ -128,7 +128,7 @@ error[E0308]: mismatched types
  --> ui/block_wrong_number_args.rs
   |
   |     takes_block1(&StackBlock::new(|_x, _y| {}));
-  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn(i32), dyn Any>`, found `&StackBlock<'_, fn(_, _), ..., _>`
+  |     ------------ ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `&Block<'_, fn(i32), dyn Any>`, found `&StackBlock<'_, _, {closure@...}, _>`
   |     |
   |     arguments to this function are incorrect
   |

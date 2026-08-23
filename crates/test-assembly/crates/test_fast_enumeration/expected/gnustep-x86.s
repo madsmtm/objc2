@@ -1,7 +1,7 @@
 	.intel_syntax noprefix
 	.section	.text.fn1_iter_create,"ax",@progbits
 	.globl	fn1_iter_create
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	fn1_iter_create,@function
 fn1_iter_create:
 	mov	eax, dword ptr [esp + 4]
@@ -30,7 +30,7 @@ fn1_iter_create:
 
 	.section	.text.fn2_iter_once,"ax",@progbits
 	.globl	fn2_iter_once
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	fn2_iter_once,@function
 fn2_iter_once:
 	push	ebp
@@ -99,7 +99,7 @@ fn2_iter_once:
 
 	.section	.text.fn3_use_obj,"ax",@progbits
 	.globl	fn3_use_obj
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	fn3_use_obj,@function
 fn3_use_obj:
 	push	eax
@@ -115,7 +115,7 @@ fn3_use_obj:
 
 	.section	.text.fn4_iter,"ax",@progbits
 	.globl	fn4_iter
-	.p2align	4
+	.prefalign	4, .Lfunc_end3, nop
 	.type	fn4_iter,@function
 fn4_iter:
 	push	ebp
@@ -210,7 +210,7 @@ fn4_iter:
 
 	.section	.text.fn5_iter_noop,"ax",@progbits
 	.globl	fn5_iter_noop
-	.p2align	4
+	.prefalign	4, .Lfunc_end4, nop
 	.type	fn5_iter_noop,@function
 fn5_iter_noop:
 	push	ebp
@@ -298,7 +298,7 @@ fn5_iter_noop:
 
 	.section	.text.fn6_iter_retained,"ax",@progbits
 	.globl	fn6_iter_retained
-	.p2align	4
+	.prefalign	4, .Lfunc_end5, nop
 	.type	fn6_iter_retained,@function
 fn6_iter_retained:
 	push	ebp

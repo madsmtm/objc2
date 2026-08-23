@@ -34,7 +34,7 @@ Lfunc_begin0:
 	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
-	jne	LBB1_9
+	jne	LBB1_8
 	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].6]
@@ -81,7 +81,7 @@ Ltmp3:
 	pop	rbx
 	pop	rbp
 	ret
-LBB1_9:
+LBB1_8:
 	lea	rdi, [rip + l_anon.[ID].4]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB1_6:
@@ -91,7 +91,7 @@ LBB1_6:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
 LBB1_5:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
-LBB1_7:
+LBB1_9:
 Ltmp4:
 	mov	rbx, rax
 	mov	rdi, qword ptr [rbp - 16]

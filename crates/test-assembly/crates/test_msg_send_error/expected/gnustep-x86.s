@@ -1,7 +1,7 @@
 	.intel_syntax noprefix
 	.section	.text.fn1_error_bool,"ax",@progbits
 	.globl	fn1_error_bool
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	fn1_error_bool,@function
 fn1_error_bool:
 	push	ebp
@@ -55,7 +55,7 @@ fn1_error_bool:
 
 	.section	.text.fn2_error_new,"ax",@progbits
 	.globl	fn2_error_new
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	fn2_error_new,@function
 fn2_error_new:
 	push	ebx
@@ -109,7 +109,7 @@ fn2_error_new:
 
 	.section	.text.fn3_error_init,"ax",@progbits
 	.globl	fn3_error_init
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	fn3_error_init,@function
 fn3_error_init:
 	push	ebx
@@ -172,7 +172,7 @@ fn3_error_init:
 
 	.section	.text.fn4_error_copy,"ax",@progbits
 	.globl	fn4_error_copy
-	.p2align	4
+	.prefalign	4, .Lfunc_end3, nop
 	.type	fn4_error_copy,@function
 fn4_error_copy:
 	push	ebx
@@ -226,7 +226,7 @@ fn4_error_copy:
 
 	.section	.text.fn5_error_mutable_copy,"ax",@progbits
 	.globl	fn5_error_mutable_copy
-	.p2align	4
+	.prefalign	4, .Lfunc_end4, nop
 	.type	fn5_error_mutable_copy,@function
 fn5_error_mutable_copy:
 	push	ebx
@@ -280,7 +280,7 @@ fn5_error_mutable_copy:
 
 	.section	.text.fn6_error_autoreleased,"ax",@progbits
 	.globl	fn6_error_autoreleased
-	.p2align	4
+	.prefalign	4, .Lfunc_end5, nop
 	.type	fn6_error_autoreleased,@function
 fn6_error_autoreleased:
 	push	ebx

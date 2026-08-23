@@ -2,7 +2,6 @@
 	.globl	_fn1_iter_create
 	.p2align	2
 _fn1_iter_create:
-	stp	xzr, xzr, [x8, #192]
 	movi.2d	v0, #0000000000000000
 	stp	q0, q0, [x8, #160]
 	stur	q0, [x8, #8]
@@ -16,16 +15,16 @@ _fn1_iter_create:
 	str	x0, [x8]
 	stp	xzr, xzr, [x8, #144]
 	str	xzr, [x8, #136]
-	str	xzr, [x8, #208]
+	stp	xzr, xzr, [x8, #200]
+	str	xzr, [x8, #192]
 	ret
 
 	.globl	_fn2_iter_once
 	.p2align	2
 _fn2_iter_once:
-	sub	sp, sp, #48
-	stp	x20, x19, [sp, #16]
-	stp	x29, x30, [sp, #32]
-	add	x29, sp, #32
+	stp	x20, x19, [sp, #-32]!
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
 	mov	x19, x0
 	ldp	x8, x9, [x0, #200]
 	cmp	x8, x9
@@ -51,20 +50,19 @@ LBB1_3:
 	str	x10, [x19, #200]
 	ldr	x0, [x9, x8, lsl #3]
 LBB1_4:
-	ldp	x29, x30, [sp, #32]
-	ldp	x20, x19, [sp, #16]
-	add	sp, sp, #48
+	ldp	x29, x30, [sp, #16]
+	ldp	x20, x19, [sp], #32
 	ret
 LBB1_5:
 Lloh2:
 	adrp	x1, l_anon.[ID].0@PAGE
 Lloh3:
 	add	x1, x1, l_anon.[ID].0@PAGEOFF
-	str	x0, [sp, #8]
+	mov	x20, x0
 	mov	x0, x8
 	bl	SYM(<objc2[CRATE_ID]::__macros::sel::CachedSel>::fetch, 0)
 	mov	x1, x0
-	ldr	x0, [sp, #8]
+	mov	x0, x20
 	b	LBB1_2
 	.loh AdrpLdrGot	Lloh0, Lloh1
 	.loh AdrpAdd	Lloh2, Lloh3
@@ -91,7 +89,6 @@ _fn4_iter:
 	add	x29, sp, #272
 	mov	x9, #0
 	mov	x8, #0
-	stp	xzr, xzr, [sp, #200]
 	movi.2d	v0, #0000000000000000
 	stur	q0, [sp, #184]
 	stur	q0, [sp, #168]
@@ -103,7 +100,8 @@ _fn4_iter:
 	str	x0, [sp, #8]
 	stp	xzr, xzr, [sp, #152]
 	str	xzr, [sp, #144]
-	str	xzr, [sp, #216]
+	stp	xzr, xzr, [sp, #208]
+	str	xzr, [sp, #200]
 Lloh4:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh5:
@@ -169,7 +167,6 @@ _fn5_iter_noop:
 	add	x29, sp, #272
 	mov	x8, #0
 	mov	x9, #0
-	stp	xzr, xzr, [sp, #200]
 	movi.2d	v0, #0000000000000000
 	stur	q0, [sp, #184]
 	stur	q0, [sp, #168]
@@ -181,7 +178,8 @@ _fn5_iter_noop:
 	str	x0, [sp, #8]
 	stp	xzr, xzr, [sp, #152]
 	str	xzr, [sp, #144]
-	str	xzr, [sp, #216]
+	stp	xzr, xzr, [sp, #208]
+	str	xzr, [sp, #200]
 Lloh8:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh9:
@@ -244,7 +242,6 @@ _fn6_iter_retained:
 	add	x29, sp, #288
 	mov	x9, #0
 	mov	x8, #0
-	stp	xzr, xzr, [sp, #216]
 	movi.2d	v0, #0000000000000000
 	stur	q0, [sp, #200]
 	stur	q0, [sp, #184]
@@ -257,8 +254,9 @@ _fn6_iter_retained:
 	str	x0, [sp, #24]
 	stp	xzr, xzr, [sp, #168]
 	str	xzr, [sp, #160]
+	stp	xzr, xzr, [sp, #224]
 	mov	w23, #1
-	str	xzr, [sp, #232]
+	str	xzr, [sp, #216]
 Lloh12:
 	adrp	x19, l_anon.[ID].0@PAGE
 Lloh13:
@@ -302,8 +300,7 @@ LBB5_8:
 	cbz	x9, LBB5_2
 	ldr	x9, [x9]
 	ldr	x10, [sp, #8]
-	cmp	x10, #1
-	b.ne	LBB5_1
+	cbz	x10, LBB5_1
 	ldr	x10, [sp, #16]
 	cmp	x10, x9
 	b.eq	LBB5_2

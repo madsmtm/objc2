@@ -43,29 +43,6 @@ error[E0277]: the trait bound `Allocated<AnyObject>: Encode` is not satisfied
   = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Allocated<AnyObject>: OptionEncode` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Option<Allocated<AnyObject>> = unsafe { msg_send![cls, alloc] };
-  |                                                    ^^^^^^^^^^^^^^^^^^^^^ the trait `OptionEncode` is not implemented for `Allocated<AnyObject>`
-  |
-  = help: the following other types implement trait `OptionEncode`:
-            &T
-            &mut T
-            NonNull<T>
-            NonZero<i128>
-            NonZero<i16>
-            NonZero<i32>
-            NonZero<i64>
-            NonZero<i8>
-          and $N others
-  = note: required for `Option<Allocated<AnyObject>>` to implement `Encode`
-  = note: required for `Option<Allocated<AnyObject>>` to implement `EncodeReturn`
-  = note: required for `Option<Allocated<AnyObject>>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<2>>`
-  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Option<Allocated<AnyObject>>, objc2::__macros::KindSendMessage>`
-  = note: required for `objc2::__macros::MethodFamily<2>` to implement `objc2::__macros::MsgSend<&AnyClass, Option<Allocated<AnyObject>>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error[E0277]: the trait bound `Retained<Allocated<AnyObject>>: Encode` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
@@ -120,28 +97,6 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Retained<AnyClass>: Encode` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Retained<AnyClass> = unsafe { msg_send![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<AnyClass>`
-  |
-  = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *mut T
-            Cell<T>
-            ManuallyDrop<T>
-            MaybeUninit<T>
-            NonNull<T>
-          and $N others
-  = note: required for `Retained<AnyClass>` to implement `EncodeReturn`
-  = note: required for `Retained<AnyClass>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<AnyClass>, objc2::__macros::KindSendMessage>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<AnyClass>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-
 error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not satisfied
  --> ui/msg_send_invalid_return.rs
   |
@@ -154,28 +109,6 @@ error[E0277]: the trait bound `Allocated<AnyObject>: MessageReceiver` is not sat
             *const T
             *mut T
             NonNull<T>
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, objc2::__macros::KindSendMessage>`
-  = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
-  = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)
-
-error[E0277]: the trait bound `Retained<NSObject>: Encode` is not satisfied
- --> ui/msg_send_invalid_return.rs
-  |
-  |     let _: Retained<NSObject> = unsafe { msg_send![obj, init] };
-  |                                          ^^^^^^^^^^^^^^^^^^^^ the trait `Encode` is not implemented for `Retained<NSObject>`
-  |
-  = help: the following other types implement trait `Encode`:
-            &'a T
-            &'a mut T
-            *const T
-            *mut T
-            Cell<T>
-            ManuallyDrop<T>
-            MaybeUninit<T>
-            NonNull<T>
-          and $N others
-  = note: required for `Retained<NSObject>` to implement `EncodeReturn`
-  = note: required for `Retained<NSObject>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<3>>`
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::RetainSemantics<Allocated<AnyObject>, Retained<NSObject>, objc2::__macros::KindSendMessage>`
   = note: required for `objc2::__macros::MethodFamily<3>` to implement `objc2::__macros::MsgSend<Allocated<AnyObject>, Retained<NSObject>>`
   = note: this error originates in the macro `$crate::__msg_send_helper` which comes from the expansion of the macro `msg_send` (in Nightly builds, run with -Z macro-backtrace for more info)

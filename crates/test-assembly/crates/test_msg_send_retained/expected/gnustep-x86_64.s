@@ -1,7 +1,7 @@
 	.intel_syntax noprefix
 	.section	.text.fn01_handle_new,"ax",@progbits
 	.globl	fn01_handle_new
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	fn01_handle_new,@function
 fn01_handle_new:
 	push	r14
@@ -21,7 +21,7 @@ fn01_handle_new:
 
 	.section	.text.fn02_handle_new_fallible,"ax",@progbits
 	.globl	fn02_handle_new_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	fn02_handle_new_fallible,@function
 fn02_handle_new_fallible:
 	push	r14
@@ -49,7 +49,7 @@ fn02_handle_new_fallible:
 
 	.section	.text.fn03_handle_alloc,"ax",@progbits
 	.globl	fn03_handle_alloc
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	fn03_handle_alloc,@function
 fn03_handle_alloc:
 	push	r14
@@ -69,7 +69,7 @@ fn03_handle_alloc:
 
 	.section	.text.fn04_handle_init,"ax",@progbits
 	.globl	fn04_handle_init
-	.p2align	4
+	.prefalign	4, .Lfunc_end3, nop
 	.type	fn04_handle_init,@function
 fn04_handle_init:
 	test	rdi, rdi
@@ -94,7 +94,7 @@ fn04_handle_init:
 
 	.section	.text.fn05_handle_init_fallible,"ax",@progbits
 	.globl	fn05_handle_init_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end4, nop
 	.type	fn05_handle_init_fallible,@function
 fn05_handle_init_fallible:
 	push	r14
@@ -126,7 +126,7 @@ fn05_handle_init_fallible:
 
 	.section	.text.fn06_handle_alloc_init,"ax",@progbits
 	.globl	fn06_handle_alloc_init
-	.p2align	4
+	.prefalign	4, .Lfunc_end5, nop
 	.type	fn06_handle_alloc_init,@function
 fn06_handle_alloc_init:
 	push	r15
@@ -162,7 +162,7 @@ fn06_handle_alloc_init:
 
 	.section	.text.fn07_handle_alloc_release,"ax",@progbits
 	.globl	fn07_handle_alloc_release
-	.p2align	4
+	.prefalign	4, .Lfunc_end6, nop
 	.type	fn07_handle_alloc_release,@function
 fn07_handle_alloc_release:
 	push	r14
@@ -184,7 +184,7 @@ fn07_handle_alloc_release:
 
 	.section	.text.fn08_handle_alloc_init_release,"ax",@progbits
 	.globl	fn08_handle_alloc_init_release
-	.p2align	4
+	.prefalign	4, .Lfunc_end7, nop
 	.type	fn08_handle_alloc_init_release,@function
 fn08_handle_alloc_init_release:
 	push	r15
@@ -219,7 +219,7 @@ fn08_handle_alloc_init_release:
 
 	.section	.text.fn09_handle_copy,"ax",@progbits
 	.globl	fn09_handle_copy
-	.p2align	4
+	.prefalign	4, .Lfunc_end8, nop
 	.type	fn09_handle_copy,@function
 fn09_handle_copy:
 	push	r14
@@ -239,7 +239,7 @@ fn09_handle_copy:
 
 	.section	.text.fn10_handle_copy_fallible,"ax",@progbits
 	.globl	fn10_handle_copy_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end9, nop
 	.type	fn10_handle_copy_fallible,@function
 fn10_handle_copy_fallible:
 	push	r14
@@ -265,7 +265,7 @@ fn10_handle_copy_fallible:
 
 	.section	.text.fn11_handle_mutable_copy,"ax",@progbits
 	.globl	fn11_handle_mutable_copy
-	.p2align	4
+	.prefalign	4, .Lfunc_end10, nop
 	.type	fn11_handle_mutable_copy,@function
 fn11_handle_mutable_copy:
 	push	r14
@@ -285,7 +285,7 @@ fn11_handle_mutable_copy:
 
 	.section	.text.fn12_handle_mutable_copy_fallible,"ax",@progbits
 	.globl	fn12_handle_mutable_copy_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end11, nop
 	.type	fn12_handle_mutable_copy_fallible,@function
 fn12_handle_mutable_copy_fallible:
 	push	r14
@@ -311,7 +311,7 @@ fn12_handle_mutable_copy_fallible:
 
 	.section	.text.fn13_handle_autoreleased,"ax",@progbits
 	.globl	fn13_handle_autoreleased
-	.p2align	4
+	.prefalign	4, .Lfunc_end12, nop
 	.type	fn13_handle_autoreleased,@function
 fn13_handle_autoreleased:
 	push	r14
@@ -333,7 +333,7 @@ fn13_handle_autoreleased:
 
 	.section	.text.fn14_handle_autoreleased_with_arg,"ax",@progbits
 	.globl	fn14_handle_autoreleased_with_arg
-	.p2align	4
+	.prefalign	4, .Lfunc_end13, nop
 	.type	fn14_handle_autoreleased_with_arg,@function
 fn14_handle_autoreleased_with_arg:
 	push	r15
@@ -357,7 +357,7 @@ fn14_handle_autoreleased_with_arg:
 
 	.section	.text.fn15_handle_autoreleased_fallible,"ax",@progbits
 	.globl	fn15_handle_autoreleased_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end14, nop
 	.type	fn15_handle_autoreleased_fallible,@function
 fn15_handle_autoreleased_fallible:
 	push	r14
@@ -387,7 +387,7 @@ fn15_handle_autoreleased_fallible:
 
 	.section	.text.fn16_handle_with_out_param,"ax",@progbits
 	.globl	fn16_handle_with_out_param
-	.p2align	4
+	.prefalign	4, .Lfunc_end15, nop
 	.type	fn16_handle_with_out_param,@function
 fn16_handle_with_out_param:
 .Lfunc_begin0:

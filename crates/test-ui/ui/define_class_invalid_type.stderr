@@ -98,7 +98,7 @@ note: required by a bound in `objc2::__macros::ConvertDefinedFn::Func`
   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `ConvertDefinedFn::Func`
   = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
+error[E0277]: the trait bound `Vec<()>: Encode` is not satisfied
  --> ui/define_class_invalid_type.rs
   |
   | / define_class!(
@@ -120,9 +120,11 @@ error[E0277]: the trait bound `Vec<()>: EncodeReturn` is not satisfied
           and $N others
   = note: required for `Vec<()>` to implement `EncodeReturn`
   = note: required for `Vec<()>` to implement `objc2::__macros::ConvertReturn<objc2::__macros::MethodFamily<6>>`
+  = note: required for `objc2::__macros::MethodFamily<6>` to implement `objc2::__macros::RetainSemantics<&AnyClass, Vec<()>, objc2::__macros::KindDefined>`
+  = note: required for `fn() -> Vec<()>` to implement `objc2::__macros::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::ClassFnKind<&AnyClass>, CustomObject>`
   = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
+error[E0277]: the trait bound `Box<u32>: Encode` is not satisfied
  --> ui/define_class_invalid_type.rs
   |
   | / define_class!(
@@ -144,9 +146,10 @@ error[E0277]: the trait bound `Box<u32>: EncodeArgument` is not satisfied
           and $N others
   = note: required for `Box<u32>` to implement `EncodeArgument`
   = note: required for `Box<u32>` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `fn(&CustomObject, Box<u32>)` to implement `objc2::__macros::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
   = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `CustomObject: EncodeArgument` is not satisfied
+error[E0277]: the trait bound `CustomObject: Encode` is not satisfied
  --> ui/define_class_invalid_type.rs
   |
   | / define_class!(
@@ -177,4 +180,92 @@ help: the trait `Encode` is not implemented for `CustomObject`
           and $N others
   = note: required for `CustomObject` to implement `EncodeArgument`
   = note: required for `CustomObject` to implement `objc2::__macros::ConvertArgument`
+  = note: required for `fn(&CustomObject, CustomObject)` to implement `objc2::__macros::FnToExternFn<_::<impl ClassType for CustomObject>::class::{closure#0}::{closure#0}::__FnMarker, objc2::__macros::MethodFamily<6>, objc2::__macros::MethodKind, CustomObject>`
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed: cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+  |
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot infer the value of the constant `_`
+  |
+note: required by a const generic parameter in `objc2::__macros::method_encoding_str_array`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/encoding.rs
+  |
+  | pub const fn method_encoding_str_array<const LEN: usize>(
+  |                                        ^^^^^^^^^^^^^^^^ required by this const generic parameter in `method_encoding_str_array`
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed: cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+  |
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot infer the value of the constant `_`
+  |
+note: required by a const generic parameter in `objc2::__macros::method_encoding_str_array`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/encoding.rs
+  |
+  | pub const fn method_encoding_str_array<const LEN: usize>(
+  |                                        ^^^^^^^^^^^^^^^^ required by this const generic parameter in `method_encoding_str_array`
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed: cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot satisfy `the constant `{__ENCODING_LEN + 1}` can be evaluated`
+  |
+  = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0284]: type annotations needed
+ --> ui/define_class_invalid_type.rs
+  |
+  | / define_class!(
+  | |     #[unsafe(super(NSObject))]
+  | |     struct CustomObject;
+... |
+  | | );
+  | |_^ cannot infer the value of the constant `_`
+  |
+note: required by a const generic parameter in `objc2::__macros::method_encoding_str_array`
+ --> $WORKSPACE/crates/objc2/src/__macros/define_class/encoding.rs
+  |
+  | pub const fn method_encoding_str_array<const LEN: usize>(
+  |                                        ^^^^^^^^^^^^^^^^ required by this const generic parameter in `method_encoding_str_array`
   = note: this error originates in the macro `$crate::__define_class_register_thunk` which comes from the expansion of the macro `define_class` (in Nightly builds, run with -Z macro-backtrace for more info)

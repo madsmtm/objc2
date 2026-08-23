@@ -1,7 +1,7 @@
 	.intel_syntax noprefix
 	.section	.text.fn1_get_ascii,"ax",@progbits
 	.globl	fn1_get_ascii
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	fn1_get_ascii,@function
 fn1_get_ascii:
 	mov	rax, qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_ascii::CACHED_NSSTRING, 0).0]
@@ -22,7 +22,7 @@ fn1_get_ascii:
 
 	.section	.text.fn2_get_utf16,"ax",@progbits
 	.globl	fn2_get_utf16
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	fn2_get_utf16,@function
 fn2_get_utf16:
 	mov	rax, qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_utf16::CACHED_NSSTRING, 0).0]
@@ -43,7 +43,7 @@ fn2_get_utf16:
 
 	.section	.text.fn3_get_with_nul,"ax",@progbits
 	.globl	fn3_get_with_nul
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	fn3_get_with_nul,@function
 fn3_get_with_nul:
 	mov	rax, qword ptr [rip + SYM(test_ns_string[CRATE_ID]::get_with_nul::CACHED_NSSTRING, 0).0]

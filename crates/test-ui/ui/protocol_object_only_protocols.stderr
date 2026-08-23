@@ -168,45 +168,6 @@ note: required by a bound in `ProtocolObject::<P>::from_ref`
   |         P: ImplementedBy<T>,
   |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
 
-error[E0277]: `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
- --> ui/protocol_object_only_protocols.rs
-  |
-  |     let _: &ProtocolObject<dyn NSObjectProtocol + Send + Sync> = ProtocolObject::from_ref(&*obj);
-  |                                                                  ------------------------ ^^^^^ `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>` cannot be shared between threads safely
-  |                                                                  |
-  |                                                                  required by a bound introduced by this call
-  |
-  = help: within `NSObject`, the trait `Sync` is not implemented for `UnsafeCell<PhantomData<(*const UnsafeCell<()>, PhantomPinned)>>`
-  = help: the following other types implement trait `ImplementedBy<T>`:
-            dyn NSCoding
-            dyn NSCopying
-            dyn NSDiscardableContent
-            dyn NSFastEnumeration
-            dyn NSMutableCopying
-            dyn NSObjectProtocol + Send + Sync
-            dyn NSObjectProtocol + Send
-            dyn NSObjectProtocol + Sync
-          and $N others
-note: required because it appears within the type `AnyObject`
- --> $WORKSPACE/crates/objc2/src/runtime/anyobject.rs
-  |
-  | pub struct AnyObject {
-  |            ^^^^^^^^^
-note: required because it appears within the type `NSObject`
- --> $WORKSPACE/crates/objc2/src/runtime/nsobject.rs
-  |
-  | pub struct NSObject {
-  |            ^^^^^^^^
-  = note: required for `dyn NSObjectProtocol + Send + Sync` to implement `ImplementedBy<NSObject>`
-note: required by a bound in `ProtocolObject::<P>::from_ref`
- --> $WORKSPACE/crates/objc2/src/runtime/protocol_object.rs
-  |
-  |     pub fn from_ref<T: ?Sized + Message>(obj: &T) -> &Self
-  |            -------- required by a bound in this associated function
-  |     where
-  |         P: ImplementedBy<T>,
-  |            ^^^^^^^^^^^^^^^^ required by this bound in `ProtocolObject::<P>::from_ref`
-
 error[E0277]: `*const UnsafeCell<()>` cannot be sent between threads safely
  --> ui/protocol_object_only_protocols.rs
   |

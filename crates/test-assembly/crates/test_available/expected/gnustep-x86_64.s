@@ -1,7 +1,7 @@
 	.intel_syntax noprefix
 	.section	.text.fn1_always,"ax",@progbits
 	.globl	fn1_always
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	fn1_always,@function
 fn1_always:
 	mov	al, 1
@@ -11,7 +11,7 @@ fn1_always:
 
 	.section	.text.fn2_never,"ax",@progbits
 	.globl	fn2_never
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	fn2_never,@function
 fn2_never:
 	xor	eax, eax
@@ -21,7 +21,7 @@ fn2_never:
 
 	.section	.text.fn3_low,"ax",@progbits
 	.globl	fn3_low
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	fn3_low,@function
 fn3_low:
 	mov	al, 1
@@ -31,7 +31,7 @@ fn3_low:
 
 	.section	.text.fn4_high,"ax",@progbits
 	.globl	fn4_high
-	.p2align	4
+	.prefalign	4, .Lfunc_end3, nop
 	.type	fn4_high,@function
 fn4_high:
 	mov	al, 1
@@ -41,7 +41,7 @@ fn4_high:
 
 	.section	.text.fn5_only_ios,"ax",@progbits
 	.globl	fn5_only_ios
-	.p2align	4
+	.prefalign	4, .Lfunc_end4, nop
 	.type	fn5_only_ios,@function
 fn5_only_ios:
 	xor	eax, eax
@@ -51,7 +51,7 @@ fn5_only_ios:
 
 	.section	.text.fn6_two_checks,"ax",@progbits
 	.globl	fn6_two_checks
-	.p2align	4
+	.prefalign	4, .Lfunc_end5, nop
 	.type	fn6_two_checks,@function
 fn6_two_checks:
 	mov	al, 1

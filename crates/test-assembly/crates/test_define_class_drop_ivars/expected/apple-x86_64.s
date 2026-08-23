@@ -116,7 +116,7 @@ Lfunc_begin1:
 	movzx	ecx, byte ptr [rax]
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
-	jne	LBB2_12
+	jne	LBB2_11
 	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].9]
@@ -191,7 +191,7 @@ Ltmp13:
 	pop	r14
 	pop	rbp
 	ret
-LBB2_12:
+LBB2_11:
 	lea	rdi, [rip + l_anon.[ID].7]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
 LBB2_8:
@@ -203,7 +203,7 @@ LBB2_7:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::ivars_offset::get_ivar_failed, 0)
 LBB2_13:
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::ivars::drop_flag_offset::get_drop_flag_failed, 0)
-LBB2_9:
+LBB2_12:
 Ltmp14:
 	mov	rbx, rax
 	mov	rdi, qword ptr [rbp - 24]
@@ -266,14 +266,14 @@ Ltmp18:
 Ltmp19:
 	mov	r12, rax
 	test	rbx, rbx
-	je	LBB4_3
+	je	LBB4_7
 	mov	rax, qword ptr [rip + ___IVAR_OFFSET_DropIvars]
 	mov	qword ptr [rbx + rax], r15
 	mov	qword ptr [rbx + rax + 8], r12
 	mov	rax, qword ptr [rip + ___DROP_FLAG_OFFSET_DropIvars]
 	mov	byte ptr [rbx + rax], 15
 	jmp	LBB4_9
-LBB4_3:
+LBB4_7:
 Ltmp26:
 	mov	rdi, r15
 	call	_objc_release
@@ -301,7 +301,7 @@ LBB4_11:
 	pop	r15
 	pop	rbp
 	ret
-LBB4_6:
+LBB4_5:
 Ltmp28:
 	mov	r14, rax
 Ltmp29:
@@ -309,10 +309,10 @@ Ltmp29:
 	call	_objc_release
 Ltmp30:
 	jmp	LBB4_15
-LBB4_7:
+LBB4_6:
 Ltmp31:
 	call	SYM(core[CRATE_ID]::panicking::panic_in_cleanup, 0)
-LBB4_5:
+LBB4_4:
 Ltmp20:
 	mov	r14, rax
 Ltmp21:

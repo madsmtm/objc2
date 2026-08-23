@@ -1,38 +1,29 @@
 	.intel_syntax noprefix
 	.section	.text.fn01_handle_new,"ax",@progbits
 	.globl	fn01_handle_new
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	fn01_handle_new,@function
 fn01_handle_new:
 	push	ebx
-	push	edi
-	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 8
 	call	.L0$pb
 .L0$pb:
 	pop	ebx
 .Ltmp0:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
 	sub	esp, 8
-	push	edi
-	push	esi
+	push	dword ptr [esp + 28]
+	push	dword ptr [esp + 28]
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	pop	esi
-	pop	edi
+	add	esp, 24
 	pop	ebx
-	ret
+	jmp	eax
 .Lfunc_end0:
 	.size	fn01_handle_new, .Lfunc_end0-fn01_handle_new
 
 	.section	.text.fn02_handle_new_fallible,"ax",@progbits
 	.globl	fn02_handle_new_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	fn02_handle_new_fallible,@function
 fn02_handle_new_fallible:
 	push	ebx
@@ -72,69 +63,51 @@ fn02_handle_new_fallible:
 
 	.section	.text.fn03_handle_alloc,"ax",@progbits
 	.globl	fn03_handle_alloc
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	fn03_handle_alloc,@function
 fn03_handle_alloc:
 	push	ebx
-	push	edi
-	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 8
 	call	.L2$pb
 .L2$pb:
 	pop	ebx
 .Ltmp2:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp2-.L2$pb)
 	sub	esp, 8
-	push	edi
-	push	esi
+	push	dword ptr [esp + 28]
+	push	dword ptr [esp + 28]
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	pop	esi
-	pop	edi
+	add	esp, 24
 	pop	ebx
-	ret
+	jmp	eax
 .Lfunc_end2:
 	.size	fn03_handle_alloc, .Lfunc_end2-fn03_handle_alloc
 
 	.section	.text.fn04_handle_init,"ax",@progbits
 	.globl	fn04_handle_init
-	.p2align	4
+	.prefalign	4, .Lfunc_end3, nop
 	.type	fn04_handle_init,@function
 fn04_handle_init:
 	push	ebx
-	push	edi
-	push	esi
-	mov	esi, dword ptr [esp + 16]
+	sub	esp, 8
+	mov	eax, dword ptr [esp + 16]
 	call	.L3$pb
 .L3$pb:
 	pop	ebx
 .Ltmp3:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp3-.L3$pb)
-	test	esi, esi
-	je	.LBB3_2
-	mov	edi, dword ptr [esp + 20]
+	test	eax, eax
+	je	.LBB3_1
 	sub	esp, 8
-	push	edi
-	push	esi
+	push	dword ptr [esp + 28]
+	push	eax
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	pop	esi
-	pop	edi
+	add	esp, 24
 	pop	ebx
-	ret
-.LBB3_2:
+	jmp	eax
+.LBB3_1:
 	xor	eax, eax
-	pop	esi
-	pop	edi
+	add	esp, 8
 	pop	ebx
 	ret
 .Lfunc_end3:
@@ -142,7 +115,7 @@ fn04_handle_init:
 
 	.section	.text.fn05_handle_init_fallible,"ax",@progbits
 	.globl	fn05_handle_init_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end4, nop
 	.type	fn05_handle_init_fallible,@function
 fn05_handle_init_fallible:
 	push	ebx
@@ -184,7 +157,7 @@ fn05_handle_init_fallible:
 
 	.section	.text.fn06_handle_alloc_init,"ax",@progbits
 	.globl	fn06_handle_alloc_init
-	.p2align	4
+	.prefalign	4, .Lfunc_end5, nop
 	.type	fn06_handle_alloc_init,@function
 fn06_handle_alloc_init:
 	push	ebx
@@ -234,7 +207,7 @@ fn06_handle_alloc_init:
 
 	.section	.text.fn07_handle_alloc_release,"ax",@progbits
 	.globl	fn07_handle_alloc_release
-	.p2align	4
+	.prefalign	4, .Lfunc_end6, nop
 	.type	fn07_handle_alloc_release,@function
 fn07_handle_alloc_release:
 	push	ebx
@@ -266,7 +239,7 @@ fn07_handle_alloc_release:
 
 	.section	.text.fn08_handle_alloc_init_release,"ax",@progbits
 	.globl	fn08_handle_alloc_init_release
-	.p2align	4
+	.prefalign	4, .Lfunc_end7, nop
 	.type	fn08_handle_alloc_init_release,@function
 fn08_handle_alloc_init_release:
 	push	ebp
@@ -308,38 +281,29 @@ fn08_handle_alloc_init_release:
 
 	.section	.text.fn09_handle_copy,"ax",@progbits
 	.globl	fn09_handle_copy
-	.p2align	4
+	.prefalign	4, .Lfunc_end8, nop
 	.type	fn09_handle_copy,@function
 fn09_handle_copy:
 	push	ebx
-	push	edi
-	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 8
 	call	.L8$pb
 .L8$pb:
 	pop	ebx
 .Ltmp8:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp8-.L8$pb)
 	sub	esp, 8
-	push	edi
-	push	esi
+	push	dword ptr [esp + 28]
+	push	dword ptr [esp + 28]
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	pop	esi
-	pop	edi
+	add	esp, 24
 	pop	ebx
-	ret
+	jmp	eax
 .Lfunc_end8:
 	.size	fn09_handle_copy, .Lfunc_end8-fn09_handle_copy
 
 	.section	.text.fn10_handle_copy_fallible,"ax",@progbits
 	.globl	fn10_handle_copy_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end9, nop
 	.type	fn10_handle_copy_fallible,@function
 fn10_handle_copy_fallible:
 	push	ebx
@@ -375,38 +339,29 @@ fn10_handle_copy_fallible:
 
 	.section	.text.fn11_handle_mutable_copy,"ax",@progbits
 	.globl	fn11_handle_mutable_copy
-	.p2align	4
+	.prefalign	4, .Lfunc_end10, nop
 	.type	fn11_handle_mutable_copy,@function
 fn11_handle_mutable_copy:
 	push	ebx
-	push	edi
-	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 8
 	call	.L10$pb
 .L10$pb:
 	pop	ebx
 .Ltmp10:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp10-.L10$pb)
 	sub	esp, 8
-	push	edi
-	push	esi
+	push	dword ptr [esp + 28]
+	push	dword ptr [esp + 28]
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	pop	esi
-	pop	edi
+	add	esp, 24
 	pop	ebx
-	ret
+	jmp	eax
 .Lfunc_end10:
 	.size	fn11_handle_mutable_copy, .Lfunc_end10-fn11_handle_mutable_copy
 
 	.section	.text.fn12_handle_mutable_copy_fallible,"ax",@progbits
 	.globl	fn12_handle_mutable_copy_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end11, nop
 	.type	fn12_handle_mutable_copy_fallible,@function
 fn12_handle_mutable_copy_fallible:
 	push	ebx
@@ -442,7 +397,7 @@ fn12_handle_mutable_copy_fallible:
 
 	.section	.text.fn13_handle_autoreleased,"ax",@progbits
 	.globl	fn13_handle_autoreleased
-	.p2align	4
+	.prefalign	4, .Lfunc_end12, nop
 	.type	fn13_handle_autoreleased,@function
 fn13_handle_autoreleased:
 	push	ebx
@@ -474,7 +429,7 @@ fn13_handle_autoreleased:
 
 	.section	.text.fn14_handle_autoreleased_with_arg,"ax",@progbits
 	.globl	fn14_handle_autoreleased_with_arg
-	.p2align	4
+	.prefalign	4, .Lfunc_end13, nop
 	.type	fn14_handle_autoreleased_with_arg,@function
 fn14_handle_autoreleased_with_arg:
 	push	ebp
@@ -513,7 +468,7 @@ fn14_handle_autoreleased_with_arg:
 
 	.section	.text.fn15_handle_autoreleased_fallible,"ax",@progbits
 	.globl	fn15_handle_autoreleased_fallible
-	.p2align	4
+	.prefalign	4, .Lfunc_end14, nop
 	.type	fn15_handle_autoreleased_fallible,@function
 fn15_handle_autoreleased_fallible:
 	push	ebx
@@ -556,7 +511,7 @@ fn15_handle_autoreleased_fallible:
 
 	.section	.text.fn16_handle_with_out_param,"ax",@progbits
 	.globl	fn16_handle_with_out_param
-	.p2align	4
+	.prefalign	4, .Lfunc_end15, nop
 	.type	fn16_handle_with_out_param,@function
 fn16_handle_with_out_param:
 .Lfunc_begin0:

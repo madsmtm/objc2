@@ -177,7 +177,7 @@ Lfunc_begin1:
 	xor	edx, edx
 	call	_objc_allocateClassPair
 	test	rax, rax
-	je	LBB5_8
+	je	LBB5_9
 	mov	qword ptr [rbp - 16], rax
 	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_d04fae079395572d]
 Ltmp8:
@@ -230,12 +230,12 @@ Ltmp17:
 LBB5_10:
 	lea	rdi, [rip + l_anon.[ID].2]
 	call	SYM(core[CRATE_ID]::option::unwrap_failed, 0)
-LBB5_8:
+LBB5_9:
 	lea	rdi, [rip + L_anon.[ID].5]
 	lea	rdx, [rip + l_anon.[ID].7]
 	mov	esi, 9
 	call	SYM(objc2[CRATE_ID]::__macros::define_class::checks::class_not_unique, 0)
-LBB5_9:
+LBB5_8:
 Ltmp18:
 	mov	rbx, rax
 	mov	rdi, qword ptr [rbp - 16]

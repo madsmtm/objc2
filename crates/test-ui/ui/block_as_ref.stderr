@@ -22,30 +22,6 @@ help: `RcBlock<'_, Signature, ThreadKindFrom>` implements trait `AsRef<T>`
   = note: required for `dyn Any` to implement `block2::traits::BoundedBy<dyn Send + Sync>`
   = note: required for `RcBlock<'_, fn(), dyn Any>` to implement `AsRef<RcBlock<'_, fn(), dyn Send + Sync>>`
 
-error[E0277]: `dyn Any` cannot be shared between threads safely
- --> ui/block_as_ref.rs
-  |
-  |     let _: &RcBlock<'_, _, dyn Send + Sync> = block.as_ref();
-  |                                                     ^^^^^^ `dyn Any` cannot be shared between threads safely
-  |
-  = help: the trait `Sync` is not implemented for `dyn Any`
-help: `RcBlock<'_, Signature, ThreadKindFrom>` implements trait `AsRef<T>`
- --> $WORKSPACE/crates/block2/src/rc_block.rs
-  |
-  | / impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
-  | |     AsRef<RcBlock<'b, Signature, ThreadKindTo>> for RcBlock<'b, Signature, ThreadKindFrom>
-  | | where
-  | |     ThreadKindFrom: BoundedBy<ThreadKindTo>,
-  | |____________________________________________^ `AsRef<RcBlock<'_, Signature, ThreadKindTo>>`
-...
-  | / impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
-  | |     AsRef<Block<'b, Signature, ThreadKindTo>> for RcBlock<'b, Signature, ThreadKindFrom>
-  | | where
-  | |     ThreadKindFrom: BoundedBy<ThreadKindTo>,
-  | |____________________________________________^ `AsRef<Block<'_, Signature, ThreadKindTo>>`
-  = note: required for `dyn Any` to implement `block2::traits::BoundedBy<dyn Send + Sync>`
-  = note: required for `RcBlock<'_, fn(), dyn Any>` to implement `AsRef<RcBlock<'_, fn(), dyn Send + Sync>>`
-
 error[E0277]: `dyn Any` cannot be sent between threads safely
  --> ui/block_as_ref.rs
   |
@@ -53,30 +29,6 @@ error[E0277]: `dyn Any` cannot be sent between threads safely
   |                                          ^^^^^^ `dyn Any` cannot be sent between threads safely
   |
   = help: the trait `Send` is not implemented for `dyn Any`
-help: `RcBlock<'_, Signature, ThreadKindFrom>` implements trait `AsRef<T>`
- --> $WORKSPACE/crates/block2/src/rc_block.rs
-  |
-  | / impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
-  | |     AsRef<RcBlock<'b, Signature, ThreadKindTo>> for RcBlock<'b, Signature, ThreadKindFrom>
-  | | where
-  | |     ThreadKindFrom: BoundedBy<ThreadKindTo>,
-  | |____________________________________________^ `AsRef<RcBlock<'_, Signature, ThreadKindTo>>`
-...
-  | / impl<'b, Signature, ThreadKindFrom: ?Sized, ThreadKindTo: ?Sized>
-  | |     AsRef<Block<'b, Signature, ThreadKindTo>> for RcBlock<'b, Signature, ThreadKindFrom>
-  | | where
-  | |     ThreadKindFrom: BoundedBy<ThreadKindTo>,
-  | |____________________________________________^ `AsRef<Block<'_, Signature, ThreadKindTo>>`
-  = note: required for `dyn Any` to implement `block2::traits::BoundedBy<dyn Send + Sync>`
-  = note: required for `RcBlock<'_, fn(), dyn Any>` to implement `AsRef<Block<'_, fn(), dyn Send + Sync>>`
-
-error[E0277]: `dyn Any` cannot be shared between threads safely
- --> ui/block_as_ref.rs
-  |
-  |     let _: &SendableBlock<'_, _> = block.as_ref();
-  |                                          ^^^^^^ `dyn Any` cannot be shared between threads safely
-  |
-  = help: the trait `Sync` is not implemented for `dyn Any`
 help: `RcBlock<'_, Signature, ThreadKindFrom>` implements trait `AsRef<T>`
  --> $WORKSPACE/crates/block2/src/rc_block.rs
   |

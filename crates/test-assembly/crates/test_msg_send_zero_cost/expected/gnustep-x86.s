@@ -1,38 +1,29 @@
 	.intel_syntax noprefix
 	.section	.text.handle,"ax",@progbits
 	.globl	handle
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	handle,@function
 handle:
 	push	ebx
-	push	edi
-	push	esi
-	mov	esi, dword ptr [esp + 16]
-	mov	edi, dword ptr [esp + 20]
+	sub	esp, 8
 	call	.L0$pb
 .L0$pb:
 	pop	ebx
 .Ltmp0:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp0-.L0$pb)
 	sub	esp, 8
-	push	edi
-	push	esi
+	push	dword ptr [esp + 28]
+	push	dword ptr [esp + 28]
 	call	objc_msg_lookup@PLT
-	add	esp, 8
-	push	edi
-	push	esi
-	call	eax
-	add	esp, 16
-	pop	esi
-	pop	edi
+	add	esp, 24
 	pop	ebx
-	ret
+	jmp	eax
 .Lfunc_end0:
 	.size	handle, .Lfunc_end0-handle
 
 	.section	.text.handle_with_sel,"ax",@progbits
 	.globl	handle_with_sel
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	handle_with_sel,@function
 handle_with_sel:
 	push	ebx

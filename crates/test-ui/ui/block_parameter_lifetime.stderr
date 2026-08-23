@@ -1,26 +1,71 @@
-error: implementation of `BlockSignature` is not general enough
+error[E0277]: the trait bound `for<'a> fn(&'a i8): BlockSignature` is not satisfied
  --> ui/block_parameter_lifetime.rs
   |
   |     is_encode::<&Block<'_, fn(&i8)>>();
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockSignature` is not general enough
+  |                 ^^^^^^^^^^^^^^^^^^^ the trait `BlockSignature` is not implemented for `for<'a> fn(&'a i8)`
   |
-  = note: `BlockSignature` would have to be implemented for the type `for<'a> fn(&'a i8)`
-  = note: ...but `BlockSignature` is actually implemented for the type `fn(&'0 i8)`, for some specific lifetime `'0`
+  = help: the following other types implement trait `BlockSignature`:
+            fn() -> R
+            fn(T1) -> R
+            fn(T1, T2) -> R
+            fn(T1, T2, T3) -> R
+            fn(T1, T2, T3, T4) -> R
+            fn(T1, T2, T3, T4, T5) -> R
+            fn(T1, T2, T3, T4, T5, T6) -> R
+            fn(T1, T2, T3, T4, T5, T6, T7) -> R
+          and $N others
+  = note: required for `block2::Block<'_, for<'a> fn(&'a i8)>` to implement `RefEncode`
+  = note: required for `&block2::Block<'_, for<'a> fn(&'a i8)>` to implement `Encode`
+note: required by a bound in `is_encode`
+ --> ui/block_parameter_lifetime.rs
+  |
+  | fn is_encode<T: Encode>() {}
+  |                 ^^^^^^ required by this bound in `is_encode`
 
-error: implementation of `BlockSignature` is not general enough
+error[E0277]: the trait bound `for<'a> fn(&'a i32) -> &'a i32: BlockSignature` is not satisfied
  --> ui/block_parameter_lifetime.rs
   |
   |     is_encode::<&Block<'_, fn(&i32) -> &i32>>();
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockSignature` is not general enough
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `BlockSignature` is not implemented for `for<'a> fn(&'a i32) -> &'a i32`
   |
-  = note: `BlockSignature` would have to be implemented for the type `for<'a> fn(&'a i32) -> &'a i32`
-  = note: ...but `BlockSignature` is actually implemented for the type `fn(&'0 i32) -> &'0 i32`, for some specific lifetime `'0`
+  = help: the following other types implement trait `BlockSignature`:
+            fn() -> R
+            fn(T1) -> R
+            fn(T1, T2) -> R
+            fn(T1, T2, T3) -> R
+            fn(T1, T2, T3, T4) -> R
+            fn(T1, T2, T3, T4, T5) -> R
+            fn(T1, T2, T3, T4, T5, T6) -> R
+            fn(T1, T2, T3, T4, T5, T6, T7) -> R
+          and $N others
+  = note: required for `block2::Block<'_, for<'a> fn(&'a i32) -> &'a i32>` to implement `RefEncode`
+  = note: required for `&block2::Block<'_, for<'a> fn(&'a i32) -> &'a i32>` to implement `Encode`
+note: required by a bound in `is_encode`
+ --> ui/block_parameter_lifetime.rs
+  |
+  | fn is_encode<T: Encode>() {}
+  |                 ^^^^^^ required by this bound in `is_encode`
 
-error: implementation of `BlockSignature` is not general enough
+error[E0277]: the trait bound `for<'a> fn(&'a i64, &'a i64) -> &'a i64: BlockSignature` is not satisfied
  --> ui/block_parameter_lifetime.rs
   |
   |     is_encode::<&Block<'_, for<'a> fn(&'a i64, &'a i64) -> &'a i64>>();
-  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ implementation of `BlockSignature` is not general enough
+  |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ the trait `BlockSignature` is not implemented for `for<'a> fn(&'a i64, &'a i64) -> &'a i64`
   |
-  = note: `BlockSignature` would have to be implemented for the type `for<'a> fn(&'a i64, &'a i64) -> &'a i64`
-  = note: ...but `BlockSignature` is actually implemented for the type `fn(&'0 i64, &'0 i64) -> &'0 i64`, for some specific lifetime `'0`
+  = help: the following other types implement trait `BlockSignature`:
+            fn() -> R
+            fn(T1) -> R
+            fn(T1, T2) -> R
+            fn(T1, T2, T3) -> R
+            fn(T1, T2, T3, T4) -> R
+            fn(T1, T2, T3, T4, T5) -> R
+            fn(T1, T2, T3, T4, T5, T6) -> R
+            fn(T1, T2, T3, T4, T5, T6, T7) -> R
+          and $N others
+  = note: required for `block2::Block<'_, for<'a> fn(&'a i64, &'a i64) -> &'a i64>` to implement `RefEncode`
+  = note: required for `&block2::Block<'_, for<'a> fn(&'a i64, &'a i64) -> &'a i64>` to implement `Encode`
+note: required by a bound in `is_encode`
+ --> ui/block_parameter_lifetime.rs
+  |
+  | fn is_encode<T: Encode>() {}
+  |                 ^^^^^^ required by this bound in `is_encode`

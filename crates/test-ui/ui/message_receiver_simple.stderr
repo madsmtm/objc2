@@ -1,4 +1,4 @@
-error[E0277]: the trait bound `&Retained<NSObject>: runtime::message_receiver::private::Sealed` is not satisfied
+error[E0277]: the trait bound `Retained<NSObject>: Message` is not satisfied
   --> ui/message_receiver_simple.rs
    |
    |     let _: usize = unsafe { MessageReceiver::send_message(&obj, sel!(hash), ()) };

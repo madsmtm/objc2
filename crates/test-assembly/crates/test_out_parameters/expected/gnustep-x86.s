@@ -1,6 +1,6 @@
 	.intel_syntax noprefix
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>>,)>, 0),"ax",@progbits
-	.p2align	4
+	.prefalign	4, .Lfunc_end0, nop
 	.type	SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>>,)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>>,)>, 0):
 	push	ebx
@@ -28,7 +28,7 @@ SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE
 	.size	SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>>,)>, 0), .Lfunc_end0-SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>>,)>, 0)
 
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>>,)>, 0),"ax",@progbits
-	.p2align	4
+	.prefalign	4, .Lfunc_end1, nop
 	.type	SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>>,)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>>,)>, 0):
 	push	ebx
@@ -58,7 +58,7 @@ SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE
 	.size	SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>>,)>, 0), .Lfunc_end1-SYM(core[CRATE_ID]::ptr::drop_glue::<(core[CRATE_ID]::option::Option<objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>>,)>, 0)
 
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>, objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>)>, 0),"ax",@progbits
-	.p2align	4
+	.prefalign	4, .Lfunc_end2, nop
 	.type	SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>, objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>, objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, false>)>, 0):
 .Lfunc_begin0:
@@ -152,7 +152,7 @@ GCC_except_table2:
 	.p2align	2, 0x0
 
 	.section	.text.SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>,)>, 0),"ax",@progbits
-	.p2align	4
+	.prefalign	4, .Lfunc_end3, nop
 	.type	SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>,)>, 0),@function
 SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>,)>, 0):
 	push	ebx
@@ -181,7 +181,7 @@ SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::Reta
 
 	.section	.text.fn1_nonnull_nonnull,"ax",@progbits
 	.globl	fn1_nonnull_nonnull
-	.p2align	4
+	.prefalign	4, .Lfunc_end4, nop
 	.type	fn1_nonnull_nonnull,@function
 fn1_nonnull_nonnull:
 .Lfunc_begin1:
@@ -282,7 +282,7 @@ GCC_except_table4:
 
 	.section	.text.fn2_null_nonnull,"ax",@progbits
 	.globl	fn2_null_nonnull
-	.p2align	4
+	.prefalign	4, .Lfunc_end5, nop
 	.type	fn2_null_nonnull,@function
 fn2_null_nonnull:
 .Lfunc_begin2:
@@ -386,7 +386,7 @@ GCC_except_table5:
 
 	.section	.text.fn3_nonnull_null,"ax",@progbits
 	.globl	fn3_nonnull_null
-	.p2align	4
+	.prefalign	4, .Lfunc_end6, nop
 	.type	fn3_nonnull_null,@function
 fn3_nonnull_null:
 .Lfunc_begin3:
@@ -395,30 +395,29 @@ fn3_nonnull_null:
 	push	edi
 	push	esi
 	sub	esp, 12
-	mov	eax, dword ptr [esp + 40]
-	mov	edi, dword ptr [esp + 36]
+	mov	edi, dword ptr [esp + 40]
+	mov	eax, dword ptr [esp + 36]
 	mov	ebp, dword ptr [esp + 32]
 	call	.L6$pb
 .L6$pb:
 	pop	ebx
 .Ltmp42:
 	add	ebx, offset _GLOBAL_OFFSET_TABLE_+(.Ltmp42-.L6$pb)
-	mov	esi, dword ptr [eax]
+	mov	esi, dword ptr [edi]
 .Ltmp34:
-	mov	dword ptr [esp + 4], edi
+	mov	dword ptr [esp + 4], eax
 	mov	dword ptr [esp], ebp
 	call	objc_msg_lookup@PLT
 .Ltmp35:
 .Ltmp36:
-	mov	ecx, dword ptr [esp + 40]
-	mov	dword ptr [esp + 4], edi
+	mov	ecx, dword ptr [esp + 36]
+	mov	dword ptr [esp + 8], edi
 	mov	dword ptr [esp], ebp
-	mov	dword ptr [esp + 8], ecx
+	mov	dword ptr [esp + 4], ecx
 	call	eax
 .Ltmp37:
 	mov	ebp, eax
-	mov	eax, dword ptr [esp + 40]
-	mov	eax, dword ptr [eax]
+	mov	eax, dword ptr [edi]
 	mov	dword ptr [esp], eax
 	call	objc_retain@PLT
 	test	esi, esi
@@ -437,7 +436,7 @@ fn3_nonnull_null:
 .Ltmp38:
 	mov	ebp, eax
 .Ltmp39:
-	mov	ecx, dword ptr [esp + 40]
+	mov	ecx, edi
 	mov	edx, esi
 	call	SYM(core[CRATE_ID]::ptr::drop_glue::<(objc2[CRATE_ID]::__macros::writeback::RetainNewReleaseOldOnDrop<objc2[CRATE_ID]::runtime::nsobject::NSObject, true>,)>, 0)
 .Ltmp40:
@@ -485,7 +484,7 @@ GCC_except_table6:
 
 	.section	.text.fn4_null_null,"ax",@progbits
 	.globl	fn4_null_null
-	.p2align	4
+	.prefalign	4, .Lfunc_end7, nop
 	.type	fn4_null_null,@function
 fn4_null_null:
 .Lfunc_begin4:
@@ -591,7 +590,7 @@ GCC_except_table7:
 
 	.section	.text.fn5_two_nonnull_nonnull,"ax",@progbits
 	.globl	fn5_two_nonnull_nonnull
-	.p2align	4
+	.prefalign	4, .Lfunc_end8, nop
 	.type	fn5_two_nonnull_nonnull,@function
 fn5_two_nonnull_nonnull:
 .Lfunc_begin5:
@@ -730,7 +729,7 @@ GCC_except_table8:
 
 	.section	.text.fn6_call_with_none1,"ax",@progbits
 	.globl	fn6_call_with_none1
-	.p2align	4
+	.prefalign	4, .Lfunc_end9, nop
 	.type	fn6_call_with_none1,@function
 fn6_call_with_none1:
 	push	ebx
@@ -762,7 +761,7 @@ fn6_call_with_none1:
 
 	.section	.text.fn6_call_with_none2,"ax",@progbits
 	.globl	fn6_call_with_none2
-	.p2align	4
+	.prefalign	4, .Lfunc_end10, nop
 	.type	fn6_call_with_none2,@function
 fn6_call_with_none2:
 	push	ebx
@@ -794,7 +793,7 @@ fn6_call_with_none2:
 
 	.section	.text.fn6_call_with_none3,"ax",@progbits
 	.globl	fn6_call_with_none3
-	.p2align	4
+	.prefalign	4, .Lfunc_end11, nop
 	.type	fn6_call_with_none3,@function
 fn6_call_with_none3:
 .Lfunc_begin6:
@@ -907,7 +906,7 @@ GCC_except_table11:
 
 	.section	.text.fn6_call_with_none4,"ax",@progbits
 	.globl	fn6_call_with_none4
-	.p2align	4
+	.prefalign	4, .Lfunc_end12, nop
 	.type	fn6_call_with_none4,@function
 fn6_call_with_none4:
 .Lfunc_begin7:
@@ -1020,7 +1019,7 @@ GCC_except_table12:
 
 	.section	.text.fn7_call_with_some1,"ax",@progbits
 	.globl	fn7_call_with_some1
-	.p2align	4
+	.prefalign	4, .Lfunc_end13, nop
 	.type	fn7_call_with_some1,@function
 fn7_call_with_some1:
 .Lfunc_begin8:
@@ -1140,7 +1139,7 @@ GCC_except_table13:
 
 	.section	.text.fn7_call_with_some2,"ax",@progbits
 	.globl	fn7_call_with_some2
-	.p2align	4
+	.prefalign	4, .Lfunc_end14, nop
 	.type	fn7_call_with_some2,@function
 fn7_call_with_some2:
 .Lfunc_begin9:
@@ -1264,7 +1263,7 @@ GCC_except_table14:
 
 	.section	.text.fn7_call_with_some3,"ax",@progbits
 	.globl	fn7_call_with_some3
-	.p2align	4
+	.prefalign	4, .Lfunc_end15, nop
 	.type	fn7_call_with_some3,@function
 fn7_call_with_some3:
 .Lfunc_begin10:

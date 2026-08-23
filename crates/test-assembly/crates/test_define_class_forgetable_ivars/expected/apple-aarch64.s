@@ -47,8 +47,7 @@ Lfunc_begin0:
 	ldr	x8, [x0]
 	ldrb	w9, [x8]
 	strb	wzr, [x8]
-	cmp	w9, #1
-	b.ne	LBB1_6
+	cbz	w9, LBB1_6
 Lloh8:
 	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh9:
