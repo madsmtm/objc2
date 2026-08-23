@@ -1,0 +1,122 @@
+error: no rules expected keyword `fn`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         fn has_body() {
+  |         ^^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         unsafe impl $type:ty {
+  |         ^^^^^^
+
+error: no rules expected `{`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         fn with_pattern((_a, _b): (u32, i32)) {}
+  |                                               ^ no rules expected this token in macro call
+  |
+note: while trying to match `;`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         $(where $($where:ty : $bound:path),+ $(,)?)?;
+  |                                                     ^
+
+error: number of arguments in function and selector did not match
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  | /     extern_methods!(
+  | |         #[unsafe(method(bareSelf))]
+  | |         fn bare_self(self);
+  | |     );
+  | |_____^
+  |
+  = note: this error originates in the macro `$crate::__parse_sel_and_params_inner` which comes from the expansion of the macro `extern_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: no rules expected keyword `const`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         const fn is_const();
+  |         ^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         unsafe impl $type:ty {
+  |         ^^^^^^
+
+error: no rules expected keyword `async`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         async fn is_async();
+  |         ^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         unsafe impl $type:ty {
+  |         ^^^^^^
+
+error: no rules expected keyword `extern`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         extern "C" fn has_extern();
+  |         ^^^^^^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         unsafe impl $type:ty {
+  |         ^^^^^^
+
+error: no rules expected keyword `fn`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         fn has_generic<T>();
+  |         ^^ no rules expected this token in macro call
+  |
+note: while trying to match keyword `unsafe`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         unsafe impl $type:ty {
+  |         ^^^^^^
+
+error: unexpected end of macro invocation
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         fn unfinished()
+  |                        ^ missing tokens in macro arguments
+  |
+note: while trying to match `;`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         $(where $($where:ty : $bound:path),+ $(,)?)?;
+  |                                                     ^
+
+error: no rules expected `!`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         #![doc = "inner_attribute"]
+  |          ^ no rules expected this token in macro call
+  |
+note: while trying to match `[`
+ --> $WORKSPACE/crates/objc2/src/__macros/extern_methods.rs
+  |
+  |         $(#[$($m:tt)*])*
+  |            ^
+
+error: no rules expected keyword `type`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         type TypeAlias = Self;
+  |         ^^^^ no rules expected this token in macro call
+  |
+  = note: while trying to match end of macro
+
+error: no rules expected keyword `const`
+ --> ui/extern_methods_invalid_syntax.rs
+  |
+  |         const CONSTANT: () = ();
+  |         ^^^^^ no rules expected this token in macro call
+  |
+  = note: while trying to match end of macro
