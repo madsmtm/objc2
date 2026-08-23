@@ -13,9 +13,9 @@ Lloh1:
 	.p2align	2
 _fn2_dyn_call:
 Lloh2:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
 Lloh3:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGEOFF]
 	b	_objc_msgSend
 	.loh AdrpLdr	Lloh2, Lloh3
 
@@ -27,9 +27,9 @@ _fn3_dyn_consume:
 	add	x29, sp, #16
 	mov	x19, x0
 Lloh4:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGE
 Lloh5:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac@PAGEOFF]
 	bl	_objc_msgSend
 	mov	x0, x19
 	ldp	x29, x30, [sp, #16]
@@ -43,9 +43,9 @@ L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
+	.globl	_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
+_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 	.quad	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

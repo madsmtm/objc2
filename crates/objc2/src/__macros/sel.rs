@@ -322,7 +322,7 @@ macro_rules! __statics_sel {
             all(target_os = "macos", target_arch = "x86"),
             link_section = "__OBJC,__message_refs,literal_pointers",
         )]
-        #[export_name = $crate::__macros::concat!("\x01L_OBJC_SELECTOR_REFERENCES_", $hash)]
+        #[export_name = $crate::__macros::concat!("OBJC_SELECTOR_REFERENCES_", $hash)]
         static REF: $crate::__macros::SyncUnsafeCell<$crate::runtime::Sel> = unsafe {
             $crate::__macros::SyncUnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr()))
         };

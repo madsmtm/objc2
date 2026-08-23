@@ -26,7 +26,7 @@ _fn2_dyn_call:
 L1$pb:
 	pop	eax
 	sub	esp, 8
-	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-L1$pb]
+	push	dword ptr [eax + _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-L1$pb]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 24
@@ -43,7 +43,7 @@ _fn3_dyn_consume:
 L2$pb:
 	pop	eax
 	sub	esp, 8
-	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-L2$pb]
+	push	dword ptr [eax + _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-L2$pb]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 24
@@ -56,9 +56,9 @@ L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.asciz	"aMethod"
 
 	.section	__OBJC,__message_refs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
+	.globl	_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
+_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 	.long	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
 	.section	__OBJC,__image_info

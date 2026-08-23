@@ -6,8 +6,8 @@
 _fn1_handle_with_sel:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074-(LPC0_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074-(LPC0_0+8))
+	movw	r1, :lower16:(_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074-(LPC0_0+8))
+	movt	r1, :upper16:(_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074-(LPC0_0+8))
 LPC0_0:
 	ldr	r1, [pc, r1]
 	pop	{r7, lr}
@@ -19,14 +19,14 @@ LPC0_0:
 _fn2_handle_alloc_init:
 	push	{r4, r5, r7, lr}
 	add	r7, sp, #8
-	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_0+8))
-	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_0+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_0+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-(LPC1_0+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
 	ldr	r1, [r1]
 	bl	_objc_msgSend
-	movw	r1, :lower16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_1+8))
-	movt	r1, :upper16:(LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_1+8))
+	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_1+8))
+	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-(LPC1_1+8))
 LPC1_1:
 	ldr	r1, [pc, r1]
 	mov	r4, r0
@@ -52,31 +52,31 @@ _fn3_use_generic:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r0
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21-(LPC2_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21-(LPC2_0+8))
+	movw	r1, :lower16:(_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21-(LPC2_0+8))
+	movt	r1, :upper16:(_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21-(LPC2_0+8))
 LPC2_0:
 	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_1+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_1+8))
+	movw	r2, :lower16:(_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_1+8))
+	movt	r2, :upper16:(_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_1+8))
 LPC2_1:
 	ldr	r2, [pc, r2]
 	bl	_objc_msgSend
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9-(LPC2_2+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9-(LPC2_2+8))
+	movw	r1, :lower16:(_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9-(LPC2_2+8))
+	movt	r1, :upper16:(_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9-(LPC2_2+8))
 LPC2_2:
 	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_3+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_3+8))
+	movw	r2, :lower16:(_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_3+8))
+	movt	r2, :upper16:(_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_3+8))
 LPC2_3:
 	ldr	r2, [pc, r2]
 	mov	r0, r4
 	bl	_objc_msgSend
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_6659046596384437-(LPC2_4+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_6659046596384437-(LPC2_4+8))
+	movw	r1, :lower16:(_OBJC_SELECTOR_REFERENCES_6659046596384437-(LPC2_4+8))
+	movt	r1, :upper16:(_OBJC_SELECTOR_REFERENCES_6659046596384437-(LPC2_4+8))
 LPC2_4:
 	ldr	r1, [pc, r1]
-	movw	r2, :lower16:(L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_5+8))
-	movt	r2, :upper16:(L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_5+8))
+	movw	r2, :lower16:(_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_5+8))
+	movt	r2, :upper16:(_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-(LPC2_5+8))
 LPC2_5:
 	ldr	r2, [pc, r2]
 	mov	r0, r4
@@ -105,29 +105,29 @@ L_OBJC_METH_VAR_NAME_e348e18690a1021e:
 	.asciz	"generic:selector:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_6659046596384437
+	.globl	_OBJC_SELECTOR_REFERENCES_6659046596384437
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_6659046596384437:
+_OBJC_SELECTOR_REFERENCES_6659046596384437:
 	.long	L_OBJC_METH_VAR_NAME_6659046596384437
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
+	.globl	_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
+_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
 	.long	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
+	.globl	_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
+_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
 	.long	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
+	.globl	_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
+_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
 	.long	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
+	.globl	_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
+_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
 	.long	L_OBJC_METH_VAR_NAME_e348e18690a1021e
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
@@ -168,11 +168,11 @@ l_anon.[ID].1:
 
 	.section	__DATA,__nl_symbol_ptr,non_lazy_symbol_pointers
 	.p2align	2, 0x0
-LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_alloc
+L_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
+	.indirect_symbol	_OBJC_SELECTOR_REFERENCES_alloc
 	.long	0
-LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
+L_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
+	.indirect_symbol	_OBJC_SELECTOR_REFERENCES_init
 	.long	0
 
 .subsections_via_symbols

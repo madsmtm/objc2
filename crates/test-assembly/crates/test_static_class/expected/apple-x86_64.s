@@ -5,7 +5,7 @@
 _fn1_get_class:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34]
 	pop	rbp
 	ret
 
@@ -14,7 +14,7 @@ _fn1_get_class:
 _fn1_get_same_class:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a]
 	pop	rbp
 	ret
 
@@ -23,7 +23,7 @@ _fn1_get_same_class:
 _fn3_get_different_class:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1]
 	pop	rbp
 	ret
 
@@ -41,10 +41,10 @@ _fn5_use_fns:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34]
-	mov	rdx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a]
-	mov	rsi, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1]
-	mov	rdi, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5]
+	mov	rcx, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34]
+	mov	rdx, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a]
+	mov	rsi, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1]
+	mov	rdi, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5]
 	mov	qword ptr [rax], rcx
 	mov	qword ptr [rax + 8], rdx
 	mov	qword ptr [rax + 16], rsi
@@ -58,7 +58,7 @@ _fn6_use_same_twice:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34]
+	mov	rcx, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34]
 	mov	qword ptr [rdi], rcx
 	mov	qword ptr [rdi + 8], rcx
 	pop	rbp
@@ -73,34 +73,34 @@ _fn7_use_in_loop:
 	ret
 
 	.section	__DATA,__objc_classrefs
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34
+	.globl	_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34:
+_OBJC_CLASSLIST_REFERENCES_$_1f36dafa1e0a7b34:
 	.quad	_OBJC_CLASS_$_NSObject
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1
+	.globl	_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1:
+_OBJC_CLASSLIST_REFERENCES_$_5a6ce274a9f949e1:
 	.quad	_OBJC_CLASS_$_NSString
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_9f503c7582f87b48
+	.globl	_OBJC_CLASSLIST_REFERENCES_$_9f503c7582f87b48
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_9f503c7582f87b48:
+_OBJC_CLASSLIST_REFERENCES_$_9f503c7582f87b48:
 	.quad	_OBJC_CLASS_$_NSData
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5
+	.globl	_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5:
+_OBJC_CLASSLIST_REFERENCES_$_a92f01d3b55d29c5:
 	.quad	_OBJC_CLASS_$_NSException
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_d4ef9efb3ee49ab7
+	.globl	_OBJC_CLASSLIST_REFERENCES_$_d4ef9efb3ee49ab7
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_d4ef9efb3ee49ab7:
+_OBJC_CLASSLIST_REFERENCES_$_d4ef9efb3ee49ab7:
 	.quad	_OBJC_CLASS_$_NSLock
 
-	.globl	L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a
+	.globl	_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a
 	.p2align	3, 0x0
-L_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a:
+_OBJC_CLASSLIST_REFERENCES_$_e1a6d3426ab3be5a:
 	.quad	_OBJC_CLASS_$_NSObject
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

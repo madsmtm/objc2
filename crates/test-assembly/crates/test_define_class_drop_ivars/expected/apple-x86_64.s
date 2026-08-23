@@ -28,7 +28,7 @@ Ltmp1:
 	mov	rdi, r15
 	call	_objc_release
 LBB0_2:
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 40], r14
 	mov	qword ptr [rbp - 32], rax
@@ -117,7 +117,7 @@ Lfunc_begin1:
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
 	jne	LBB2_12
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].9]
 	xor	edx, edx
@@ -125,7 +125,7 @@ Lfunc_begin1:
 	test	rax, rax
 	je	LBB2_8
 	mov	qword ptr [rbp - 24], rax
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_dealloc@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp6:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::ivars::dealloc::<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
@@ -134,7 +134,7 @@ Ltmp6:
 	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp8:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_drop_ivars[CRATE_ID]::DropIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_drop_ivars[CRATE_ID]::DropIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_drop_ivars[CRATE_ID]::DropIvars>, 0)]
@@ -281,9 +281,9 @@ Ltmp27:
 	mov	rdi, r12
 	call	_objc_release
 LBB4_9:
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 48], rbx
 	mov	qword ptr [rbp - 40], rax

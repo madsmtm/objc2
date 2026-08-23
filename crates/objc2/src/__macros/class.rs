@@ -143,7 +143,7 @@ macro_rules! __statics_class {
         /// SAFETY: Same as `REF` in `__statics_sel!`.
         #[link_section = "__DATA,__objc_classrefs,regular"]
         #[export_name = $crate::__macros::concat!(
-            "\x01L_OBJC_CLASSLIST_REFERENCES_$_",
+            "OBJC_CLASSLIST_REFERENCES_$_",
             $hash,
         )]
         static REF: $crate::__macros::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {

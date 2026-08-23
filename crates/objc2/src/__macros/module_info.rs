@@ -12,7 +12,7 @@ macro_rules! __statics_module_info {
         /// This is similar to image info, and must be present in the final
         /// binary on macOS 32-bit.
         #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
-        #[export_name = $crate::__macros::concat!("\x01L_OBJC_MODULES_", $hash)]
+        #[export_name = $crate::__macros::concat!("\x01l_OBJC_MODULES_", $hash)]
         #[used] // Make sure this reaches the linker
         static _MODULE_INFO: $crate::__macros::ModuleInfo =
             $crate::__macros::ModuleInfo::new(MODULE_INFO_NAME.as_ptr());

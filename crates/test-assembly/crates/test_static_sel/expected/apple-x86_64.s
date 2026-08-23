@@ -5,7 +5,7 @@
 _fn1_get_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb]
 	pop	rbp
 	ret
 
@@ -14,7 +14,7 @@ _fn1_get_sel:
 _fn2_get_same_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_9303807037ba4f9f]
 	pop	rbp
 	ret
 
@@ -23,7 +23,7 @@ _fn2_get_same_sel:
 _fn3_get_common_twice:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_alloc@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_alloc@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	rdx, rax
 	pop	rbp
@@ -34,7 +34,7 @@ _fn3_get_common_twice:
 _fn4_get_different_sel:
 	push	rbp
 	mov	rbp, rsp
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85]
 	pop	rbp
 	ret
 
@@ -52,10 +52,10 @@ _fn6_use_fns:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb]
-	mov	rdx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f]
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85]
-	mov	rdi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc]
+	mov	rcx, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb]
+	mov	rdx, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_9303807037ba4f9f]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85]
+	mov	rdi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc]
 	mov	qword ptr [rax], rcx
 	mov	qword ptr [rax + 8], rdx
 	mov	qword ptr [rax + 16], rsi
@@ -69,7 +69,7 @@ _fn7_use_same_twice:
 	push	rbp
 	mov	rbp, rsp
 	mov	rax, rdi
-	mov	rcx, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb]
+	mov	rcx, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb]
 	mov	qword ptr [rdi], rcx
 	mov	qword ptr [rdi + 8], rcx
 	pop	rbp
@@ -109,34 +109,34 @@ L_OBJC_METH_VAR_NAME_ff60dae1998e0c85:
 	.asciz	"i:am:different:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb
+	.globl	_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb:
+_OBJC_SELECTOR_REFERENCES_2668dedcc69bf8fb:
 	.quad	L_OBJC_METH_VAR_NAME_2668dedcc69bf8fb
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_29d0234b9445d447
+	.globl	_OBJC_SELECTOR_REFERENCES_29d0234b9445d447
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_29d0234b9445d447:
+_OBJC_SELECTOR_REFERENCES_29d0234b9445d447:
 	.quad	L_OBJC_METH_VAR_NAME_29d0234b9445d447
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f
+	.globl	_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f:
+_OBJC_SELECTOR_REFERENCES_9303807037ba4f9f:
 	.quad	L_OBJC_METH_VAR_NAME_9303807037ba4f9f
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518
+	.globl	_OBJC_SELECTOR_REFERENCES_a23daf114eba1518
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_a23daf114eba1518:
+_OBJC_SELECTOR_REFERENCES_a23daf114eba1518:
 	.quad	L_OBJC_METH_VAR_NAME_a23daf114eba1518
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc
+	.globl	_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc:
+_OBJC_SELECTOR_REFERENCES_e91a5376ddae3cfc:
 	.quad	L_OBJC_METH_VAR_NAME_e91a5376ddae3cfc
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85
+	.globl	_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85:
+_OBJC_SELECTOR_REFERENCES_ff60dae1998e0c85:
 	.quad	L_OBJC_METH_VAR_NAME_ff60dae1998e0c85
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

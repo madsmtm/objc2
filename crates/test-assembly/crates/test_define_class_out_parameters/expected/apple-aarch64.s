@@ -159,9 +159,9 @@ Lfunc_begin1:
 	cmp	w9, #1
 	b.ne	LBB5_8
 Lloh0:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh1:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh2:
 	ldr	x0, [x8]
 Lloh3:
@@ -173,9 +173,9 @@ Lloh4:
 	cbz	x0, LBB5_9
 	str	x0, [sp, #8]
 Lloh5:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_d04fae079395572d@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_d04fae079395572d@PAGE
 Lloh6:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_d04fae079395572d@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_d04fae079395572d@PAGEOFF]
 Ltmp8:
 Lloh7:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, 0)@PAGE
@@ -190,9 +190,9 @@ Lloh10:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp9:
 Lloh11:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe@PAGE
 Lloh12:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe@PAGEOFF]
 Ltmp10:
 Lloh13:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, core[CRATE_ID]::option::Option<&mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>, 0)@PAGE
@@ -207,9 +207,9 @@ Lloh16:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp11:
 Lloh17:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a@PAGE
 Lloh18:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a@PAGEOFF]
 Ltmp12:
 Lloh19:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>, 0)@PAGE
@@ -224,9 +224,9 @@ Lloh22:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp13:
 Lloh23:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a@PAGE
 Lloh24:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a@PAGEOFF]
 Ltmp14:
 Lloh25:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, core[CRATE_ID]::option::Option<&mut core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>>, 0)@PAGE
@@ -241,9 +241,9 @@ Lloh28:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp15:
 Lloh29:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_9c279b7fa093536a@PAGE
 Lloh30:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_9c279b7fa093536a@PAGEOFF]
 Ltmp16:
 Lloh31:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, 0)@PAGE
@@ -451,29 +451,29 @@ L_OBJC_METH_VAR_NAME_d04fae079395572d:
 	.asciz	"nonnull_nonnull:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a
+	.globl	_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a:
+_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a:
 	.quad	L_OBJC_METH_VAR_NAME_06f3315fc4e8da1a
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe
+	.globl	_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe:
+_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe:
 	.quad	L_OBJC_METH_VAR_NAME_48e4a002a77cbcfe
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a
+	.globl	_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a:
+_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a:
 	.quad	L_OBJC_METH_VAR_NAME_77a278f49aa73e0a
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a
+	.globl	_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
+_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
 	.quad	L_OBJC_METH_VAR_NAME_9c279b7fa093536a
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_d04fae079395572d
+	.globl	_OBJC_SELECTOR_REFERENCES_d04fae079395572d
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_d04fae079395572d:
+_OBJC_SELECTOR_REFERENCES_d04fae079395572d:
 	.quad	L_OBJC_METH_VAR_NAME_d04fae079395572d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

@@ -16,15 +16,15 @@ LBB0_2:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh2:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh3:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh4:
 	ldr	x1, [x8]
 Lloh5:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh6:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh7:
 	ldr	x8, [x8]
 	stp	x0, x8, [sp]
@@ -50,9 +50,9 @@ Lfunc_begin0:
 	cmp	w9, #1
 	b.ne	LBB1_6
 Lloh8:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh9:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh10:
 	ldr	x0, [x8]
 Lloh11:
@@ -64,9 +64,9 @@ Lloh12:
 	cbz	x0, LBB1_7
 	str	x0, [sp]
 Lloh13:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh14:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh15:
 	ldr	x1, [x8]
 Ltmp0:
@@ -214,15 +214,15 @@ LBB3_2:
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
 Lloh36:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh37:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh38:
 	ldr	x1, [x8]
 Lloh39:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh40:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh41:
 	ldr	x8, [x8]
 	stp	x0, x8, [sp]

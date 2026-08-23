@@ -32,9 +32,9 @@ Ltmp1:
 	bl	_objc_release
 LBB0_5:
 Lloh4:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh5:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh6:
 	ldr	x8, [x8]
 	stp	x20, x8, [sp]
@@ -120,9 +120,9 @@ Lfunc_begin1:
 	cmp	w9, #1
 	b.ne	LBB2_9
 Lloh7:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh8:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh9:
 	ldr	x0, [x8]
 Lloh10:
@@ -134,9 +134,9 @@ Lloh11:
 	cbz	x0, LBB2_10
 	str	x0, [sp]
 Lloh12:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGE
 Lloh13:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_dealloc@GOTPAGEOFF]
 Lloh14:
 	ldr	x1, [x8]
 Ltmp6:
@@ -153,9 +153,9 @@ Lloh18:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp7:
 Lloh19:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh20:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh21:
 	ldr	x1, [x8]
 Ltmp8:
@@ -360,15 +360,15 @@ Ltmp27:
 	bl	_objc_release
 LBB4_6:
 Lloh49:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGE
 Lloh50:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_init@GOTPAGEOFF]
 Lloh51:
 	ldr	x1, [x8]
 Lloh52:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh53:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh54:
 	ldr	x8, [x8]
 	stp	x19, x8, [sp]

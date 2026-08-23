@@ -123,7 +123,7 @@ SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_clas
 	jne	LBB3_1
 LBB3_2:
 	mov	rdi, qword ptr [rip + ___CLASS_NoIvars]
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	call	_objc_msgSend
 	add	rsp, 16
@@ -151,7 +151,7 @@ SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_clas
 	jne	LBB4_1
 LBB4_2:
 	mov	rdi, qword ptr [rip + ___CLASS_NoIvars]
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	call	_objc_msgSend
 	mov	rdi, rax
@@ -190,7 +190,7 @@ Lfunc_begin1:
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
 	jne	LBB6_15
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].11]
 	xor	edx, edx
@@ -198,7 +198,7 @@ Lfunc_begin1:
 	test	rax, rax
 	je	LBB6_13
 	mov	qword ptr [rbp - 16], rax
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_a9fb958c74006297]
 Ltmp6:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -206,7 +206,7 @@ Ltmp6:
 	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp7:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_adfe2eb45443b755]
 Ltmp8:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
 	lea	rcx, [rip + L_anon.[ID].4]
@@ -214,7 +214,7 @@ Ltmp8:
 	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9]
 Ltmp10:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)]
 	lea	rcx, [rip + L_anon.[ID].5]
@@ -222,7 +222,7 @@ Ltmp10:
 	mov	r8d, 5
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp11:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4]
 Ltmp12:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)]
 	lea	rcx, [rip + L_anon.[ID].6]
@@ -230,7 +230,7 @@ Ltmp12:
 	mov	r8d, 4
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp13:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0]
 Ltmp14:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)]
 	lea	rcx, [rip + L_anon.[ID].7]
@@ -254,7 +254,7 @@ LBB6_9:
 	mov	rsi, rax
 	call	_class_addProtocol
 LBB6_11:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_996a3b5043cf563d]
 Ltmp16:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)]
 	lea	rcx, [rip + L_anon.[ID].10]
@@ -331,7 +331,7 @@ SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::method_retained, 0):
 	jne	LBB8_1
 LBB8_2:
 	mov	rdi, qword ptr [rip + ___CLASS_NoIvars]
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	call	_objc_msgSend
 	add	rsp, 16
@@ -465,7 +465,7 @@ SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars>::copy_with_zone, 0):
 	jne	LBB11_1
 LBB11_2:
 	mov	rdi, qword ptr [rip + ___CLASS_NoIvars]
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_new@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 	call	_objc_msgSend
 	add	rsp, 16
@@ -535,34 +535,34 @@ L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0:
 	.asciz	"methodRetainedWithParam:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4
+	.globl	_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4:
+_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4:
 	.quad	L_OBJC_METH_VAR_NAME_44ec46acb208c3d4
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9
+	.globl	_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9:
+_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9:
 	.quad	L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d
+	.globl	_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d:
+_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d:
 	.quad	L_OBJC_METH_VAR_NAME_996a3b5043cf563d
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297
+	.globl	_OBJC_SELECTOR_REFERENCES_a9fb958c74006297
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297:
+_OBJC_SELECTOR_REFERENCES_a9fb958c74006297:
 	.quad	L_OBJC_METH_VAR_NAME_a9fb958c74006297
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755
+	.globl	_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
+_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
 	.quad	L_OBJC_METH_VAR_NAME_adfe2eb45443b755
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0
+	.globl	_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0:
+_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0:
 	.quad	L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

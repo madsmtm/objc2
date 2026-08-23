@@ -11,9 +11,9 @@ LBB0_2:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 16], rdi
 	mov	qword ptr [rbp - 8], rax
@@ -35,7 +35,7 @@ Lfunc_begin0:
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
 	jne	LBB1_9
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].6]
 	xor	edx, edx
@@ -43,7 +43,7 @@ Lfunc_begin0:
 	test	rax, rax
 	je	LBB1_6
 	mov	qword ptr [rbp - 16], rax
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
 Ltmp0:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, objc2[CRATE_ID]::rc::allocated_partial_init::Allocated<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<3u8>, test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars>, 0)]
@@ -145,9 +145,9 @@ LBB3_2:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
-	mov	rax, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_init@GOTPCREL]
 	mov	rsi, qword ptr [rax]
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rax, qword ptr [rax]
 	mov	qword ptr [rbp - 16], rdi
 	mov	qword ptr [rbp - 8], rax

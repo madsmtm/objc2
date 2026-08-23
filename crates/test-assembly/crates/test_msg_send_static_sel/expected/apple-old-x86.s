@@ -10,7 +10,7 @@ _fn1_handle_with_sel:
 L0$pb:
 	pop	eax
 	sub	esp, 8
-	push	dword ptr [eax + L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074-L0$pb]
+	push	dword ptr [eax + _OBJC_SELECTOR_REFERENCES_66d4c61f523c7074-L0$pb]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 24
@@ -29,14 +29,14 @@ _fn2_handle_alloc_init:
 	call	L1$pb
 L1$pb:
 	pop	edi
-	mov	eax, dword ptr [edi + LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
+	mov	eax, dword ptr [edi + L_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr-L1$pb]
 	sub	esp, 8
 	push	dword ptr [eax]
 	push	dword ptr [ebp + 8]
 	call	_objc_msgSend
 	add	esp, 16
 	mov	esi, eax
-	mov	eax, dword ptr [edi + LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
+	mov	eax, dword ptr [edi + L_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr-L1$pb]
 	mov	ebx, dword ptr [eax]
 	sub	esp, 8
 	push	ebx
@@ -71,18 +71,18 @@ L2$pb:
 	pop	esi
 	mov	edi, dword ptr [ebp + 8]
 	sub	esp, 4
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-L2$pb]
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21-L2$pb]
+	push	dword ptr [esi + _OBJC_SELECTOR_REFERENCES_e348e18690a1021e-L2$pb]
+	push	dword ptr [esi + _OBJC_SELECTOR_REFERENCES_8d4579a56572fa21-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 12
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-L2$pb]
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9-L2$pb]
+	push	dword ptr [esi + _OBJC_SELECTOR_REFERENCES_e348e18690a1021e-L2$pb]
+	push	dword ptr [esi + _OBJC_SELECTOR_REFERENCES_d018146ff130bbd9-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 12
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e-L2$pb]
-	push	dword ptr [esi + L_OBJC_SELECTOR_REFERENCES_6659046596384437-L2$pb]
+	push	dword ptr [esi + _OBJC_SELECTOR_REFERENCES_e348e18690a1021e-L2$pb]
+	push	dword ptr [esi + _OBJC_SELECTOR_REFERENCES_6659046596384437-L2$pb]
 	push	edi
 	call	_objc_msgSend
 	add	esp, 16
@@ -113,29 +113,29 @@ L_OBJC_METH_VAR_NAME_e348e18690a1021e:
 	.asciz	"generic:selector:"
 
 	.section	__OBJC,__message_refs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_6659046596384437
+	.globl	_OBJC_SELECTOR_REFERENCES_6659046596384437
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_6659046596384437:
+_OBJC_SELECTOR_REFERENCES_6659046596384437:
 	.long	L_OBJC_METH_VAR_NAME_6659046596384437
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
+	.globl	_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
+_OBJC_SELECTOR_REFERENCES_66d4c61f523c7074:
 	.long	L_OBJC_METH_VAR_NAME_66d4c61f523c7074
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
+	.globl	_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
+_OBJC_SELECTOR_REFERENCES_8d4579a56572fa21:
 	.long	L_OBJC_METH_VAR_NAME_8d4579a56572fa21
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
+	.globl	_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
+_OBJC_SELECTOR_REFERENCES_d018146ff130bbd9:
 	.long	L_OBJC_METH_VAR_NAME_d018146ff130bbd9
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
+	.globl	_OBJC_SELECTOR_REFERENCES_e348e18690a1021e
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
+_OBJC_SELECTOR_REFERENCES_e348e18690a1021e:
 	.long	L_OBJC_METH_VAR_NAME_e348e18690a1021e
 
 	.section	__OBJC,__image_info
@@ -175,11 +175,11 @@ l_anon.[ID].1:
 	.asciz	";\000\000\000\016\000\000\000\005\000\000"
 
 	.section	__IMPORT,__pointers,non_lazy_symbol_pointers
-LL_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_alloc
+L_OBJC_SELECTOR_REFERENCES_alloc$non_lazy_ptr:
+	.indirect_symbol	_OBJC_SELECTOR_REFERENCES_alloc
 	.long	0
-LL_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
-	.indirect_symbol	L_OBJC_SELECTOR_REFERENCES_init
+L_OBJC_SELECTOR_REFERENCES_init$non_lazy_ptr:
+	.indirect_symbol	_OBJC_SELECTOR_REFERENCES_init
 	.long	0
 
 .subsections_via_symbols

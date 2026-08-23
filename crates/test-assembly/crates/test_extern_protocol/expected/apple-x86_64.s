@@ -14,7 +14,7 @@ _fn1_get_protocol:
 _fn2_dyn_call:
 	push	rbp
 	mov	rbp, rsp
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac]
 	pop	rbp
 	jmp	_objc_msgSend
 
@@ -26,7 +26,7 @@ _fn3_dyn_consume:
 	push	rbx
 	push	rax
 	mov	rbx, rdi
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac]
 	call	_objc_msgSend
 	mov	rdi, rbx
 	add	rsp, 8
@@ -40,9 +40,9 @@ L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
+	.globl	_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
+_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 	.quad	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

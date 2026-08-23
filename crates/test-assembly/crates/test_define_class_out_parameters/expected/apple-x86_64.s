@@ -171,7 +171,7 @@ Lfunc_begin1:
 	mov	byte ptr [rax], 0
 	cmp	cl, 1
 	jne	LBB5_10
-	mov	rax, qword ptr [rip + L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
+	mov	rax, qword ptr [rip + _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPCREL]
 	mov	rdi, qword ptr [rax]
 	lea	rsi, [rip + L_anon.[ID].5]
 	xor	edx, edx
@@ -179,7 +179,7 @@ Lfunc_begin1:
 	test	rax, rax
 	je	LBB5_8
 	mov	qword ptr [rbp - 16], rax
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_d04fae079395572d]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_d04fae079395572d]
 Ltmp8:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -187,7 +187,7 @@ Ltmp8:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp9:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe]
 Ltmp10:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, core[CRATE_ID]::option::Option<&mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -195,7 +195,7 @@ Ltmp10:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp11:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a]
 Ltmp12:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -203,7 +203,7 @@ Ltmp12:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp13:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a]
 Ltmp14:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, core[CRATE_ID]::option::Option<&mut core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -211,7 +211,7 @@ Ltmp14:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp15:
-	mov	rsi, qword ptr [rip + L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_9c279b7fa093536a]
 Ltmp16:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].4]
@@ -372,29 +372,29 @@ L_OBJC_METH_VAR_NAME_d04fae079395572d:
 	.asciz	"nonnull_nonnull:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a
+	.globl	_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a:
+_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a:
 	.quad	L_OBJC_METH_VAR_NAME_06f3315fc4e8da1a
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe
+	.globl	_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe:
+_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe:
 	.quad	L_OBJC_METH_VAR_NAME_48e4a002a77cbcfe
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a
+	.globl	_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a:
+_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a:
 	.quad	L_OBJC_METH_VAR_NAME_77a278f49aa73e0a
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a
+	.globl	_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
+_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
 	.quad	L_OBJC_METH_VAR_NAME_9c279b7fa093536a
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_d04fae079395572d
+	.globl	_OBJC_SELECTOR_REFERENCES_d04fae079395572d
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_d04fae079395572d:
+_OBJC_SELECTOR_REFERENCES_d04fae079395572d:
 	.quad	L_OBJC_METH_VAR_NAME_d04fae079395572d
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

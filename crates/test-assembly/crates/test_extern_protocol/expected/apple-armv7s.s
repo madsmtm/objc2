@@ -19,8 +19,8 @@ LPC0_0:
 _fn2_dyn_call:
 	push	{r7, lr}
 	mov	r7, sp
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
+	movw	r1, :lower16:(_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
+	movt	r1, :upper16:(_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC1_0+8))
 LPC1_0:
 	ldr	r1, [pc, r1]
 	pop	{r7, lr}
@@ -33,8 +33,8 @@ _fn3_dyn_consume:
 	push	{r4, r7, lr}
 	add	r7, sp, #4
 	mov	r4, r0
-	movw	r1, :lower16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC2_0+8))
-	movt	r1, :upper16:(L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC2_0+8))
+	movw	r1, :lower16:(_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC2_0+8))
+	movt	r1, :upper16:(_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac-(LPC2_0+8))
 LPC2_0:
 	ldr	r1, [pc, r1]
 	bl	_objc_msgSend
@@ -48,9 +48,9 @@ L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac:
 	.asciz	"aMethod"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
+	.globl	_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac
 	.p2align	2, 0x0
-L_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
+_OBJC_SELECTOR_REFERENCES_a3f3690bc9f113ac:
 	.long	L_OBJC_METH_VAR_NAME_a3f3690bc9f113ac
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip

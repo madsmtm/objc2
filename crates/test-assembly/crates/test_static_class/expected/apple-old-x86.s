@@ -203,44 +203,44 @@ L_OBJC_IMAGE_INFO_e1a6d3426ab3be5a:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__OBJC,__module_info,regular,no_dead_strip
-	.globl	L_OBJC_MODULES_1f36dafa1e0a7b34
+	.globl	l_OBJC_MODULES_1f36dafa1e0a7b34
 	.p2align	2, 0x0
-L_OBJC_MODULES_1f36dafa1e0a7b34:
+l_OBJC_MODULES_1f36dafa1e0a7b34:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_1f36dafa1e0a7b34_MODULE_INFO
 	.space	4
 
-	.globl	L_OBJC_MODULES_5a6ce274a9f949e1
+	.globl	l_OBJC_MODULES_5a6ce274a9f949e1
 	.p2align	2, 0x0
-L_OBJC_MODULES_5a6ce274a9f949e1:
+l_OBJC_MODULES_5a6ce274a9f949e1:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_5a6ce274a9f949e1_MODULE_INFO
 	.space	4
 
-	.globl	L_OBJC_MODULES_9f503c7582f87b48
+	.globl	l_OBJC_MODULES_9f503c7582f87b48
 	.p2align	2, 0x0
-L_OBJC_MODULES_9f503c7582f87b48:
+l_OBJC_MODULES_9f503c7582f87b48:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_9f503c7582f87b48_MODULE_INFO
 	.space	4
 
-	.globl	L_OBJC_MODULES_a92f01d3b55d29c5
+	.globl	l_OBJC_MODULES_a92f01d3b55d29c5
 	.p2align	2, 0x0
-L_OBJC_MODULES_a92f01d3b55d29c5:
+l_OBJC_MODULES_a92f01d3b55d29c5:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_a92f01d3b55d29c5_MODULE_INFO
 	.space	4
 
-	.globl	L_OBJC_MODULES_d4ef9efb3ee49ab7
+	.globl	l_OBJC_MODULES_d4ef9efb3ee49ab7
 	.p2align	2, 0x0
-L_OBJC_MODULES_d4ef9efb3ee49ab7:
+l_OBJC_MODULES_d4ef9efb3ee49ab7:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_d4ef9efb3ee49ab7_MODULE_INFO
 	.space	4
 
-	.globl	L_OBJC_MODULES_e1a6d3426ab3be5a
+	.globl	l_OBJC_MODULES_e1a6d3426ab3be5a
 	.p2align	2, 0x0
-L_OBJC_MODULES_e1a6d3426ab3be5a:
+l_OBJC_MODULES_e1a6d3426ab3be5a:
 	.asciz	"\007\000\000\000\020\000\000"
 	.long	L_OBJC_CLASS_NAME_e1a6d3426ab3be5a_MODULE_INFO
 	.space	4

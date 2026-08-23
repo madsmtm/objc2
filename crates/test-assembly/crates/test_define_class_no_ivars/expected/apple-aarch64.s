@@ -146,9 +146,9 @@ Lloh14:
 Lloh15:
 	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
 Lloh16:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGE
 Lloh17:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
 Lloh18:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
@@ -201,9 +201,9 @@ Lloh27:
 Lloh28:
 	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
 Lloh29:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGE
 Lloh30:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
 Lloh31:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
@@ -257,9 +257,9 @@ Lfunc_begin1:
 	cmp	w9, #1
 	b.ne	LBB6_13
 Lloh38:
-	adrp	x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGE
 Lloh39:
-	ldr	x8, [x8, L_OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_CLASSLIST_REFERENCES_$_NSObject@GOTPAGEOFF]
 Lloh40:
 	ldr	x0, [x8]
 Lloh41:
@@ -271,9 +271,9 @@ Lloh42:
 	cbz	x0, LBB6_14
 	str	x0, [sp, #8]
 Lloh43:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGE
 Lloh44:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGEOFF]
 Ltmp6:
 Lloh45:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
@@ -288,9 +288,9 @@ Lloh48:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp7:
 Lloh49:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGE
 Lloh50:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGEOFF]
 Ltmp8:
 Lloh51:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
@@ -305,9 +305,9 @@ Lloh54:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 Lloh55:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGE
 Lloh56:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGEOFF]
 Ltmp10:
 Lloh57:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGE
@@ -322,9 +322,9 @@ Lloh60:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp11:
 Lloh61:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4@PAGE
 Lloh62:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4@PAGEOFF]
 Ltmp12:
 Lloh63:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
@@ -339,9 +339,9 @@ Lloh66:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp13:
 Lloh67:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0@PAGE
 Lloh68:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0@PAGEOFF]
 Ltmp14:
 Lloh69:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGE
@@ -376,9 +376,9 @@ Lloh76:
 	bl	_class_addProtocol
 LBB6_11:
 Lloh77:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGE
 Lloh78:
-	ldr	x1, [x8, L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGEOFF]
 Ltmp16:
 Lloh79:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)@PAGE
@@ -503,9 +503,9 @@ Lloh91:
 Lloh92:
 	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
 Lloh93:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGE
 Lloh94:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
 Lloh95:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
@@ -686,9 +686,9 @@ Lloh116:
 Lloh117:
 	ldr	x0, [x8, ___CLASS_NoIvars@PAGEOFF]
 Lloh118:
-	adrp	x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGE
 Lloh119:
-	ldr	x8, [x8, L_OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
+	ldr	x8, [x8, _OBJC_SELECTOR_REFERENCES_new@GOTPAGEOFF]
 Lloh120:
 	ldr	x1, [x8]
 	bl	_objc_msgSend
@@ -801,34 +801,34 @@ L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0:
 	.asciz	"methodRetainedWithParam:"
 
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4
+	.globl	_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4:
+_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4:
 	.quad	L_OBJC_METH_VAR_NAME_44ec46acb208c3d4
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9
+	.globl	_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9:
+_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9:
 	.quad	L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d
+	.globl	_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d:
+_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d:
 	.quad	L_OBJC_METH_VAR_NAME_996a3b5043cf563d
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297
+	.globl	_OBJC_SELECTOR_REFERENCES_a9fb958c74006297
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_a9fb958c74006297:
+_OBJC_SELECTOR_REFERENCES_a9fb958c74006297:
 	.quad	L_OBJC_METH_VAR_NAME_a9fb958c74006297
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755
+	.globl	_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
+_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
 	.quad	L_OBJC_METH_VAR_NAME_adfe2eb45443b755
 
-	.globl	L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0
+	.globl	_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0
 	.p2align	3, 0x0
-L_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0:
+_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0:
 	.quad	L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
