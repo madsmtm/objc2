@@ -57,10 +57,12 @@ fn main() {
     #[cfg(feature = "unstable-simd")]
     builder.file("extern/test_simd_return.m");
     builder.file("extern/writeback.m"); // -fobjc-arc important
+    builder.file("extern/weak.m");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
     println!("cargo:rerun-if-changed=extern/test_object.m");
     println!("cargo:rerun-if-changed=extern/test_simd_return.m");
     println!("cargo:rerun-if-changed=extern/writeback.m");
+    println!("cargo:rerun-if-changed=extern/weak.m");
 
     builder.flag("-fblocks");
 

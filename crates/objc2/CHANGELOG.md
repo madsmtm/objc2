@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Implement `Encode` on `Result<(), T>` when `T: OptionEncode`.
 * Allow returning `Result<T, Retained<NSError>>` from `define_class!`.
 * Optimized adding `define_class!` methods to avoid a few string allocations.
+* Added `rc::Weak::empty()`.
+* Added `rc::Weak::copy()`.
+* Added `rc::Weak::store()`.
 
 ## Changed
 * **BREAKING**: Changed syntax for `define_class!` ivars (instance variables).
@@ -98,6 +101,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   Catalyst targets on older Rust versions.
 * **BREAKING**: Changed `ClassType::NAME` and `ProtocolType::NAME` to be
   `&CStr` instead of `&str`.
+* **BREAKING**: Changed `rc::Weak` to be externally pinned. This should allow
+  using it directly in FFI and instance variables.
 
 ## Removed
 * Removed `rc::AutoreleaseSafe`, it relies on unstable language features that

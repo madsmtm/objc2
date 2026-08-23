@@ -40,6 +40,8 @@ mod test_object;
 #[cfg(all(target_vendor = "apple", feature = "unstable-simd"))]
 mod test_simd_return;
 #[cfg(test)]
+mod weak;
+#[cfg(test)]
 mod writeback;
 
 // Run some `objc2` doctests that require extra crates.
