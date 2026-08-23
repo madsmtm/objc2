@@ -17,7 +17,7 @@ serde_json = "1.0.143"
 rusqlite = { version = "0.40.1", features = ["bundled", "fallible_uint"] }
 hex = "0.4.3"
 apple-sdk = "0.6.0"
-base64 = "0.22.1"
+base64 = "0.23.1"
 sha1 = "0.11.0"
 
 [package.metadata.release]
