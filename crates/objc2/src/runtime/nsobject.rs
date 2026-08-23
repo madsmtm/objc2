@@ -8,8 +8,8 @@ use crate::ffi::NSUInteger;
 use crate::rc::{Allocated, DefaultRetained, Retained};
 use crate::runtime::{AnyClass, AnyObject, AnyProtocol, ImplementedBy, ProtocolObject, Sel};
 use crate::{
-    extern_conformance, extern_methods, msg_send, AnyThread, ClassType, DowncastTarget, Message,
-    ProtocolType,
+    extern_conformance, extern_methods, extern_protocol, AnyThread, ClassType, DowncastTarget,
+    Message,
 };
 
 /// The root class of most Objective-C class hierarchies.
@@ -102,250 +102,198 @@ unsafe impl ClassType for NSObject {
 
 unsafe impl DowncastTarget for NSObject {}
 
-/// The methods that are fundamental to most Objective-C objects.
-///
-/// This represents the [`NSObject` protocol][proto].
-///
-/// You should rarely need to use this for anything other than as a trait
-/// bound in [`extern_protocol!`], to allow your protocol to implement `Debug`
-/// `Hash`, `PartialEq` and `Eq`.
-///
-/// This trait is exported under `objc2_foundation::NSObjectProtocol`, you
-/// probably want to use that path instead.
-///
-/// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
-/// [`extern_protocol!`]: crate::extern_protocol!
-///
-///
-/// # Safety
-///
-/// Like with [other protocols](ProtocolType), the type must represent a class
-/// that implements the `NSObject` protocol.
-#[allow(non_snake_case)] // Follow the naming scheme in framework crates
-pub unsafe trait NSObjectProtocol {
-    /// Check whether the object is equal to an arbitrary other object.
+extern_protocol!(
+    /// The methods that are fundamental to most Objective-C objects.
     ///
-    /// Most objects that implement `NSObjectProtocol` also implements the
-    /// [`PartialEq`] trait. If the objects you are comparing are of the same
-    /// type, you likely want to use that instead.
+    /// This represents the [`NSObject` protocol][proto].
     ///
-    /// See [Apple's documentation][apple-doc] for details.
+    /// You should rarely need to use this for anything other than as a trait
+    /// bound in [`extern_protocol!`], to allow your protocol to implement `Debug`
+    /// `Hash`, `PartialEq` and `Eq`.
     ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418795-isequal?language=objc
-    #[doc(alias = "isEqual:")]
-    fn isEqual(&self, other: Option<&AnyObject>) -> bool
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, isEqual: other] }
+    /// This trait is exported under `objc2_foundation::NSObjectProtocol`, you
+    /// probably want to use that path instead.
+    ///
+    /// [proto]: https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc
+    /// [`extern_protocol!`]: crate::extern_protocol!
+    ///
+    ///
+    /// # Safety
+    ///
+    /// Like with [other protocols](crate::ProtocolType), the type must
+    /// represent a class that implements the `NSObject` protocol.
+    #[name = "NSObject"]
+    #[allow(non_snake_case)] // Follow the naming scheme in framework crates
+    pub unsafe trait NSObjectProtocol {
+        /// Check whether the object is equal to an arbitrary other object.
+        ///
+        /// Most objects that implement `NSObjectProtocol` also implements the
+        /// [`PartialEq`] trait. If the objects you are comparing are of the same
+        /// type, you likely want to use that instead.
+        ///
+        /// See [Apple's documentation][apple-doc] for details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418795-isequal?language=objc
+        #[unsafe(method(isEqual:))]
+        #[doc(alias = "isEqual:")]
+        fn isEqual(&self, other: Option<&AnyObject>) -> bool;
+
+        /// An integer that can be used as a table address in a hash table
+        /// structure.
+        ///
+        /// Most objects that implement `NSObjectProtocol` also implements the
+        /// [`Hash`][std::hash::Hash] trait, you likely want to use that instead.
+        ///
+        /// See [Apple's documentation][apple-doc] for details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418859-hash?language=objc
+        #[unsafe(method(hash))]
+        fn hash(&self) -> NSUInteger;
+
+        /// Check if the object is an instance of the class, or one of its
+        /// subclasses.
+        ///
+        /// See [`AnyObject::downcast_ref`] or [`Retained::downcast`] if your
+        /// intention is to use this to cast an object to another, and see
+        /// [Apple's documentation][apple-doc] for more details on what you may
+        /// (and what you may not) do with this information in general.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
+        #[unsafe(method(isKindOfClass:))]
+        #[doc(alias = "isKindOfClass:")]
+        fn isKindOfClass(&self, cls: &AnyClass) -> bool;
+
+        /// Check if the object is an instance of a specific class, without
+        /// checking subclasses.
+        ///
+        /// Note that this is rarely what you want, the specific class of an
+        /// object is considered a private implementation detail. Use
+        /// [`isKindOfClass`][Self::isKindOfClass] instead to check whether an
+        /// object is an instance of a given class.
+        ///
+        /// See [Apple's documentation][apple-doc] for more details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418766-ismemberofclass?language=objc
+        #[unsafe(method(isMemberOfClass:))]
+        #[doc(alias = "isMemberOfClass:")]
+        fn isMemberOfClass(&self, cls: &AnyClass) -> bool;
+
+        /// Check whether the object implements or inherits a method with the
+        /// given selector.
+        ///
+        /// See [Apple's documentation][apple-doc] for more details.
+        ///
+        /// If using this for availability checking, you might want to consider
+        /// using the [`available!`] macro instead, as it is often more
+        /// performant than this runtime check.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418583-respondstoselector?language=objc
+        /// [`available!`]: crate::available
+        #[unsafe(method(respondsToSelector:))]
+        #[doc(alias = "respondsToSelector:")]
+        fn respondsToSelector(&self, aSelector: Sel) -> bool;
+
+        /// Check whether the object conforms to a given protocol.
+        ///
+        /// See [Apple's documentation][apple-doc] for details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418893-conformstoprotocol?language=objc
+        #[unsafe(method(conformsToProtocol:))]
+        #[doc(alias = "conformsToProtocol:")]
+        fn conformsToProtocol(&self, aProtocol: &AnyProtocol) -> bool;
+
+        /// A textual representation of the object.
+        ///
+        /// The returned class is `NSString`, but since that is defined in
+        /// `objc2-foundation`, and `NSObjectProtocol` is defined in `objc2`, the
+        /// declared return type is unfortunately restricted to be [`NSObject`].
+        /// It is always safe to cast the return value of this to `NSString`.
+        ///
+        /// You might want to use the [`Debug`][fmt::Debug] impl of the object
+        /// instead, or if the object implements [`Display`][fmt::Display], the
+        /// [`to_string`][std::string::ToString::to_string] method.
+        ///
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use objc2::rc::Retained;
+        /// # use objc2::runtime::{NSObjectProtocol, NSObject, NSObject as NSString};
+        /// # #[cfg(available_in_foundation)]
+        /// use objc2_foundation::{NSObject, NSObjectProtocol, NSString};
+        ///
+        /// # let obj = NSObject::new();
+        /// // SAFETY: Descriptions are always `NSString`.
+        /// let desc: Retained<NSString> = unsafe { Retained::cast_unchecked(obj.description()) };
+        /// println!("{desc:?}");
+        /// ```
+        //
+        // Only safe to override if the user-provided return type is NSString.
+        #[unsafe(method(description))]
+        fn description(&self) -> Retained<NSObject>;
+
+        /// A textual representation of the object to use when debugging.
+        ///
+        /// Like with [`description`][Self::description], the return type of this
+        /// is always `NSString`.
+        ///
+        /// LLVM's po command uses this property to create a textual
+        /// representation of the object. The default implementation returns the
+        /// same value as `description`. Override either to provide custom object
+        /// descriptions.
+        // optional, introduced in macOS 10.8
+        //
+        // Only safe to override if the user-provided return type is NSString.
+        #[unsafe(method(debugDescription))]
+        fn debugDescription(&self) -> Retained<NSObject>;
+
+        /// Check whether the receiver is a subclass of the `NSProxy` root class
+        /// instead of the usual [`NSObject`].
+        ///
+        /// See [Apple's documentation][apple-doc] for details.
+        ///
+        /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418528-isproxy?language=objc
+        ///
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use objc2::runtime::{NSObject, NSObjectProtocol};
+        ///
+        /// let obj = NSObject::new();
+        /// assert!(!obj.isProxy());
+        /// ```
+        #[unsafe(method(isProxy))]
+        fn isProxy(&self) -> bool;
+
+        /// The reference count of the object.
+        ///
+        /// This can rarely be useful when debugging memory management issues,
+        /// though beware that in most real-world scenarios, your object may be
+        /// retained by several autorelease pools, especially when debug
+        /// assertions are enabled, so this value may not represent what you'd
+        /// expect.
+        ///
+        ///
+        /// # Example
+        ///
+        /// ```
+        /// use objc2::ClassType;
+        /// use objc2::runtime::{NSObject, NSObjectProtocol};
+        ///
+        /// let obj = NSObject::new();
+        /// assert_eq!(obj.retainCount(), 1);
+        /// let obj2 = obj.clone();
+        /// assert_eq!(obj.retainCount(), 2);
+        /// drop(obj2);
+        /// assert_eq!(obj.retainCount(), 1);
+        /// ```
+        #[unsafe(method(retainCount))]
+        fn retainCount(&self) -> NSUInteger;
+
+        // retain, release and autorelease belong to this protocol.
     }
-
-    /// An integer that can be used as a table address in a hash table
-    /// structure.
-    ///
-    /// Most objects that implement `NSObjectProtocol` also implements the
-    /// [`Hash`][std::hash::Hash] trait, you likely want to use that instead.
-    ///
-    /// See [Apple's documentation][apple-doc] for details.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418859-hash?language=objc
-    fn hash(&self) -> NSUInteger
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, hash] }
-    }
-
-    /// Check if the object is an instance of the class, or one of its
-    /// subclasses.
-    ///
-    /// See [`AnyObject::downcast_ref`] or [`Retained::downcast`] if your
-    /// intention is to use this to cast an object to another, and see
-    /// [Apple's documentation][apple-doc] for more details on what you may
-    /// (and what you may not) do with this information in general.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418511-iskindofclass?language=objc
-    #[doc(alias = "isKindOfClass:")]
-    fn isKindOfClass(&self, cls: &AnyClass) -> bool
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, isKindOfClass: cls] }
-    }
-
-    /// Check if the object is an instance of a specific class, without
-    /// checking subclasses.
-    ///
-    /// Note that this is rarely what you want, the specific class of an
-    /// object is considered a private implementation detail. Use
-    /// [`isKindOfClass`][Self::isKindOfClass] instead to check whether an
-    /// object is an instance of a given class.
-    ///
-    /// See [Apple's documentation][apple-doc] for more details.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418766-ismemberofclass?language=objc
-    #[doc(alias = "isMemberOfClass:")]
-    fn isMemberOfClass(&self, cls: &AnyClass) -> bool
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, isMemberOfClass: cls] }
-    }
-
-    /// Check whether the object implements or inherits a method with the
-    /// given selector.
-    ///
-    /// See [Apple's documentation][apple-doc] for more details.
-    ///
-    /// If using this for availability checking, you might want to consider
-    /// using the [`available!`] macro instead, as it is often more
-    /// performant than this runtime check.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418583-respondstoselector?language=objc
-    /// [`available!`]: crate::available
-    #[doc(alias = "respondsToSelector:")]
-    fn respondsToSelector(&self, aSelector: Sel) -> bool
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, respondsToSelector: aSelector] }
-    }
-
-    /// Check whether the object conforms to a given protocol.
-    ///
-    /// See [Apple's documentation][apple-doc] for details.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/nsobject/1418893-conformstoprotocol?language=objc
-    #[doc(alias = "conformsToProtocol:")]
-    fn conformsToProtocol(&self, aProtocol: &AnyProtocol) -> bool
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, conformsToProtocol: aProtocol] }
-    }
-
-    /// A textual representation of the object.
-    ///
-    /// The returned class is `NSString`, but since that is defined in
-    /// `objc2-foundation`, and `NSObjectProtocol` is defined in `objc2`, the
-    /// declared return type is unfortunately restricted to be [`NSObject`].
-    /// It is always safe to cast the return value of this to `NSString`.
-    ///
-    /// You might want to use the [`Debug`][fmt::Debug] impl of the object
-    /// instead, or if the object implements [`Display`][fmt::Display], the
-    /// [`to_string`][std::string::ToString::to_string] method.
-    ///
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use objc2::rc::Retained;
-    /// # use objc2::runtime::{NSObjectProtocol, NSObject, NSObject as NSString};
-    /// # #[cfg(available_in_foundation)]
-    /// use objc2_foundation::{NSObject, NSObjectProtocol, NSString};
-    ///
-    /// # let obj = NSObject::new();
-    /// // SAFETY: Descriptions are always `NSString`.
-    /// let desc: Retained<NSString> = unsafe { Retained::cast_unchecked(obj.description()) };
-    /// println!("{desc:?}");
-    /// ```
-    //
-    // Only safe to override if the user-provided return type is NSString.
-    fn description(&self) -> Retained<NSObject>
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, description] }
-    }
-
-    /// A textual representation of the object to use when debugging.
-    ///
-    /// Like with [`description`][Self::description], the return type of this
-    /// is always `NSString`.
-    ///
-    /// LLVM's po command uses this property to create a textual
-    /// representation of the object. The default implementation returns the
-    /// same value as `description`. Override either to provide custom object
-    /// descriptions.
-    // optional, introduced in macOS 10.8
-    //
-    // Only safe to override if the user-provided return type is NSString.
-    fn debugDescription(&self) -> Retained<NSObject>
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, debugDescription] }
-    }
-
-    /// Check whether the receiver is a subclass of the `NSProxy` root class
-    /// instead of the usual [`NSObject`].
-    ///
-    /// See [Apple's documentation][apple-doc] for details.
-    ///
-    /// [apple-doc]: https://developer.apple.com/documentation/objectivec/1418956-nsobject/1418528-isproxy?language=objc
-    ///
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use objc2::runtime::{NSObject, NSObjectProtocol};
-    ///
-    /// let obj = NSObject::new();
-    /// assert!(!obj.isProxy());
-    /// ```
-    fn isProxy(&self) -> bool
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, isProxy] }
-    }
-
-    /// The reference count of the object.
-    ///
-    /// This can rarely be useful when debugging memory management issues,
-    /// though beware that in most real-world scenarios, your object may be
-    /// retained by several autorelease pools, especially when debug
-    /// assertions are enabled, so this value may not represent what you'd
-    /// expect.
-    ///
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use objc2::ClassType;
-    /// use objc2::runtime::{NSObject, NSObjectProtocol};
-    ///
-    /// let obj = NSObject::new();
-    /// assert_eq!(obj.retainCount(), 1);
-    /// let obj2 = obj.clone();
-    /// assert_eq!(obj.retainCount(), 2);
-    /// drop(obj2);
-    /// assert_eq!(obj.retainCount(), 1);
-    /// ```
-    fn retainCount(&self) -> NSUInteger
-    where
-        Self: Sized + Message,
-    {
-        unsafe { msg_send![self, retainCount] }
-    }
-
-    // retain, release and autorelease below to this protocol.
-}
-
-// SAFETY: Same as in extern_protocol!
-unsafe impl<T> NSObjectProtocol for ProtocolObject<T> where T: ?Sized + NSObjectProtocol {}
-// SAFETY: Same as in extern_protocol!
-unsafe impl ProtocolType for dyn NSObjectProtocol {
-    const NAME: &'static CStr = unsafe { CStr::from_bytes_with_nul_unchecked(b"NSObject\0") };
-    const __INNER: () = ();
-}
-// SAFETY: Same as in extern_protocol!
-unsafe impl<T> ImplementedBy<T> for dyn NSObjectProtocol
-where
-    T: ?Sized + Message + NSObjectProtocol,
-{
-    const __INNER: () = ();
-}
+);
 
 // SAFETY: Anything that implements `NSObjectProtocol` and is `Send` is valid
 // to convert to `ProtocolObject<dyn NSObjectProtocol + Send>`.
@@ -479,6 +427,7 @@ mod tests {
 
     use crate::extern_class;
     use crate::rc::RcTestObject;
+    use crate::ProtocolType;
 
     extern_class!(
         #[unsafe(super(NSObject))]
