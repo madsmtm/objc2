@@ -64,6 +64,12 @@ extern_c! {
     pub fn objc_destructInstance(obj: *mut AnyObject) -> *mut c_void;
 
     // TODO: Unsure if we should expose these; are they useful, and stable?
+    //
+    // I suspect they're stable, but not very useful for us; they effectively
+    // allow wrapping a `Retained` instance variable in a `Mutex` (provided
+    // you only use these functions when accessing that instance variable),
+    // but it'd be very hard for .
+    //
     // Defined in objc-abi.h
     // pub fn objc_getProperty(
     //     obj: *const AnyObject,

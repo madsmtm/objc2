@@ -3,19 +3,24 @@
 #[cfg(target_vendor = "apple")]
 macro_rules! __statics_module_info {
     ($hash:expr) => {
-        #[link_section = "__TEXT,__cstring,cstring_literals"]
-        #[export_name = $crate::__macros::concat!("\x01L_OBJC_CLASS_NAME_", $hash, "_MODULE_INFO")]
-        static MODULE_INFO_NAME: [$crate::__macros::u8; 1] = [0];
+        $crate::__with_clang_name! {
+            #[clang_export_name = $crate::__macros::concat!("\x01L_OBJC_CLASS_NAME_", $hash, "_MODULE_INFO")]
+            #[link_section = "__TEXT,__cstring,cstring_literals"]
+            static MODULE_INFO_NAME: [$crate::__macros::u8; 1] = [0];
+        }
 
-        /// Emit module info.
-        ///
-        /// This is similar to image info, and must be present in the final
-        /// binary on macOS 32-bit.
-        #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
-        #[export_name = $crate::__macros::concat!("\x01l_OBJC_MODULES_", $hash)]
-        #[used] // Make sure this reaches the linker
-        static _MODULE_INFO: $crate::__macros::ModuleInfo =
-            $crate::__macros::ModuleInfo::new(MODULE_INFO_NAME.as_ptr());
+        // Emit module info.
+        //
+        // This is similar to image info, and must be present in the final
+        // binary on macOS 32-bit.
+        $crate::__with_clang_name! {
+            #[clang_export_name = $crate::__macros::concat!("\x01l_OBJC_MODULES_", $hash)]
+            #[link_section = "__OBJC,__module_info,regular,no_dead_strip"]
+            #[used] // Make sure this reaches the linker
+            static _MODULE_INFO: $crate::__macros::ModuleInfo = {
+                $crate::__macros::ModuleInfo::new(MODULE_INFO_NAME.as_ptr())
+            };
+        }
     };
 }
 

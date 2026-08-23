@@ -590,7 +590,15 @@ jobs:
 
     # TODO: Re-enable this on all of Foundation once we do some form of
     # availability checking.
-    - name: Test static class and selectors
+    - name: Test static class and selectors with Clang naming
+      if: ${{ matrix.frameworks == 'MACOS_15' }}
+      # TODO: Re-enable `unstable-static-nsstring` when it gets less broken.
+      run: >-
+        cargo test $ARGS -ptests -pobjc2-foundation
+        --no-default-features
+        --features=objc2/unstable-static-sel,objc2/unstable-static-class,objc2/unstable-clang-statics
+        --features=std,NSString
+    - name: Test static class and selectors with Rust naming
       if: ${{ matrix.frameworks == 'MACOS_15' }}
       # TODO: Re-enable `unstable-static-nsstring` when it gets less broken.
       run: >-

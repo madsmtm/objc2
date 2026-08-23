@@ -118,37 +118,39 @@ macro_rules! __statics_class {
         ($hash:expr)
     } => {
         extern "C" {
-            /// Link to the Objective-C class static.
-            ///
-            /// This uses the special symbol that static and dynamic linkers
-            /// knows about.
-            ///
-            /// Failure modes:
-            /// - Unknown class: Static linker error.
-            /// - OS version < Class introduced version: Dynamic linker error
-            ///   on program startup.
-            /// - Deployment target > Class introduced version: No error,
-            ///   though _should_ be a static linker error.
-            ///
-            /// Ideally, we'd have some way of allowing this to be weakly
-            /// linked, and return `Option<&AnyClass>` in that case, but Rust
-            /// doesn't have the capability to do so yet!
-            /// <https://github.com/rust-lang/rust/issues/29603>
-            /// <https://stackoverflow.com/a/16936512>
-            /// <http://sealiesoftware.com/blog/archive/2010/4/8/Do-it-yourself_Objective-C_weak_import.html>
+            // Link to the Objective-C class static.
+            //
+            // This uses the special symbol that static and dynamic linkers
+            // knows about.
+            //
+            // Failure modes:
+            // - Unknown class: Static linker error.
+            // - OS version < Class introduced version: Dynamic linker error
+            //   on program startup.
+            // - Deployment target > Class introduced version: No error,
+            //   though _should_ be a static linker error.
+            //
+            // Ideally, we'd have some way of allowing this to be weakly
+            // linked, and return `Option<&AnyClass>` in that case, but Rust
+            // doesn't have the capability to do so yet!
+            // <https://github.com/rust-lang/rust/issues/29603>
+            // <https://stackoverflow.com/a/16936512>
+            // <http://sealiesoftware.com/blog/archive/2010/4/8/Do-it-yourself_Objective-C_weak_import.html>
             #[link_name = $crate::__macros::concat!("OBJC_CLASS_$_", $name)]
             static CLASS: $crate::runtime::AnyClass;
         }
 
-        /// SAFETY: Same as `REF` in `__statics_sel!`.
-        #[link_section = "__DATA,__objc_classrefs,regular"]
-        #[export_name = $crate::__macros::concat!(
-            "OBJC_CLASSLIST_REFERENCES_$_",
-            $hash,
-        )]
-        static REF: $crate::__macros::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {
-            $crate::__macros::SyncUnsafeCell::new(&CLASS)
-        };
+        $crate::__with_clang_name! {
+            // This is read by LLDB's expression parser:
+            // <https://github.com/llvm/llvm-project/blob/llvmorg-22.1.8/lldb/source/Plugins/ExpressionParser/Clang/IRForTarget.cpp#L1237>
+            // But that should only matter for Clang-produced symbols.
+            #[clang_export_name = $crate::__macros::concat!("OBJC_CLASSLIST_REFERENCES_$_", $hash)]
+            // SAFETY: Same as `REF` in `__statics_sel!`.
+            #[link_section = "__DATA,__objc_classrefs,regular"]
+            static REF: $crate::__macros::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+                $crate::__macros::SyncUnsafeCell::new(&CLASS)
+            };
+        }
 
         $crate::__statics_image_info!($hash);
     };
@@ -164,24 +166,22 @@ macro_rules! __statics_class {
     } => {
         const X: &[$crate::__macros::u8] = $name.as_bytes();
 
-        /// Similar to NAME_DATA in `__statics_sel!`.
-        #[link_section = "__TEXT,__cstring,cstring_literals"]
-        #[export_name = $crate::__macros::concat!(
-            "\x01L_OBJC_CLASS_NAME_",
-            $hash,
-        )]
-        static NAME_DATA: [$crate::__macros::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
+        $crate::__with_clang_name! {
+            #[clang_export_name = $crate::__macros::concat!("\x01L_OBJC_CLASS_NAME_", $hash)]
+            // Similar to NAME_DATA in `__statics_sel!`.
+            #[link_section = "__TEXT,__cstring,cstring_literals"]
+            static NAME_DATA: [$crate::__macros::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
+        }
 
-        /// SAFETY: Same as `REF` in `__statics_sel!`.
-        #[link_section = "__OBJC,__cls_refs,literal_pointers"]
-        #[export_name = $crate::__macros::concat!(
-            "\x01L_OBJC_CLASS_REFERENCES_",
-            $hash,
-        )]
-        static REF: $crate::__macros::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {
-            let ptr: *const $crate::runtime::AnyClass = NAME_DATA.as_ptr().cast();
-            $crate::__macros::SyncUnsafeCell::new(&*ptr)
-        };
+        $crate::__with_clang_name! {
+            #[clang_export_name = $crate::__macros::concat!("\x01L_OBJC_CLASS_REFERENCES_", $hash)]
+            // SAFETY: Same as `REF` in `__statics_sel!`.
+            #[link_section = "__OBJC,__cls_refs,literal_pointers"]
+            static REF: $crate::__macros::SyncUnsafeCell<&$crate::runtime::AnyClass> = unsafe {
+                let ptr: *const $crate::runtime::AnyClass = NAME_DATA.as_ptr().cast();
+                $crate::__macros::SyncUnsafeCell::new(&*ptr)
+            };
+        }
 
         $crate::__statics_image_info!($hash);
         $crate::__statics_module_info!($hash);

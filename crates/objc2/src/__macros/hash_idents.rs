@@ -1,8 +1,8 @@
-#[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
+#[cfg(feature = "unstable-clang-statics")]
 #[doc(hidden)]
 pub use objc2_proc_macros::__hash_idents as proc_macro_hash_idents;
 
-#[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
+#[cfg(feature = "unstable-clang-statics")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __hash_idents {
@@ -12,7 +12,7 @@ macro_rules! __hash_idents {
 }
 
 /// No-op, used to make our other macros a bit easier to read.
-#[cfg(not(any(feature = "unstable-static-sel", feature = "unstable-static-class")))]
+#[cfg(not(feature = "unstable-clang-statics"))]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __hash_idents {
@@ -21,8 +21,36 @@ macro_rules! __hash_idents {
     };
 }
 
+#[cfg(feature = "unstable-clang-statics")]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __with_clang_name {
+    (
+        #[clang_export_name = $name:expr]
+        $($item:tt)*
+    ) => {
+        #[export_name = $name]
+        $($item)*
+    };
+}
+
+#[cfg(not(feature = "unstable-clang-statics"))]
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __with_clang_name {
+    (
+        #[clang_export_name = $name:expr]
+        $($item:tt)*
+    ) => {
+        // Using Clang's naming scheme shouldn't be necessary, the names are
+        // meant to be internal. Though we allow it behind a feature flag to
+        // allow users to test whether this claim is true.
+        $($item)*
+    };
+}
+
 #[cfg(test)]
-#[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
+#[cfg(feature = "unstable-clang-statics")]
 mod tests {
     #[test]
     fn hash_idents_different() {

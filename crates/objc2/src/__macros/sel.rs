@@ -126,12 +126,19 @@ use crate::runtime::Sel;
 /// ```
 ///
 /// Unsupported usage that you may run into when using macros - fails to
-/// compile when the `"unstable-static-sel"` feature is enabled.
+/// compile when the `"unstable-static-sel"` and `"unstable-clang-statics"`
+/// features are enabled.
 ///
 /// Instead, define a wrapper function that retrieves the selector.
 ///
-#[cfg_attr(not(feature = "unstable-static-sel"), doc = "```no_run")]
-#[cfg_attr(feature = "unstable-static-sel", doc = "```compile_fail")]
+#[cfg_attr(
+    not(all(feature = "unstable-static-sel", feature = "unstable-clang-statics")),
+    doc = "```no_run"
+)]
+#[cfg_attr(
+    all(feature = "unstable-static-sel", feature = "unstable-clang-statics"),
+    doc = "```compile_fail"
+)]
 /// use objc2::sel;
 /// macro_rules! x {
 ///     ($x:ident) => {
@@ -273,59 +280,61 @@ macro_rules! __statics_sel {
     } => {
         const X: &[$crate::__macros::u8] = $crate::__macros::concat!($data, '\0').as_bytes();
 
-        /// Clang marks this with LLVM's `unnamed_addr`.
-        /// See rust-lang/rust#18297
-        /// Should only be an optimization (?)
-        #[cfg_attr(
-            not(all(target_os = "macos", target_arch = "x86")),
-            link_section = "__TEXT,__objc_methname,cstring_literals",
-        )]
-        #[cfg_attr(
-            all(target_os = "macos", target_arch = "x86"),
-            link_section = "__TEXT,__cstring,cstring_literals",
-        )]
-        #[export_name = $crate::__macros::concat!(
-            "\x01L_OBJC_METH_VAR_NAME_",
-            $hash,
-        )]
-        static NAME_DATA: [$crate::__macros::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
+        $crate::__with_clang_name! {
+            #[clang_export_name = $crate::__macros::concat!("\x01L_OBJC_METH_VAR_NAME_", $hash)]
+            // Clang marks this with LLVM's `unnamed_addr`.
+            // See rust-lang/rust#18297
+            // Should only be an optimization (?)
+            #[cfg_attr(
+                not(all(target_os = "macos", target_arch = "x86")),
+                link_section = "__TEXT,__objc_methname,cstring_literals",
+            )]
+            #[cfg_attr(
+                all(target_os = "macos", target_arch = "x86"),
+                link_section = "__TEXT,__cstring,cstring_literals",
+            )]
+            static NAME_DATA: [$crate::__macros::u8; X.len()] = $crate::__statics_string_to_known_length_bytes!(X);
+        }
 
-        /// Place the constant value in the correct section.
-        ///
-        /// We use `UnsafeCell` because this somewhat resembles internal
-        /// mutation - this pointer will be changed by dyld at startup, so we
-        /// _must_ prevent Rust/LLVM from trying to "peek inside" it and just
-        /// use a pointer to `NAME_DATA` directly.
-        ///
-        /// Clang does this by marking `REF` with LLVM's
-        /// `externally_initialized`.
-        ///
-        ///
-        /// # Safety
-        ///
-        /// I'm quite uncertain of how safe this is, since the Rust abstract
-        /// machine has no concept of a static that is initialized outside of
-        /// it - perhaps it would be better to use `read_volatile` instead of
-        /// relying on `UnsafeCell`? Or perhaps `MaybeUninit` would help?
-        ///
-        /// See the [`ctor`](https://docs.rs/ctor) crate for more info on
-        /// "life before main".
-        #[cfg_attr(
-            not(all(target_os = "macos", target_arch = "x86")),
-            // Clang uses `no_dead_strip` in the link section for some unknown reason,
-            // but it makes LTO fail to trim the unused symbols.
-            // https://github.com/madsmtm/objc2/issues/667
-            // https://github.com/llvm/llvm-project/issues/114111
-            link_section = "__DATA,__objc_selrefs,literal_pointers",
-        )]
-        #[cfg_attr(
-            all(target_os = "macos", target_arch = "x86"),
-            link_section = "__OBJC,__message_refs,literal_pointers",
-        )]
-        #[export_name = $crate::__macros::concat!("OBJC_SELECTOR_REFERENCES_", $hash)]
-        static REF: $crate::__macros::SyncUnsafeCell<$crate::runtime::Sel> = unsafe {
-            $crate::__macros::SyncUnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr()))
-        };
+        $crate::__with_clang_name! {
+            // This is read by LLDB's expression parser:
+            // <https://github.com/llvm/llvm-project/blob/llvmorg-22.1.8/lldb/source/Plugins/ExpressionParser/Clang/IRForTarget.cpp#L725>
+            // But that should only matter for Clang-produced symbols.
+            #[clang_export_name = $crate::__macros::concat!("OBJC_SELECTOR_REFERENCES_", $hash)]
+            // Place the constant value in the correct section.
+            #[cfg_attr(
+                not(all(target_os = "macos", target_arch = "x86")),
+                // Clang uses `no_dead_strip` in the link section for some unknown reason,
+                // but it makes LTO fail to trim the unused symbols.
+                // https://github.com/madsmtm/objc2/issues/667
+                // https://github.com/llvm/llvm-project/issues/114111
+                link_section = "__DATA,__objc_selrefs,literal_pointers",
+            )]
+            #[cfg_attr(
+                all(target_os = "macos", target_arch = "x86"),
+                link_section = "__OBJC,__message_refs,literal_pointers",
+            )]
+            // We use `UnsafeCell` because this somewhat resembles internal
+            // mutation - this pointer will be changed by dyld at startup, so we
+            // _must_ prevent Rust/LLVM from trying to "peek inside" it and just
+            // use a pointer to `NAME_DATA` directly.
+            //
+            // Clang does this by marking `REF` with LLVM's
+            // `externally_initialized`.
+            //
+            // # Safety
+            //
+            // I'm quite uncertain of how safe this is, since the Rust abstract
+            // machine has no concept of a static that is initialized outside of
+            // it - perhaps it would be better to use `read_volatile` instead of
+            // relying on `UnsafeCell`? Or perhaps `MaybeUninit` would help?
+            //
+            // See the [`ctor`](https://docs.rs/ctor) crate for more info on
+            // "life before main".
+            static REF: $crate::__macros::SyncUnsafeCell<$crate::runtime::Sel> = unsafe {
+                $crate::__macros::SyncUnsafeCell::new($crate::runtime::Sel::__internal_from_ptr(NAME_DATA.as_ptr()))
+            };
+        }
 
         $crate::__statics_image_info!($hash);
     };

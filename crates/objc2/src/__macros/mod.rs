@@ -70,7 +70,7 @@ pub use self::define_class::{
 pub use self::extern_class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
 #[allow(deprecated)]
 pub use self::extern_methods::extern_methods_unsafe_impl;
-#[cfg(any(feature = "unstable-static-sel", feature = "unstable-static-class"))]
+#[cfg(feature = "unstable-clang-statics")]
 pub use self::hash_idents::proc_macro_hash_idents;
 pub use self::image_info::ImageInfo;
 pub use self::method_family::{
