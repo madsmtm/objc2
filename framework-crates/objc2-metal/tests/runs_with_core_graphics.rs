@@ -1,8 +1,5 @@
 #![cfg(feature = "MTLDevice")]
-use block2::RcBlock;
-use objc2::rc::autoreleasepool;
-use objc2_foundation::NSObjectProtocol;
-use objc2_metal::{MTLCreateSystemDefaultDevice, MTLRemoveDeviceObserver};
+use objc2_metal::MTLCreateSystemDefaultDevice;
 
 #[link(name = "CoreGraphics", kind = "framework")]
 extern "C" {}
@@ -19,16 +16,21 @@ fn get_all() {
 }
 
 #[test]
+#[cfg(target_os = "macos")]
+#[cfg(target_arch = "aarch64")] // Workaround to not try to compile this with 10.12 SDK
 fn get_all_with_observer() {
+    use objc2::rc::autoreleasepool;
+    use objc2_foundation::NSObjectProtocol;
+
     let mut observer = None;
     let _ = autoreleasepool(|_| {
         objc2_metal::MTLCopyAllDevicesWithObserver(
             &mut observer,
-            &RcBlock::new(|_device, _notification| {}),
+            &block2::RcBlock::new(|_device, _notification| {}),
         )
     });
     let observer = observer.unwrap();
     assert_eq!(observer.retainCount(), 2);
-    autoreleasepool(|_| unsafe { MTLRemoveDeviceObserver(&observer) });
+    autoreleasepool(|_| unsafe { objc2_metal::MTLRemoveDeviceObserver(&observer) });
     assert_eq!(observer.retainCount(), 1);
 }
