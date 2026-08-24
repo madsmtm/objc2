@@ -41,7 +41,19 @@ mod tests {
         ];
         for addr in addrs {
             let roundtripped = NWEndpoint::new_address(*addr).address();
-            assert_eq!(roundtripped, *addr);
+            if let (SocketAddr::V6(roundtripped), SocketAddr::V6(addr)) = (roundtripped, *addr) {
+                assert_eq!(roundtripped.ip(), addr.ip());
+                assert_eq!(roundtripped.port(), addr.port());
+                if cfg!(target_os = "macos") {
+                    assert_eq!(roundtripped.flowinfo(), addr.flowinfo());
+                } else {
+                    // iOS seems to erase flow info?
+                    assert_eq!(roundtripped.flowinfo(), 0);
+                }
+                assert_eq!(roundtripped.scope_id(), addr.scope_id());
+            } else {
+                assert_eq!(roundtripped, *addr);
+            }
         }
     }
 
