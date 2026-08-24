@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use core::ffi::{c_char, CStr};
 use core::ptr::NonNull;
 
