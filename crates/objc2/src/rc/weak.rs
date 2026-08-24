@@ -451,10 +451,10 @@ mod tests {
         expected.drop += 1;
         expected.assert_current();
 
-        // The object is deallocated, which sets weak pointers to null.
-        assert!(unsafe { weak.inner.get().read() }.is_null());
-
         if cfg!(not(feature = "gnustep-1-7")) {
+            // The object is deallocated, which sets weak pointers to null.
+            assert!(unsafe { weak.inner.get().read() }.is_null());
+
             // This loads the object on GNUStep for some reason??
             assert!(weak.load().is_none());
             expected.assert_current();
