@@ -315,6 +315,10 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(
+        not(target_os = "macos"),
+        ignore = "aborts in assertion on iOS/tvOS/watchOS/visionOS"
+    )]
     fn create_with_cstring_broken_on_non_8_bit() {
         // A CFString that is supposed to contain a "♥" (the UTF-8 encoding of
         // that is the vastly different b"\xE2\x99\xA5").
