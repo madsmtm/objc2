@@ -3,8 +3,8 @@
 //! This is used so that we don't need to add a `build.rs` script to `block2`.
 #![no_std]
 #![cfg_attr(
-    all(target_vendor = "apple", feature = "unstable-simd"),
-    feature(repr_simd)
+    all(test, target_vendor = "apple", feature = "unstable-simd"),
+    feature(portable_simd)
 )]
 
 use core::ffi::c_void;
