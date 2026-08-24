@@ -56,6 +56,7 @@ fn main() {
     builder.file("extern/test_object.m");
     #[cfg(feature = "unstable-simd")]
     builder.file("extern/test_simd_return.m");
+    #[cfg(target_vendor = "apple")]
     builder.file("extern/writeback.m"); // -fobjc-arc important
     builder.file("extern/weak.m");
     println!("cargo:rerun-if-changed=extern/encode_utils.m");
