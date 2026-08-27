@@ -30,3 +30,6 @@ pub(crate) type FourCharCode = u32;
 pub(crate) type ConstStr255Param = *const core::ffi::c_char;
 #[allow(dead_code)]
 pub(crate) type UniChar = u16;
+
+#[allow(dead_code)]
+pub(crate) type ATSFontRef = u32;

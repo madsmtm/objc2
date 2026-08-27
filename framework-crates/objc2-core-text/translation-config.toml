@@ -9,9 +9,10 @@ tvos = "9.0"
 watchos = "2.0"
 visionos = "1.0"
 
-# Needs ATSFontRef from ATS framework
-fn.CTFontGetPlatformFont.skipped = true
-fn.CTFontCreateWithPlatformFont.skipped = true
+# Defined in objc2-application-services and redefined here, though it's a
+# type-alias, so we'd rather just want it only in `objc2-application-services`
+# and private here.
+typedef.ATSFontRef.skipped = true
 
 # Emits -1 on an unsigned type
 const.kCTFontUIFontNone.use-value = true
