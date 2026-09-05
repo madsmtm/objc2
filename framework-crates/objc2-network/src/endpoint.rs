@@ -44,12 +44,12 @@ mod tests {
             if let (SocketAddr::V6(roundtripped), SocketAddr::V6(addr)) = (roundtripped, *addr) {
                 assert_eq!(roundtripped.ip(), addr.ip());
                 assert_eq!(roundtripped.port(), addr.port());
-                if cfg!(target_os = "macos") {
-                    assert_eq!(roundtripped.flowinfo(), addr.flowinfo());
-                } else {
-                    // iOS seems to erase flow info?
-                    assert_eq!(roundtripped.flowinfo(), 0);
-                }
+                // macOS/iOS/... 26 seem to erase flow info, so allow `0`
+                // there as well.
+                assert!(
+                    roundtripped.flowinfo() == addr.flowinfo() || roundtripped.flowinfo() == 0,
+                    "{roundtripped:?} ~= {addr:?}"
+                );
                 assert_eq!(roundtripped.scope_id(), addr.scope_id());
             } else {
                 assert_eq!(roundtripped, *addr);
