@@ -735,6 +735,19 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
                 | "objc2-scene-kit"
         )
     };
+    // HACK: Cinematic, MediaSetup, etc. aren't available in the simulator.
+    // MLCompute and MetalFX are also only available on Aarch64
+    let not_on_simulator = |lib: &LibraryConfig| {
+        matches!(
+            &*lib.krate,
+            "objc2-cinematic"
+                | "objc2-media-setup"
+                | "objc2-thread-network"
+                | "objc2-ml-compute"
+                | "objc2-metal-fx"
+        )
+    };
+
     writer(&mut ci, config, "FRAMEWORKS_MACOS_10_12", |lib| {
         lib.macos
             .as_ref()
@@ -789,15 +802,15 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         lib.ios
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
-            // HACK: MLCompute and MetalFX are only available on Aarch64
-            && !["objc2-ml-compute", "objc2-metal-fx"].contains(&&*lib.krate)
-            // HACK: Cinematic, MediaSetup, etc. aren't available in the simulator.
-            && !["objc2-cinematic", "objc2-media-setup", "objc2-thread-network"].contains(&&*lib.krate)
+            && !not_on_simulator(lib)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_TVOS_17", |lib| {
         lib.tvos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
+            // HACK: MetalPerformanceShadersGraph is not available on tvOS simulator
+            && !["objc2-metal-performance-shaders-graph"].contains(&&*lib.krate)
+            && !not_on_simulator(lib)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_MAC_CATALYST_17", |lib| {
         lib.maccatalyst
@@ -808,11 +821,13 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
         lib.visionos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=1.0").unwrap().matches(v))
+            && !not_on_simulator(lib)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_WATCHOS_10", |lib| {
         lib.watchos
             .as_ref()
             .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
+            && !not_on_simulator(lib)
     })?;
     writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| {
         // HACK: CoreFoundation uses mach types that GNUStep doesn't support
