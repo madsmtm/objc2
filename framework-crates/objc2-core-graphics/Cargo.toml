@@ -77,12 +77,14 @@ default = [
     "CGPDFContext",
     "CGPDFDictionary",
     "CGPDFDocument",
+    "CGPDFMarkedContentItem",
     "CGPDFObject",
     "CGPDFOperatorTable",
     "CGPDFPage",
     "CGPDFScanner",
     "CGPDFStream",
     "CGPDFString",
+    "CGPDFStructureElement",
     "CGPSConverter",
     "CGPath",
     "CGPattern",
@@ -226,12 +228,14 @@ CGPDFDocument = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFURL",
 ]
+CGPDFMarkedContentItem = []
 CGPDFObject = ["objc2-core-foundation/CFCGTypes"]
 CGPDFOperatorTable = []
 CGPDFPage = ["objc2-core-foundation/CFCGTypes"]
 CGPDFScanner = ["objc2-core-foundation/CFCGTypes"]
 CGPDFStream = ["objc2-core-foundation/CFData"]
 CGPDFString = ["objc2-core-foundation/CFDate"]
+CGPDFStructureElement = []
 CGPSConverter = ["objc2-core-foundation/CFDictionary"]
 CGPath = [
     "objc2-core-foundation/CFArray",

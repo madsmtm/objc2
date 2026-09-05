@@ -69,6 +69,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SecTransform` and `SecTransformAttribute`.
   - `SCBondInterface` and `SCVLANInterface`.
 * **BREAKING**: Renamed `THClient::enableCredentialSharingMode` to `enableCredentialSharingModeWithExtendedPANId_completion`.
+* **BREAKING**: Split parts of `FSVolumeOperations` into `FSVolumeCommonOperations`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

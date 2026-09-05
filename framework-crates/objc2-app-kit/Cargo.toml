@@ -65,7 +65,6 @@ objc2-core-text = { workspace = true, optional = true, features = [
     "CTFontCollection",
     "CTFontDescriptor",
     "CTGlyphInfo",
-    "CTParagraphStyle",
     "objc2",
 ] }
 objc2-core-video = { workspace = true, optional = true, features = [

@@ -52,7 +52,6 @@
 | `DockKit` | Swift-only. |
 | `DriverKit` | Uses C++ classes. |
 | `EnergyKit` | Swift-only. |
-| `EnhancedLinkSecurity` | TODO. |
 | `Evaluations` | Swift- and Developer-only. |
 | `ExtensionFoundation` | Swift-only. |
 | `FamilyControls` | Swift-only. |
