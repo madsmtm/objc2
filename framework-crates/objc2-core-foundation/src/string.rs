@@ -224,18 +224,36 @@ mod tests {
 
     #[test]
     fn cstr_conversion() {
-        let table = [
-            (
-                b"abc\xf8xyz\0" as &[u8],
-                CFStringBuiltInEncodings::ISOLatin1,
-                "abcøxyz",
-            ),
-            (b"\x26\x65\0", CFStringBuiltInEncodings::UTF16BE, "♥"),
-            (b"\x65\x26\0", CFStringBuiltInEncodings::UTF16LE, "♥"),
+        let cstr = CStr::from_bytes_with_nul(b"abc\xf8xyz\0").unwrap();
+        let encoding = CFStringBuiltInEncodings::ISOLatin1;
+        // SAFETY: The encoding is 8-bit and is correct.
+        let s = unsafe { CFString::with_c_string(None, cstr, encoding.0) }.unwrap();
+        assert_eq!(s.to_string(), "abcøxyz");
+    }
+
+    #[test]
+    fn byte_conversion() {
+        let heart_be = b"\x26\x65";
+        let heart_le = b"\x65\x26";
+        let heart_ne = if cfg!(target_endian = "little") {
+            heart_le
+        } else {
+            heart_be
+        };
+        let table: [(&[u8], _, _); _] = [
+            (b"\xf8", CFStringBuiltInEncodings::ISOLatin1, "ø"),
+            (heart_be, CFStringBuiltInEncodings::UTF16BE, "♥"),
+            (heart_le, CFStringBuiltInEncodings::UTF16LE, "♥"),
+            (heart_ne, CFStringBuiltInEncodings::UTF16, "♥"),
         ];
-        for (cstr, encoding, expected) in table {
-            let cstr = CStr::from_bytes_with_nul(cstr).unwrap();
-            let s = unsafe { CFString::with_c_string(None, cstr, encoding.0) }.unwrap();
+        for (bytes, encoding, expected) in table {
+            // SAFETY:
+            // - The bytes pointer is valid.
+            // - The encoding is correct.
+            let s = unsafe {
+                CFString::with_bytes(None, bytes.as_ptr(), bytes.len() as _, encoding.0, false)
+            }
+            .unwrap();
             assert_eq!(s.to_string(), expected);
         }
     }
