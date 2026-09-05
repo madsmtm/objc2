@@ -89,6 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Use `Result<(), Retained<NSError>>` in more methods.
 * Fixed `SCContentSharingPickerConfiguration` having generics even though it shouldn't.
 * `NSArray`'s and `NSSet`'s `Debug` impl longer requires the `NSEnumerator` feature.
+* **BREAKING**: Type aliases now refer to the function pointer instead of to `Option<fn(...)>`.
 * **BREAKING**: Type aliases now refer to the block instead of a pointer to the block.
 * **BREAKING**: Methods with blocks as type-aliases now take `&Block` instead of `*mut Block`.
 * **BREAKING**: Methods with completion handler blocks are now correctly sendable.

@@ -160,7 +160,7 @@ impl DispatchQueue {
         //
         // The key is never dereferenced, so passing _any_ pointer here is
         // safe and allowed.
-        unsafe { self.__set_specific(key.cast(), destructor_boxed, function_wrapper::<F>) }
+        unsafe { self.__set_specific(key.cast(), destructor_boxed, Some(function_wrapper::<F>)) }
     }
 
     /// Set the QOS class floor of the [`DispatchQueue`].

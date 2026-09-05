@@ -78,7 +78,7 @@ mod mac_types {
 
     pub(crate) type Boolean = u8;
 
-    pub(crate) type ProcPtr = Option<unsafe extern "C" fn() -> core::ffi::c_long>;
+    pub(crate) type ProcPtr = unsafe extern "C" fn() -> core::ffi::c_long;
     // TODO: This is something else on TARGET_RT_MAC_CFM
     #[cfg(not(target_arch = "powerpc"))]
     pub(crate) type UniversalProcPtr = ProcPtr;

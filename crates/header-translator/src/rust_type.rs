@@ -1026,6 +1026,50 @@ impl PointeeTy {
         })
     }
 
+    fn fn_ptr(&self, allow_generic_param: bool, in_method: bool) -> impl fmt::Display + '_ {
+        FormatterFn(move |f| {
+            match self {
+                Self::Fn {
+                    is_variadic,
+                    no_escape: _,
+                    arguments,
+                    result_type,
+                } => {
+                    // Allow pointers that the user provides to unwind.
+                    //
+                    // This is not _necessarily_ safe, though in practice
+                    // it will be for all of Apple's frameworks.
+                    write!(f, "unsafe extern \"C-unwind\" fn(")?;
+                    for arg in arguments {
+                        if in_method {
+                            // Emit functions in methods without references, as those
+                            // aren't `Encode`-able.
+                            write!(f, "{},", arg.argument(allow_generic_param))?;
+                        } else {
+                            write!(f, "{},", arg.fn_argument(allow_generic_param))?;
+                        }
+                    }
+                    if *is_variadic {
+                        write!(f, "...")?;
+                    }
+                    write!(f, ")")?;
+                    write!(
+                        f,
+                        "{}",
+                        result_type.prefix_return(result_type.fn_type_return())
+                    )?;
+
+                    Ok(())
+                }
+                Self::TypeDef { id, to } => {
+                    assert!(matches!(to.through_typedef(), Self::Fn { .. }));
+                    write!(f, "{}", id.path())
+                }
+                _ => unreachable!("fn_ptr must be PointeeTy::Fn"),
+            }
+        })
+    }
+
     pub(crate) fn add_protocol(&mut self, entity: Entity<'_>, context: &Context<'_>) {
         let Self::AnyObject { protocols, .. } = self else {
             error!(?self, "invalid type to add protocols to");
@@ -2331,6 +2375,8 @@ impl Ty {
                 // Which needs us to "see" the `__autoreleasing` on
                 // `MTLAutoreleasedArgument` all the way to the `reflection`
                 // parameter.
+                //
+                // See also `Ty::typedef`.
                 if let Self::Pointer {
                     nullability: inner_nullability,
                     read: _,
@@ -2404,17 +2450,13 @@ impl Ty {
                         let id = context.replace_typedef_name(id, true);
                         **pointee = Self::Pointee(PointeeTy::OpaqueTypeDef { id });
                         return inner;
-                    } else if pointee.is_object_like() {
-                        if let Self::Pointee(pointee_ty) = &mut **pointee {
-                            let id = context.replace_typedef_name(id, pointee_ty.is_cf_type());
-                            // Replace with a dummy type (will be re-replaced
-                            // on the line below).
-                            let to = Box::new(mem::replace(pointee_ty, PointeeTy::Self_));
-                            **pointee = Self::Pointee(PointeeTy::TypeDef { id, to });
-                            return inner;
-                        } else {
-                            error!(?pointee, "is_object_like but not Pointee");
-                        }
+                    } else if let Self::Pointee(pointee_ty) = &mut **pointee {
+                        let id = context.replace_typedef_name(id, pointee_ty.is_cf_type());
+                        // Replace with a dummy type (will be re-replaced
+                        // on the line below).
+                        let to = Box::new(mem::replace(pointee_ty, PointeeTy::Self_));
+                        **pointee = Self::Pointee(PointeeTy::TypeDef { id, to });
+                        return inner;
                     }
                 } else {
                     // Ignore properties that are set here, we can't use the
@@ -2669,7 +2711,7 @@ impl Ty {
                 bounds: PointerBounds::Single,
                 pointee,
                 ..
-            } if matches!(**pointee, Ty::Pointee(PointeeTy::Fn { .. })) => pointee.safety(),
+            } if self.is_fn_ptr() => pointee.safety(),
             // By default, all other pointers aren't safe in arguments, though
             // they are generally safe to return (at least if the pointee is).
             Self::Pointer {
@@ -3143,9 +3185,13 @@ impl Ty {
         }
     }
 
-    pub(crate) fn directly_contains_fn_ptr(&self) -> bool {
+    pub(crate) fn is_fn_ptr(&self) -> bool {
         if let Self::Pointer { pointee, .. } = self.through_wrapper() {
-            matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. }))
+            if let Ty::Pointee(pointee) = &**pointee {
+                matches!(pointee.through_typedef(), PointeeTy::Fn { .. })
+            } else {
+                false
+            }
         } else {
             false
         }
@@ -3181,7 +3227,6 @@ impl Ty {
                 // less of a breaking change if we change the fields to be
                 // `NonNull` in the future.
                 nullability: Nullability::Nullable | Nullability::NullableResult,
-                pointee,
                 ..
                 // TODO: Return `true` here always once MSRV is 1.88, that's
                 // when pointer types started implementing `Default` (which
@@ -3190,7 +3235,7 @@ impl Ty {
                 // Alternatively, we could implement `Default` manually on
                 // these, but that's a bit of a hassle, so we won't bother for
                 // now.
-            } => matches!(&**pointee, Ty::Pointee(PointeeTy::Fn { .. })),
+            } => self.is_fn_ptr(),
             // Only arrays up to size 32 implement Default.
             Self::Array {
                 element_type,
@@ -3245,32 +3290,13 @@ impl Ty {
                     bounds,
                     pointee,
                 } => match &**pointee {
-                    Self::Pointee(PointeeTy::Fn {
-                        is_variadic,
-                        no_escape: _,
-                        arguments,
-                        result_type,
-                    }) if *bounds == PointerBounds::Single => {
+                    Self::Pointee(pointee)
+                        if self.is_fn_ptr() && *bounds == PointerBounds::Single =>
+                    {
                         if *nullability != Nullability::NonNull {
                             write!(f, "Option<")?;
                         }
-                        // Allow pointers that the user provides to unwind.
-                        //
-                        // This is not _necessarily_ safe, though in practice
-                        // it will be for all of Apple's frameworks.
-                        write!(f, "unsafe extern \"C-unwind\" fn(")?;
-                        for arg in arguments {
-                            write!(f, "{},", arg.fn_argument(allow_generic_param))?;
-                        }
-                        if *is_variadic {
-                            write!(f, "...")?;
-                        }
-                        write!(f, ")")?;
-                        write!(
-                            f,
-                            "{}",
-                            result_type.prefix_return(result_type.fn_type_return())
-                        )?;
+                        write!(f, "{}", pointee.fn_ptr(allow_generic_param, false))?;
                         if *nullability != Nullability::NonNull {
                             write!(f, ">")?;
                         }
@@ -3575,7 +3601,7 @@ impl Ty {
                 lifetime: _,
                 bounds,
                 pointee,
-            } => {
+            } if !self.is_fn_ptr() => {
                 // Ignore nullability, always emit a nullable pointer. We will
                 // unwrap it later in `fn_return_converter`.
                 //
@@ -3664,7 +3690,7 @@ impl Ty {
                 read,
                 pointee,
                 ..
-            } => {
+            } if !self.is_fn_ptr() => {
                 let pointee = maybemaybeuninit(*read, pointee.behind_pointer(true));
                 write!(f, "NonNull<{pointee}>")
             }
@@ -3871,6 +3897,8 @@ impl Ty {
     pub(crate) fn typedef(&self) -> impl fmt::Display + '_ {
         let allow_generic_param = true; // Might not be correct?
         FormatterFn(move |f| match self {
+            // "push" pointers in typedefs out into the usage site.
+            // See `Ty::parse` for details.
             Self::Pointer {
                 nullability: _,
                 read: _,
@@ -3878,8 +3906,12 @@ impl Ty {
                 lifetime: _,
                 bounds: _,
                 pointee,
-            } if pointee.is_object_like() => {
-                write!(f, "{}", pointee.behind_pointer(allow_generic_param))
+            } if let Self::Pointee(pointee) = &**pointee => {
+                if self.is_fn_ptr() {
+                    write!(f, "{}", pointee.fn_ptr(allow_generic_param, false))
+                } else {
+                    write!(f, "{}", pointee.behind_pointer(allow_generic_param))
+                }
             }
             // We mark `typedefs` as-if behind a pointer, as even though
             // typedefs are _usually_ to a pointer of the type (handled
@@ -3901,9 +3933,7 @@ impl Ty {
                 lifetime,
                 bounds: PointerBounds::Single,
                 pointee,
-            } if !matches!(**pointee, Self::Pointee(PointeeTy::Fn { .. }))
-                && !pointee.is_unsized() =>
-            {
+            } if !self.is_fn_ptr() && !pointee.is_unsized() => {
                 if *lifetime == Lifetime::Autoreleasing {
                     error!(?self, "autoreleasing in fn argument");
                 }
@@ -4283,31 +4313,15 @@ impl Ty {
                 pointee,
                 bounds: PointerBounds::Single,
                 ..
-            } if let Self::Pointee(PointeeTy::Fn {
-                is_variadic,
-                no_escape: _,
-                arguments,
-                result_type,
-            }) = &**pointee =>
+            } if let Self::Pointee(pointee) = &**pointee
+                && self.is_fn_ptr() =>
             {
                 if *nullability != Nullability::NonNull {
                     write!(f, "Option<")?;
                 }
-                write!(f, "unsafe extern \"C-unwind\" fn(")?;
-                for arg in arguments {
-                    // Emit functions in methods without references, as those
-                    // aren't `Encode`-able.
-                    write!(f, "{},", arg.argument(true))?;
-                }
-                if *is_variadic {
-                    write!(f, "...")?;
-                }
-                write!(f, ")")?;
-                write!(
-                    f,
-                    "{}",
-                    result_type.prefix_return(result_type.fn_type_return())
-                )?;
+                // Function pointers in method arguments cannot use
+                // references, as those aren't `Encode`-able.
+                write!(f, "{}", pointee.fn_ptr(true, true))?;
                 if *nullability != Nullability::NonNull {
                     write!(f, ">")?;
                 }
@@ -4375,14 +4389,6 @@ impl Ty {
 
     pub(crate) fn record(&self) -> impl fmt::Display + '_ {
         self.plain(true)
-    }
-
-    fn is_fn_ptr(&self) -> bool {
-        if let Self::Pointer { pointee, .. } = self.through_wrapper() {
-            matches!(&**pointee, Self::Pointee(PointeeTy::Fn { .. }))
-        } else {
-            false
-        }
     }
 
     pub(crate) fn record_encoding(&self) -> impl fmt::Display + '_ {

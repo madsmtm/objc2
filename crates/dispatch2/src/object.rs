@@ -105,7 +105,7 @@ pub unsafe trait DispatchObject {
     /// TODO.
     #[doc(alias = "dispatch_set_finalizer_f")]
     #[inline]
-    unsafe fn set_finalizer_f(&self, finalizer: DispatchFunction) {
+    unsafe fn set_finalizer_f(&self, finalizer: Option<DispatchFunction>) {
         // SAFETY: Upheld by the caller.
         unsafe { dispatch_set_finalizer_f(self.as_raw(), finalizer) }
     }
@@ -123,7 +123,7 @@ pub unsafe trait DispatchObject {
         //         This isn't an issue as the context shall not be accessed after the dispatch object is destroyed.
         unsafe {
             self.set_context(destructor_boxed);
-            self.set_finalizer_f(function_wrapper::<F>)
+            self.set_finalizer_f(Some(function_wrapper::<F>))
         }
     }
 

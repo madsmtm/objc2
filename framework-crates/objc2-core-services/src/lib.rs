@@ -147,7 +147,7 @@ mod mac_types {
 
     pub(crate) type Boolean = u8;
 
-    pub(crate) type ProcPtr = Option<unsafe extern "C" fn() -> core::ffi::c_long>;
+    pub(crate) type ProcPtr = unsafe extern "C" fn() -> core::ffi::c_long;
 
     #[cfg(target_pointer_width = "64")]
     pub(crate) type URefCon = *mut core::ffi::c_void;

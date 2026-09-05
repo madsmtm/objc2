@@ -3104,10 +3104,7 @@ impl Stmt {
                     {
                         writeln!(f, "#[derive(Clone, Copy)]")?;
                     } else {
-                        if fields
-                            .iter()
-                            .any(|(_, _, field)| field.directly_contains_fn_ptr())
-                        {
+                        if fields.iter().any(|(_, _, field)| field.is_fn_ptr()) {
                             // TODO(breaking): Maybe remove the PartialEq implementation here?
                             writeln!(f, "#[allow(unpredictable_function_pointer_comparisons)]")?;
                         }

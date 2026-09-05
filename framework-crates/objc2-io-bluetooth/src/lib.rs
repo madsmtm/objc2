@@ -42,4 +42,4 @@ pub(crate) type ByteCount = core::ffi::c_ulong;
 #[cfg(feature = "OBEXBluetooth")]
 #[cfg(feature = "OBEX")]
 pub type IOBluetoothOBEXSessionOpenConnectionCallback =
-    Option<unsafe extern "C-unwind" fn(*mut OBEXSessionRef, OBEXError, *mut core::ffi::c_void)>;
+    unsafe extern "C-unwind" fn(*mut OBEXSessionRef, OBEXError, *mut core::ffi::c_void);
