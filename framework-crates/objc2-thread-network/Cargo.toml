@@ -47,6 +47,7 @@ THClient = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
 ]
 THCredentials = [
     "objc2-foundation/NSData",

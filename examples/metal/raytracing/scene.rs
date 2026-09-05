@@ -5,7 +5,7 @@ use glam::{Mat4, Vec3, Vec4};
 use objc2::Message;
 use objc2::{rc::Retained, runtime::ProtocolObject};
 use objc2_foundation::{ns_string, NSRange};
-use objc2_metal::{MTLBuffer, MTLDevice, MTLResource};
+use objc2_metal::{MTLBuffer, MTLDevice, MTLResource, MTLResourceOptions};
 use rand::RngExt;
 
 use super::camera::Camera;
@@ -119,14 +119,16 @@ impl Scene {
                 });
             }
         }
+        #[allow(deprecated)]
         let lights_buffer = unsafe {
             device.newBufferWithBytes_length_options(
                 NonNull::new(lights.as_ptr().cast_mut().cast()).unwrap(),
                 size_of_val(lights.as_slice()),
-                get_managed_buffer_storage_mode(),
+                MTLResourceOptions::StorageModeManaged,
             )
         }
         .unwrap();
+        #[allow(deprecated)]
         lights_buffer.didModifyRange(NSRange::new(0, lights_buffer.length()));
         lights_buffer.setLabel(Some(ns_string!("lights buffer")));
 

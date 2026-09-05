@@ -5,12 +5,13 @@ use objc2::{define_class, msg_send, rc::Retained, AnyThread, Ivars};
 use objc2_foundation::{
     ns_string, NSError, NSInteger, NSObject, NSObjectProtocol, NSString, NSUUID,
 };
+#[allow(deprecated)]
+use objc2_fs_kit::FSVolumeOperations;
 use objc2_fs_kit::{
     FSBlockDeviceResource, FSDeactivateOptions, FSDirectoryCookie, FSDirectoryEntryPacker,
     FSDirectoryVerifier, FSFileName, FSItem, FSItemAttributes, FSItemGetAttributesRequest,
     FSItemID, FSItemSetAttributesRequest, FSItemType, FSStatFSResult, FSSyncFlags, FSTaskOptions,
-    FSVolume, FSVolumeIdentifier, FSVolumeOperations, FSVolumePathConfOperations,
-    FSVolumeSupportedCapabilities,
+    FSVolume, FSVolumeIdentifier, FSVolumePathConfOperations, FSVolumeSupportedCapabilities,
 };
 use tracing::trace;
 
@@ -71,6 +72,7 @@ define_class!(
     }
 
     #[allow(non_snake_case)]
+    #[allow(deprecated)]
     unsafe impl FSVolumeOperations for Volume {
         #[unsafe(method(supportedVolumeCapabilities))]
         fn supportedVolumeCapabilities(&self) -> Retained<FSVolumeSupportedCapabilities> {

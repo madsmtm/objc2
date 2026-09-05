@@ -27,7 +27,7 @@ use objc2_metal::{
 use objc2_quartz_core::CAMetalDrawable;
 use rand::Rng;
 
-use crate::{camera::Camera, geometry::get_managed_buffer_storage_mode, scene::Scene};
+use crate::{camera::Camera, scene::Scene};
 
 #[repr(C)]
 struct Uniforms {
@@ -91,6 +91,7 @@ pub struct Renderer {
 }
 
 impl Renderer {
+    #[allow(deprecated)]
     pub fn new(device: &ProtocolObject<dyn MTLDevice>) -> Self {
         let scene = Scene::new(device);
 
@@ -104,7 +105,7 @@ impl Renderer {
             device.newBufferWithBytes_length_options(
                 NonNull::new(buffer_data.as_ptr().cast_mut().cast()).unwrap(),
                 UNIFORM_BUFFER_SIZE,
-                get_managed_buffer_storage_mode(),
+                MTLResourceOptions::StorageModeManaged,
             )
         }
         .unwrap();
@@ -145,7 +146,7 @@ impl Renderer {
             device.newBufferWithBytes_length_options(
                 NonNull::new(resource_buffer_data.as_ptr().cast_mut().cast()).unwrap(),
                 size_of_val(resource_buffer_data.as_slice()),
-                get_managed_buffer_storage_mode(),
+                MTLResourceOptions::StorageModeManaged,
             )
         }
         .unwrap();
@@ -193,7 +194,7 @@ impl Renderer {
             device.newBufferWithBytes_length_options(
                 NonNull::new(instance_descriptors.as_ptr().cast_mut().cast()).unwrap(),
                 size_of_val(instance_descriptors.as_slice()),
-                get_managed_buffer_storage_mode(),
+                MTLResourceOptions::StorageModeManaged,
             )
         }
         .unwrap();
@@ -343,6 +344,7 @@ impl Renderer {
             .unwrap();
         texture_descriptor.setPixelFormat(MTLPixelFormat::R32Uint);
         texture_descriptor.setUsage(MTLTextureUsage::ShaderRead);
+        #[allow(deprecated)]
         texture_descriptor.setStorageMode(MTLStorageMode::Managed);
         *self.random_texture.borrow_mut() = self
             .device
@@ -416,6 +418,7 @@ impl Renderer {
 
         uniforms.light_count = self.scene.lights.len() as u32;
 
+        #[allow(deprecated)]
         self.uniform_buffer.didModifyRange(NSRange {
             location: self.uniform_buffer_offset.get(),
             length: ALIGNED_UNIFORMS_SIZE,

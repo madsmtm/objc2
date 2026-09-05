@@ -86,6 +86,7 @@ default = [
     "HKLensSpecification",
     "HKLiveWorkoutBuilder",
     "HKLiveWorkoutDataSource",
+    "HKLiveWorkoutZoneUpdate",
     "HKMedicationConcept",
     "HKMedicationDoseEvent",
     "HKMetadata",
@@ -125,6 +126,7 @@ default = [
     "HKVisionPrism",
     "HKWorkout",
     "HKWorkoutActivity",
+    "HKWorkoutActivityType",
     "HKWorkoutBuilder",
     "HKWorkoutConfiguration",
     "HKWorkoutEffortRelationshipQuery",
@@ -358,6 +360,7 @@ HKLiveWorkoutDataSource = [
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSSet",
 ]
+HKLiveWorkoutZoneUpdate = ["objc2-foundation/NSDate"]
 HKMedicationConcept = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSSet",
@@ -551,6 +554,7 @@ HKWorkoutActivity = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
 ]
+HKWorkoutActivityType = []
 HKWorkoutBuilder = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",

@@ -298,13 +298,13 @@ jobs:
 
   header-translator:
     name: Verify header translator output
-    runs-on: macos-26 # Aarch64
+    runs-on: xcode-27 # Aarch64
     needs:
     - fmt
     - lint
 
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_27.0.app/Contents/Developer
 
     steps:
     - uses: actions/checkout@v6

@@ -111,6 +111,7 @@ MPSGraph = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
+    "objc2-metal/MTL4CommandQueue",
     "objc2-metal/MTLCommandQueue",
     "objc2-metal/MTLEvent",
 ]
@@ -149,6 +150,7 @@ MPSGraphExecutable = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+    "objc2-metal/MTL4CommandQueue",
     "objc2-metal/MTLCommandQueue",
     "objc2-metal/MTLEvent",
 ]

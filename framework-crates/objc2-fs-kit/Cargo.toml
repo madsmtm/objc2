@@ -35,10 +35,12 @@ default = [
     "std",
     "FSClient",
     "FSContainer",
+    "FSContext",
     "FSEntityIdentifier",
     "FSFileName",
     "FSFileSystem",
     "FSFileSystemBase",
+    "FSFreeSpace",
     "FSItem",
     "FSKitDefines",
     "FSKitError",
@@ -51,7 +53,9 @@ default = [
     "FSTaskOptions",
     "FSUnaryFileSystem",
     "FSVolume",
+    "FSVolumeDataCacheHandler",
     "FSVolumeExtent",
+    "FSVolumeHandlerResult",
     "bitflags",
     "block2",
     "libc",
@@ -66,6 +70,8 @@ unstable-darwin-objc = []
 FSClient = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
 ]
 FSContainer = [
     "objc2-foundation/NSData",
@@ -73,6 +79,7 @@ FSContainer = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSUUID",
 ]
+FSContext = []
 FSEntityIdentifier = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
@@ -85,6 +92,7 @@ FSFileName = [
 ]
 FSFileSystem = []
 FSFileSystemBase = ["objc2-foundation/NSError"]
+FSFreeSpace = []
 FSItem = [
     "bitflags",
     "objc2-foundation/NSObject",
@@ -128,7 +136,12 @@ FSVolume = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSUUID",
 ]
+FSVolumeDataCacheHandler = ["objc2-foundation/NSError"]
 FSVolumeExtent = [
     "bitflags",
     "objc2-foundation/NSError",
+]
+FSVolumeHandlerResult = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
 ]

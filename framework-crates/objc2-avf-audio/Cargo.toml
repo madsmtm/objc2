@@ -168,6 +168,7 @@ AVAudioMixerNode = []
 AVAudioMixing = []
 AVAudioNode = [
     "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
 AVAudioPlayer = [
@@ -179,7 +180,10 @@ AVAudioPlayer = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-AVAudioPlayerNode = ["bitflags"]
+AVAudioPlayerNode = [
+    "bitflags",
+    "objc2-foundation/NSError",
+]
 AVAudioRecorder = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",

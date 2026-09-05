@@ -27,6 +27,7 @@ pub mod geometry;
 pub mod renderer;
 pub mod scene;
 
+#[allow(deprecated)]
 fn select_device() -> Retained<ProtocolObject<dyn MTLDevice>> {
     let devices = MTLCopyAllDevices();
     devices

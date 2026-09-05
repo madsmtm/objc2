@@ -55,6 +55,7 @@ impl Renderer {
             .newLibraryWithSource_options_error(ns_string!(include_str!("shaders.metal")), None)
             .unwrap_or_else(|e| panic!("{e}"));
 
+        #[allow(deprecated)]
         let viewport_size_buffer = device
             .newBufferWithLength_options(
                 8,
@@ -130,6 +131,7 @@ impl Renderer {
             TexturedVertex::new([-quad_width, quad_height], [0., 0.]),
         ];
 
+        #[allow(deprecated)]
         let vertex_buffer = unsafe {
             device.newBufferWithBytes_length_options(
                 NonNull::new(vertex_data.as_ptr().cast_mut().cast()).unwrap(),
@@ -227,6 +229,7 @@ impl Renderer {
         unsafe {
             std::ptr::copy(viewport_size.as_ptr(), contents.cast(), byte_count);
         }
+        #[allow(deprecated)]
         self.viewport_size_buffer
             .didModifyRange(NSRange::new(0, byte_count));
     }
