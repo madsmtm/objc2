@@ -68,6 +68,7 @@ BAAssetPack = [
     "objc2-foundation/NSString",
 ]
 BAAssetPackManager = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",
@@ -75,6 +76,7 @@ BAAssetPackManager = [
     "objc2-foundation/NSURL",
 ]
 BAAssetPackManifest = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSData",
     "objc2-foundation/NSError",
     "objc2-foundation/NSSet",

@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added missing `AudioToolbox` unions and functions using these.
 
 ### Changed
-* Updated SDK from Xcode 26.0.1 to 26.6.
+* Updated SDK from Xcode 26.0.1 to 27.0.
 
   View the release notes to learn more details:
   - [26.1.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_1-release-notes)
@@ -42,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - [26.4.1](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_4_1-release-notes)
   - [26.5](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_5-release-notes)
   - [26.6](https://developer.apple.com/documentation/xcode-release-notes/xcode-26_6-release-notes)
+  - [27.0](https://developer.apple.com/documentation/xcode-release-notes/xcode-27-release-notes)
 
   Breaking changes are noted elsewhere in this changelog entry.
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
@@ -67,6 +68,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CVImageBuffer`, `CVPixelBuffer`, `CVOpenGLBuffer`, `CVOpenGLTexture` and `CVMetalTexture`.
   - `SecTransform` and `SecTransformAttribute`.
   - `SCBondInterface` and `SCVLANInterface`.
+* **BREAKING**: Renamed `THClient::enableCredentialSharingMode` to `enableCredentialSharingModeWithExtendedPANId_completion`.
+* **BREAKING**: Split parts of `FSVolumeOperations` into `FSVolumeCommonOperations`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.
@@ -80,8 +83,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Removed unavailable methods.
 * **BREAKING**: Removed `CSSearchableItemAttributeSet::moveFrom`.
 * **BREAKING**: Removed various `kUSBHostBillboardDeviceProperty*` consts.
+* **BREAKING**: Removed `kUSBHostPortPropertyUsbCPortNumber` const.
 * **BREAKING**: Removed `CFGetRetainCount`, `CFEqual` and `CFHash`; these are now only available directly on `CFType`.
-* **BREAKING**: Remove inherent `initWithCoder:` methods, these are available on `NSCoding`.
+* **BREAKING**: Removed inherent `initWithCoder:` methods, these are available on `NSCoding`.
+* **BREAKING**: Removed `drawWithRect_options_attributes` and `boundingRectWithSize_options_attributes` AppKit extension methods on `NSString`.
+* **BREAKING**: Removed `loadBroadcastingApplicationInfoWithCompletion` and `completeRequestWithBroadcastURL_setupInfo` ReplayKit extension methods on `NSExtensionContext`.
+* **BREAKING**: Removed `FSDirectoryVerifier` and `ParavirtualizedGraphicsVersion*`.
+* **BREAKING**: Removed `NSAttributedStringNSStringDrawingDeprecated`.
 
 ### Fixed
 * Fixed the encoding check in `NSUUID` methods.
@@ -98,6 +106,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: `UIApplication::sharedApplication` now returns an `Option` (it returns `None` if called before `UIApplication::main()`).
 * **BREAKING**: Improved support for unsized structs.
 * Improved documentation for enum variants.
+* Fixed a bunch of thread-safety issues in `objc2-avf-audio`.
 
 ## [0.3.2] - 2025-10-04
 [0.3.2]: https://github.com/madsmtm/objc2/compare/frameworks-0.3.1...frameworks-0.3.2

@@ -73,6 +73,7 @@ default = [
     "AUCocoaUIView",
     "AUComponent",
     "AUGraph",
+    "AUHeadTrackingBinauralRenderer",
     "AUParameters",
     "AudioCodec",
     "AudioComponent",
@@ -132,6 +133,7 @@ AUAudioUnitImplementation = []
 AUCocoaUIView = []
 AUComponent = ["bitflags"]
 AUGraph = []
+AUHeadTrackingBinauralRenderer = []
 AUParameters = []
 AudioCodec = ["bitflags"]
 AudioComponent = ["bitflags"]

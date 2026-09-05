@@ -43,6 +43,7 @@ default = [
     "CSPerson",
     "CSSearchQuery",
     "CSSearchableIndex",
+    "CSSearchableIndexDescription",
     "CSSearchableItem",
     "CSSearchableItemAttributeSet",
     "CSSearchableItemAttributeSet_Categories",
@@ -92,6 +93,11 @@ CSSearchableIndex = [
     "objc2-foundation/NSFileManager",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+]
+CSSearchableIndexDescription = [
+    "objc2-foundation/NSFileManager",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 CSSearchableItem = [
     "bitflags",

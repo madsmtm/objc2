@@ -38,6 +38,7 @@ targets = [
 default = [
     "std",
     "BEAvailability",
+    "BEBrowserContentFilter",
     "BEBrowserData",
     "BEBrowserDataExchangeErrors",
     "BEBrowserDataExportManager",
@@ -54,6 +55,7 @@ objc2-ui-kit = ["dep:objc2-ui-kit"]
 unstable-darwin-objc = []
 
 BEAvailability = ["objc2-foundation/NSError"]
+BEBrowserContentFilter = ["objc2-foundation/NSURL"]
 BEBrowserData = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",

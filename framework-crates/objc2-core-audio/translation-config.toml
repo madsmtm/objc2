@@ -16,6 +16,7 @@ typedef.AudioServerPlugInHostRef.skipped = true
 struct.AudioServerPlugInDriverInterface.skipped = true
 typedef.AudioServerPlugInDriverInterface.skipped = true
 typedef.AudioServerPlugInDriverRef.skipped = true
+fn.AudioServerPlugInRegisterMediaDeviceExtension.skipped = true
 
 # This is currently emitted incorrectly, the union field is
 # not included, which is an ABI mismatch.

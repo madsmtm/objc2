@@ -378,6 +378,7 @@ impl UnexposedAttr {
             | "ATS_UNAVAILABLE"
             | "BROWSERENGINE_TEXTINPUT_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_AVAILABILITY"
+            | "BROWSERENGINE_ACCESSIBILITY_AVAILABILITY_27"
             | "BROWSERENGINE_ACCESSIBILITY_MARKER_AVAILABILITY"
             | "BROWSERENGINE_ACCESSIBILITY_REMOTE_AVAILABILITY"
             | "CA_CANONICAL_DEPRECATED"
@@ -400,6 +401,8 @@ impl UnexposedAttr {
             | "EN_API_AVAILABLE_V5"
             | "EN_API_AVAILABLE_EXPORT"
             | "EN_API_AVAILABLE_EXPORT_V2"
+            | "FSKIT_API_INTRODUCED_V1_DEPRECATED_V3_WITH_REPLACEMENT"
+            | "FILE_PROVIDER_AVAILABILITY_NAMESPACE_POLICY"
             | "GK_BASE_AVAILABILITY"
             | "GK_BASE_AVAILABILITY_2"
             | "GK_BASE_AVAILABILITY_3"
@@ -409,6 +412,7 @@ impl UnexposedAttr {
             | "INTERAPP_AUDIO_DEPRECATED"
             | "MD_AVAIL"
             | "MD_AVAIL_LEOPARD"
+            | "MHDR_AVAILABILITY_v1"
             | "MIDI_API_UNAVAILABLE_NON_MACOS"
             | "MIDI_AVAILABLE_UMP1_1"
             | "MIDICI1_0_AVAILABILITY"
@@ -419,6 +423,7 @@ impl UnexposedAttr {
             | "MIDICI1_1"
             | "MIDICI1_2"
             | "MIDINETWORKSESSION_AVAILABLE"
+            | "MPSF_AVAILABILITY_v1"
             | "NS_CLASS_AVAILABLE"
             | "UT_AVAILABLE_BEGIN"
             | "MP_DEPRECATED_BEGIN"
@@ -473,6 +478,10 @@ impl UnexposedAttr {
             // Irrelevant, we don't emit dispatch_object_t anyhow.
             "DISPATCH_TRANSPARENT_UNION" => None,
             "NS_NO_TAIL_CALL" => None,
+            // TODO: Use this to map as `BlockOnce`? Probably not strong
+            // enough to be a soundness guarantee.
+            // <https://clang.llvm.org/docs/AttributeReference.html#called-once>
+            "FSKIT_CALLED_ONCE" => None,
             _ => return Err(()),
         })
     }

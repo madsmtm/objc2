@@ -1,6 +1,8 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
+| `AVSystemRouting` | TODO. |
 | `Accelerate` | Very C-centric, hard for us to map. |
+| `AccessoryAccess` | TODO. |
 | `AccessoryLiveActivities` | Swift-only. |
 | `AccessoryNotifications` | Swift-only. |
 | `AccessoryTransportExtension` | Swift-only. |
@@ -10,6 +12,9 @@
 | `AddressBookUI` | Deprecated, use Contacts instead. |
 | `AlarmKit` | Mostly Swift-only. |
 | `AppIntents` | Swift-only. |
+| `AppIntentsTesting` | Swift- and Developer-only. |
+| `AppIntentsTypeSupport` | Swift-only. |
+| `AppManagedFeatures` | Swift-only. |
 | `AppMigrationKit` | Swift-only. |
 | `AppleScriptKit` | Basically empty nowadays. |
 | `AppleScriptObjC` | Basically empty nowadays. |
@@ -25,11 +30,14 @@
 | `ClassKitUI` | Swift-only. |
 | `Cocoa` | Basically empty nowadays, use AppKit. |
 | `Combine` | Swift-only. |
+| `ComputeGraph` | TODO. |
 | `ContactProvider` | Mostly Swift-only. |
+| `CoreAI` | Swift-only. |
 | `CoreDisplay` | Basically empty. |
 | `CoreHID` | Swift-only. |
 | `CoreMIDIServer` | Very deprecated. |
 | `CoreTransferable` | Swift-only. |
+| `CrashReportExtension` | Swift-only. |
 | `CreateML` | Swift-only. |
 | `CreateMLComponents` | Swift-only. |
 | `CryptoKit` | Swift-only. |
@@ -40,9 +48,11 @@
 | `DirectoryService` | Deprecated, use OpenDirectory instead. |
 | `DiscRecording` | Deprecated, use AVKit/AVFoundation instead. |
 | `DiscRecordingUI` | Deprecated, use AVKit/AVFoundation instead. |
+| `DiskImageKit` | Swift-only. |
 | `DockKit` | Swift-only. |
 | `DriverKit` | Uses C++ classes. |
 | `EnergyKit` | Swift-only. |
+| `Evaluations` | Swift- and Developer-only. |
 | `ExtensionFoundation` | Swift-only. |
 | `FamilyControls` | Swift-only. |
 | `FinanceKit` | Swift-only. |
@@ -70,6 +80,7 @@
 | `KernelManagement` | Basically empty. |
 | `LDAP` | Basically empty. |
 | `LightweightCodeRequirements` | Swift-only. |
+| `LinkSecurity` | TODO. |
 | `LiveCommunicationKit` | Swift-only. |
 | `LockedCameraCapture` | Swift-only. |
 | `ManagedApp` | Swift-only. |
@@ -79,12 +90,17 @@
 | `MarketplaceKit` | Swift-only. |
 | `Matter` | Mostly available [here](https://github.com/project-chip/connectedhomeip). |
 | `MatterSupport` | Swift-only. |
+| `MediaDevice` | Swift-only. |
+| `MediaIntelligence` | Swift-only. |
+| `MediaIntents` | Swift-only. |
 | `MediaLibrary` | Deprecated, use PhotoKit instead. |
 | `Message` | Basically empty. |
 | `MetalPerformancePrimitives` | Header-only framework used in Metal shaders. |
 | `MobileCoreServices` | Deprecated, use CoreServices + UniformTypeIdentifiers instead. |
 | `MusicKit` | Swift-only. |
+| `MusicUnderstanding` | Swift-only. |
 | `NetFS` | Deprecated, use macFUSE or FSKit instead (probably). |
+| `NowPlaying` | Swift-only. |
 | `OpenAL` | Very C-centric, use newer Audio frameworks instead. |
 | `OpenCL` | Very C-centric and old. |
 | `PCSC` | Too low-level, consider crates like `pcsc` instead. |
@@ -101,9 +117,12 @@
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
 | `ServicesAccountLinking` | Effectively Swift-only. |
+| `SpatialPreview` | Swift-only. |
+| `StateReporting` | TODO. |
 | `StickerFoundation` | Basically empty. |
 | `StickerKit` | Basically empty. |
 | `StoreKitTest` | TODO. Developer-only. |
+| `SuggestedActions` | Swift-only. |
 | `SwiftData` | Swift-only. |
 | `SwiftUI` | Swift-only. |
 | `SwiftUICore` | Swift-only. |
@@ -119,7 +138,9 @@
 | `Tk` | Very C-centric and old. |
 | `Translation` | Swift-only. |
 | `TranslationUIProvider` | Swift-only. |
+| `TrustInsights` | Swift-only. |
 | `Twitter` | Deprecated, use Social instead. |
+| `USDKit` | Swift-only. |
 | `VideoDecodeAcceleration` | Very C-centric and old. |
 | `VisionEntitlementServices` | Mostly Swift-only. |
 | `VisionKit` | Swift-only. |

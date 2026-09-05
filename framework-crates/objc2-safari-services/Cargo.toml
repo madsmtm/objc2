@@ -59,6 +59,7 @@ default = [
     "SFSafariExtensionViewController",
     "SFSafariPage",
     "SFSafariPageProperties",
+    "SFSafariSettings",
     "SFSafariTab",
     "SFSafariToolbarItem",
     "SFSafariWindow",
@@ -111,6 +112,10 @@ SFSafariPage = [
 SFSafariPageProperties = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
+]
+SFSafariSettings = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
 ]
 SFSafariTab = [
     "objc2-foundation/NSArray",

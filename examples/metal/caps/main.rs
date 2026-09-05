@@ -25,6 +25,7 @@ fn main() {
         device.maxThreadsPerThreadgroup()
     );
     #[cfg(target_os = "macos")]
+    #[allow(deprecated)]
     {
         println!("Integrated GPU: {:?}", device.isLowPower());
         println!("Headless: {:?}", device.isHeadless());

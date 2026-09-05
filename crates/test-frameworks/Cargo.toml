@@ -205,7 +205,7 @@ test-frameworks = [
 ]
 objc2-ar-kit = ["dep:objc2-ar-kit"]
 objc2-avf-audio = ["dep:objc2-avf-audio", "objc2-avf-audio?/objc2-core-media", "objc2-avf-audio?/objc2-core-midi"]
-objc2-av-foundation = ["dep:objc2-av-foundation", "objc2-av-foundation?/objc2-core-media", "objc2-av-foundation?/objc2-uniform-type-identifiers"]
+objc2-av-foundation = ["dep:objc2-av-foundation", "objc2-av-foundation?/objc2-core-media", "objc2-av-foundation?/objc2-uniform-type-identifiers", "objc2-av-foundation?/objc2-video-toolbox"]
 objc2-av-kit = ["dep:objc2-av-kit", "objc2-av-kit?/objc2-av-routing"]
 objc2-av-routing = ["dep:objc2-av-routing"]
 objc2-accessibility = ["dep:objc2-accessibility"]

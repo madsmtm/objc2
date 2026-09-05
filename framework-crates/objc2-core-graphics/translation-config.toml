@@ -81,6 +81,10 @@ const.kCGNumberOfEventSupressionStates.skipped = true
 # Placed on CGEventFilterMask instead of being a separate `const`.
 const.kCGEventFilterMaskPermitAllEvents.skipped = true
 
+# Defined twice (one is a forward declaration)
+typedef.CGPDFMarkedContentItemRef.skipped = true
+typedef.CGPDFStructureElementRef.skipped = true
+
 ##
 ## Fix bounds information.
 ##

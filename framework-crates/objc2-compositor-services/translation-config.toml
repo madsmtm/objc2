@@ -4,6 +4,8 @@ required-crates = ["objc2"] # Currently
 flags = [
     # Emit `cp_retain`/`cp_release`.
     "-DOS_OBJECT_USE_OBJC=0",
+    # For ARKit
+    "-DUSE_ARKIT_PUBLIC_HEADERS=1",
 ]
 visionos = "1.0"
 

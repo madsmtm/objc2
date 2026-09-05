@@ -1,6 +1,10 @@
 framework = "ARKit"
 crate = "objc2-ar-kit"
 required-crates = []
+flags = [
+    # Needed for unclear reasons? Maybe because ARKitCore exists?
+    "-DUSE_ARKIT_PUBLIC_HEADERS=1",
+]
 maccatalyst = "14.0"
 ios = "11.0"
 visionos = "1.0"

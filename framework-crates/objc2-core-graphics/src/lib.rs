@@ -19,14 +19,20 @@ extern crate std;
 mod generated;
 #[cfg(feature = "CGImage")]
 mod image;
+#[cfg(feature = "CGPDFContext")]
+mod pdf_context;
 mod thread_safety;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "CGPDFContext")]
+pub use self::pdf_context::*;
 
 #[allow(dead_code)]
 pub(crate) type UniCharCount = core::ffi::c_ulong;
 #[allow(dead_code)]
 pub(crate) type UniChar = u16;
+#[allow(dead_code)]
+pub(crate) type OSStatus = i32;
 
 #[allow(non_upper_case_globals)]
 #[cfg(feature = "CGWindowLevel")]
