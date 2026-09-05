@@ -557,6 +557,11 @@ mod tests {
         let expected = OSVersion::from_str(expected.trim());
 
         let actual = current_version();
+        if actual.major == 10 && actual.minor == 16 {
+            // Allow this, it is desired that we return the compatibility
+            // version here.
+            return;
+        }
         assert_eq!(expected, actual);
     }
 }
