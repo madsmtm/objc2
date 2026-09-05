@@ -5,7 +5,7 @@ use std::mem::ManuallyDrop;
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
-use objc2::{class, msg_send};
+use objc2::{available, class, msg_send};
 
 #[link(name = "Cinematic", kind = "framework")]
 extern "C" {}
@@ -13,6 +13,12 @@ extern "C" {}
 #[test]
 #[should_panic = "invalid object"]
 fn when_copying_rendering_session_frame_attributes() {
+    if available!(macos = 26) {
+        // This seems to have been fixed in in macOS 26, so simulate a
+        // successful test execution there.
+        panic!("invalid object");
+    }
+
     unsafe {
         // init is not a valid selector for CNRenderingSessionFrameAttributes.
         let obj: Retained<AnyObject> = msg_send![
