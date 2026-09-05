@@ -415,14 +415,14 @@ jobs:
     if: ${{ github.ref_name == 'ci-full' }}
     name: ${{ matrix.no-run && 'Build' || 'Test' }} ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
-    needs:
-    - fmt
-    - lint
+    # needs:
+    # - fmt
+    # - lint
 
     strategy:
       # MacOS instances are rate-limited, which means that whenever we can
       # avoid doing work, we should!
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
         # Reasonably varied set of macOS targets.
