@@ -41,6 +41,7 @@
 | `CreateML` | Swift-only. |
 | `CreateMLComponents` | Swift-only. |
 | `CryptoKit` | Swift-only. |
+| `DVDPlayback` | Deprecated, use AVKit/AVFoundation instead. |
 | `DeclaredAgeRange` | Swift-only. |
 | `DeveloperToolsSupport` | Swift-only. |
 | `DeviceActivity` | Swift-only. |
@@ -80,6 +81,7 @@
 | `KernelManagement` | Basically empty. |
 | `LDAP` | Basically empty. |
 | `LightweightCodeRequirements` | Swift-only. |
+| `LinkSecurity` | TODO. |
 | `LiveCommunicationKit` | Swift-only. |
 | `LockedCameraCapture` | Swift-only. |
 | `ManagedApp` | Swift-only. |
@@ -116,7 +118,6 @@
 | `Ruby` | Very C-centric and old. |
 | `SecureElementCredential` | Swift-only. |
 | `ServicesAccountLinking` | Effectively Swift-only. |
-| `SiriInferenceLearning` | Swift-only. |
 | `SpatialPreview` | Swift-only. |
 | `StateReporting` | TODO. |
 | `StickerFoundation` | Basically empty. |
