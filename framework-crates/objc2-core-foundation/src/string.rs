@@ -337,7 +337,13 @@ mod tests {
         not(target_os = "macos"),
         ignore = "aborts in assertion on iOS/tvOS/watchOS/visionOS"
     )]
+    #[cfg(feature = "objc2")]
     fn create_with_cstring_broken_on_non_8_bit() {
+        if objc2::available!(macos = 26) {
+            // This also asserts on macOS 26 and above.
+            return;
+        }
+
         // A CFString that is supposed to contain a "♥" (the UTF-8 encoding of
         // that is the vastly different b"\xE2\x99\xA5").
         //
