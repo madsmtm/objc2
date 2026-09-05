@@ -82,6 +82,12 @@ objc2-quartz-core = { workspace = true, optional = true, features = [
     "CALayer",
     "CAMediaTiming",
 ] }
+objc2-video-toolbox = { workspace = true, optional = true, features = [
+    "VTCompressionSession",
+    "VTErrors",
+    "objc2",
+    "objc2-core-media",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -98,6 +104,7 @@ targets = [
 features = [
     "objc2-core-media",
     "objc2-uniform-type-identifiers",
+    "objc2-video-toolbox",
 ]
 
 [features]
@@ -121,6 +128,7 @@ default = [
     "AVAssetVariant",
     "AVAssetWriter",
     "AVAssetWriterInput",
+    "AVAssetWritingPlanner",
     "AVAsynchronousKeyValueLoading",
     "AVAudioBuffer",
     "AVAudioChannelLayout",
@@ -172,6 +180,7 @@ default = [
     "AVCaptionSettings",
     "AVCaptureAudioDataOutput",
     "AVCaptureAudioPreviewOutput",
+    "AVCaptureBroadcastVideoOutput",
     "AVCaptureControl",
     "AVCaptureDataOutputSynchronizer",
     "AVCaptureDepthDataOutput",
@@ -231,12 +240,14 @@ default = [
     "AVPlayerItemMediaDataCollector",
     "AVPlayerItemOutput",
     "AVPlayerItemProtectedContentAdditions",
+    "AVPlayerItemSampleBufferOutput",
     "AVPlayerItemTrack",
     "AVPlayerLayer",
     "AVPlayerLooper",
     "AVPlayerMediaSelectionCriteria",
     "AVPlayerOutput",
     "AVPortraitEffectsMatte",
+    "AVProVideoStorage",
     "AVQueuedSampleBufferRendering",
     "AVRenderedCaptionImage",
     "AVRouteDetector",
@@ -286,6 +297,7 @@ objc2-image-io = ["dep:objc2-image-io"]
 objc2-media-toolbox = ["dep:objc2-media-toolbox"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
+objc2-video-toolbox = ["dep:objc2-video-toolbox"]
 unstable-darwin-objc = []
 
 AVAnimation = ["objc2-foundation/NSString"]
@@ -404,6 +416,14 @@ AVAssetWriterInput = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
 ]
+AVAssetWritingPlanner = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
 AVAsynchronousKeyValueLoading = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
@@ -488,6 +508,10 @@ AVCaptureAudioDataOutput = [
     "objc2-foundation/NSString",
 ]
 AVCaptureAudioPreviewOutput = ["objc2-foundation/NSString"]
+AVCaptureBroadcastVideoOutput = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
+]
 AVCaptureControl = []
 AVCaptureDataOutputSynchronizer = [
     "objc2-foundation/NSArray",
@@ -630,6 +654,7 @@ AVError = [
 AVExternalStorageDevice = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
     "objc2-foundation/NSUUID",
@@ -772,6 +797,7 @@ AVPlayerItemOutput = [
     "objc2-foundation/NSValue",
 ]
 AVPlayerItemProtectedContentAdditions = ["objc2-foundation/NSDate"]
+AVPlayerItemSampleBufferOutput = []
 AVPlayerItemTrack = ["objc2-foundation/NSString"]
 AVPlayerLayer = [
     "objc2-foundation/NSDictionary",
@@ -797,6 +823,7 @@ AVPortraitEffectsMatte = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
+AVProVideoStorage = []
 AVQueuedSampleBufferRendering = []
 AVRenderedCaptionImage = []
 AVRouteDetector = [

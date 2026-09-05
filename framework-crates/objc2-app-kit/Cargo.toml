@@ -65,6 +65,7 @@ objc2-core-text = { workspace = true, optional = true, features = [
     "CTFontCollection",
     "CTFontDescriptor",
     "CTGlyphInfo",
+    "CTParagraphStyle",
     "objc2",
 ] }
 objc2-core-video = { workspace = true, optional = true, features = [
@@ -267,6 +268,7 @@ default = [
     "NSPrintPanel",
     "NSPrinter",
     "NSProgressIndicator",
+    "NSRefreshController",
     "NSResponder",
     "NSRotationGestureRecognizer",
     "NSRuleEditor",
@@ -309,6 +311,7 @@ default = [
     "NSStatusBar",
     "NSStatusBarButton",
     "NSStatusItem",
+    "NSStatusItemExpandedInterfaceSession",
     "NSStepper",
     "NSStepperCell",
     "NSStepperTouchBarItem",
@@ -350,12 +353,14 @@ default = [
     "NSTextListElement",
     "NSTextRange",
     "NSTextSelection",
+    "NSTextSelectionManager",
     "NSTextSelectionNavigation",
     "NSTextStorage",
     "NSTextStorageScripting",
     "NSTextTable",
     "NSTextView",
     "NSTextViewportLayoutController",
+    "NSTextViewportRenderingSurface",
     "NSTintConfiguration",
     "NSTintProminence",
     "NSTitlebarAccessoryViewController",
@@ -381,6 +386,9 @@ default = [
     "NSUserInterfaceValidation",
     "NSView",
     "NSViewController",
+    "NSViewCornerConfiguration",
+    "NSViewCornerRadii",
+    "NSViewCornerRadius",
     "NSViewLayoutRegion",
     "NSVisualEffectView",
     "NSWindow",
@@ -774,6 +782,7 @@ NSComboButton = [
     "objc2-foundation/objc2-core-foundation",
 ]
 NSControl = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSFormatter",
@@ -1456,6 +1465,7 @@ NSProgressIndicator = [
     "objc2-foundation/NSProgress",
     "objc2-foundation/objc2-core-foundation",
 ]
+NSRefreshController = ["objc2-foundation/NSAttributedString"]
 NSResponder = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
@@ -1505,6 +1515,7 @@ NSSavePanel = [
     "objc2-foundation/objc2-core-foundation",
 ]
 NSScreen = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSDictionary",
@@ -1586,11 +1597,7 @@ NSSegmentedControl = [
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
-NSShadow = [
-    "objc2-foundation/NSGeometry",
-    "objc2-foundation/NSObject",
-    "objc2-foundation/objc2-core-foundation",
-]
+NSShadow = ["objc2-foundation/NSObject"]
 NSSharingCollaborationModeRestriction = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -1711,6 +1718,7 @@ NSStatusItem = [
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
+NSStatusItemExpandedInterfaceSession = []
 NSStepper = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/NSObject",
@@ -1965,6 +1973,11 @@ NSTextSelection = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+NSTextSelectionManager = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSGeometry",
+    "objc2-foundation/objc2-core-foundation",
+]
 NSTextSelectionNavigation = [
     "bitflags",
     "objc2-foundation/NSArray",
@@ -1990,6 +2003,7 @@ NSTextTable = [
     "objc2-foundation/objc2-core-foundation",
 ]
 NSTextView = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
@@ -2006,6 +2020,7 @@ NSTextView = [
     "objc2-foundation/objc2-core-foundation",
 ]
 NSTextViewportLayoutController = []
+NSTextViewportRenderingSurface = []
 NSTintConfiguration = ["objc2-foundation/NSObject"]
 NSTintProminence = []
 NSTitlebarAccessoryViewController = [
@@ -2148,6 +2163,9 @@ NSViewController = [
     "objc2-foundation/NSString",
     "objc2-foundation/objc2-core-foundation",
 ]
+NSViewCornerConfiguration = []
+NSViewCornerRadii = ["objc2-foundation/NSObject"]
+NSViewCornerRadius = ["objc2-foundation/NSObject"]
 NSViewLayoutRegion = [
     "objc2-foundation/NSGeometry",
     "objc2-foundation/objc2-core-foundation",

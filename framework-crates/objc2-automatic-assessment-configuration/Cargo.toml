@@ -22,7 +22,9 @@ objc2-foundation = { workspace = true, features = [
     "NSDictionary",
     "NSError",
     "NSObject",
+    "NSSet",
     "NSString",
+    "NSURL",
     "alloc",
 ] }
 

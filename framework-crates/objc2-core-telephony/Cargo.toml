@@ -41,6 +41,7 @@ default = [
     "CTCellularPlanProvisioning",
     "CTCellularPlanProvisioningRequest",
     "CTCellularPlanStatus",
+    "CTQuickSwitch",
     "CTSubscriber",
     "CTSubscriberInfo",
     "CTTelephonyNetworkInfo",
@@ -68,6 +69,10 @@ CTCellularPlanProvisioningRequest = [
     "objc2-foundation/NSString",
 ]
 CTCellularPlanStatus = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
+CTQuickSwitch = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]

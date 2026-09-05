@@ -63,6 +63,7 @@ default = [
     "MSStickerBrowserViewController",
     "MSStickerBrowserViewDataSource",
     "MSStickerView",
+    "MSUPIRequest",
     "MessagesDefines",
     "block2",
     "objc2-core-foundation",
@@ -120,5 +121,9 @@ MSStickerBrowserViewDataSource = []
 MSStickerView = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
+]
+MSUPIRequest = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
 MessagesDefines = []

@@ -38,6 +38,10 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
     "objc2",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
+objc2-security = { workspace = true, optional = true, features = [
+    "SecBase",
+    "objc2",
+] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -59,6 +63,12 @@ default = [
     "VZConsoleDevice",
     "VZConsoleDeviceConfiguration",
     "VZConsolePortConfiguration",
+    "VZCustomVirtioDevice",
+    "VZCustomVirtioDeviceConfiguration",
+    "VZCustomVirtioDeviceConfigurationDelegate",
+    "VZCustomVirtioDeviceDelegate",
+    "VZCustomVirtioDeviceDelegateProvider",
+    "VZCustomVirtioDeviceProvider",
     "VZDefines",
     "VZDirectoryShare",
     "VZDirectorySharingDevice",
@@ -67,6 +77,11 @@ default = [
     "VZDiskImageStorageDeviceAttachment",
     "VZDiskSynchronizationMode",
     "VZEFIBootLoader",
+    "VZEFISignature",
+    "VZEFISignatureDatabaseConfiguration",
+    "VZEFISignatureList",
+    "VZEFISignatureSHA256Hash",
+    "VZEFISignatureX509Certificate",
     "VZEFIVariableStore",
     "VZEntropyDeviceConfiguration",
     "VZError",
@@ -79,6 +94,8 @@ default = [
     "VZGraphicsDeviceConfiguration",
     "VZGraphicsDisplay",
     "VZGraphicsDisplayConfiguration",
+    "VZGuestMemoryMapping",
+    "VZGuestProvisioningOptions",
     "VZHostAudioInputStreamSource",
     "VZHostAudioOutputStreamSink",
     "VZKeyboardConfiguration",
@@ -93,6 +110,7 @@ default = [
     "VZMacGraphicsDeviceConfiguration",
     "VZMacGraphicsDisplay",
     "VZMacGraphicsDisplayConfiguration",
+    "VZMacGuestProvisioningOptions",
     "VZMacHardwareModel",
     "VZMacKeyboardConfiguration",
     "VZMacMachineIdentifier",
@@ -108,6 +126,7 @@ default = [
     "VZMultipleDirectoryShare",
     "VZNATNetworkDeviceAttachment",
     "VZNVMExpressControllerDeviceConfiguration",
+    "VZNegotiatedVirtioFeatureSet",
     "VZNetworkBlockDeviceStorageDeviceAttachment",
     "VZNetworkDevice",
     "VZNetworkDeviceAttachment",
@@ -131,6 +150,8 @@ default = [
     "VZUSBKeyboardConfiguration",
     "VZUSBMassStorageDevice",
     "VZUSBMassStorageDeviceConfiguration",
+    "VZUSBPassthroughDevice",
+    "VZUSBPassthroughDeviceConfiguration",
     "VZUSBScreenCoordinatePointingDeviceConfiguration",
     "VZVirtioBlockDeviceConfiguration",
     "VZVirtioConsoleDevice",
@@ -140,7 +161,9 @@ default = [
     "VZVirtioConsolePortArray",
     "VZVirtioConsolePortConfiguration",
     "VZVirtioConsolePortConfigurationArray",
+    "VZVirtioDeviceSpecificConfiguration",
     "VZVirtioEntropyDeviceConfiguration",
+    "VZVirtioFeatureSet",
     "VZVirtioFileSystemDevice",
     "VZVirtioFileSystemDeviceConfiguration",
     "VZVirtioGraphicsDevice",
@@ -148,6 +171,10 @@ default = [
     "VZVirtioGraphicsScanout",
     "VZVirtioGraphicsScanoutConfiguration",
     "VZVirtioNetworkDeviceConfiguration",
+    "VZVirtioQueue",
+    "VZVirtioQueueElement",
+    "VZVirtioSharedMemoryRegion",
+    "VZVirtioSharedMemoryRegionConfiguration",
     "VZVirtioSocketConnection",
     "VZVirtioSocketDevice",
     "VZVirtioSocketDeviceConfiguration",
@@ -171,6 +198,7 @@ default = [
     "dispatch2",
     "objc2-app-kit",
     "objc2-core-foundation",
+    "objc2-security",
 ]
 std = ["alloc"]
 alloc = []
@@ -179,6 +207,7 @@ block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
+objc2-security = ["dep:objc2-security"]
 unstable-darwin-objc = []
 
 VZAudioDeviceConfiguration = ["objc2-foundation/NSObject"]
@@ -193,6 +222,18 @@ VZBridgedNetworkInterface = [
 VZConsoleDevice = []
 VZConsoleDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZConsolePortConfiguration = ["objc2-foundation/NSObject"]
+VZCustomVirtioDevice = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+]
+VZCustomVirtioDeviceConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+VZCustomVirtioDeviceConfigurationDelegate = []
+VZCustomVirtioDeviceDelegate = ["objc2-foundation/NSData"]
+VZCustomVirtioDeviceDelegateProvider = []
+VZCustomVirtioDeviceProvider = []
 VZDefines = []
 VZDirectoryShare = []
 VZDirectorySharingDevice = []
@@ -207,6 +248,22 @@ VZDiskImageStorageDeviceAttachment = [
 ]
 VZDiskSynchronizationMode = []
 VZEFIBootLoader = ["objc2-foundation/NSObject"]
+VZEFISignature = ["objc2-foundation/NSObject"]
+VZEFISignatureDatabaseConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+VZEFISignatureList = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSURL",
+]
+VZEFISignatureSHA256Hash = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+]
+VZEFISignatureX509Certificate = ["objc2-foundation/NSObject"]
 VZEFIVariableStore = [
     "bitflags",
     "objc2-foundation/NSError",
@@ -232,6 +289,11 @@ VZGraphicsDevice = ["objc2-foundation/NSArray"]
 VZGraphicsDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZGraphicsDisplay = ["objc2-foundation/NSError"]
 VZGraphicsDisplayConfiguration = ["objc2-foundation/NSObject"]
+VZGuestMemoryMapping = []
+VZGuestProvisioningOptions = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+]
 VZHostAudioInputStreamSource = []
 VZHostAudioOutputStreamSink = []
 VZKeyboardConfiguration = ["objc2-foundation/NSObject"]
@@ -270,6 +332,10 @@ VZMacGraphicsDisplayConfiguration = [
     "objc2-foundation/NSObject",
     "objc2-foundation/objc2-core-foundation",
 ]
+VZMacGuestProvisioningOptions = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 VZMacHardwareModel = [
     "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
@@ -292,7 +358,7 @@ VZMacOSRestoreImage = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-VZMacOSVirtualMachineStartOptions = []
+VZMacOSVirtualMachineStartOptions = ["objc2-foundation/NSError"]
 VZMacPlatformConfiguration = ["objc2-foundation/NSObject"]
 VZMacTrackpadConfiguration = ["objc2-foundation/NSObject"]
 VZMemoryBalloonDevice = []
@@ -304,6 +370,7 @@ VZMultipleDirectoryShare = [
 ]
 VZNATNetworkDeviceAttachment = []
 VZNVMExpressControllerDeviceConfiguration = ["objc2-foundation/NSObject"]
+VZNegotiatedVirtioFeatureSet = []
 VZNetworkBlockDeviceStorageDeviceAttachment = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
@@ -337,6 +404,8 @@ VZUSBDeviceConfiguration = ["objc2-foundation/NSUUID"]
 VZUSBKeyboardConfiguration = ["objc2-foundation/NSObject"]
 VZUSBMassStorageDevice = []
 VZUSBMassStorageDeviceConfiguration = ["objc2-foundation/NSObject"]
+VZUSBPassthroughDevice = ["objc2-foundation/NSError"]
+VZUSBPassthroughDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZUSBScreenCoordinatePointingDeviceConfiguration = ["objc2-foundation/NSObject"]
 VZVirtioBlockDeviceConfiguration = [
     "objc2-foundation/NSError",
@@ -353,7 +422,12 @@ VZVirtioConsolePortConfiguration = [
     "objc2-foundation/NSString",
 ]
 VZVirtioConsolePortConfigurationArray = ["objc2-foundation/NSObject"]
+VZVirtioDeviceSpecificConfiguration = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSObject",
+]
 VZVirtioEntropyDeviceConfiguration = ["objc2-foundation/NSObject"]
+VZVirtioFeatureSet = ["objc2-foundation/NSObject"]
 VZVirtioFileSystemDevice = ["objc2-foundation/NSString"]
 VZVirtioFileSystemDeviceConfiguration = [
     "objc2-foundation/NSError",
@@ -368,6 +442,14 @@ VZVirtioGraphicsDeviceConfiguration = [
 VZVirtioGraphicsScanout = []
 VZVirtioGraphicsScanoutConfiguration = ["objc2-foundation/NSObject"]
 VZVirtioNetworkDeviceConfiguration = ["objc2-foundation/NSObject"]
+VZVirtioQueue = []
+VZVirtioQueueElement = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSError",
+]
+VZVirtioSharedMemoryRegion = ["objc2-foundation/NSError"]
+VZVirtioSharedMemoryRegionConfiguration = ["objc2-foundation/NSObject"]
 VZVirtioSocketConnection = []
 VZVirtioSocketDevice = ["objc2-foundation/NSError"]
 VZVirtioSocketDeviceConfiguration = ["objc2-foundation/NSObject"]
@@ -390,6 +472,7 @@ VZVirtualMachineConfiguration = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 VZVirtualMachineDelegate = ["objc2-foundation/NSError"]
 VZVirtualMachineStartOptions = []
