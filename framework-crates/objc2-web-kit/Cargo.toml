@@ -213,6 +213,7 @@ default = [
     "WKContentWorld",
     "WKContentWorldConfiguration",
     "WKContextMenuElementInfo",
+    "WKDOMNodeSnapshot",
     "WKDataDetectorTypes",
     "WKDownload",
     "WKDownloadDelegate",
@@ -226,7 +227,6 @@ default = [
     "WKImmersiveEnvironment",
     "WKImmersiveEnvironmentDelegate",
     "WKJSHandle",
-    "WKJSSerializedNode",
     "WKNavigation",
     "WKNavigationAction",
     "WKNavigationDelegate",
@@ -731,6 +731,7 @@ WKContentRuleListStore = [
 WKContentWorld = ["objc2-foundation/NSString"]
 WKContentWorldConfiguration = ["objc2-foundation/NSObject"]
 WKContextMenuElementInfo = []
+WKDOMNodeSnapshot = []
 WKDataDetectorTypes = []
 WKDownload = [
     "objc2-foundation/NSData",
@@ -769,7 +770,6 @@ WKHTTPCookieStore = [
 WKImmersiveEnvironment = []
 WKImmersiveEnvironmentDelegate = ["objc2-foundation/NSError"]
 WKJSHandle = ["objc2-foundation/NSObject"]
-WKJSSerializedNode = []
 WKNavigation = []
 WKNavigationAction = ["objc2-foundation/NSURLRequest"]
 WKNavigationDelegate = [
