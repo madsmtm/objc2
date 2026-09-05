@@ -77,21 +77,13 @@ impl Documentation {
         let mut end = None;
         let mut line_command_text = None;
         for (i, child) in self.from_header.iter().enumerate() {
-            if let CommentChild::VerbatimLineCommand(line_command) = child {
-                let line_command = line_command.trim();
+            if let CommentChild::VerbatimLineCommand(verbatim_line) = child {
                 if start.is_some() {
                     end = Some(i);
                     break;
                 } else {
-                    // VerbatimLineCommand doesn't have any structure, but
-                    // "{name} ..rest" seems fairly common, so let's parse it
-                    // like that.
-                    let (line_command, text) = line_command
-                        .split_once(' ')
-                        .map(|(id, text)| (id, Some(text)))
-                        .unwrap_or((line_command, None));
-                    // Trim `;` to fix docs for `AudioUnitMeterClipping`.
-                    if line_command.trim_end_matches(';') == child_name {
+                    let (line_command, text) = parse_line_command(verbatim_line);
+                    if line_command == child_name {
                         start = Some(i);
                         line_command_text = text;
                     }
@@ -209,6 +201,22 @@ impl Documentation {
 
             Ok(())
         })
+    }
+}
+
+/// VerbatimLineCommand doesn't have any structure, but
+/// "{name} ..rest" seems fairly common, so let's parse it
+/// like that.
+fn parse_line_command(verbatim_line: &str) -> (&str, Option<&str>) {
+    let verbatim_line = verbatim_line.trim();
+    // Try to parse the first item as an identifier-like thing.
+    if let Some(non_ident_pos) = verbatim_line.find(|c: char| {
+        !c.is_ascii_alphanumeric() && c != '_' && c != ':' && c != '`' && c != '+' && c != '-'
+    }) {
+        let (line_command, text) = verbatim_line.split_at(non_ident_pos);
+        (line_command, Some(text))
+    } else {
+        (verbatim_line, None)
     }
 }
 
@@ -435,10 +443,18 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                 writeln!(f, "```")?;
                 writeln!(f)?;
             }
-            CommentChild::VerbatimLineCommand(_) => {
-                // Often comes from @member or similar that just name the item
-                // again.
-                // writeln!(f, "{verbatim_line}")?;
+            CommentChild::VerbatimLineCommand(verbatim_line) => {
+                // Often comes from `@member` or similar that just name the
+                // item we're already documenting again, so we won't bother
+                // with outputting that here.
+                let (line_command, text) = parse_line_command(verbatim_line);
+                // If there was extra text after the item name, we do want to
+                // emit that. We also emit the first part, since parsing
+                // `VerbatimLineCommand` isn't really possible, and it's
+                // common to run into things like `@class This class does xyz`.
+                if let Some(text) = text {
+                    writeln!(f, "{line_command}{text}")?;
+                }
             }
         }
 
@@ -647,5 +663,19 @@ mod tests {
         ];
         let expected = "/// A\n/// B.\n///\n/// C.\n";
         check(&children, expected);
+    }
+
+    #[test]
+    fn line_command() {
+        assert_eq!(parse_line_command("  x"), ("x", None));
+        assert_eq!(parse_line_command("foo(bar)"), ("foo", Some("(bar)")));
+        assert_eq!(
+            parse_line_command("  foo_a:xyz: bar"),
+            ("foo_a:xyz:", Some(" bar"))
+        );
+        assert_eq!(
+            parse_line_command("  (readonly) CMTime timestamp;  "),
+            ("", Some("(readonly) CMTime timestamp;"))
+        );
     }
 }
