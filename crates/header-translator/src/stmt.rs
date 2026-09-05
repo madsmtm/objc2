@@ -1726,7 +1726,7 @@ impl Stmt {
                             error!("unsound struct/union bitfield");
                         }
 
-                        let documentation = Documentation::from_entity(&entity, context);
+                        let documentation = documentation.child(&entity, context);
                         fields.push((name, documentation, ty))
                     }
                     EntityKind::ObjCBoxable => {
@@ -1847,7 +1847,7 @@ impl Stmt {
                             });
                         };
 
-                        let mut documentation = documentation.enum_constant(&entity, context);
+                        let mut documentation = documentation.child(&entity, context);
 
                         if ty.is_simple_uint() {
                             ty = expr.guess_type(id.location());

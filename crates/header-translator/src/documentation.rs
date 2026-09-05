@@ -61,16 +61,17 @@ impl Documentation {
         }
     }
 
-    /// Get documentation for enum constant / variant.
+    /// Get documentation for enum constant / variant and struct fields.
     ///
-    /// Removes documentation from the enum if it contains stuff like
-    /// `@constant variant_name`, and adds it to the variant instead.
-    pub fn enum_constant(&mut self, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let variant_name = entity.get_name().unwrap();
+    /// Removes documentation from the item if it contains stuff like
+    /// `@constant child_name` or `@var child_name`, and adds it to the child
+    /// instead.
+    pub fn child(&mut self, entity: &Entity<'_>, context: &Context<'_>) -> Self {
+        let child_name = entity.get_name().unwrap_or_else(|| "__unknown__".into());
 
         let mut documentation = Self::from_entity(entity, context);
 
-        // Find range from `VerbatimLineCommand("{variant_name} ...")` to next
+        // Find range from `VerbatimLineCommand("{child_name} ...")` to next
         // `VerbatimLineCommand(...)`.
         let mut start = None;
         let mut end = None;
@@ -89,7 +90,8 @@ impl Documentation {
                         .split_once(' ')
                         .map(|(id, text)| (id, Some(text)))
                         .unwrap_or((line_command, None));
-                    if line_command == variant_name {
+                    // Trim `;` to fix docs for `AudioUnitMeterClipping`.
+                    if line_command.trim_end_matches(';') == child_name {
                         start = Some(i);
                         line_command_text = text;
                     }
