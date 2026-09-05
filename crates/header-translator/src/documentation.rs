@@ -404,8 +404,55 @@ fn format_child(child: &CommentChild) -> impl fmt::Display + '_ {
                 writeln!(f, "</{}>", name.trim())?;
             }
             CommentChild::Paragraph(children) => {
-                for child in children {
-                    write!(f, "{}", format_child(child))?;
+                let mut iter = children.iter().peekable();
+                let mut no_trim_next = false;
+                while let Some(child) = iter.next() {
+                    if let CommentChild::Text(child) = child {
+                        let child = if no_trim_next {
+                            no_trim_next = false;
+                            child
+                        } else {
+                            child.trim()
+                        };
+
+                        if let Some(CommentChild::Text(text)) = iter.peek() {
+                            // A single `"` usually means a `@"xyz"` that was
+                            // handled wrongly by Clang.
+                            //
+                            // In that case, merge the next three
+                            // `CommentChild::Text`s into a single line.
+                            //
+                            // Similar for a single `@` or `\`.
+                            if text == "\"" || text == "\\" || text == "@" {
+                                let _ = iter.next();
+                                write!(f, "{child}")?;
+                                if text == "\"" {
+                                    write!(f, "@")?;
+                                }
+                                // Intentionally no newline
+                                write!(f, "{text}")?;
+                                no_trim_next = true;
+                                continue;
+                            }
+                        }
+
+                        // A trailing `@` usually means a `@123` that was
+                        // handled wrongly by Clang.
+                        //
+                        // In that case, don't write a newline.
+                        if child.ends_with("@") || child.ends_with("%") {
+                            write!(f, "{child}")?;
+                            no_trim_next = true;
+                            continue;
+                        }
+
+                        if !child.is_empty() {
+                            writeln!(f, "{child}")?;
+                        }
+                    } else {
+                        no_trim_next = false;
+                        write!(f, "{}", format_child(child))?;
+                    }
                 }
 
                 writeln!(f)?;
@@ -662,6 +709,19 @@ mod tests {
             CommentChild::Paragraph(vec![CommentChild::Text("\tC.".into())]),
         ];
         let expected = "/// A\n/// B.\n///\n/// C.\n";
+        check(&children, expected);
+    }
+
+    #[test]
+    fn wrong_quote() {
+        let children = [CommentChild::Paragraph(vec![
+            CommentChild::Text("NSClassFromString(".into()),
+            CommentChild::Text("\"".into()),
+            CommentChild::Text("NSProcessInfo\") + @".into()),
+            CommentChild::Text("123;".into()),
+            CommentChild::Text("Xyz".into()),
+        ])];
+        let expected = "/// NSClassFromString(@\"NSProcessInfo\") + @123;\n/// Xyz\n";
         check(&children, expected);
     }
 
