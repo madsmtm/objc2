@@ -24,6 +24,7 @@ objc2-core-foundation = { workspace = true, optional = true, features = [
 ] }
 objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGColor",
+    "CGPath",
     "objc2",
 ] }
 objc2-foundation = { workspace = true, features = ["alloc"] }
@@ -60,6 +61,7 @@ default = [
     "PKStroke",
     "PKStrokePath",
     "PKStrokePoint",
+    "PKStrokeRenderState",
     "PKTool",
     "PKToolPickerEraserItem",
     "PKToolPickerInkingItem",
@@ -99,16 +101,19 @@ PKLassoTool = ["objc2-foundation/NSObject"]
 PKStroke = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
 PKStrokePath = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSUUID",
 ]
 PKStrokePoint = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
 ]
+PKStrokeRenderState = ["objc2-foundation/NSObject"]
 PKTool = ["objc2-foundation/NSObject"]
 PKToolPickerEraserItem = ["objc2-foundation/NSObject"]
 PKToolPickerInkingItem = [

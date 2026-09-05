@@ -20,6 +20,7 @@ bitflags = { workspace = true, optional = true, features = ["std"] }
 block2 = { workspace = true, optional = true, features = ["alloc"] }
 dispatch2 = { workspace = true, optional = true, features = [
     "alloc",
+    "block2",
     "objc2",
 ] }
 objc2 = { workspace = true, features = ["std"] }
@@ -63,16 +64,19 @@ default = [
     "GCControllerButtonInput",
     "GCControllerDirectionPad",
     "GCControllerElement",
+    "GCControllerHomeButtonSettingsManager",
     "GCControllerInput",
     "GCControllerTouchpad",
     "GCDevice",
     "GCDeviceBattery",
     "GCDeviceCursor",
     "GCDeviceHaptics",
+    "GCDeviceHapticsLocality",
     "GCDeviceLight",
     "GCDevicePhysicalInput",
     "GCDevicePhysicalInputState",
     "GCDevicePhysicalInputStateDiff",
+    "GCDeviceType",
     "GCDirectionPadElement",
     "GCDirectionalGamepad",
     "GCDualSenseAdaptiveTrigger",
@@ -105,6 +109,7 @@ default = [
     "GCRacingWheel",
     "GCRacingWheelInput",
     "GCRelativeInput",
+    "GCSpatialAccessory",
     "GCSteeringWheelElement",
     "GCStylus",
     "GCSwitchElement",
@@ -151,6 +156,7 @@ GCControllerElement = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+GCControllerHomeButtonSettingsManager = ["objc2-foundation/NSError"]
 GCControllerInput = []
 GCControllerTouchpad = []
 GCDevice = ["objc2-foundation/NSString"]
@@ -160,13 +166,18 @@ GCDeviceHaptics = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+GCDeviceHapticsLocality = ["objc2-foundation/NSString"]
 GCDeviceLight = []
-GCDevicePhysicalInput = []
+GCDevicePhysicalInput = ["objc2-foundation/NSDate"]
 GCDevicePhysicalInputState = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSString",
 ]
 GCDevicePhysicalInputStateDiff = ["objc2-foundation/NSEnumerator"]
+GCDeviceType = [
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 GCDirectionPadElement = []
 GCDirectionalGamepad = ["objc2-foundation/NSString"]
 GCDualSenseAdaptiveTrigger = []
@@ -230,6 +241,10 @@ GCRacingWheelInput = []
 GCRelativeInput = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSSet",
+]
+GCSpatialAccessory = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
 ]
 GCSteeringWheelElement = []
 GCStylus = [

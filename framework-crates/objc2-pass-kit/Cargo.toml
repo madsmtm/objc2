@@ -110,8 +110,6 @@ default = [
     "PKPassLibrary",
     "PKPassRelevantDate",
     "PKPass_Types",
-    "PKPayLaterValidator",
-    "PKPayLaterView",
     "PKPayment",
     "PKPaymentAuthorizationController",
     "PKPaymentAuthorizationViewController",
@@ -230,6 +228,7 @@ PKIdentityButton = []
 PKIdentityDocument = ["objc2-foundation/NSData"]
 PKIdentityDocumentDescriptor = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
     "objc2-foundation/NSString",
 ]
 PKIdentityElement = ["objc2-foundation/NSObject"]
@@ -279,8 +278,6 @@ PKPassRelevantDate = [
     "objc2-foundation/NSDateInterval",
 ]
 PKPass_Types = []
-PKPayLaterValidator = []
-PKPayLaterView = []
 PKPayment = []
 PKPaymentAuthorizationController = [
     "objc2-foundation/NSArray",

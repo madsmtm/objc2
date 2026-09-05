@@ -91,6 +91,7 @@ OSAScriptView = [
     "objc2-app-kit/NSTextContent",
     "objc2-app-kit/NSTextInputClient",
     "objc2-app-kit/NSTextView",
+    "objc2-app-kit/NSTextViewportLayoutController",
     "objc2-app-kit/NSUserInterfaceItemIdentification",
     "objc2-app-kit/NSUserInterfaceValidation",
     "objc2-app-kit/NSView",

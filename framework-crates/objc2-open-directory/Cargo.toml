@@ -57,6 +57,7 @@ default = [
     "CFOpenDirectoryConstants",
     "ODAttributeMap",
     "ODConfiguration",
+    "ODContext",
     "ODMappings",
     "ODModuleEntry",
     "ODNode",
@@ -91,6 +92,7 @@ ODConfiguration = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
+ODContext = []
 ODMappings = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",

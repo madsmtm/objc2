@@ -70,6 +70,7 @@ default = [
     "CNDecision",
     "CNDetection",
     "CNDetectionTrack",
+    "CNImageRenderingSession",
     "CNObjectTracker",
     "CNRenderingSession",
     "CNScript",
@@ -110,6 +111,7 @@ CNDetectionTrack = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
+CNImageRenderingSession = []
 CNObjectTracker = ["objc2-foundation/NSObject"]
 CNRenderingSession = [
     "objc2-foundation/NSArray",

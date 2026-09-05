@@ -46,6 +46,7 @@ default = [
     "CMAuthorization",
     "CMAvailability",
     "CMBatchedSensorManager",
+    "CMBody",
     "CMDeviceMotion",
     "CMError",
     "CMErrorDomain",
@@ -65,6 +66,7 @@ default = [
     "CMOdometer",
     "CMPedometer",
     "CMRecordedAccelerometerData",
+    "CMRecordedDeviceMotion",
     "CMRecordedPressureData",
     "CMRotationRateData",
     "CMSensorRecorder",
@@ -107,6 +109,7 @@ CMBatchedSensorManager = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
 ]
+CMBody = []
 CMDeviceMotion = ["objc2-foundation/NSObject"]
 CMError = []
 CMErrorDomain = ["objc2-foundation/NSString"]
@@ -165,6 +168,10 @@ CMPedometer = [
     "objc2-foundation/NSValue",
 ]
 CMRecordedAccelerometerData = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+]
+CMRecordedDeviceMotion = [
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
 ]

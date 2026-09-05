@@ -45,8 +45,10 @@ features = ["objc2-messages"]
 [features]
 default = [
     "std",
+    "MFComposeAssistantViewController",
     "MFMailComposeControllerDeferredAction",
     "MFMailComposeViewController",
+    "MFMailDraft",
     "MFMessageComposeViewController",
     "UPI",
     "block2",
@@ -59,6 +61,11 @@ objc2-messages = ["dep:objc2-messages"]
 objc2-ui-kit = ["dep:objc2-ui-kit"]
 unstable-darwin-objc = []
 
+MFComposeAssistantViewController = [
+    "objc2-foundation/NSBundle",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 MFMailComposeControllerDeferredAction = []
 MFMailComposeViewController = [
     "objc2-foundation/NSArray",
@@ -67,6 +74,11 @@ MFMailComposeViewController = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSItemProvider",
     "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+MFMailDraft = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSString",
 ]
 MFMessageComposeViewController = [
