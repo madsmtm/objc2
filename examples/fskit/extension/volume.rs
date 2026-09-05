@@ -11,7 +11,8 @@ use objc2_fs_kit::{
     FSBlockDeviceResource, FSDeactivateOptions, FSDirectoryCookie, FSDirectoryEntryPacker,
     FSDirectoryVerifier, FSFileName, FSItem, FSItemAttributes, FSItemGetAttributesRequest,
     FSItemID, FSItemSetAttributesRequest, FSItemType, FSStatFSResult, FSSyncFlags, FSTaskOptions,
-    FSVolume, FSVolumeIdentifier, FSVolumePathConfOperations, FSVolumeSupportedCapabilities,
+    FSVolume, FSVolumeCommonOperations, FSVolumeIdentifier, FSVolumePathConfOperations,
+    FSVolumeSupportedCapabilities,
 };
 use tracing::trace;
 
@@ -72,8 +73,7 @@ define_class!(
     }
 
     #[allow(non_snake_case)]
-    #[allow(deprecated)]
-    unsafe impl FSVolumeOperations for Volume {
+    unsafe impl FSVolumeCommonOperations for Volume {
         #[unsafe(method(supportedVolumeCapabilities))]
         fn supportedVolumeCapabilities(&self) -> Retained<FSVolumeSupportedCapabilities> {
             trace!("supportedVolumeCapabilities");
@@ -104,27 +104,6 @@ define_class!(
             stats
         }
 
-        #[unsafe(method(activateWithOptions:replyHandler:))]
-        fn activateWithOptions_replyHandler(
-            &self,
-            options: &FSTaskOptions,
-            reply: &block2::SendableBlock<'static, fn(*mut FSItem, *mut NSError)>,
-        ) {
-            trace!(taskOptions = ?unsafe { options.taskOptions() }, "activate");
-            let item = Item::new(FSItemID::RootDirectory).into_super();
-            reply.call(Retained::as_ptr(&item).cast_mut(), null_mut());
-        }
-
-        #[unsafe(method(deactivateWithOptions:replyHandler:))]
-        fn deactivateWithOptions_replyHandler(
-            &self,
-            options: FSDeactivateOptions,
-            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
-        ) {
-            trace!(?options, "deactivate");
-            reply.call(null_mut());
-        }
-
         #[unsafe(method(mountWithOptions:replyHandler:))]
         fn mountWithOptions_replyHandler(
             &self,
@@ -148,6 +127,42 @@ define_class!(
             reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
         ) {
             trace!(?flags, "synchronize");
+            reply.call(null_mut());
+        }
+
+        #[unsafe(method(reclaimItem:replyHandler:))]
+        fn reclaimItem_replyHandler(
+            &self,
+            item: &FSItem,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
+        ) {
+            let item = item.downcast_ref::<Item>().unwrap();
+            trace!(?item, "reclaimItem");
+            reply.call(null_mut());
+        }
+    }
+
+    #[allow(non_snake_case)]
+    #[allow(deprecated)]
+    unsafe impl FSVolumeOperations for Volume {
+        #[unsafe(method(activateWithOptions:replyHandler:))]
+        fn activateWithOptions_replyHandler(
+            &self,
+            options: &FSTaskOptions,
+            reply: &block2::SendableBlock<'static, fn(*mut FSItem, *mut NSError)>,
+        ) {
+            trace!(taskOptions = ?unsafe { options.taskOptions() }, "activate");
+            let item = Item::new(FSItemID::RootDirectory).into_super();
+            reply.call(Retained::as_ptr(&item).cast_mut(), null_mut());
+        }
+
+        #[unsafe(method(deactivateWithOptions:replyHandler:))]
+        fn deactivateWithOptions_replyHandler(
+            &self,
+            options: FSDeactivateOptions,
+            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
+        ) {
+            trace!(?options, "deactivate");
             reply.call(null_mut());
         }
 
@@ -188,17 +203,6 @@ define_class!(
             let directory = directory.downcast_ref::<Item>().unwrap();
             trace!(?name, ?directory, "lookupItem");
             reply.call(null_mut(), null_mut(), posix_err(ENOENT));
-        }
-
-        #[unsafe(method(reclaimItem:replyHandler:))]
-        fn reclaimItem_replyHandler(
-            &self,
-            item: &FSItem,
-            reply: &block2::SendableBlock<'static, fn(*mut NSError)>,
-        ) {
-            let item = item.downcast_ref::<Item>().unwrap();
-            trace!(?item, "reclaimItem");
-            reply.call(null_mut());
         }
 
         #[unsafe(method(readSymbolicLink:replyHandler:))]
