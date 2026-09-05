@@ -5,11 +5,12 @@ use std::path::Path;
 use std::{fs, io};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
+use clang::diagnostic::Severity;
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use clap::Parser;
 use semver::VersionReq;
 use tracing::level_filters::LevelFilter;
-use tracing::{debug_span, error, info, info_span, trace_span};
+use tracing::{debug_span, error, info, info_span, trace, trace_span, warn};
 use tracing_subscriber::filter::EnvFilter;
 use tracing_subscriber::layer::{Layer, SubscriberExt};
 use tracing_subscriber::registry::Registry;
@@ -622,6 +623,27 @@ fn get_translation_unit<'i: 'c, 'c>(
         .arguments(&arguments)
         .parse()
         .unwrap();
+
+    for diag in tu.get_diagnostics() {
+        let location = diag.get_location().get_spelling_location();
+        let location = format!(
+            "{}:{}:{}",
+            location
+                .file
+                .map(|f| f.get_path())
+                .unwrap_or_else(|| "unknown".into())
+                .to_string_lossy(),
+            location.line,
+            location.column
+        );
+        let text = diag.get_text();
+        match diag.get_severity() {
+            Severity::Ignored => trace!("{location}: {text}"),
+            Severity::Note => info!("{location}: {text}"),
+            Severity::Warning => warn!("{location}: {text}"),
+            Severity::Error | Severity::Fatal => error!("{location}: {text}"),
+        }
+    }
 
     // dbg!(&tu);
     // dbg!(tu.get_entity().get_children());
