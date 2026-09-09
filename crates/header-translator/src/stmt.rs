@@ -8,10 +8,11 @@ use std::iter;
 use std::str::FromStr;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
-use translation_config::{Config, Counterpart, Derives, LibraryConfig, MethodData, StmtData};
+use translation_config::{
+    Config, Counterpart, Derives, LibraryConfig, MethodData, PlatformCfg, StmtData,
+};
 
 use crate::availability::Availability;
-use crate::cfgs::PlatformCfg;
 use crate::context::Context;
 use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;

@@ -1,7 +1,7 @@
 use core::fmt;
 use std::fmt::Display;
 
-use translation_config::LibraryConfig;
+use crate::LibraryConfig;
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 enum CfgState {

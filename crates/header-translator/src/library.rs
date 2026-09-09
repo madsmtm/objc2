@@ -8,9 +8,8 @@ use std::path::Path;
 
 use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Item, Table, Value};
-use translation_config::{Config, LibraryConfig, VERSION};
+use translation_config::{Config, LibraryConfig, PlatformCfg, VERSION};
 
-use crate::cfgs::PlatformCfg;
 use crate::display_helper::FormatterFn;
 use crate::module::Module;
 use crate::Location;
@@ -398,16 +397,12 @@ see that for related crates.", self.data.krate)?;
                     .position()
                     .unwrap();
 
-                let target = cargo_toml.entry("target").implicit_table();
+                let target = implicit_table(cargo_toml.entry("target"));
 
                 target.set_position(Some(dep_position));
 
                 let key = format!("'cfg({cfgs})'").parse().unwrap();
-                target
-                    .entry_format(&key)
-                    .implicit_table()
-                    .entry("dependencies")
-                    .implicit_table()
+                implicit_table(implicit_table(target.entry_format(&key)).entry("dependencies"))
             } else {
                 cargo_toml["dependencies"].as_table_mut().unwrap()
             };
@@ -625,18 +620,13 @@ fn array_with_newlines(features: impl IntoIterator<Item = String>) -> Item {
     value(array)
 }
 
-pub trait EntryExt<'a> {
-    fn implicit_table(self) -> &'a mut Table;
-}
-
-impl<'a> EntryExt<'a> for toml_edit::Entry<'a> {
-    fn implicit_table(self) -> &'a mut Table {
-        self.or_insert({
-            let mut table = Table::new();
+fn implicit_table(entry: toml_edit::Entry<'_>) -> &mut toml_edit::Table {
+    entry
+        .or_insert_with(|| {
+            let mut table = toml_edit::Table::new();
             table.set_implicit(true);
-            Item::Table(table)
+            toml_edit::Item::Table(table)
         })
         .as_table_mut()
         .unwrap()
-    }
 }
