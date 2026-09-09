@@ -16,6 +16,7 @@ pub fn run_cargo_fmt(packages: impl IntoIterator<Item = impl fmt::Display>) {
     );
 }
 
+#[allow(dead_code)]
 pub fn run_rustfmt(data: impl fmt::Display) -> Vec<u8> {
     use std::io::Write;
 

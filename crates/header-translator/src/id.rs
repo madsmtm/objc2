@@ -862,10 +862,6 @@ impl ItemTree {
         self.visit_inner(&[emission_location.library_name()], &mut f);
     }
 
-    pub fn nserror() -> Self {
-        Self::from_id(ItemIdentifier::nserror())
-    }
-
     pub fn sendable_block() -> Self {
         Self::from_id(ItemIdentifier {
             name: "SendableBlock".into(),
