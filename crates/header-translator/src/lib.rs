@@ -32,7 +32,7 @@ mod unexposed_attr;
 
 pub use self::availability::HOST_MACOS;
 pub use self::cfgs::PlatformCfg;
-pub use self::config::{load_config, load_skipped, Config, Counterpart, LibraryConfig};
+pub use self::config::{Config, Counterpart, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::documentation::EXTRA_BLOCK_COMMANDS;
 pub use self::global_analysis::global_analysis;
