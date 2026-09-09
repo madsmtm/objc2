@@ -24,6 +24,16 @@ pub struct Library {
     pub data: LibraryConfig,
 }
 
+fn library_from_crate<'c>(config: &'c Config, krate: &str) -> &'c LibraryConfig {
+    config.try_library_from_crate(krate).unwrap_or_else(|| {
+        error!("tried to get library config from krate {krate:?}");
+        config
+            .libraries
+            .get("__builtin__")
+            .expect("could not find builtin library")
+    })
+}
+
 impl Library {
     pub fn new(name: &str, data: &LibraryConfig) -> Self {
         Self {
@@ -64,7 +74,7 @@ impl Library {
         // HACK: Encode impls need the inner encode impl to be available.
         if self.data.required_crates.contains("objc2") {
             for (krate, features) in &mut dependencies {
-                let data = config.library_from_crate(krate);
+                let data = library_from_crate(config, krate);
                 if !data.required_crates.contains("objc2") && !data.skipped {
                     features.insert("objc2".into());
                 }
@@ -135,7 +145,7 @@ impl Library {
         for krate in self.module.used_crates(config, &emission_location) {
             let required = self.data.required_crates.contains(krate);
 
-            let data = config.library_from_crate(krate);
+            let data = library_from_crate(config, krate);
             if !data.required_crates.contains("objc2") && krate != "objc2" && !data.skipped {
                 // Uses optional feature enablement. Sub-optimal since it's
                 // buggy in Cargo, but it's what we have to work with.
@@ -363,7 +373,7 @@ see that for related crates.", self.data.krate)?;
             value(default_target.unwrap());
 
         for (krate, required_features) in self.dependencies(config) {
-            let library = config.library_from_crate(krate);
+            let library = library_from_crate(config, krate);
             let required = self.data.required_crates.contains(krate);
             let mut table = InlineTable::from_iter([("workspace", Value::from(true))]);
             if !required {

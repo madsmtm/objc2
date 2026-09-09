@@ -6,13 +6,15 @@ use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 use regex::Regex;
 
-use crate::config::{ItemGeneric, PointerBounds, PointerLifetime, StmtData, TypeOverride};
-use crate::context::Context;
+use crate::config::{self, ItemGeneric, PointerBounds, PointerLifetime, StmtData, TypeOverride};
+use crate::context::{Context, LibraryFromLocation};
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
-use crate::stmt::{anonymous_record_name, bridged_to, parse_class_generics, GenericWithBound};
+use crate::stmt::{
+    anonymous_record_name, bridged_to, parse_class_generics, stmt_data, GenericWithBound,
+};
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
@@ -2149,7 +2151,7 @@ impl Ty {
                 parser.check();
 
                 let id = ItemIdentifier::new(&declaration, context);
-                let data = context.library(&id).get(&declaration);
+                let data = stmt_data(context.library(&id), &declaration);
 
                 match &*typedef_name {
                     "BOOL" => return Self::Primitive(Primitive::ObjcBool),
@@ -2298,7 +2300,7 @@ impl Ty {
                     name if name.starts_with("dispatch_")
                         && inner.get_kind() == TypeKind::ObjCObjectPointer =>
                     {
-                        let id = context.replace_typedef_name(id, false);
+                        let id = id.replace_typedef_name(context, false);
                         let pointee = Box::new(Self::Pointee(PointeeTy::DispatchTypeDef { id }));
                         return Self::Pointer {
                             nullability,
@@ -2314,7 +2316,7 @@ impl Ty {
                     name if name.starts_with("nw_")
                         && inner.get_kind() == TypeKind::ObjCObjectPointer =>
                     {
-                        let id = context.replace_typedef_name(id, false);
+                        let id = id.replace_typedef_name(context, false);
                         let pointee = Box::new(Self::Pointee(PointeeTy::NetworkTypeDef { id }));
                         return Self::Pointer {
                             nullability,
@@ -2435,7 +2437,7 @@ impl Ty {
                         // here, as that's also what determines whether the
                         // type is a CF type or not... But that's how it is
                         // currently.
-                        let id = context.replace_typedef_name(id, true);
+                        let id = id.replace_typedef_name(context, true);
                         **pointee = Self::Pointee(PointeeTy::CFTypeDef {
                             id,
                             generics: vec![],
@@ -2447,11 +2449,11 @@ impl Ty {
                         .opaque
                         .unwrap_or_else(|| pointee.is_direct_opaque(&id.name))
                     {
-                        let id = context.replace_typedef_name(id, true);
+                        let id = id.replace_typedef_name(context, true);
                         **pointee = Self::Pointee(PointeeTy::OpaqueTypeDef { id });
                         return inner;
                     } else if let Self::Pointee(pointee_ty) = &mut **pointee {
-                        let id = context.replace_typedef_name(id, pointee_ty.is_cf_type());
+                        let id = id.replace_typedef_name(context, pointee_ty.is_cf_type());
                         // Replace with a dummy type (will be re-replaced
                         // on the line below).
                         let to = Box::new(mem::replace(pointee_ty, PointeeTy::Self_));
@@ -4966,7 +4968,7 @@ impl Ty {
     fn change_generics(&mut self, new: &[ItemGeneric]) {
         fn to_cf(generic: &ItemGeneric) -> PointeeTy {
             PointeeTy::CFTypeDef {
-                id: generic.id.clone(),
+                id: ItemIdentifier::from_str(&generic.id).expect("valid item generic"),
                 generics: generic.generics.iter().map(to_cf).collect(),
                 // TODO: How would we get this information correctly?
                 num_declaration_generics: generic.generics.len(),
@@ -4991,7 +4993,10 @@ impl Ty {
 
     pub(crate) fn apply_override(&mut self, override_: &TypeOverride) {
         if let Some(nullability) = override_.nullability {
-            self.change_nullability(nullability.into());
+            self.change_nullability(match nullability {
+                config::Nullability::NonNull => Nullability::NonNull,
+                config::Nullability::Nullable => Nullability::Nullable,
+            });
         }
         if let Some(generics) = &override_.generics {
             self.change_generics(generics);
