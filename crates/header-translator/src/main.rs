@@ -41,7 +41,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 use translation_config::{Config, LibraryConfig, PlatformCfg};
 
-use self::availability::HOST_MACOS;
+use crate::availability::is_available;
+
 use self::clang_utils::immediate_children;
 use self::command::run_cargo_fmt;
 use self::context::{Context, MacroEntity, MacroLocation};
@@ -642,8 +643,8 @@ fn update_test_imports(workspace_dir: &Path, config: &Config) {
         if lib.located_outside_sdk {
             continue;
         }
-        if let Some(macos) = &lib.macos {
-            if (HOST_MACOS as u64) < macos.major {
+        if let Some(version) = &lib.macos {
+            if is_available(version.major as _, version.minor as _, version.patch as _) {
                 // Skip library if not available on current host.
                 continue;
             }

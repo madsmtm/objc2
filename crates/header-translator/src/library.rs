@@ -10,6 +10,7 @@ use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Item, Table, Value};
 use translation_config::{Config, LibraryConfig, PlatformCfg, VERSION};
 
+use crate::availability::is_available;
 use crate::display_helper::FormatterFn;
 use crate::module::Module;
 use crate::Location;
@@ -204,7 +205,7 @@ impl Library {
             .data
             .macos
             .as_ref()
-            .map(|macos| macos.major <= (crate::HOST_MACOS as u64))
+            .map(|version| is_available(version.major as _, version.minor as _, version.patch as _))
             .unwrap_or(true)
             && !self.data.located_outside_sdk;
 
