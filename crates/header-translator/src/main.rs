@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::fmt::Write as _;
 use std::io::{ErrorKind, Read, Seek, Write};
 use std::path::Path;
@@ -18,9 +18,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, load_config, load_skipped, run_cargo_fmt, Config, Context, EntryExt, Library,
-    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS,
-    HOST_MACOS, VERSION,
+    global_analysis, run_cargo_fmt, Config, Context, EntryExt, Library, LibraryConfig, Location,
+    MacroEntity, MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS, HOST_MACOS, VERSION,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -70,7 +69,7 @@ fn main() -> Result<(), BoxError> {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
 
-    let config = load_config()?;
+    let config = Config::load()?;
 
     clang_sys::load()?;
     info!(clang_version = clang::get_version());
@@ -132,7 +131,7 @@ fn main() -> Result<(), BoxError> {
 
     update_ci(workspace_dir, &config)?;
 
-    update_list(workspace_dir, &config, &load_skipped().unwrap())?;
+    update_list(workspace_dir, &config)?;
 
     Ok(())
 }
@@ -839,11 +838,7 @@ fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     Ok(())
 }
 
-fn update_list(
-    workspace_dir: &Path,
-    config: &Config,
-    skipped: &BTreeMap<String, String>,
-) -> io::Result<()> {
+fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
     let _span = info_span!("updating lists").entered();
 
     let mut f =
@@ -867,7 +862,7 @@ fn update_list(
     writeln!(f, "| Framework | Why is this unsupported? |")?;
     writeln!(f, "| --- | --- |")?;
 
-    for (framework, why) in skipped {
+    for (framework, why) in &config.skipped {
         writeln!(f, "| `{framework}` | {why}. |")?;
     }
 

@@ -11,7 +11,7 @@ use std::path::Path;
 use std::{collections::BTreeSet, process::ExitCode};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SimpleSdk};
-use header_translator::{load_config, load_skipped};
+use header_translator::Config;
 
 fn parse_framework_from_path(path: &Path) -> Option<String> {
     if path.file_name().unwrap().as_bytes().starts_with(b"_") {
@@ -71,12 +71,13 @@ fn all_frameworks() -> BTreeSet<String> {
 }
 
 fn known_frameworks() -> BTreeSet<String> {
-    load_config()
-        .unwrap()
+    let config = Config::load().unwrap();
+
+    config
         .to_parse()
         .filter(|(_, config)| !config.is_library)
         .map(|(name, _)| name.to_string())
-        .chain(load_skipped().unwrap().into_keys())
+        .chain(config.skipped.keys().cloned())
         .collect()
 }
 
