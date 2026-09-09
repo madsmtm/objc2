@@ -1,3 +1,28 @@
+#![allow(clippy::collapsible_else_if)]
+
+#[macro_use]
+extern crate tracing;
+
+mod availability;
+mod clang_utils;
+mod command;
+mod context;
+mod display_helper;
+pub mod documentation;
+mod expr;
+mod global_analysis;
+mod id;
+mod library;
+mod method;
+mod module;
+mod name_translation;
+mod objc2_utils;
+mod protocol;
+mod rust_type;
+mod stmt;
+mod thread_safety;
+mod unexposed_attr;
+
 use std::fmt::Write as _;
 use std::fs;
 use std::io::ErrorKind;
@@ -14,12 +39,17 @@ use tracing_subscriber::layer::{Layer, SubscriberExt};
 use tracing_subscriber::registry::Registry;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
-
-use header_translator::{
-    global_analysis, run_cargo_fmt, Context, Library, Location, MacroEntity, MacroLocation, Stmt,
-    EXTRA_BLOCK_COMMANDS, HOST_MACOS,
-};
 use translation_config::{Config, LibraryConfig, PlatformCfg};
+
+use self::availability::HOST_MACOS;
+use self::clang_utils::immediate_children;
+use self::command::run_cargo_fmt;
+use self::context::{Context, MacroEntity, MacroLocation};
+use self::documentation::EXTRA_BLOCK_COMMANDS;
+use self::global_analysis::global_analysis;
+use self::id::{ItemIdentifier, Location};
+use self::library::Library;
+use self::stmt::Stmt;
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
 

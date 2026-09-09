@@ -294,6 +294,7 @@ impl Availability {
         }
     }
 
+    #[allow(dead_code)]
     pub fn new_deprecated(msg: impl Into<String>) -> Self {
         Self {
             deprecated: Versions::MIN,
