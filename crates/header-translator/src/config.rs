@@ -8,13 +8,9 @@ use std::str::FromStr;
 use std::sync::OnceLock;
 use std::{fmt, ptr};
 
-use clang::{Entity, EntityKind};
 use heck::ToTrainCase;
 use semver::Version;
 use serde::{de, Deserialize, Deserializer};
-
-use crate::name_translation::cf_no_ref;
-use crate::{ItemIdentifier, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
@@ -95,61 +91,8 @@ impl Config {
         self.libraries.get(library_name)
     }
 
-    /// Look up the library config.
-    ///
-    /// This only needs the library name, but it takes ItemIdentifier or
-    /// Location for better error reporting.
-    pub fn library(&self, location: impl AsRef<Location> + fmt::Debug) -> &LibraryConfig {
-        self.try_library(location.as_ref().library_name())
-            .unwrap_or_else(|| {
-                error!("tried to get library config from {location:?}");
-                self.libraries
-                    .get("__builtin__")
-                    .expect("could not find builtin library")
-            })
-    }
-
-    pub fn library_from_crate(&self, krate: &str) -> &LibraryConfig {
-        self.try_library_from_crate(krate).unwrap_or_else(|| {
-            error!("tried to get library config from krate {krate:?}");
-            self.libraries
-                .get("__builtin__")
-                .expect("could not find builtin library")
-        })
-    }
-
     pub fn try_library_from_crate(&self, krate: &str) -> Option<&LibraryConfig> {
         self.libraries.values().find(|lib| lib.krate == krate)
-    }
-
-    pub fn replace_typedef_name(&self, id: ItemIdentifier, is_cf: bool) -> ItemIdentifier {
-        let library_config = self.library(&id);
-        id.map_name(|name| {
-            library_config
-                .typedef_data
-                .get(&name)
-                .and_then(|data| data.renamed.clone())
-                .unwrap_or_else(|| {
-                    // If a typedef's underlying type is itself a "CF pointer"
-                    // typedef, the "alias" typedef will be imported as a
-                    // regular typealias, with the suffix "Ref" still dropped
-                    // from its name (if present).
-                    //
-                    // <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md#cf-types>
-                    //
-                    // NOTE: There's an extra clause that we don't support:
-                    // > unless doing so would conflict with another
-                    // > declaration in the same module as the typedef.
-                    //
-                    // We'll have to manually keep the name of those in
-                    // translation-config.toml.
-                    if is_cf {
-                        cf_no_ref(&name).to_string()
-                    } else {
-                        name
-                    }
-                })
-        })
     }
 
     pub fn to_parse(&self) -> impl Iterator<Item = (&str, &LibraryConfig)> + Clone {
@@ -157,26 +100,6 @@ impl Config {
             .iter()
             .filter(|(_, data)| !data.skipped)
             .map(|(name, data)| (&**name, data))
-    }
-
-    pub fn module_configs<'l>(
-        &'l self,
-        location: &'l Location,
-    ) -> impl Iterator<Item = &'l ModuleConfig> + 'l {
-        self.try_library(location.library_name())
-            .map(|library| {
-                let mut current = &library.module;
-                location.modules().map_while(move |component| {
-                    if let Some(module_config) = current.get(component) {
-                        current = &module_config.module;
-                        Some(module_config)
-                    } else {
-                        None
-                    }
-                })
-            })
-            .into_iter()
-            .flatten()
     }
 }
 
@@ -213,13 +136,7 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ExternalData {
-    pub(crate) module: Location,
-}
-
-impl ExternalData {
-    pub(crate) fn into_id(self, name: String) -> ItemIdentifier {
-        ItemIdentifier::from_raw(name, self.module)
-    }
+    pub(crate) module: String,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -528,57 +445,6 @@ impl LibraryConfig {
             assert_eq!(data.opaque, Default::default());
         }
     }
-
-    pub(crate) fn get(&self, entity: &Entity<'_>) -> &StmtData {
-        let name = if entity.is_anonymous() {
-            // union (unnamed at /Applications/Xcode.app/...)
-            // union (anonymous at /Applications/Xcode.app/...)
-            // enum (unnamed at /Applications/Xcode.app/...)
-            // struct (unnamed at /Applications/Xcode.app/...)
-            //
-            // Anonymous enums don't have a name that we can use to look up
-            // a config. So we use the special "__anonymous__" instead.
-            "__anonymous__".to_string()
-        } else {
-            if let Some(name) = entity.get_name() {
-                name
-            } else {
-                return StmtData::empty();
-            }
-        };
-
-        let data = match entity.get_kind() {
-            EntityKind::ObjCInterfaceDecl | EntityKind::ObjCClassRef => self.class_data.get(&name),
-            EntityKind::ObjCCategoryDecl => None, // TODO
-            EntityKind::ObjCProtocolDecl | EntityKind::ObjCProtocolRef => {
-                self.protocol_data.get(&name)
-            }
-            EntityKind::TypedefDecl => self.typedef_data.get(&name),
-            EntityKind::StructDecl => self.struct_data.get(&name),
-            EntityKind::UnionDecl => self.union_data.get(&name),
-            EntityKind::EnumDecl => self.enum_data.get(&name),
-            EntityKind::EnumConstantDecl => self.const_data.get(&name),
-            EntityKind::VarDecl => self.statics.get(&name),
-            EntityKind::FunctionDecl => self.fns.get(&name),
-            EntityKind::FieldDecl => None, // TODO
-            // TODO: Add #[doc(alias = ...)] on methods?
-            EntityKind::ObjCClassMethodDecl
-            | EntityKind::ObjCInstanceMethodDecl
-            | EntityKind::ObjCPropertyDecl => None,
-            EntityKind::MacroDefinition | EntityKind::MacroExpansion => None,
-            EntityKind::UnexposedDecl => None,
-            EntityKind::TemplateTypeParameter => None,
-            kind => {
-                error!(
-                    ?kind,
-                    "tried to look up ItemIdentifier from unknown entity kind"
-                );
-                None
-            }
-        };
-
-        data.unwrap_or_else(|| StmtData::empty())
-    }
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -623,7 +489,7 @@ pub struct StmtData {
     /// They are correctness-checked in `global_analysis.rs` though.
     #[serde(default)]
     #[serde(rename = "bridged-to")]
-    pub bridged_to: Option<ItemIdentifier>,
+    pub bridged_to: Option<String>,
 
     // Protocol only.
     #[serde(default)]
@@ -639,7 +505,7 @@ pub struct StmtData {
     #[serde(default)]
     pub no_implementor: bool,
     #[serde(default)]
-    pub implementor: Option<ItemIdentifier>,
+    pub implementor: Option<String>,
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_argument_overrides")]
     pub arguments: HashMap<usize, TypeOverride>,
@@ -700,15 +566,6 @@ pub enum Nullability {
     Nullable,
     #[serde(rename = "nonnull")]
     NonNull,
-}
-
-impl From<Nullability> for clang::Nullability {
-    fn from(nullability: Nullability) -> Self {
-        match nullability {
-            Nullability::Nullable => clang::Nullability::Nullable,
-            Nullability::NonNull => clang::Nullability::NonNull,
-        }
-    }
 }
 
 /// The bounds of a raw pointer.
@@ -925,9 +782,9 @@ pub enum Counterpart {
     #[default]
     NoCounterpart,
     #[serde(rename = "immutable-superclass")]
-    ImmutableSuperclass(ItemIdentifier),
+    ImmutableSuperclass(String),
     #[serde(rename = "mutable-subclass")]
-    MutableSubclass(ItemIdentifier),
+    MutableSubclass(String),
 }
 
 fn deserialize_argument_overrides<'de, D>(
@@ -961,7 +818,7 @@ where
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ItemGeneric {
-    pub id: ItemIdentifier,
+    pub id: String,
     pub generics: Vec<ItemGeneric>,
 }
 
@@ -996,7 +853,7 @@ impl FromStr for ItemGeneric {
                 Err(std::io::Error::other("unexpected after >"))?;
             }
             Ok(Self {
-                id: ItemIdentifier::from_str(id)?,
+                id: id.to_string(),
                 generics: split_top_level_commas(generics)
                     .into_iter()
                     .map(|g| g.parse::<ItemGeneric>())
@@ -1004,7 +861,7 @@ impl FromStr for ItemGeneric {
             })
         } else {
             Ok(Self {
-                id: ItemIdentifier::from_str(s)?,
+                id: s.to_string(),
                 generics: vec![],
             })
         }
@@ -1046,7 +903,7 @@ mod tests {
         assert_eq!(
             ItemGeneric::from_str("Foo.Bar").unwrap(),
             ItemGeneric {
-                id: ItemIdentifier::from_str("Foo.Bar").unwrap(),
+                id: "Foo.Bar".to_string(),
                 generics: vec![],
             }
         );
@@ -1054,14 +911,14 @@ mod tests {
         assert_eq!(
             ItemGeneric::from_str("Foo.Bar<X.Y.Z, A.B.C>").unwrap(),
             ItemGeneric {
-                id: ItemIdentifier::from_str("Foo.Bar").unwrap(),
+                id: "Foo.Bar".to_string(),
                 generics: vec![
                     ItemGeneric {
-                        id: ItemIdentifier::from_str("X.Y.Z").unwrap(),
+                        id: "X.Y.Z".to_string(),
                         generics: vec![],
                     },
                     ItemGeneric {
-                        id: ItemIdentifier::from_str("A.B.C").unwrap(),
+                        id: "A.B.C".to_string(),
                         generics: vec![],
                     },
                 ],
@@ -1074,27 +931,27 @@ mod tests {
             )
             .unwrap(),
             ItemGeneric {
-                id: ItemIdentifier::from_str("Foo.Bar").unwrap(),
+                id: "Foo.Bar".to_string(),
                 generics: vec![
                     ItemGeneric {
-                        id: ItemIdentifier::from_str("X.Y.Z").unwrap(),
+                        id: "X.Y.Z".to_string(),
                         generics: vec![],
                     },
                     ItemGeneric {
-                        id: ItemIdentifier::from_str("Inner.Item").unwrap(),
+                        id: "Inner.Item".to_string(),
                         generics: vec![
                             ItemGeneric {
-                                id: ItemIdentifier::from_str("With.Generic").unwrap(),
+                                id: "With.Generic".to_string(),
                                 generics: vec![],
                             },
                             ItemGeneric {
-                                id: ItemIdentifier::from_str("Second.Generic").unwrap(),
+                                id: "Second.Generic".to_string(),
                                 generics: vec![],
                             }
                         ],
                     },
                     ItemGeneric {
-                        id: ItemIdentifier::from_str("A.B.C").unwrap(),
+                        id: "A.B.C".to_string(),
                         generics: vec![],
                     },
                 ],

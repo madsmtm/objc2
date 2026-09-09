@@ -1,7 +1,6 @@
 use clang::EntityKind;
 use core::fmt;
 use core::hash;
-use serde::de;
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BTreeSet;
@@ -15,8 +14,11 @@ use clang::Entity;
 use crate::cfgs::cfg_features_ln;
 use crate::cfgs::PlatformCfg;
 use crate::context::Context;
+use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
 use crate::module::clean_name;
+use crate::name_translation::cf_no_ref;
+use crate::stmt::stmt_data;
 use crate::Config;
 
 pub trait ToOptionString: fmt::Debug {
@@ -407,7 +409,7 @@ impl<N: ToOptionString> ItemIdentifier<N> {
                         .get(name)
                 })
             {
-                location = external.module.clone();
+                location = Location::from_str(&external.module).unwrap();
             } else if let EntityKind::ObjCClassRef | EntityKind::ObjCProtocolRef = entity.get_kind()
             {
                 error!(?entity, "could not get declaration, add appropriate external.{name}.module = \"...\" to translation-config.toml");
@@ -415,7 +417,10 @@ impl<N: ToOptionString> ItemIdentifier<N> {
         }
 
         // Rename if the config contains a rename.
-        if let Some(renamed) = context.library(&location).get(entity).renamed.clone() {
+        if let Some(renamed) = stmt_data(context.library(&location), entity)
+            .renamed
+            .clone()
+        {
             name.set(Some(renamed));
         }
 
@@ -569,6 +574,36 @@ impl ItemIdentifier {
 
         ItemIdentifierPathInRelationTo(self, other)
     }
+
+    pub fn replace_typedef_name(self, config: &Config, is_cf: bool) -> Self {
+        let library_config = config.library(&self);
+        self.map_name(|name| {
+            library_config
+                .typedef_data
+                .get(&name)
+                .and_then(|data| data.renamed.clone())
+                .unwrap_or_else(|| {
+                    // If a typedef's underlying type is itself a "CF pointer"
+                    // typedef, the "alias" typedef will be imported as a
+                    // regular typealias, with the suffix "Ref" still dropped
+                    // from its name (if present).
+                    //
+                    // <https://github.com/swiftlang/swift/blob/swift-6.0.3-RELEASE/docs/CToSwiftNameTranslation.md#cf-types>
+                    //
+                    // NOTE: There's an extra clause that we don't support:
+                    // > unless doing so would conflict with another
+                    // > declaration in the same module as the typedef.
+                    //
+                    // We'll have to manually keep the name of those in
+                    // translation-config.toml.
+                    if is_cf {
+                        cf_no_ref(&name).to_string()
+                    } else {
+                        name
+                    }
+                })
+        })
+    }
 }
 
 impl ItemIdentifier<Option<String>> {
@@ -685,32 +720,6 @@ impl fmt::Display for Location {
     }
 }
 
-impl<'de> de::Deserialize<'de> for Location {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: de::Deserializer<'de>,
-    {
-        struct LocationVisitor;
-
-        impl de::Visitor<'_> for LocationVisitor {
-            type Value = Location;
-
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("location")
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                Location::from_str(value).map_err(de::Error::custom)
-            }
-        }
-
-        deserializer.deserialize_str(LocationVisitor)
-    }
-}
-
 impl FromStr for ItemIdentifier {
     type Err = Box<dyn Error>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -734,32 +743,6 @@ impl FromStr for ItemIdentifier {
 impl fmt::Display for ItemIdentifier {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}.{}", self.location, self.name)
-    }
-}
-
-impl<'de> de::Deserialize<'de> for ItemIdentifier {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: de::Deserializer<'de>,
-    {
-        struct ItemIdentifierVisitor;
-
-        impl de::Visitor<'_> for ItemIdentifierVisitor {
-            type Value = ItemIdentifier;
-
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-                formatter.write_str("item identifier")
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                ItemIdentifier::from_str(value).map_err(de::Error::custom)
-            }
-        }
-
-        deserializer.deserialize_str(ItemIdentifierVisitor)
     }
 }
 

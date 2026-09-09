@@ -1,13 +1,14 @@
+use core::fmt;
 use std::collections::HashMap;
 use std::ops;
 
 use clang::Entity;
 use proc_macro2::TokenStream;
 
-use crate::config::Config;
+use crate::config::{Config, ModuleConfig};
 use crate::expr::Expr;
 use crate::unexposed_attr::{get_argument_tokens, parse_macro_arguments};
-use crate::ItemIdentifier;
+use crate::{ItemIdentifier, LibraryConfig, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MacroLocation {
@@ -88,6 +89,26 @@ impl<'config> Context<'config> {
             current_library,
         }
     }
+
+    pub fn module_configs<'l>(
+        &'l self,
+        location: &'l Location,
+    ) -> impl Iterator<Item = &'l ModuleConfig> + 'l {
+        self.try_library(location.library_name())
+            .map(|library| {
+                let mut current = &library.module;
+                location.modules().map_while(move |component| {
+                    if let Some(module_config) = current.get(component) {
+                        current = &module_config.module;
+                        Some(module_config)
+                    } else {
+                        None
+                    }
+                })
+            })
+            .into_iter()
+            .flatten()
+    }
 }
 
 impl ops::Deref for Context<'_> {
@@ -95,5 +116,25 @@ impl ops::Deref for Context<'_> {
 
     fn deref(&self) -> &Self::Target {
         self.config
+    }
+}
+
+pub trait LibraryFromLocation {
+    /// Look up the library config.
+    ///
+    /// This only needs the library name, but it takes ItemIdentifier or
+    /// Location for better error reporting.
+    fn library(&self, location: impl AsRef<Location> + fmt::Debug) -> &LibraryConfig;
+}
+
+impl LibraryFromLocation for Config {
+    fn library(&self, location: impl AsRef<Location> + fmt::Debug) -> &LibraryConfig {
+        self.try_library(location.as_ref().library_name())
+            .unwrap_or_else(|| {
+                error!("tried to get library config from {location:?}");
+                self.libraries
+                    .get("__builtin__")
+                    .expect("could not find builtin library")
+            })
     }
 }

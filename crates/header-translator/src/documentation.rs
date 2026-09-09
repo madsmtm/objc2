@@ -6,7 +6,9 @@ use clang::documentation::{
 };
 use clang::Entity;
 
+use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
+use crate::stmt::stmt_data;
 use crate::{Context, ItemIdentifier};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -42,7 +44,7 @@ impl Documentation {
         };
 
         let library = context.library(ItemIdentifier::new_optional(entity, context));
-        let alias = if let Some(renamed) = &library.get(entity).renamed {
+        let alias = if let Some(renamed) = &stmt_data(library, entity).renamed {
             let name = entity.get_name().expect("renamed entity must have name");
             if *renamed != name {
                 Some(name)

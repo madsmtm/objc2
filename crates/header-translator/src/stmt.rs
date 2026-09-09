@@ -5,14 +5,17 @@ use std::collections::HashSet;
 use std::fmt;
 use std::fmt::Display;
 use std::iter;
+use std::str::FromStr;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
+use crate::config;
 use crate::config::Derives;
 use crate::config::{Config, Counterpart, LibraryConfig, MethodData, StmtData};
 use crate::context::Context;
+use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
 use crate::expr::Expr;
@@ -499,6 +502,60 @@ pub(crate) fn non_deprecated_enum_cases(entity: &Entity<'_>, context: &Context<'
         .collect()
 }
 
+pub(crate) fn stmt_data<'config>(
+    config: &'config LibraryConfig,
+    entity: &Entity<'_>,
+) -> &'config StmtData {
+    let name = if entity.is_anonymous() {
+        // union (unnamed at /Applications/Xcode.app/...)
+        // union (anonymous at /Applications/Xcode.app/...)
+        // enum (unnamed at /Applications/Xcode.app/...)
+        // struct (unnamed at /Applications/Xcode.app/...)
+        //
+        // Anonymous enums don't have a name that we can use to look up
+        // a config. So we use the special "__anonymous__" instead.
+        "__anonymous__".to_string()
+    } else {
+        if let Some(name) = entity.get_name() {
+            name
+        } else {
+            return StmtData::empty();
+        }
+    };
+
+    let data = match entity.get_kind() {
+        EntityKind::ObjCInterfaceDecl | EntityKind::ObjCClassRef => config.class_data.get(&name),
+        EntityKind::ObjCCategoryDecl => None, // TODO
+        EntityKind::ObjCProtocolDecl | EntityKind::ObjCProtocolRef => {
+            config.protocol_data.get(&name)
+        }
+        EntityKind::TypedefDecl => config.typedef_data.get(&name),
+        EntityKind::StructDecl => config.struct_data.get(&name),
+        EntityKind::UnionDecl => config.union_data.get(&name),
+        EntityKind::EnumDecl => config.enum_data.get(&name),
+        EntityKind::EnumConstantDecl => config.const_data.get(&name),
+        EntityKind::VarDecl => config.statics.get(&name),
+        EntityKind::FunctionDecl => config.fns.get(&name),
+        EntityKind::FieldDecl => None, // TODO
+        // TODO: Add #[doc(alias = ...)] on methods?
+        EntityKind::ObjCClassMethodDecl
+        | EntityKind::ObjCInstanceMethodDecl
+        | EntityKind::ObjCPropertyDecl => None,
+        EntityKind::MacroDefinition | EntityKind::MacroExpansion => None,
+        EntityKind::UnexposedDecl => None,
+        EntityKind::TemplateTypeParameter => None,
+        kind => {
+            error!(
+                ?kind,
+                "tried to look up ItemIdentifier from unknown entity kind"
+            );
+            None
+        }
+    };
+
+    data.unwrap_or_else(|| StmtData::empty())
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Abi {
     C,
@@ -844,7 +901,7 @@ impl Stmt {
         //
         // This allows us to configure the item (like skipping it) even when
         // the item is marked as `external` and id thus points to another crate.
-        let data = current_library.get(entity);
+        let data = stmt_data(current_library, entity);
 
         if data.skipped.unwrap_or(false) {
             return vec![];
@@ -1013,7 +1070,10 @@ impl Stmt {
                     // trait, it's propagated to subclasses anyhow!
                     sendable: thread_safety.explicit_sendable(),
                     documentation,
-                    bridged_to: data.bridged_to.clone(),
+                    bridged_to: data
+                        .bridged_to
+                        .as_deref()
+                        .map(|s| ItemIdentifier::from_str(s).unwrap()),
                 })
                 .chain(protocols.into_iter().map(|(p, entity)| Self::ProtocolImpl {
                     location: id.location().clone(),
@@ -1131,6 +1191,7 @@ impl Stmt {
                     let extra_methods = if let Counterpart::MutableSubclass(subclass) =
                         cls_data.counterpart.clone()
                     {
+                        let subclass = ItemIdentifier::from_str(&subclass).unwrap();
                         let subclass_data = context
                             .library(&subclass)
                             .class_data
@@ -1330,7 +1391,10 @@ impl Stmt {
                 let mut ty = Ty::parse_typedef(ty, context, data.sendable);
 
                 if let Some(nullability) = data.nullability {
-                    ty.change_nullability(nullability.into());
+                    ty.change_nullability(match nullability {
+                        config::Nullability::NonNull => clang::Nullability::NonNull,
+                        config::Nullability::Nullable => clang::Nullability::Nullable,
+                    });
                 }
 
                 if ty.needs_simd() {
@@ -1426,7 +1490,7 @@ impl Stmt {
                                 _ => error!(macro_name, "unknown OS protocol macro"),
                             }
 
-                            let id = context.replace_typedef_name(id.clone(), false);
+                            let id = id.clone().replace_typedef_name(context, false);
 
                             if id.name != c_name {
                                 documentation.set_alias(c_name.clone());
@@ -1460,7 +1524,7 @@ impl Stmt {
                             EntityKind::StructDecl
                                 if ty.is_cf_type_typedef(&id.name, bridged.is_some()) =>
                             {
-                                let id = context.replace_typedef_name(id.clone(), true);
+                                let id = id.clone().replace_typedef_name(context, true);
 
                                 if id.name != c_name {
                                     documentation.set_alias(c_name.clone());
@@ -1529,7 +1593,7 @@ impl Stmt {
                                     .opaque
                                     .unwrap_or_else(|| ty.is_opaque_typedef(&id.name)) =>
                             {
-                                let id = context.replace_typedef_name(id.clone(), true);
+                                let id = id.clone().replace_typedef_name(context, true);
 
                                 if id.name != c_name {
                                     documentation.set_alias(c_name.clone());
@@ -1577,7 +1641,7 @@ impl Stmt {
                             EntityKind::TypedefDecl
                                 if ty.is_cf_type_typedef(&id.name, bridged.is_some()) =>
                             {
-                                let id = context.replace_typedef_name(id.clone(), true);
+                                let id = id.clone().replace_typedef_name(context, true);
 
                                 if id.name != c_name {
                                     documentation.set_alias(c_name.clone());
@@ -1587,7 +1651,7 @@ impl Stmt {
                                 let superclass = if superclass.is_cftype() {
                                     None
                                 } else {
-                                    Some(context.replace_typedef_name(superclass, true))
+                                    Some(superclass.replace_typedef_name(context, true))
                                 };
 
                                 stmts.push(Self::CFDecl {
@@ -1622,7 +1686,7 @@ impl Stmt {
 
                 if stmts.is_empty() && data.opaque.unwrap_or_else(|| ty.is_opaque_typedef(&c_name))
                 {
-                    let id = context.replace_typedef_name(id.clone(), true);
+                    let id = id.clone().replace_typedef_name(context, true);
 
                     if id.name != c_name {
                         documentation.set_alias(c_name.clone());
@@ -1639,7 +1703,7 @@ impl Stmt {
                 }
 
                 if stmts.is_empty() {
-                    let id = context.replace_typedef_name(id, ty.is_cf_type_ptr());
+                    let id = id.replace_typedef_name(context, ty.is_cf_type_ptr());
 
                     if id.name != c_name {
                         documentation.set_alias(c_name);
@@ -1797,7 +1861,7 @@ impl Stmt {
                         let c_name = entity.get_name().unwrap();
 
                         let id = ItemIdentifier::new(&entity, context);
-                        let const_data = context.library(&id).get(&entity);
+                        let const_data = stmt_data(context.library(&id), &entity);
                         let availability = Availability::parse(&entity, context);
 
                         if const_data.skipped.unwrap_or(false) {
@@ -1938,7 +2002,10 @@ impl Stmt {
                 let mut ty = Ty::parse_static(ty, context);
 
                 if let Some(nullability) = data.nullability {
-                    ty.change_nullability(nullability.into());
+                    ty.change_nullability(match nullability {
+                        config::Nullability::NonNull => clang::Nullability::NonNull,
+                        config::Nullability::Nullable => clang::Nullability::Nullable,
+                    });
                 }
 
                 if ty.needs_simd() {
@@ -2191,7 +2258,10 @@ impl Stmt {
                     returns_retained,
                     documentation,
                     no_implementor: data.no_implementor,
-                    custom_implementor: data.implementor.clone().map(ItemTree::from_id),
+                    custom_implementor: data
+                        .implementor
+                        .as_deref()
+                        .map(|x| ItemTree::from_id(ItemIdentifier::from_str(x).unwrap())),
                 }]
             }
             EntityKind::UnexposedDecl => {
@@ -2960,6 +3030,7 @@ impl Stmt {
                         // Assume counterparts have the same generics.
                         let ty = match (cls_counterpart, &*protocol.name) {
                             (Counterpart::ImmutableSuperclass(superclass), "NSCopying") => {
+                                let superclass = ItemIdentifier::from_str(superclass).unwrap();
                                 // REMARK: Already part of required items.
                                 format!(
                                     "{}{}",
@@ -2968,6 +3039,7 @@ impl Stmt {
                                 )
                             }
                             (Counterpart::MutableSubclass(subclass), "NSMutableCopying") => {
+                                let subclass = ItemIdentifier::from_str(subclass).unwrap();
                                 required_items.push(ItemTree::from_id(subclass.clone()));
                                 format!(
                                     "{}{}",
