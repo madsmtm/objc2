@@ -10,9 +10,8 @@ use std::str::FromStr;
 
 use clang::source::File;
 use clang::Entity;
-use translation_config::Config;
+use translation_config::{Config, PlatformCfg};
 
-use crate::cfgs::PlatformCfg;
 use crate::context::Context;
 use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;

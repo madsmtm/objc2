@@ -5,9 +5,8 @@ use std::fmt::Write as _;
 use std::path::Path;
 use std::{fmt, fs};
 
-use translation_config::Config;
+use translation_config::{Config, PlatformCfg};
 
-use crate::cfgs::PlatformCfg;
 use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, ItemTree};

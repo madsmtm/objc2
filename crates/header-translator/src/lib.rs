@@ -11,7 +11,6 @@ use clang::{Entity, EntityVisitResult};
 use tracing::span::EnteredSpan;
 
 mod availability;
-mod cfgs;
 mod context;
 mod display_helper;
 pub mod documentation;
@@ -30,12 +29,11 @@ mod thread_safety;
 mod unexposed_attr;
 
 pub use self::availability::HOST_MACOS;
-pub use self::cfgs::PlatformCfg;
 pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::documentation::EXTRA_BLOCK_COMMANDS;
 pub use self::global_analysis::global_analysis;
 pub use self::id::{ItemIdentifier, Location};
-pub use self::library::{EntryExt, Library};
+pub use self::library::Library;
 pub use self::module::Module;
 pub use self::stmt::Stmt;
 
