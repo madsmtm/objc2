@@ -383,10 +383,9 @@ impl Availability {
         if self.unavailable.macos {
             return false;
         }
-        if let Some(macos) = self.introduced.macos {
-            // Disable test if introduced later than my current OS.
-            // TODO: Use `available!` macro here.
-            if HOST_MACOS < macos.x {
+        if let Some(version) = self.introduced.macos {
+            // Disable test if introduced later than the current OS version.
+            if is_available(version.x, version.y.unwrap_or(0), version.z.unwrap_or(0)) {
                 return false;
             }
         }
@@ -429,9 +428,21 @@ impl fmt::Display for Availability {
     }
 }
 
-pub const HOST_MACOS: u32 = if option_env!("CI").is_some() {
-    9999
-} else {
-    // @madsmtm's development machine's current OS version.
-    14
-};
+// Link to `__isOSVersionAtLeast` provided by Rust's `std`.
+//
+// This is a hack for not really being able to use `objc2::available!` here.
+#[cfg(target_vendor = "apple")]
+unsafe extern "C" {
+    safe fn __isOSVersionAtLeast(major: i32, minor: i32, subminor: i32) -> i32;
+}
+
+pub fn is_available(major: u32, minor: u32, patch: u32) -> bool {
+    #[cfg(target_vendor = "apple")]
+    {
+        __isOSVersionAtLeast(major as _, minor as _, patch as _) != 0
+    }
+    #[cfg(not(target_vendor = "apple"))]
+    {
+        false
+    }
+}
