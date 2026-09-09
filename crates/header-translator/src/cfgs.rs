@@ -1,8 +1,7 @@
+use core::fmt;
 use std::fmt::Display;
 
 use translation_config::LibraryConfig;
-
-use crate::display_helper::FormatterFn;
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 enum CfgState {
@@ -57,6 +56,7 @@ impl CfgState {
     }
 }
 
+// TODO: Make a more generic system for handling this.
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct PlatformCfg {
     macos: CfgState,
@@ -120,129 +120,104 @@ impl PlatformCfg {
         self.gnustep.implied(implied.gnustep);
     }
 
-    pub fn cfgs(&self) -> Option<impl Display + '_> {
-        // Don't emit a cfg if we can avoid it
-        if self.macos.allowed_active()
+    pub fn is_empty(&self) -> bool {
+        self.macos.allowed_active()
             && self.maccatalyst.allowed_active()
             && self.ios.allowed_active()
             && self.tvos.allowed_active()
             && self.watchos.allowed_active()
             && self.visionos.allowed_active()
             && self.gnustep.allowed_active()
-        {
+    }
+
+    pub fn cfgs(&self) -> Option<impl Display + '_> {
+        // Don't emit a cfg if we can avoid it
+        if self.is_empty() {
             return None;
         }
 
-        Some(FormatterFn(|f| {
-            match (
-                self.macos.allowed_active(),
-                self.maccatalyst.allowed_active(),
-                self.ios.allowed_active(),
-                self.tvos.allowed_active(),
-                self.watchos.allowed_active(),
-                self.visionos.allowed_active(),
-                self.gnustep.allowed_active(),
-            ) {
-                // Emit `target_vendor = "apple"` if at all possible, since
-                // it's more general.
-                (true, true, true, true, true, true, false) => {
-                    return write!(f, "target_vendor = \"apple\"");
-                }
-                // Emit negative `cfg`s when only a niche platform is
-                // excluded, since it's more likely to be the "true" config
-                // for this item (e.g. if something is excluded on iOS and
-                // macOS, it'll likely be on other targets in the future. But
-                // if something is excluded just for tvOS, that exclusion
-                // probably only applies to tvOS).
-                (true, false, true, true, true, true, true) => {
-                    return write!(f, "not(target_abi = \"macabi\")");
-                }
-                (true, true, true, false, true, true, true) => {
-                    return write!(f, "not(target_os = \"tvos\")");
-                }
-                (true, true, true, true, false, true, true) => {
-                    return write!(f, "not(target_os = \"watchos\")");
-                }
-                (true, true, true, false, false, true, true) => {
-                    // tvOS and watchOS are more bare-bones that the others
-                    return write!(f, "not(any(target_os = \"tvos\", target_os = \"watchos\"))");
-                }
-                (true, true, true, true, true, false, true) => {
-                    return write!(f, "not(target_os = \"visionos\")");
-                }
-                _ => {}
-            }
-
-            let mut cfgs: Vec<&str> = Vec::new();
-
-            if self.macos.active() {
-                cfgs.push("target_os = \"macos\"");
-            }
-            match (self.ios, self.maccatalyst) {
-                (CfgState::ShouldGate, CfgState::ShouldGate | CfgState::AlreadyGated) => {
-                    cfgs.push("target_os = \"ios\"")
-                }
-                (CfgState::ShouldGate, CfgState::Omit) => {
-                    cfgs.push("all(target_os = \"ios\", not(target_abi = \"macabi\"))")
-                }
-                (CfgState::AlreadyGated, CfgState::ShouldGate) => cfgs.push("target_os = \"ios\""),
-                (CfgState::AlreadyGated, _) => {}
-                (CfgState::Omit, CfgState::ShouldGate) => cfgs.push("target_abi = \"macabi\""),
-                (CfgState::Omit, _) => {}
-            }
-            if self.tvos.active() {
-                cfgs.push("target_os = \"tvos\"");
-            }
-            if self.watchos.active() {
-                cfgs.push("target_os = \"watchos\"");
-            }
-            if self.visionos.active() {
-                cfgs.push("target_os = \"visionos\"");
-            }
-            if self.gnustep.active() {
-                // FIXME: This will fail if it got emitted in `Cargo.toml`
-                cfgs.push("feature = \"gnustep-1-7\"");
-            }
-
-            match &*cfgs {
-                [] => write!(f, "any()"), // Should be unreachable in reality
-                [cfg] => write!(f, "{cfg}"),
-                cfgs => write!(f, "any({})", cfgs.join(", ")),
-            }
-        }))
+        Some(self)
     }
 }
 
-pub(crate) fn cfg_features_ln<'a, I, F>(feature_names: I) -> impl Display + 'a
-where
-    I: IntoIterator<Item = F> + Clone + 'a,
-    F: AsRef<str>,
-{
-    FormatterFn(move |f| {
-        let mut iter = feature_names.clone().into_iter().peekable();
-
-        if let Some(first) = iter.next() {
-            if iter.peek().is_none() {
-                // One feature.
-                writeln!(f, "#[cfg(feature = {:?})]", first.as_ref())?;
-            } else {
-                write!(f, "#[cfg(all(")?;
-
-                write!(f, "feature = {:?}", first.as_ref())?;
-
-                for feature in iter {
-                    write!(f, ", feature = {:?}", feature.as_ref())?;
-                }
-
-                write!(f, "))]")?;
-                writeln!(f)?;
+impl fmt::Display for PlatformCfg {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match (
+            self.macos.allowed_active(),
+            self.maccatalyst.allowed_active(),
+            self.ios.allowed_active(),
+            self.tvos.allowed_active(),
+            self.watchos.allowed_active(),
+            self.visionos.allowed_active(),
+            self.gnustep.allowed_active(),
+        ) {
+            // Emit `target_vendor = "apple"` if at all possible, since
+            // it's more general.
+            (true, true, true, true, true, true, false) => {
+                return write!(f, "target_vendor = \"apple\"");
             }
-        } else {
-            // No features, no output.
+            // Emit negative `cfg`s when only a niche platform is
+            // excluded, since it's more likely to be the "true" config
+            // for this item (e.g. if something is excluded on iOS and
+            // macOS, it'll likely be on other targets in the future. But
+            // if something is excluded just for tvOS, that exclusion
+            // probably only applies to tvOS).
+            (true, false, true, true, true, true, true) => {
+                return write!(f, "not(target_abi = \"macabi\")");
+            }
+            (true, true, true, false, true, true, true) => {
+                return write!(f, "not(target_os = \"tvos\")");
+            }
+            (true, true, true, true, false, true, true) => {
+                return write!(f, "not(target_os = \"watchos\")");
+            }
+            (true, true, true, false, false, true, true) => {
+                // tvOS and watchOS are more bare-bones that the others
+                return write!(f, "not(any(target_os = \"tvos\", target_os = \"watchos\"))");
+            }
+            (true, true, true, true, true, false, true) => {
+                return write!(f, "not(target_os = \"visionos\")");
+            }
+            _ => {}
         }
 
-        Ok(())
-    })
+        let mut cfgs: Vec<&str> = Vec::new();
+
+        if self.macos.active() {
+            cfgs.push("target_os = \"macos\"");
+        }
+        match (self.ios, self.maccatalyst) {
+            (CfgState::ShouldGate, CfgState::ShouldGate | CfgState::AlreadyGated) => {
+                cfgs.push("target_os = \"ios\"")
+            }
+            (CfgState::ShouldGate, CfgState::Omit) => {
+                cfgs.push("all(target_os = \"ios\", not(target_abi = \"macabi\"))")
+            }
+            (CfgState::AlreadyGated, CfgState::ShouldGate) => cfgs.push("target_os = \"ios\""),
+            (CfgState::AlreadyGated, _) => {}
+            (CfgState::Omit, CfgState::ShouldGate) => cfgs.push("target_abi = \"macabi\""),
+            (CfgState::Omit, _) => {}
+        }
+        if self.tvos.active() {
+            cfgs.push("target_os = \"tvos\"");
+        }
+        if self.watchos.active() {
+            cfgs.push("target_os = \"watchos\"");
+        }
+        if self.visionos.active() {
+            cfgs.push("target_os = \"visionos\"");
+        }
+        if self.gnustep.active() {
+            // FIXME: This will fail if it got emitted in `Cargo.toml`
+            cfgs.push("feature = \"gnustep-1-7\"");
+        }
+
+        match &*cfgs {
+            [] => write!(f, "any()"), // `true`, but with lower MSRV
+            [cfg] => write!(f, "{cfg}"),
+            cfgs => write!(f, "any({})", cfgs.join(", ")),
+        }
+    }
 }
 
 #[cfg(test)]
