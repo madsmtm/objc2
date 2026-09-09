@@ -5,12 +5,14 @@ use std::fmt::Write as _;
 use std::path::Path;
 use std::{fmt, fs};
 
+use translation_config::Config;
+
 use crate::cfgs::PlatformCfg;
 use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, ItemTree};
 use crate::stmt::Stmt;
-use crate::{Config, Location};
+use crate::Location;
 
 #[derive(Default, Debug, PartialEq)]
 pub struct Module {

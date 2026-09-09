@@ -5,8 +5,10 @@ use std::{fmt, fmt::Display, iter, mem, str::FromStr, sync::LazyLock};
 use clang::{CallingConvention, Entity, EntityKind, Nullability, Type, TypeKind};
 use proc_macro2::{TokenStream, TokenTree};
 use regex::Regex;
+use translation_config::{
+    self, ItemGeneric, PointerBounds, PointerLifetime, StmtData, TypeOverride,
+};
 
-use crate::config::{self, ItemGeneric, PointerBounds, PointerLifetime, StmtData, TypeOverride};
 use crate::context::{Context, LibraryFromLocation};
 use crate::display_helper::FormatterFn;
 use crate::id::{ItemIdentifier, ItemTree};
@@ -4994,8 +4996,8 @@ impl Ty {
     pub(crate) fn apply_override(&mut self, override_: &TypeOverride) {
         if let Some(nullability) = override_.nullability {
             self.change_nullability(match nullability {
-                config::Nullability::NonNull => Nullability::NonNull,
-                config::Nullability::Nullable => Nullability::Nullable,
+                translation_config::Nullability::NonNull => Nullability::NonNull,
+                translation_config::Nullability::Nullable => Nullability::Nullable,
             });
         }
         if let Some(generics) = &override_.generics {

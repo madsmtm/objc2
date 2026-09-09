@@ -10,6 +10,7 @@ use std::str::FromStr;
 
 use clang::source::File;
 use clang::Entity;
+use translation_config::Config;
 
 use crate::cfgs::cfg_features_ln;
 use crate::cfgs::PlatformCfg;
@@ -19,7 +20,6 @@ use crate::display_helper::FormatterFn;
 use crate::module::clean_name;
 use crate::name_translation::cf_no_ref;
 use crate::stmt::stmt_data;
-use crate::Config;
 
 pub trait ToOptionString: fmt::Debug {
     fn set(&mut self, name: Option<String>);

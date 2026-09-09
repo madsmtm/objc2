@@ -13,22 +13,19 @@ license.workspace = true
 clang = { git = "https://github.com/KyleMayes/clang-rs.git", branch = "objc2", features = ["runtime", "clang_10_0"] }
 clang-sys = { version = "1.4.0" }
 toml_edit = "0.25.11"
-toml = "1.1.2"
-serde = { version = "1.0.144", features = ["derive"] }
 apple-sdk = { version = "0.6.0", default-features = false }
 tracing = { version = "0.1.37", default-features = false, features = ["std"] }
 tracing-subscriber = { version = "0.3.16", features = ["fmt", "env-filter"] }
 tracing-tree = "0.4.1"
 proc-macro2 = "1.0.66"
 heck = "0.5"
-semver = { version = "1.0", features = ["serde"] }
-lenient_semver_parser = "0.4"
 four-char-code = "2.3.0"
 regex = "1.6"
 clap = { version = "4.5.31", features = ["derive"] }
 itertools = "0.15.0"
 moka = { version = "0.12.13", features = ["sync"] }
 indexmap = "2.13.0"
+translation-config.path = "../translation-config"
 
 [package.metadata.release]
 release = false

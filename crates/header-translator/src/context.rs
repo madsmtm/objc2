@@ -4,11 +4,11 @@ use std::ops;
 
 use clang::Entity;
 use proc_macro2::TokenStream;
+use translation_config::{Config, LibraryConfig, ModuleConfig};
 
-use crate::config::{Config, ModuleConfig};
 use crate::expr::Expr;
 use crate::unexposed_attr::{get_argument_tokens, parse_macro_arguments};
-use crate::{ItemIdentifier, LibraryConfig, Location};
+use crate::{ItemIdentifier, Location};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MacroLocation {

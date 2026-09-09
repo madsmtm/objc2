@@ -1,6 +1,5 @@
-use std::collections::BTreeSet;
 use std::fmt::Write as _;
-use std::io::{ErrorKind, Read, Seek, Write};
+use std::io::{ErrorKind, Seek, Write};
 use std::path::Path;
 use std::{fs, io};
 
@@ -8,7 +7,6 @@ use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SdkPath, SimpleSdk};
 use clang::diagnostic::Severity;
 use clang::{Clang, EntityKind, EntityVisitResult, Index, TranslationUnit};
 use clap::Parser;
-use semver::VersionReq;
 use tracing::level_filters::LevelFilter;
 use tracing::{debug_span, error, info, info_span, trace, trace_span, warn};
 use tracing_subscriber::filter::EnvFilter;
@@ -18,9 +16,10 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, EntryExt, Library, LibraryConfig, Location,
-    MacroEntity, MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS, HOST_MACOS, VERSION,
+    global_analysis, run_cargo_fmt, Context, EntryExt, Library, Location, MacroEntity,
+    MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS, HOST_MACOS,
 };
+use translation_config::{Config, LibraryConfig};
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
 
@@ -69,7 +68,9 @@ fn main() -> Result<(), BoxError> {
     let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
     let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
 
+    let span = info_span!("loading configs").entered();
     let config = Config::load()?;
+    drop(span);
 
     clang_sys::load()?;
     info!(clang_version = clang::get_version());
@@ -108,7 +109,9 @@ fn main() -> Result<(), BoxError> {
     let tempdir = workspace_dir.join("target").join("header-translator");
     fs::create_dir_all(&tempdir)?;
 
-    update_root_cargo_toml(workspace_dir, &config);
+    let span = info_span!("updating various project metadata").entered();
+    translation_config::update_metadata(&config);
+    drop(span);
 
     let mut found = false;
     for (name, data) in config.to_parse() {
@@ -127,82 +130,13 @@ fn main() -> Result<(), BoxError> {
         panic!("failed finding framework {}", cli.framework);
     }
 
+    let span = info_span!("updating test-frameworks").entered();
+    update_test_imports(workspace_dir, &config);
     update_test_metadata(workspace_dir, &config);
-
-    update_ci(workspace_dir, &config)?;
-
-    update_list(workspace_dir, &config)?;
+    run_cargo_fmt(["test-frameworks"]);
+    drop(span);
 
     Ok(())
-}
-
-fn update_root_cargo_toml(workspace_dir: &Path, config: &Config) {
-    let _span = info_span!("updating root Cargo.toml").entered();
-
-    // Make library be imported by test crate
-    let mut f = std::fs::OpenOptions::new()
-        .read(true)
-        .write(true)
-        .open(workspace_dir.join("Cargo.toml"))
-        .unwrap();
-    let mut cargo_toml: toml_edit::DocumentMut = io::read_to_string(&f)
-        .unwrap()
-        .parse()
-        .expect("invalid test toml");
-
-    let dependencies = cargo_toml["workspace"]["dependencies"]
-        .as_table_mut()
-        .unwrap();
-
-    // Delete all framework crate entries.
-    dependencies.retain(|key, _| !key.starts_with("objc2-"));
-
-    // And add them again.
-    for (i, (_, lib)) in config.to_parse().enumerate() {
-        if lib.is_library {
-            continue;
-        }
-        let table = toml_edit::InlineTable::from_iter([
-            (
-                "path",
-                toml_edit::Value::from(format!("framework-crates/{}", lib.krate)),
-            ),
-            ("version", toml_edit::Value::from(VERSION)),
-            ("default-features", toml_edit::Value::from(false)),
-        ]);
-        dependencies[&lib.krate] = table.into();
-        if i == 0 {
-            dependencies
-                .key_mut(&lib.krate)
-                .unwrap()
-                .leaf_decor_mut()
-                .set_prefix("\n##\n## AUTO-GENERATED BELOW\n##\n\n")
-        }
-    }
-
-    let patch_crates_io = cargo_toml["patch"]["crates-io"].as_table_mut().unwrap();
-
-    // Delete all framework crate entries.
-    patch_crates_io.retain(|key, _| !key.starts_with("objc2-"));
-
-    // And add them again.
-    for (_, lib) in config.to_parse() {
-        if lib.is_library {
-            continue;
-        }
-        let path = if lib.is_library {
-            format!("crates/{}", lib.krate)
-        } else {
-            format!("framework-crates/{}", lib.krate)
-        };
-
-        patch_crates_io[&lib.krate] =
-            toml_edit::InlineTable::from_iter([("path", toml_edit::Value::from(&path))]).into();
-    }
-
-    f.set_len(0).unwrap();
-    f.seek(io::SeekFrom::Start(0)).unwrap();
-    f.write_all(cargo_toml.to_string().as_bytes()).unwrap();
 }
 
 fn parse_library(
@@ -669,217 +603,16 @@ fn get_translation_unit<'i: 'c, 'c>(
     tu
 }
 
-fn update_ci(workspace_dir: &Path, config: &Config) -> io::Result<()> {
-    let _span = info_span!("updating ci.yml").entered();
-    let mut ci = fs::OpenOptions::new()
-        .read(true)
-        .write(true)
-        .open(workspace_dir.join(".github/workflows/ci.yml"))?;
-    // find the features section
-    let mut text = String::new();
-    ci.read_to_string(&mut text)?;
-    let (before, after) = text
-        .split_once("BEGIN AUTOMATICALLY GENERATED")
-        .expect("begin section not found in ci.yml");
-    let (_, after) = after
-        .split_once("  # END AUTOMATICALLY GENERATED")
-        .expect("end section not found in ci.yml");
-
-    // Clear file
-    ci.set_len(0)?;
-    ci.seek(io::SeekFrom::Start(0))?;
-
-    writeln!(ci, "{before}BEGIN AUTOMATICALLY GENERATED")?;
-
-    fn writer(
-        mut ci: impl Write,
-        config: &Config,
-        env_name: &str,
-        check: impl Fn(&LibraryConfig) -> bool,
-    ) -> io::Result<()> {
-        // Use a BTreeSet to sort the libraries
-        let mut frameworks = BTreeSet::new();
-        for (_, library) in config.to_parse() {
-            if library.is_library {
-                continue; // Skip non-framework crates for now
-            }
-            if library.located_outside_sdk {
-                continue; // Cannot easily link to these.
-            }
-            if check(library) {
-                frameworks.insert(&*library.krate);
-            }
-        }
-        write!(ci, "  {env_name}:")?;
-        for framework in frameworks {
-            write!(ci, " --package={}", framework)?;
-        }
-        writeln!(ci)?;
-
-        Ok(())
-    }
-
-    // HACK: Linking `objc2-avf-audio` on older systems is not possible
-    // without an SDK that's new enough.
-    let uses_avf_audio = |lib: &LibraryConfig| {
-        matches!(
-            &*lib.krate,
-            "objc2-avf-audio"
-                | "objc2-av-foundation"
-                | "objc2-av-kit"
-                | "objc2-media-player"
-                | "objc2-photos"
-                | "objc2-photos-ui"
-                | "objc2-sprite-kit"
-                | "objc2-scene-kit"
-        )
-    };
-    // HACK: Cinematic, MediaSetup, etc. aren't available in the simulator.
-    // MLCompute and MetalFX are also only available on Aarch64
-    let not_on_simulator = |lib: &LibraryConfig| {
-        matches!(
-            &*lib.krate,
-            "objc2-cinematic"
-                | "objc2-media-setup"
-                | "objc2-thread-network"
-                | "objc2-ml-compute"
-                | "objc2-metal-fx"
-        )
-    };
-
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_10_12", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=10.12").unwrap().matches(v))
-            && !uses_avf_audio(lib)
-            // HACK: PDFKit requires linking Quartz on older systems.
-            && !["objc2-pdf-kit"].contains(&&*lib.krate)
-            // HACK: iTunesLibrary has a different install name on older systems.
-            && !["objc2-itunes-library"].contains(&&*lib.krate)
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_10_13", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=10.13").unwrap().matches(v))
-            && !uses_avf_audio(lib)
-            // HACK: PDFKit requires linking Quartz on older systems.
-            && !["objc2-pdf-kit"].contains(&&*lib.krate)
-            // HACK: iTunesLibrary has a different install name on older systems.
-            && !["objc2-itunes-library"].contains(&&*lib.krate)
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_11", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=11.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_12", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=12.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_13", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=13.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_14", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=14.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MACOS_15", |lib| {
-        lib.macos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=15.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_IOS_10", |lib| {
-        lib.ios
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_IOS_17", |lib| {
-        lib.ios
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
-            && !not_on_simulator(lib)
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_TVOS_17", |lib| {
-        lib.tvos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
-            // HACK: MetalPerformanceShadersGraph is not available on tvOS simulator
-            && !["objc2-metal-performance-shaders-graph"].contains(&&*lib.krate)
-            && !not_on_simulator(lib)
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_MAC_CATALYST_17", |lib| {
-        lib.maccatalyst
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=17.0").unwrap().matches(v))
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_VISIONOS_1", |lib| {
-        lib.visionos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=1.0").unwrap().matches(v))
-            && !not_on_simulator(lib)
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_WATCHOS_10", |lib| {
-        lib.watchos
-            .as_ref()
-            .is_some_and(|v| VersionReq::parse("<=10.0").unwrap().matches(v))
-            && !not_on_simulator(lib)
-    })?;
-    writer(&mut ci, config, "FRAMEWORKS_GNUSTEP", |lib| {
-        // HACK: CoreFoundation uses mach types that GNUStep doesn't support
-        lib.gnustep && lib.krate != "objc2-core-foundation"
-    })?;
-
-    write!(&mut ci, "  # END AUTOMATICALLY GENERATED{after}")?;
-
-    Ok(())
-}
-
-fn update_list(workspace_dir: &Path, config: &Config) -> io::Result<()> {
-    let _span = info_span!("updating lists").entered();
-
-    let mut f =
-        fs::File::create(workspace_dir.join("crates/objc2/src/topics/frameworks_list_data.md"))?;
-
-    writeln!(f, "| Framework | Crate | Docs.rs |")?;
-    writeln!(f, "| --- | --- | --- |")?;
-
-    for (name, library) in config.to_parse() {
-        if library.is_library {
-            continue; // Skip non-framework crates for now
-        }
-        let package = &library.krate;
-        writeln!(f, "| `{name}` | [`{package}`](https://crates.io/crates/{package}) | [![docs.rs](https://docs.rs/{package}/badge.svg)](https://docs.rs/{package}/) |")?;
-    }
-
-    let mut f = fs::File::create(
-        workspace_dir.join("crates/objc2/src/topics/frameworks_list_unsupported.md"),
-    )?;
-
-    writeln!(f, "| Framework | Why is this unsupported? |")?;
-    writeln!(f, "| --- | --- |")?;
-
-    for (framework, why) in &config.skipped {
-        writeln!(f, "| `{framework}` | {why}. |")?;
-    }
-
-    Ok(())
-}
-
-fn update_test_metadata(workspace_dir: &Path, config: &Config) {
+/// Update `test-frameworks/src/imports.rs`.
+fn update_test_imports(workspace_dir: &Path, config: &Config) {
     let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
-    let tested = config
-        .to_parse()
-        .filter(|(_, lib)| !lib.located_outside_sdk);
-
-    let _span = info_span!("updating test-frameworks metadata").entered();
 
     // Write imports
     let mut s = String::new();
-    for (_, lib) in tested.clone() {
+    for (_, lib) in config.to_parse() {
+        if lib.located_outside_sdk {
+            continue;
+        }
         if let Some(macos) = &lib.macos {
             if (HOST_MACOS as u64) < macos.major {
                 // Skip library if not available on current host.
@@ -893,8 +626,12 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         writeln!(&mut s, "pub use {}::*;", lib.krate.replace('-', "_")).unwrap();
     }
     fs::write(test_crate_dir.join("src").join("imports.rs"), s).unwrap();
+}
 
-    // Make library be imported by test crate
+/// Update `test-frameworks/Cargo.toml`.
+fn update_test_metadata(workspace_dir: &Path, config: &Config) {
+    let test_crate_dir = workspace_dir.join("crates").join("test-frameworks");
+
     let mut f = std::fs::OpenOptions::new()
         .read(true)
         .write(true)
@@ -906,7 +643,10 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
         .expect("invalid test toml");
 
     let mut features = toml_edit::Array::new();
-    for (_, lib) in tested.clone() {
+    for (_, lib) in config.to_parse() {
+        if lib.located_outside_sdk {
+            continue;
+        }
         // Add feature per crate.
         //
         // This is required for some reason for `cargo run --example` to work
@@ -980,7 +720,10 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     ]));
     let _ = cargo_toml.remove("target");
 
-    for (_, lib) in tested.clone() {
+    for (_, lib) in config.to_parse() {
+        if lib.located_outside_sdk {
+            continue;
+        }
         let platform_cfg = PlatformCfg::from_config_explicit(lib);
 
         let dependencies = if let Some(cfgs) = platform_cfg.cfgs() {
@@ -1007,6 +750,4 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     f.set_len(0).unwrap();
     f.seek(io::SeekFrom::Start(0)).unwrap();
     f.write_all(cargo_toml.to_string().as_bytes()).unwrap();
-
-    run_cargo_fmt(["test-frameworks"]);
 }

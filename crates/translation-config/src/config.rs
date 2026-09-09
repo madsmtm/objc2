@@ -10,7 +10,7 @@ use std::{fmt, ptr};
 
 use heck::ToTrainCase;
 use semver::Version;
-use serde::{de, Deserialize, Deserializer};
+use serde::{de, Deserialize};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
@@ -22,8 +22,6 @@ impl Config {
     pub fn load() -> Result<Self, Box<dyn Error + Send + Sync>> {
         let manifest_dir = Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_dir = manifest_dir.parent().unwrap().parent().unwrap();
-
-        let _span = info_span!("loading configs").entered();
 
         let mut libraries = BTreeMap::default();
 
@@ -60,7 +58,10 @@ impl Config {
         let objc = toml::from_str(&fs::read_to_string(path)?)?;
         libraries.insert("Dispatch".to_string(), objc);
 
-        let configs_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("configs");
+        let configs_dir = workspace_dir
+            .join("crates")
+            .join("header-translator")
+            .join("configs");
 
         for lib in libraries.values() {
             lib.validate();
@@ -74,7 +75,7 @@ impl Config {
             libraries.insert(config.framework.clone(), config);
         }
 
-        let skipped_path = manifest_dir.join("configs").join("skipped.toml");
+        let skipped_path = configs_dir.join("skipped.toml");
         let skipped: BTreeMap<String, String> = toml::from_str(&fs::read_to_string(skipped_path)?)?;
 
         for framework in skipped.keys() {
@@ -101,9 +102,17 @@ impl Config {
             .filter(|(_, data)| !data.skipped)
             .map(|(name, data)| (&**name, data))
     }
+
+    pub fn frameworks(&self) -> impl Iterator<Item = &LibraryConfig> + Clone {
+        self.to_parse()
+            .map(|(_, data)| data)
+            .filter(|data| !data.is_library)
+    }
 }
 
-fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Version>, D::Error> {
+fn get_version<'de, D: de::Deserializer<'de>>(
+    deserializer: D,
+) -> Result<Option<Version>, D::Error> {
     struct VersionVisitor;
 
     impl de::Visitor<'_> for VersionVisitor {
@@ -136,7 +145,7 @@ fn get_version<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Option<Vers
 #[derive(Deserialize, Debug, Clone, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 pub struct ExternalData {
-    pub(crate) module: String,
+    pub module: String,
 }
 
 #[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
@@ -317,7 +326,7 @@ pub struct ModuleConfig {
 
 impl LibraryConfig {
     // TODO: Merge this with `Availability` somehow.
-    pub(crate) fn can_safely_depend_on(&self, other: &Self) -> bool {
+    pub fn can_safely_depend_on(&self, other: &Self) -> bool {
         fn inner(
             ours: &Option<semver::Version>,
             other: &Option<semver::Version>,
@@ -679,7 +688,7 @@ pub struct MethodData {
 }
 
 impl MethodData {
-    pub(crate) fn merge_with_superclass(self, superclass: Self) -> Self {
+    pub fn merge_with_superclass(self, superclass: Self) -> Self {
         let unsafe_ = match (self.unsafe_, superclass.unsafe_) {
             // Prefer safety attribute on the item itself.
             (Some(unsafe_), _) => Some(unsafe_),
@@ -878,7 +887,7 @@ impl<'de> de::Deserialize<'de> for ItemGeneric {
         impl de::Visitor<'_> for ItemGenericVisitor {
             type Value = ItemGeneric;
 
-            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
                 formatter.write_str("item identifier")
             }
 

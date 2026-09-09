@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
-use crate::config::LibraryConfig;
+use translation_config::LibraryConfig;
+
 use crate::display_helper::FormatterFn;
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]

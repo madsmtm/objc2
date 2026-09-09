@@ -327,6 +327,11 @@ objc2-itunes-library = { path = "framework-crates/objc2-itunes-library", version
 block2 = { path = "crates/block2" }
 dispatch2 = { path = "crates/dispatch2" }
 objc2 = { path = "crates/objc2" }
+
+##
+## AUTO-GENERATED BELOW
+##
+
 objc2-ar-kit = { path = "framework-crates/objc2-ar-kit" }
 objc2-avf-audio = { path = "framework-crates/objc2-avf-audio" }
 objc2-av-foundation = { path = "framework-crates/objc2-av-foundation" }
