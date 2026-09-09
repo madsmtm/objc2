@@ -1,0 +1,23 @@
+[package]
+name = "translation-config"
+version = "0.1.0"
+edition.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[dependencies]
+toml = "1.1.2"
+toml_edit = "0.25.11"
+serde = { version = "1.0.144", features = ["derive"] }
+apple-sdk = { version = "0.6.0", default-features = false }
+semver = { version = "1.0", features = ["serde"] }
+lenient_semver_parser = "0.4"
+heck = "0.5"
+
+[features]
+std = []
+
+[package.metadata.release]
+release = false

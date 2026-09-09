@@ -6,6 +6,8 @@ use std::collections::{BTreeMap, HashMap};
 use std::str::FromStr;
 use std::{iter, mem};
 
+use translation_config::Config;
+
 use crate::availability::Availability;
 use crate::expr::Expr;
 use crate::id::ItemTree;
@@ -13,7 +15,7 @@ use crate::method::Method;
 use crate::module::Module;
 use crate::name_translation::{find_fn_implementor, shorten_name_when_on_parent};
 use crate::stmt::{GenericWithBound, Stmt};
-use crate::{Config, ItemIdentifier, Library, Location};
+use crate::{ItemIdentifier, Library, Location};
 
 pub fn global_analysis(library: &mut Library, config: &Config) {
     let _span = info_span!("analyzing").entered();

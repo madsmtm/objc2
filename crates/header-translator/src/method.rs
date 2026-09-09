@@ -3,9 +3,9 @@ use std::borrow::Cow;
 use std::fmt;
 
 use clang::{Entity, EntityKind, ObjCAttributes, ObjCQualifiers};
+use translation_config::{Config, MethodData};
 
 use crate::availability::Availability;
-use crate::config::MethodData;
 use crate::context::Context;
 use crate::display_helper::FormatterFn;
 use crate::documentation::Documentation;
@@ -18,7 +18,7 @@ use crate::rust_type::{MethodArgumentQualifier, SafetyProperty, Ty};
 use crate::stmt::parse_param_children;
 use crate::thread_safety::ThreadSafety;
 use crate::unexposed_attr::UnexposedAttr;
-use crate::{immediate_children, Config, Location};
+use crate::{immediate_children, Location};
 
 impl MethodArgumentQualifier {
     pub fn parse(qualifiers: ObjCQualifiers) -> Self {

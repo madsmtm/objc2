@@ -8,12 +8,10 @@ use std::iter;
 use std::str::FromStr;
 
 use clang::{Entity, EntityKind, EntityVisitResult};
+use translation_config::{Config, Counterpart, Derives, LibraryConfig, MethodData, StmtData};
 
 use crate::availability::Availability;
 use crate::cfgs::PlatformCfg;
-use crate::config;
-use crate::config::Derives;
-use crate::config::{Config, Counterpart, LibraryConfig, MethodData, StmtData};
 use crate::context::Context;
 use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
@@ -1392,8 +1390,8 @@ impl Stmt {
 
                 if let Some(nullability) = data.nullability {
                     ty.change_nullability(match nullability {
-                        config::Nullability::NonNull => clang::Nullability::NonNull,
-                        config::Nullability::Nullable => clang::Nullability::Nullable,
+                        translation_config::Nullability::NonNull => clang::Nullability::NonNull,
+                        translation_config::Nullability::Nullable => clang::Nullability::Nullable,
                     });
                 }
 
@@ -2003,8 +2001,8 @@ impl Stmt {
 
                 if let Some(nullability) = data.nullability {
                     ty.change_nullability(match nullability {
-                        config::Nullability::NonNull => clang::Nullability::NonNull,
-                        config::Nullability::Nullable => clang::Nullability::Nullable,
+                        translation_config::Nullability::NonNull => clang::Nullability::NonNull,
+                        translation_config::Nullability::Nullable => clang::Nullability::Nullable,
                     });
                 }
 

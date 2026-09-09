@@ -2,16 +2,17 @@
 //! mapped or documented as skipped.
 //!
 //! Run with:
+//! ```sh
+//! cargo run --bin=check_all_frameworks_known
 //! ```
-//! cargo run --bin check_all_frameworks_known
-//! ```
+
 use std::fs;
 use std::os::unix::ffi::OsStrExt;
 use std::path::Path;
 use std::{collections::BTreeSet, process::ExitCode};
 
 use apple_sdk::{AppleSdk, DeveloperDirectory, Platform, SimpleSdk};
-use header_translator::Config;
+use translation_config::Config;
 
 fn parse_framework_from_path(path: &Path) -> Option<String> {
     if path.file_name().unwrap().as_bytes().starts_with(b"_") {

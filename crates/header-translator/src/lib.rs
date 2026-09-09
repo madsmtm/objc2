@@ -12,7 +12,6 @@ use tracing::span::EnteredSpan;
 
 mod availability;
 mod cfgs;
-mod config;
 mod context;
 mod display_helper;
 pub mod documentation;
@@ -32,7 +31,6 @@ mod unexposed_attr;
 
 pub use self::availability::HOST_MACOS;
 pub use self::cfgs::PlatformCfg;
-pub use self::config::{Config, Counterpart, LibraryConfig};
 pub use self::context::{Context, MacroEntity, MacroLocation};
 pub use self::documentation::EXTRA_BLOCK_COMMANDS;
 pub use self::global_analysis::global_analysis;
@@ -94,6 +92,3 @@ fn immediate_children<'tu>(
         EntityVisitResult::Continue
     });
 }
-
-/// The version of the framework crates.
-pub const VERSION: &str = "0.3.2";

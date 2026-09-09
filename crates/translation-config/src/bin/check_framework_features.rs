@@ -1,4 +1,10 @@
 //! Utility for testing frameworks' features.
+//!
+//! Run with:
+//! ```sh
+//! cargo run --bin=check_framework_features
+//! ```
+
 use std::collections::BTreeMap;
 use std::error::Error;
 use std::fs;

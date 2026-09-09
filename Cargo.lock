@@ -858,17 +858,14 @@ dependencies = [
  "heck",
  "indexmap",
  "itertools",
- "lenient_semver_parser",
  "moka",
  "proc-macro2",
  "regex",
- "semver",
- "serde",
- "toml",
  "toml_edit",
  "tracing",
  "tracing-subscriber",
  "tracing-tree",
+ "translation-config",
 ]
 
 [[package]]
@@ -4710,6 +4707,19 @@ dependencies = [
  "tracing-core",
  "tracing-log",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "translation-config"
+version = "0.1.0"
+dependencies = [
+ "apple-sdk",
+ "heck",
+ "lenient_semver_parser",
+ "semver",
+ "serde",
+ "toml",
+ "toml_edit",
 ]
 
 [[package]]

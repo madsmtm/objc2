@@ -8,14 +8,12 @@ use std::path::Path;
 
 use toml_edit::InlineTable;
 use toml_edit::{value, Array, DocumentMut, Item, Table, Value};
+use translation_config::{Config, LibraryConfig, VERSION};
 
 use crate::cfgs::PlatformCfg;
-use crate::config::LibraryConfig;
 use crate::display_helper::FormatterFn;
 use crate::module::Module;
-use crate::Config;
 use crate::Location;
-use crate::VERSION;
 
 #[derive(Debug, PartialEq)]
 pub struct Library {
