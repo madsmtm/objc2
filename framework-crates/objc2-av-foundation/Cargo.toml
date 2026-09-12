@@ -178,6 +178,7 @@ default = [
     "AVCaptionGrouper",
     "AVCaptionRenderer",
     "AVCaptionSettings",
+    "AVCaptureAncillaryDataEncoder",
     "AVCaptureAudioDataOutput",
     "AVCaptureAudioPreviewOutput",
     "AVCaptureBroadcastVideoOutput",
@@ -503,6 +504,14 @@ AVCaptionRenderer = [
     "objc2-foundation/NSString",
 ]
 AVCaptionSettings = ["objc2-foundation/NSString"]
+AVCaptureAncillaryDataEncoder = [
+    "objc2-foundation/NSData",
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUUID",
+    "objc2-foundation/NSValue",
+]
 AVCaptureAudioDataOutput = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSString",
