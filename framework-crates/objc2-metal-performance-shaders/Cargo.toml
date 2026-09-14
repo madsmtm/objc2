@@ -69,7 +69,11 @@ default = [
     "MPSCommandBuffer",
     "MPSCore",
     "MPSCoreTypes",
+    "MPSFColorConversion",
+    "MPSFunction",
     "MPSFunctionConstantIndices",
+    "MPSFunctionTypes",
+    "MPSFunctions",
     "MPSImage",
     "MPSImageConversion",
     "MPSImageConvolution",
@@ -305,7 +309,23 @@ MPSCoreTypes = [
     "objc2-metal/MTLDevice",
     "objc2-metal/MTLTypes",
 ]
+MPSFColorConversion = [
+    "objc2-foundation/NSObject",
+    "objc2-metal/MTLAllocation",
+    "objc2-metal/MTLResource",
+    "objc2-metal/MTLTexture",
+]
+MPSFunction = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSZone",
+    "objc2-metal/MTLDevice",
+    "objc2-metal/MTLLibrary",
+]
 MPSFunctionConstantIndices = []
+MPSFunctionTypes = []
+MPSFunctions = []
 MPSImage = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -598,6 +618,8 @@ MPSNDArrayIdentity = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSValue",
+    "objc2-metal/MTL4CommandEncoder",
+    "objc2-metal/MTL4ComputeCommandEncoder",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLCommandEncoder",
     "objc2-metal/MTLComputeCommandEncoder",
@@ -608,6 +630,8 @@ MPSNDArrayKernel = [
     "objc2-foundation/NSCoder",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSZone",
+    "objc2-metal/MTL4CommandEncoder",
+    "objc2-metal/MTL4ComputeCommandEncoder",
     "objc2-metal/MTLCommandBuffer",
     "objc2-metal/MTLCommandEncoder",
     "objc2-metal/MTLComputeCommandEncoder",

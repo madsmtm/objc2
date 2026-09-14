@@ -70,6 +70,7 @@ default = [
     "CNDecision",
     "CNDetection",
     "CNDetectionTrack",
+    "CNImageRenderingSession",
     "CNObjectTracker",
     "CNRenderingSession",
     "CNScript",
@@ -93,7 +94,11 @@ unstable-darwin-objc = []
 
 CNAssetInfo = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
     "objc2-foundation/NSError",
+    "objc2-foundation/NSProgress",
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
 ]
 CNCinematicBase = []
@@ -110,6 +115,7 @@ CNDetectionTrack = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
 ]
+CNImageRenderingSession = []
 CNObjectTracker = ["objc2-foundation/NSObject"]
 CNRenderingSession = [
     "objc2-foundation/NSArray",

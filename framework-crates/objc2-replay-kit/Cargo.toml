@@ -30,7 +30,6 @@ objc2-foundation = { workspace = true, features = ["alloc"] }
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { workspace = true, optional = true, features = [
-    "NSImage",
     "NSKeyValueBinding",
     "NSNib",
     "NSResponder",
@@ -86,13 +85,15 @@ RPBroadcastConfiguration = []
 RPBroadcastExtension = [
     "objc2-foundation/NSDictionary",
     "objc2-foundation/NSError",
-    "objc2-foundation/NSExtensionContext",
     "objc2-foundation/NSExtensionRequestHandling",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
-RPError = ["objc2-foundation/NSString"]
+RPError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
 RPPreviewViewController = [
     "objc2-foundation/NSBundle",
     "objc2-foundation/NSObject",

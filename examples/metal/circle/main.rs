@@ -94,6 +94,7 @@ impl Renderer {
         let vbuf = {
             let vertex_data = create_vertex_points_for_circle();
 
+            #[allow(deprecated)]
             unsafe {
                 device.newBufferWithBytes_length_options(
                     NonNull::new(vertex_data.as_ptr().cast_mut().cast()).unwrap(),
