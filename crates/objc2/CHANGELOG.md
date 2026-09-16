@@ -109,6 +109,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   are unlikely to be stabilized (auto traits) and it's not sufficient for
   making autorelease pools safe anyhow.
 * **BREAKING**: Removed the deprecated `NSObjectProtocol::is_kind_of`.
+* Removed workaround for objects will NULL class pointers. This should never
+  happen, so we can safely assume it's UB.
 
 ## Fixed
 * Fixed encoding check when using SIMD types in signatures.

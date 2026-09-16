@@ -72,12 +72,6 @@ impl AnyObject {
     /// Dynamically find the class of this object.
     ///
     ///
-    /// # Panics
-    ///
-    /// May panic if the object is invalid (which may be the case for objects
-    /// returned from unavailable `init`/`new` methods).
-    ///
-    ///
     /// # Example
     ///
     /// Check that an instance of `NSObject` has the precise class `NSObject`.
@@ -98,10 +92,16 @@ impl AnyObject {
         // can be retrieved via `AnyClass::get(self.class().name())`).
         let cls = unsafe { ptr.as_ref() };
 
-        // The class _should_ not be NULL, because the docs only say that if
-        // the object is NULL, the class also is; and in practice, certain
-        // invalid objects can contain a NULL isa pointer.
-        cls.unwrap_or_else(|| panic!("invalid object {:?} (had NULL class)", self as *const Self))
+        // SAFETY: Objects are guaranteed to have a valid, non-NULL class/ISA
+        // pointer (if it doesn't, doing anything with the object will lead
+        // to segmentation faults anyhow).
+        if cfg!(debug_assertions) {
+            cls.unwrap_or_else(|| {
+                panic!("invalid object {:?} (had NULL class)", self as *const Self)
+            })
+        } else {
+            unsafe { cls.unwrap_unchecked() }
+        }
     }
 
     /// Change the class of the object at runtime.
@@ -365,5 +365,27 @@ impl fmt::Debug for AnyObject {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let ptr: *const Self = self;
         write!(f, "<{}: {:p}>", self.class(), ptr)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use core::{mem, ptr};
+
+    use super::*;
+
+    #[test]
+    #[cfg_attr(not(debug_assertions), ignore = "UB")]
+    #[should_panic = "invalid object"]
+    fn invalid_object() {
+        #[repr(C)]
+        struct FakeObject {
+            isa: *const AnyClass,
+        }
+
+        let fake_obj = FakeObject { isa: ptr::null() };
+        let fake_obj = unsafe { mem::transmute::<&FakeObject, &AnyObject>(&fake_obj) };
+        fake_obj.class();
+        // Sending messages etc. to `fake_obj` will lead to segfaults.
     }
 }
