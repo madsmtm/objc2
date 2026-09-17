@@ -211,16 +211,22 @@ default = [
     "WKContentRuleList",
     "WKContentRuleListStore",
     "WKContentWorld",
+    "WKContentWorldConfiguration",
     "WKContextMenuElementInfo",
+    "WKDOMNodeSnapshot",
     "WKDataDetectorTypes",
     "WKDownload",
     "WKDownloadDelegate",
     "WKError",
     "WKFindConfiguration",
     "WKFindResult",
+    "WKFormInfo",
     "WKFoundation",
     "WKFrameInfo",
     "WKHTTPCookieStore",
+    "WKImmersiveEnvironment",
+    "WKImmersiveEnvironmentDelegate",
+    "WKJSHandle",
     "WKNavigation",
     "WKNavigationAction",
     "WKNavigationDelegate",
@@ -723,7 +729,9 @@ WKContentRuleListStore = [
     "objc2-foundation/NSURL",
 ]
 WKContentWorld = ["objc2-foundation/NSString"]
+WKContentWorldConfiguration = ["objc2-foundation/NSObject"]
 WKContextMenuElementInfo = []
+WKDOMNodeSnapshot = []
 WKDataDetectorTypes = []
 WKDownload = [
     "objc2-foundation/NSData",
@@ -744,6 +752,11 @@ WKDownloadDelegate = [
 WKError = ["objc2-foundation/NSString"]
 WKFindConfiguration = ["objc2-foundation/NSObject"]
 WKFindResult = ["objc2-foundation/NSObject"]
+WKFormInfo = [
+    "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
 WKFoundation = []
 WKFrameInfo = [
     "objc2-foundation/NSObject",
@@ -752,7 +765,11 @@ WKFrameInfo = [
 WKHTTPCookieStore = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSHTTPCookie",
+    "objc2-foundation/NSURL",
 ]
+WKImmersiveEnvironment = []
+WKImmersiveEnvironmentDelegate = ["objc2-foundation/NSError"]
+WKJSHandle = ["objc2-foundation/NSObject"]
 WKNavigation = []
 WKNavigationAction = ["objc2-foundation/NSURLRequest"]
 WKNavigationDelegate = [
@@ -791,6 +808,7 @@ WKURLSchemeTask = [
 ]
 WKUserContentController = [
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -896,7 +914,10 @@ WKWebViewConfiguration = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
-WKWebpagePreferences = []
+WKWebpagePreferences = [
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURLRequest",
+]
 WKWebsiteDataRecord = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",

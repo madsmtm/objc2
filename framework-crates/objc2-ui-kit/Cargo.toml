@@ -42,7 +42,10 @@ objc2-core-graphics = { workspace = true, optional = true, features = [
     "CGPath",
     "objc2",
 ] }
-objc2-core-location = { workspace = true, optional = true, features = ["CLRegion"] }
+objc2-core-location = { workspace = true, optional = true, features = [
+    "CLBody",
+    "CLRegion",
+] }
 objc2-core-text = { workspace = true, optional = true, features = [
     "CTFont",
     "CTFontDescriptor",
@@ -66,6 +69,9 @@ objc2-quartz-core = { workspace = true, optional = true, features = [
     "CATransform3D",
     "objc2-core-foundation",
 ] }
+
+[target.'cfg(not(target_os = "tvos"))'.dependencies]
+objc2-core-motion = { workspace = true, optional = true, features = ["CMBody"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-ios"
@@ -114,7 +120,9 @@ default = [
     "NSTextSelection",
     "NSTextSelectionNavigation",
     "NSTextStorage",
+    "NSTextTable",
     "NSTextViewportLayoutController",
+    "NSTextViewportRenderingSurface",
     "NSToolbar_UIKitAdditions",
     "NSTouchBar_UIKitAdditions",
     "NSUserActivity_NSItemProvider",
@@ -159,6 +167,7 @@ default = [
     "UIBarButtonItemGroup",
     "UIBarCommon",
     "UIBarItem",
+    "UIBarMinimization",
     "UIBehavioralStyle",
     "UIBezierPath",
     "UIBlurEffect",
@@ -307,6 +316,7 @@ default = [
     "UILocalNotification",
     "UILocalizedIndexedCollation",
     "UILongPressGestureRecognizer",
+    "UILookToScrollInteraction",
     "UIMailConversationContext",
     "UIMailConversationEntry",
     "UIMainMenuSystem",
@@ -340,6 +350,7 @@ default = [
     "UIPasteControl",
     "UIPasteboard",
     "UIPencilInteraction",
+    "UIPhotoSearchSuggestion",
     "UIPickerView",
     "UIPinchGestureRecognizer",
     "UIPointerAccessory",
@@ -375,7 +386,10 @@ default = [
     "UIResponder_UIActivityItemsConfiguration",
     "UIRotationGestureRecognizer",
     "UIScene",
+    "UISceneAccessory",
+    "UISceneAccessoryRegistration",
     "UISceneActivationConditions",
+    "UISceneClosureConfirmation",
     "UISceneConfiguration",
     "UISceneDefinitions",
     "UISceneDestructionCondition",
@@ -534,6 +548,7 @@ default = [
     "objc2-core-graphics",
     "objc2-core-image",
     "objc2-core-location",
+    "objc2-core-motion",
     "objc2-core-text",
     "objc2-quartz-core",
     "objc2-user-notifications",
@@ -548,6 +563,7 @@ objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
 objc2-core-image = ["dep:objc2-core-image"]
 objc2-core-location = ["dep:objc2-core-location"]
+objc2-core-motion = ["dep:objc2-core-motion"]
 objc2-core-text = ["dep:objc2-core-text"]
 objc2-quartz-core = ["dep:objc2-quartz-core"]
 objc2-symbols = ["dep:objc2-symbols"]
@@ -712,7 +728,9 @@ NSTextStorage = [
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
 ]
+NSTextTable = ["objc2-foundation/NSObject"]
 NSTextViewportLayoutController = []
+NSTextViewportRenderingSurface = []
 NSToolbar_UIKitAdditions = []
 NSTouchBar_UIKitAdditions = []
 NSUserActivity_NSItemProvider = []
@@ -863,6 +881,7 @@ UIBarItem = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+UIBarMinimization = ["objc2-foundation/NSObject"]
 UIBehavioralStyle = []
 UIBezierPath = ["objc2-foundation/NSObject"]
 UIBlurEffect = ["objc2-foundation/NSObject"]
@@ -1375,6 +1394,7 @@ UILocalizedIndexedCollation = [
     "objc2-foundation/NSString",
 ]
 UILongPressGestureRecognizer = ["objc2-foundation/NSDate"]
+UILookToScrollInteraction = []
 UIMailConversationContext = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
@@ -1496,6 +1516,10 @@ UIPasteboard = [
     "objc2-foundation/NSURL",
 ]
 UIPencilInteraction = ["objc2-foundation/NSDate"]
+UIPhotoSearchSuggestion = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
 UIPickerView = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSObject",
@@ -1603,11 +1627,18 @@ UIScene = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSUserActivity",
 ]
+UISceneAccessory = []
+UISceneAccessoryRegistration = []
 UISceneActivationConditions = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSPredicate",
     "objc2-foundation/NSString",
     "objc2-foundation/NSUserActivity",
+]
+UISceneClosureConfirmation = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
 ]
 UISceneConfiguration = [
     "objc2-foundation/NSObject",
@@ -1818,6 +1849,7 @@ UITextChecker = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSTextCheckingResult",
 ]
 UITextCursorDropPositionAnimator = []
 UITextCursorView = []
@@ -1920,6 +1952,7 @@ UITextSelectionDisplayInteraction = ["objc2-foundation/NSArray"]
 UITextSelectionHandleView = []
 UITextSelectionHighlightView = ["objc2-foundation/NSArray"]
 UITextView = [
+    "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSDictionary",
@@ -2061,6 +2094,7 @@ UIWritingToolsCoordinator = [
     "objc2-foundation/NSAttributedString",
     "objc2-foundation/NSRange",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSTextCheckingResult",
     "objc2-foundation/NSUUID",
     "objc2-foundation/NSValue",
 ]

@@ -56,6 +56,7 @@ default = [
     "CMBufferQueue",
     "CMFormatDescription",
     "CMFormatDescriptionBridge",
+    "CMGenlockClock",
     "CMMemoryPool",
     "CMMetadata",
     "CMSampleBuffer",
@@ -110,6 +111,7 @@ CMFormatDescription = [
     "objc2-core-foundation/CFString",
 ]
 CMFormatDescriptionBridge = ["objc2-core-foundation/CFString"]
+CMGenlockClock = []
 CMMemoryPool = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFString",

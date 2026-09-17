@@ -1,10 +1,15 @@
 framework = "FSKit"
 crate = "objc2-fs-kit"
 required-crates = ["objc2", "objc2-foundation"]
+custom-lib-rs = true
 macos = "15.4"
 
 # Uses `libc::FREAD` and `libc::FWRITE`
 enum.FSVolumeOpenModes.use-value = true
+
+# Defined in both FSVolume.h and FSVolumeHandlerResult.h
+typedef.FSDirectoryVerifier.skipped = true
+class.FSEnumerateDirectoryResult.methods."initWithVerifier:".skipped = true
 
 # Wants to pass `libc::timespec` to/from objc2 methods
 # (but `libc::timespec` doesn't implement `Encode`).

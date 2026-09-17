@@ -24,7 +24,12 @@ dispatch2 = { workspace = true, optional = true, features = [
 ] }
 libc = { workspace = true, optional = true }
 objc2 = { workspace = true, features = ["std"] }
+objc2-app-kit = { workspace = true, optional = true, features = [
+    "NSResponder",
+    "NSWindow",
+] }
 objc2-av-foundation = { workspace = true, optional = true, features = [
+    "AVCaptureDevice",
     "AVMediaFormat",
     "AVVideoSettings",
 ] }
@@ -59,16 +64,20 @@ targets = [
 [features]
 default = [
     "std",
+    "SCClipBufferingOutput",
     "SCContentSharingPicker",
     "SCError",
+    "SCRecordingEditor",
     "SCRecordingOutput",
     "SCScreenshotManager",
     "SCShareableContent",
     "SCStream",
+    "SCVideoEffectOutput",
     "bitflags",
     "block2",
     "dispatch2",
     "libc",
+    "objc2-app-kit",
     "objc2-av-foundation",
     "objc2-core-foundation",
     "objc2-core-graphics",
@@ -81,6 +90,7 @@ bitflags = ["dep:bitflags"]
 block2 = ["dep:block2"]
 dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
+objc2-app-kit = ["dep:objc2-app-kit"]
 objc2-av-foundation = ["dep:objc2-av-foundation"]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-core-graphics = ["dep:objc2-core-graphics"]
@@ -88,6 +98,11 @@ objc2-core-media = ["dep:objc2-core-media"]
 objc2-uniform-type-identifiers = ["dep:objc2-uniform-type-identifiers"]
 unstable-darwin-objc = []
 
+SCClipBufferingOutput = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+]
 SCContentSharingPicker = [
     "bitflags",
     "objc2-foundation/NSArray",
@@ -95,7 +110,14 @@ SCContentSharingPicker = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSValue",
 ]
-SCError = ["objc2-foundation/NSString"]
+SCError = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSString",
+]
+SCRecordingEditor = [
+    "objc2-foundation/NSError",
+    "objc2-foundation/NSURL",
+]
 SCRecordingOutput = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
@@ -116,3 +138,4 @@ SCStream = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSString",
 ]
+SCVideoEffectOutput = []

@@ -15,9 +15,9 @@ help: the trait `objc2::downcast::DowncastTarget` is implemented for `NSArray`
  ::: $WORKSPACE/framework-crates/objc2-foundation/src/generated/NSArray.rs
   |
   | / extern_class!(
-  | |     /// **************    Immutable Array        ***************
+  | |     /// A static ordered collection of objects.
   | |     ///
-  | |     /// See also [Apple's documentation](https://developer.apple.com/documentation/foundation/nsarray?language=objc)
+  | |     /// You can use this type in Swift instead of an `Array` constant in cases that require reference semantics.
 ... |
   | |     pub struct NSArray<ObjectType: ?Sized = AnyObject>;
   | | );

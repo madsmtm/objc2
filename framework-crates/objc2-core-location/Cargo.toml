@@ -48,6 +48,7 @@ default = [
     "CLBeaconIdentityCondition",
     "CLBeaconIdentityConstraint",
     "CLBeaconRegion",
+    "CLBody",
     "CLCircularGeographicCondition",
     "CLCircularRegion",
     "CLCondition",
@@ -104,6 +105,7 @@ CLBeaconRegion = [
     "objc2-foundation/NSUUID",
     "objc2-foundation/NSValue",
 ]
+CLBody = []
 CLCircularGeographicCondition = ["objc2-foundation/NSObject"]
 CLCircularRegion = [
     "objc2-foundation/NSObject",

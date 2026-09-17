@@ -69,16 +69,20 @@ default = [
     "PHAdjustmentData",
     "PHAsset",
     "PHAssetChangeRequest",
+    "PHAssetCollection",
     "PHAssetCollectionChangeRequest",
     "PHAssetCreationRequest",
+    "PHAssetExtendedMetadata",
     "PHAssetResource",
     "PHAssetResourceManager",
     "PHAssetResourceUploadJob",
     "PHAssetResourceUploadJobChangeRequest",
+    "PHAssetResourceUploadJobOptions",
     "PHChange",
     "PHChangeRequest",
     "PHCloudIdentifier",
     "PHCollection",
+    "PHCollectionList",
     "PHCollectionListChangeRequest",
     "PHContentEditingInput",
     "PHContentEditingOutput",
@@ -141,6 +145,13 @@ PHAssetChangeRequest = [
     "objc2-foundation/NSString",
     "objc2-foundation/NSURL",
 ]
+PHAssetCollection = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSURL",
+]
 PHAssetCollectionChangeRequest = [
     "objc2-foundation/NSEnumerator",
     "objc2-foundation/NSIndexSet",
@@ -154,9 +165,14 @@ PHAssetCreationRequest = [
     "objc2-foundation/NSURL",
     "objc2-foundation/NSValue",
 ]
+PHAssetExtendedMetadata = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSString",
+]
 PHAssetResource = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSString",
+    "objc2-foundation/NSValue",
 ]
 PHAssetResourceManager = [
     "objc2-foundation/NSData",
@@ -172,6 +188,7 @@ PHAssetResourceUploadJob = [
     "objc2-foundation/NSURLRequest",
 ]
 PHAssetResourceUploadJobChangeRequest = ["objc2-foundation/NSURLRequest"]
+PHAssetResourceUploadJobOptions = ["objc2-foundation/NSObject"]
 PHChange = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSIndexSet",
@@ -185,11 +202,15 @@ PHCloudIdentifier = [
     "objc2-foundation/NSString",
 ]
 PHCollection = [
+    "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+PHCollectionList = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
-    "objc2-foundation/NSURL",
 ]
 PHCollectionListChangeRequest = [
     "objc2-foundation/NSEnumerator",
