@@ -241,6 +241,11 @@ _fn13_handle_autoreleased:
 	## InlineAsm End
 	mov	dword ptr [esp], eax
 	call	_objc_retainAutoreleasedReturnValue
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
 	add	esp, 8
 	pop	ebp
 	ret
@@ -266,7 +271,13 @@ _fn14_handle_autoreleased_with_arg:
 	sub	esp, 12
 	push	eax
 	call	_objc_retainAutoreleasedReturnValue
-	add	esp, 24
+	add	esp, 16
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
+	add	esp, 8
 	pop	ebp
 	ret
 
@@ -298,6 +309,11 @@ L14$pb:
 	push	eax
 	call	_objc_retainAutoreleasedReturnValue
 	add	esp, 16
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
 	test	eax, eax
 	je	LBB14_2
 	add	esp, 12
@@ -344,6 +360,11 @@ Ltmp2:
 	call	_objc_retainAutoreleasedReturnValue
 Ltmp3:
 	mov	esi, eax
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
 	mov	eax, dword ptr [ebx]
 	mov	dword ptr [esp], eax
 	call	_objc_retain

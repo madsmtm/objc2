@@ -381,7 +381,9 @@ mod tests {
     use std::panic::{catch_unwind, AssertUnwindSafe};
 
     use super::*;
-    use crate::rc::{autoreleasepool, Allocated, RcTestObject, ThreadTestData};
+    use crate::rc::{
+        autoreleasepool, Allocated, RcTestObject, ThreadTestData, AUTORELEASE_SKIPPED,
+    };
     use crate::runtime::NSObject;
     use crate::{define_class, extern_methods, msg_send, ClassType};
 
@@ -467,9 +469,6 @@ mod tests {
         let mut param: Retained<_> = RcTestObject::new();
         let _: () = unsafe { msg_send![cls, outParamNull: &mut param] };
     }
-
-    // TODO: Fix this in release mode with Apple's runtime
-    const AUTORELEASE_SKIPPED: bool = cfg!(feature = "gnustep-1-7");
 
     #[test]
     fn test_retained_interaction() {

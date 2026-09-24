@@ -8,7 +8,11 @@ _handle:
 	; InlineAsm Start
 	mov	x29, x29
 	; InlineAsm End
+	bl	_objc_retainAutoreleasedReturnValue
+	; InlineAsm Start
+	nop
+	; InlineAsm End
 	ldp	x29, x30, [sp], #16
-	b	_objc_retainAutoreleasedReturnValue
+	ret
 
 .subsections_via_symbols

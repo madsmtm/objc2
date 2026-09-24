@@ -258,7 +258,9 @@ mod tests {
 
     use super::*;
 
-    use crate::rc::{autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData};
+    use crate::rc::{
+        autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData, AUTORELEASE_SKIPPED,
+    };
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol, NSZone};
     use crate::{class, define_class, extern_methods, msg_send, AnyThread, Ivars};
 
@@ -728,30 +730,6 @@ mod tests {
         let _obj: Retained<AnyObject> = unsafe { msg_send![obj, description] };
     }
 
-    /// This is imperfect, but will do for now.
-    const fn autorelease_skipped(self_declared: bool) -> bool {
-        if cfg!(feature = "gnustep-1-7") {
-            // GNUStep does the optimization a different way, so it isn't
-            // optimization-dependent.
-            true
-        } else if cfg!(all(target_arch = "arm", panic = "unwind")) {
-            // 32-bit ARM unwinding sometimes interferes with the optimization
-            false
-        } else if self_declared {
-            // FIXME: Autorelease_return is not currently tail-called, so the
-            // optimization doesn't work on define_class! functions.
-            false
-        } else if cfg!(feature = "catch-all") {
-            // FIXME: `catch-all` is inserted before we get a chance to retain.
-            false
-        } else if cfg!(debug_assertions) {
-            // `debug_assertions` ~proxy for if optimizations are off.
-            false
-        } else {
-            true
-        }
-    }
-
     macro_rules! test_error_retained {
         ($expected:expr, $if_autorelease_not_skipped:expr, $sel:ident, $($obj:tt)*) => {
             // Succeeds
@@ -804,7 +782,7 @@ mod tests {
         let cls = RcTestObject::class();
         test_error_retained!(
             expected,
-            if autorelease_skipped(true) { 0 } else { 1 },
+            if AUTORELEASE_SKIPPED { 0 } else { 1 },
             idAndShouldError,
             cls
         );
@@ -815,7 +793,7 @@ mod tests {
         expected.init += 1;
         test_error_retained!(
             expected,
-            if autorelease_skipped(true) { 0 } else { 1 },
+            if AUTORELEASE_SKIPPED { 0 } else { 1 },
             idAndShouldError,
             &obj
         );
@@ -849,12 +827,12 @@ mod tests {
             assert!(res.is_some());
             expected.alloc += 1;
             expected.init += 1;
-            expected.autorelease += if autorelease_skipped(true) { 0 } else { 1 };
-            expected.retain += if autorelease_skipped(true) { 0 } else { 1 };
+            expected.autorelease += if AUTORELEASE_SKIPPED { 0 } else { 1 };
+            expected.retain += if AUTORELEASE_SKIPPED { 0 } else { 1 };
             expected.assert_current();
             res
         });
-        expected.release += if autorelease_skipped(true) { 0 } else { 1 };
+        expected.release += if AUTORELEASE_SKIPPED { 0 } else { 1 };
         expected.assert_current();
     }
 
@@ -878,7 +856,7 @@ mod tests {
             // When compiled in release mode / with optimizations enabled,
             // subsequent usage of `retain_autoreleased` will succeed in
             // retaining the autoreleased value!
-            let expected = if autorelease_skipped(false) { 1 } else { 2 };
+            let expected = if AUTORELEASE_SKIPPED { 1 } else { 2 };
 
             let data = create_obj();
             assert_eq!(data.retainCount(), expected);

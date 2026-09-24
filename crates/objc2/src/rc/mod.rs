@@ -66,7 +66,7 @@ pub use self::retained::Id;
 pub use self::retained::Retained;
 pub use self::retained_traits::{DefaultRetained, RetainedFromIterator, RetainedIntoIterator};
 #[cfg(test)]
-pub(crate) use self::test_object::{RcTestObject, ThreadTestData};
+pub(crate) use self::test_object::{RcTestObject, ThreadTestData, AUTORELEASE_SKIPPED};
 pub use self::weak::Weak;
 // Same as above.
 #[allow(deprecated)]

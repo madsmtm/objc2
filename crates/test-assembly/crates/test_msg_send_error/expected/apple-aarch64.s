@@ -147,6 +147,9 @@ _fn6_error_autoreleased:
 	mov	x29, x29
 	; InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
+	; InlineAsm Start
+	nop
+	; InlineAsm End
 	cbz	x0, LBB5_3
 	mov	x1, x0
 	mov	x0, #0

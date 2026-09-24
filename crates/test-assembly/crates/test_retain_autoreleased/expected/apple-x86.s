@@ -18,6 +18,11 @@ _handle:
 	## InlineAsm End
 	mov	dword ptr [esp], eax
 	call	_objc_retainAutoreleasedReturnValue
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
 	add	esp, 8
 	pop	ebp
 	ret

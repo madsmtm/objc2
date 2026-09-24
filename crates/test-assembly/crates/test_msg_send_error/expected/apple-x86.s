@@ -221,6 +221,11 @@ _fn6_error_autoreleased:
 	## InlineAsm End
 	mov	dword ptr [esp], eax
 	call	_objc_retainAutoreleasedReturnValue
+	## InlineAsm Start
+
+	nop
+
+	## InlineAsm End
 	test	eax, eax
 	je	LBB5_2
 	mov	edx, eax
