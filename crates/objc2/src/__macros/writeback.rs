@@ -563,7 +563,7 @@ mod tests {
 
     #[test]
     #[cfg_attr(
-        feature = "catch-all",
+        any(feature = "catch-all", panic = "abort"),
         ignore = "panics intentionally, which catch-all interferes with"
     )]
     fn basic_method_panics() {
@@ -641,6 +641,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(panic = "abort", ignore = "requires `catch_unwind`")]
     fn define_out_param() {
         define_class!(
             #[unsafe(super(NSObject))]
