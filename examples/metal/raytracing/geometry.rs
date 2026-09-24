@@ -45,10 +45,6 @@ pub struct Triangle {
     pub colours: [Vec4; 3],
 }
 
-pub fn get_managed_buffer_storage_mode() -> MTLResourceOptions {
-    MTLResourceOptions::StorageModeManaged
-}
-
 pub struct TriangleGeometry {
     pub device: Retained<ProtocolObject<dyn MTLDevice>>,
     pub name: String,
@@ -181,6 +177,7 @@ impl TriangleGeometry {
 }
 
 impl Geometry for TriangleGeometry {
+    #[allow(deprecated)]
     fn upload_to_buffers(&mut self) {
         unsafe {
             self.index_buffer = Some(
@@ -188,7 +185,7 @@ impl Geometry for TriangleGeometry {
                     .newBufferWithBytes_length_options(
                         NonNull::new(self.indices.as_ptr().cast_mut().cast()).unwrap(),
                         size_of_val(self.indices.as_slice()),
-                        get_managed_buffer_storage_mode(),
+                        MTLResourceOptions::StorageModeManaged,
                     )
                     .unwrap(),
             );
@@ -197,7 +194,7 @@ impl Geometry for TriangleGeometry {
                     .newBufferWithBytes_length_options(
                         NonNull::new(self.vertices.as_ptr().cast_mut().cast()).unwrap(),
                         size_of_val(self.vertices.as_slice()),
-                        get_managed_buffer_storage_mode(),
+                        MTLResourceOptions::StorageModeManaged,
                     )
                     .unwrap(),
             );
@@ -206,7 +203,7 @@ impl Geometry for TriangleGeometry {
                     .newBufferWithBytes_length_options(
                         NonNull::new(self.normals.as_ptr().cast_mut().cast()).unwrap(),
                         size_of_val(self.normals.as_slice()),
-                        get_managed_buffer_storage_mode(),
+                        MTLResourceOptions::StorageModeManaged,
                     )
                     .unwrap(),
             );
@@ -215,7 +212,7 @@ impl Geometry for TriangleGeometry {
                     .newBufferWithBytes_length_options(
                         NonNull::new(self.colours.as_ptr().cast_mut().cast()).unwrap(),
                         size_of_val(self.colours.as_slice()),
-                        get_managed_buffer_storage_mode(),
+                        MTLResourceOptions::StorageModeManaged,
                     )
                     .unwrap(),
             );
@@ -224,7 +221,7 @@ impl Geometry for TriangleGeometry {
                     .newBufferWithBytes_length_options(
                         NonNull::new(self.triangles.as_ptr().cast_mut().cast()).unwrap(),
                         size_of_val(self.triangles.as_slice()),
-                        get_managed_buffer_storage_mode(),
+                        MTLResourceOptions::StorageModeManaged,
                     )
                     .unwrap(),
             );
@@ -374,13 +371,14 @@ impl SphereGeometry {
 }
 
 impl Geometry for SphereGeometry {
+    #[allow(deprecated)]
     fn upload_to_buffers(&mut self) {
         self.sphere_buffer = Some(
             unsafe {
                 self.device.newBufferWithBytes_length_options(
                     NonNull::new(self.spheres.as_ptr().cast_mut().cast()).unwrap(),
                     size_of_val(self.spheres.as_slice()),
-                    get_managed_buffer_storage_mode(),
+                    MTLResourceOptions::StorageModeManaged,
                 )
             }
             .unwrap(),
@@ -402,7 +400,7 @@ impl Geometry for SphereGeometry {
                 self.device.newBufferWithBytes_length_options(
                     NonNull::new(bounding_boxes.as_ptr().cast_mut().cast()).unwrap(),
                     size_of_val(bounding_boxes.as_slice()),
-                    get_managed_buffer_storage_mode(),
+                    MTLResourceOptions::StorageModeManaged,
                 )
             }
             .unwrap(),

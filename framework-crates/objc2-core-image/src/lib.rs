@@ -19,3 +19,7 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+
+// MacTypes.h
+#[allow(dead_code)]
+pub(crate) type OSType = u32;

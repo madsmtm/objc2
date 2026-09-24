@@ -24,6 +24,7 @@ objc2-av-foundation = { workspace = true, optional = true, features = [
     "AVCaptureDevice",
     "AVCapturePhotoOutput",
     "AVDepthData",
+    "AVMetadataObject",
 ] }
 objc2-core-foundation = { workspace = true, optional = true, features = ["CFCGTypes"] }
 objc2-core-graphics = { workspace = true, optional = true, features = ["CGImage"] }

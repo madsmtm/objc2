@@ -1,6 +1,7 @@
 framework = "MetalFX"
 crate = "objc2-metal-fx"
 required-crates = ["objc2", "objc2-foundation", "objc2-metal"]
+custom-lib-rs = true
 macos = "13.0"
 maccatalyst = "16.0"
 ios = "16.0"

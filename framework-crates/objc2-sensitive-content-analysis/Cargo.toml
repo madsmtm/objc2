@@ -66,7 +66,10 @@ objc2-core-video = ["dep:objc2-core-video"]
 objc2-video-toolbox = ["dep:objc2-video-toolbox"]
 unstable-darwin-objc = []
 
-SCSensitivityAnalysis = []
+SCSensitivityAnalysis = [
+    "objc2-foundation/NSSet",
+    "objc2-foundation/NSString",
+]
 SCSensitivityAnalyzer = [
     "objc2-foundation/NSError",
     "objc2-foundation/NSProgress",

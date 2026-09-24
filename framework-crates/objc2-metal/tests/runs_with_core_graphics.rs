@@ -18,6 +18,7 @@ fn get_all() {
 #[test]
 #[cfg(target_os = "macos")]
 #[cfg(target_arch = "aarch64")] // Workaround to not try to compile this with 10.12 SDK
+#[allow(deprecated)]
 fn get_all_with_observer() {
     use objc2::rc::autoreleasepool;
     use objc2_foundation::NSObjectProtocol;

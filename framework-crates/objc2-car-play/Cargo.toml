@@ -79,6 +79,7 @@ default = [
     "CPBarButton",
     "CPBarButtonProviding",
     "CPButton",
+    "CPChargingStationConnection",
     "CPContact",
     "CPContactTemplate",
     "CPDashboardButton",
@@ -109,10 +110,15 @@ default = [
     "CPLocation",
     "CPManeuver",
     "CPMapButton",
+    "CPMapPanel",
+    "CPMapPanelButtonConfiguration",
+    "CPMapPanelItem",
+    "CPMapPanelSection",
     "CPMapTemplate",
     "CPMapTemplateWaypoint",
     "CPMessageComposeBarButton",
     "CPMessageListItem",
+    "CPMultiStopCardConfiguration",
     "CPNavigationAlert",
     "CPNavigationEnum",
     "CPNavigationSession",
@@ -120,10 +126,14 @@ default = [
     "CPNowPlayingButton",
     "CPNowPlayingMode",
     "CPNowPlayingTemplate",
+    "CPPanel",
+    "CPPanelButtonConfiguration",
+    "CPPanelItem",
     "CPPlaybackConfiguration",
     "CPPointOfInterest",
     "CPPointOfInterestTemplate",
     "CPRerouteReason",
+    "CPRouteDetail",
     "CPRouteInformation",
     "CPRouteSegment",
     "CPRouteSource",
@@ -185,6 +195,11 @@ CPBarButton = [
 ]
 CPBarButtonProviding = ["objc2-foundation/NSArray"]
 CPButton = ["objc2-foundation/NSString"]
+CPChargingStationConnection = [
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSUnit",
+]
 CPContact = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSObject",
@@ -290,15 +305,35 @@ CPManeuver = [
     "objc2-foundation/NSUnit",
 ]
 CPMapButton = ["objc2-foundation/NSObject"]
+CPMapPanel = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+CPMapPanelButtonConfiguration = ["objc2-foundation/NSObject"]
+CPMapPanelItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
+CPMapPanelSection = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 CPMapTemplate = [
     "bitflags",
     "objc2-foundation/NSArray",
     "objc2-foundation/NSError",
     "objc2-foundation/NSObject",
 ]
-CPMapTemplateWaypoint = []
+CPMapTemplateWaypoint = ["objc2-foundation/NSObject"]
 CPMessageComposeBarButton = ["objc2-foundation/NSObject"]
 CPMessageListItem = ["objc2-foundation/NSString"]
+CPMultiStopCardConfiguration = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
 CPNavigationAlert = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
@@ -311,6 +346,7 @@ CPNavigationSession = [
     "objc2-foundation/NSString",
 ]
 CPNavigationWaypoint = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
@@ -329,6 +365,12 @@ CPNowPlayingTemplate = [
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
+CPPanel = ["objc2-foundation/NSObject"]
+CPPanelButtonConfiguration = ["objc2-foundation/NSObject"]
+CPPanelItem = [
+    "objc2-foundation/NSArray",
+    "objc2-foundation/NSObject",
+]
 CPPlaybackConfiguration = ["objc2-foundation/NSObject"]
 CPPointOfInterest = [
     "objc2-foundation/NSObject",
@@ -340,6 +382,13 @@ CPPointOfInterestTemplate = [
     "objc2-foundation/NSString",
 ]
 CPRerouteReason = []
+CPRouteDetail = [
+    "objc2-foundation/NSLocale",
+    "objc2-foundation/NSMeasurement",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+    "objc2-foundation/NSUnit",
+]
 CPRouteInformation = ["objc2-foundation/NSArray"]
 CPRouteSegment = [
     "objc2-foundation/NSArray",
@@ -368,6 +417,7 @@ CPTemplateApplicationScene = []
 CPTextButton = ["objc2-foundation/NSString"]
 CPThumbnailImage = ["objc2-foundation/NSObject"]
 CPTravelEstimates = [
+    "objc2-foundation/NSArray",
     "objc2-foundation/NSDate",
     "objc2-foundation/NSMeasurement",
     "objc2-foundation/NSObject",

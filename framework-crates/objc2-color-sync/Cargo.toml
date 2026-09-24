@@ -38,6 +38,7 @@ default = [
     "ColorSyncBase",
     "ColorSyncCMM",
     "ColorSyncDevice",
+    "ColorSyncHeadroomAdaptiveGainCurve",
     "ColorSyncProfile",
     "ColorSyncTransform",
     "objc2",
@@ -60,6 +61,10 @@ ColorSyncDevice = [
     "objc2-core-foundation/CFDictionary",
     "objc2-core-foundation/CFString",
     "objc2-core-foundation/CFUUID",
+]
+ColorSyncHeadroomAdaptiveGainCurve = [
+    "objc2-core-foundation/CFData",
+    "objc2-core-foundation/CFDictionary",
 ]
 ColorSyncProfile = [
     "objc2-core-foundation/CFArray",

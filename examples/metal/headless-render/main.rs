@@ -77,6 +77,7 @@ fn main() {
     .setLoadAction(MTLLoadAction::DontCare);
 
     let blit_encoder = command_buffer.blitCommandEncoder().unwrap();
+    #[allow(deprecated)]
     blit_encoder.synchronizeResource(ProtocolObject::from_ref(&*texture));
     blit_encoder.endEncoding();
 
@@ -160,6 +161,7 @@ fn prepare_pipeline_state(
         .unwrap()
 }
 
+#[allow(deprecated)]
 fn create_vertex_buffer(
     device: &ProtocolObject<dyn MTLDevice>,
 ) -> Retained<ProtocolObject<dyn MTLBuffer>> {
