@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `CoreText` / `objc2-core-text`.
   - `ScreenCaptureKit` / `objc2-screen-capture-kit`.
   - `Network` / `objc2-network`.
+  - `LocalAuthentication` / `objc2-local-authentication`.
 * Added a few missing APIs that uses arrays.
 * Added `CGBitmapInfo::new`.
 * Added `Default` implementations for enumerations, bitflags and structs.
