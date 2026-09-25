@@ -29,11 +29,9 @@ class.LAContext.methods.localizedReason.unsafe = false
 class.LAContext.methods."setLocalizedReason:".unsafe = false
 class.LAContext.methods.interactionNotAllowed.unsafe = false
 class.LAContext.methods."setInteractionNotAllowed:".unsafe = false
-class.LAContext.methods.biometryType.unsafe = false
 class.LAContext.methods."canEvaluatePolicy:error:".unsafe = false
 class.LAContext.methods."setCredential:type:".unsafe = false
 class.LAContext.methods."isCredentialSet:".unsafe = false
-class.LAContext.methods.domainState.unsafe = false
 
 class.LADomainStateBiometry.methods.biometryType.unsafe = false
 class.LADomainStateBiometry.methods.stateHash.unsafe = false
@@ -57,7 +55,6 @@ class.LAAuthenticationRequirement.methods."biometryRequirementWithFallback:".uns
 class.LABiometryFallbackRequirement.methods.defaultRequirement.unsafe = false
 class.LABiometryFallbackRequirement.methods.devicePasscodeRequirement.unsafe = false
 
-class.LARight.methods.state.unsafe = false
 class.LARight.methods.tag.unsafe = false
 class.LARight.methods."setTag:".unsafe = false
 class.LARight.methods.init.unsafe = false
