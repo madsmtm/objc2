@@ -30,3 +30,49 @@ class.LAContext.methods."setLocalizedReason:".unsafe = false
 class.LAContext.methods.interactionNotAllowed.unsafe = false
 class.LAContext.methods."setInteractionNotAllowed:".unsafe = false
 class.LAContext.methods.biometryType.unsafe = false
+class.LAContext.methods."canEvaluatePolicy:error:".unsafe = false
+class.LAContext.methods."setCredential:type:".unsafe = false
+class.LAContext.methods."isCredentialSet:".unsafe = false
+class.LAContext.methods.domainState.unsafe = false
+
+class.LADomainStateBiometry.methods.biometryType.unsafe = false
+class.LADomainStateBiometry.methods.stateHash.unsafe = false
+
+class.LADomainStateCompanion.methods.availableCompanionTypes.unsafe = false
+class.LADomainStateCompanion.methods.stateHash.unsafe = false
+class.LADomainStateCompanion.methods."stateHashForCompanionType:".unsafe = false
+
+class.LADomainState.methods.biometry.unsafe = false
+class.LADomainState.methods.companion.unsafe = false
+class.LADomainState.methods.stateHash.unsafe = false
+
+class.LAEnvironment.methods.currentUser.unsafe = false
+class.LAEnvironment.methods.state.unsafe = false
+
+class.LAAuthenticationRequirement.methods.defaultRequirement.unsafe = false
+class.LAAuthenticationRequirement.methods.biometryRequirement.unsafe = false
+class.LAAuthenticationRequirement.methods.biometryCurrentSetRequirement.unsafe = false
+class.LAAuthenticationRequirement.methods."biometryRequirementWithFallback:".unsafe = false
+
+class.LABiometryFallbackRequirement.methods.defaultRequirement.unsafe = false
+class.LABiometryFallbackRequirement.methods.devicePasscodeRequirement.unsafe = false
+
+class.LARight.methods.state.unsafe = false
+class.LARight.methods.tag.unsafe = false
+class.LARight.methods."setTag:".unsafe = false
+class.LARight.methods.init.unsafe = false
+class.LARight.methods."initWithRequirement:".unsafe = false
+class.LARight.methods.new.unsafe = false
+
+class.LARightStore.methods.sharedStore.unsafe = false
+
+class.LAPersistedRight.methods.key.unsafe = false
+class.LAPersistedRight.methods.secret.unsafe = false
+
+class.LAPrivateKey.methods.publicKey.unsafe = false
+class.LAPrivateKey.methods."canSignUsingSecKeyAlgorithm:".unsafe = false
+class.LAPrivateKey.methods."canDecryptUsingSecKeyAlgorithm:".unsafe = false
+class.LAPrivateKey.methods."canExchangeKeysUsingSecKeyAlgorithm:".unsafe = false
+
+class.LAPublicKey.methods."canEncryptUsingSecKeyAlgorithm:".unsafe = false
+class.LAPublicKey.methods."canVerifyUsingSecKeyAlgorithm:".unsafe = false
