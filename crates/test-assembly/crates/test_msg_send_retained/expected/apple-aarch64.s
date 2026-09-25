@@ -149,8 +149,12 @@ _fn13_handle_autoreleased:
 	; InlineAsm Start
 	mov	x29, x29
 	; InlineAsm End
+	bl	_objc_retainAutoreleasedReturnValue
+	; InlineAsm Start
+	nop
+	; InlineAsm End
 	ldp	x29, x30, [sp], #16
-	b	_objc_retainAutoreleasedReturnValue
+	ret
 
 	.globl	_fn14_handle_autoreleased_with_arg
 	.p2align	2
@@ -162,8 +166,12 @@ _fn14_handle_autoreleased_with_arg:
 	; InlineAsm Start
 	mov	x29, x29
 	; InlineAsm End
+	bl	_objc_retainAutoreleasedReturnValue
+	; InlineAsm Start
+	nop
+	; InlineAsm End
 	ldp	x29, x30, [sp], #16
-	b	_objc_retainAutoreleasedReturnValue
+	ret
 
 	.globl	_fn15_handle_autoreleased_fallible
 	.p2align	2
@@ -178,6 +186,9 @@ _fn15_handle_autoreleased_fallible:
 	mov	x29, x29
 	; InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
+	; InlineAsm Start
+	nop
+	; InlineAsm End
 	cbz	x0, LBB14_2
 	ldp	x29, x30, [sp, #16]
 	ldp	x20, x19, [sp], #32
@@ -212,6 +223,9 @@ Ltmp2:
 	bl	_objc_retainAutoreleasedReturnValue
 Ltmp3:
 	mov	x21, x0
+	; InlineAsm Start
+	nop
+	; InlineAsm End
 	ldr	x0, [x20]
 	bl	_objc_retain
 	mov	x0, x19

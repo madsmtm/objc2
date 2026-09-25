@@ -291,3 +291,26 @@ impl RcTestObject {
         unsafe { Retained::from_raw(msg_send![Self::class(), new]) }.unwrap()
     }
 }
+
+#[allow(dead_code)]
+pub(crate) const AUTORELEASE_SKIPPED: bool = if cfg!(feature = "gnustep-1-7") {
+    // GNUStep does the optimization a different way, so it isn't
+    // optimization-dependent.
+    true
+} else if cfg!(all(target_arch = "arm", panic = "unwind")) {
+    // 32-bit ARM unwinding sometimes interferes with the optimization.
+    false
+} else if cfg!(target_arch = "x86") {
+    // 32-bit x86 seems to be broken here.
+    false
+} else if cfg!(feature = "catch-all") {
+    // FIXME: `catch-all` is inserted before we get a chance to retain.
+    false
+} else if cfg!(debug_assertions) {
+    // `debug_assertions` ~= proxy for if optimizations are off.
+    false
+} else {
+    // FIXME: `--config 'profile.release.panic="abort"' -Zpanic-abort-tests`
+    // seems to interfere with this for some reason?
+    true
+};

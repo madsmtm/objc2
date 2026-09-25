@@ -164,6 +164,9 @@ _fn6_error_autoreleased:
 	mov	r7, r7
 	@ InlineAsm End
 	bl	_objc_retainAutoreleasedReturnValue
+	@ InlineAsm Start
+	nop
+	@ InlineAsm End
 	cmp	r0, #0
 	beq	LBB5_2
 LBB5_1:

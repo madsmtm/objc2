@@ -10,7 +10,10 @@ _handle:
 	@ InlineAsm Start
 	mov	r7, r7
 	@ InlineAsm End
-	pop	{r7, lr}
-	b	_objc_retainAutoreleasedReturnValue
+	bl	_objc_retainAutoreleasedReturnValue
+	@ InlineAsm Start
+	nop
+	@ InlineAsm End
+	pop	{r7, pc}
 
 .subsections_via_symbols
