@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+## Fixed
+* Fixed miscompilation when calling methods that return autoreleased objects,
+  see [#861](https://github.com/madsmtm/objc2/issues/861) for details.
+
 
 ## 0.5.2 - 2024-05-21
 
