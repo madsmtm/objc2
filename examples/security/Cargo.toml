@@ -1,0 +1,24 @@
+[package]
+name = "examples-security"
+version = "0.0.0"
+edition = "2021"
+license = "Zlib OR Apache-2.0 OR MIT"
+publish = false
+
+[[example]]
+name = "generic_password"
+path = "generic_password.rs"
+
+[dependencies]
+objc2-core-foundation = { version = "0.3.2", default-features = false, features = [
+    "std",
+    "CFData",
+    "CFDictionary",
+    "CFNumber",
+    "CFString",
+] }
+objc2-security = { version = "0.3.2", default-features = false, features = [
+    "std",
+    "SecBase",
+    "SecItem",
+] }
