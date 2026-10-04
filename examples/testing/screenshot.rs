@@ -1,7 +1,7 @@
 #![no_main] // Required, we build this with `-bundle`.
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 
-use objc2::{define_class, ClassType, MainThreadOnly};
+use objc2::{define_class, MainThreadOnly};
 use objc2_foundation::ns_string;
 use objc2_xc_test::XCTestCase;
 use objc2_xc_ui_automation::{
@@ -11,6 +11,7 @@ use objc2_xc_ui_automation::{
 define_class!(
     #[unsafe(super = XCTestCase)]
     #[thread_kind = MainThreadOnly]
+    #[name = "TestCase"] // #[used]
     struct TestCase;
 
     impl TestCase {
@@ -32,9 +33,3 @@ define_class!(
         }
     }
 );
-
-/// Load and initialize the class such that XCTest can see it.
-#[ctor::ctor(unsafe)]
-unsafe fn setup() {
-    let _ = TestCase::class();
-}

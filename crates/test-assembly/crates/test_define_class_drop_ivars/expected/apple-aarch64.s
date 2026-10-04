@@ -469,6 +469,78 @@ Lttbase1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
+	.globl	SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
+	.p2align	2
+SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin3:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+Lloh55:
+	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh56:
+	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB5_2
+LBB5_1:
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+	ret
+LBB5_2:
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Ltmp32:
+Lloh57:
+	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh58:
+	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
+Lloh59:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh60:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh61:
+	adrp	x4, l_anon.[ID].11@PAGE
+Lloh62:
+	add	x4, x4, l_anon.[ID].11@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+Ltmp33:
+	b	LBB5_1
+LBB5_3:
+Ltmp34:
+	bl	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
+	.loh AdrpAdd	Lloh55, Lloh56
+	.loh AdrpAdd	Lloh61, Lloh62
+	.loh AdrpAdd	Lloh59, Lloh60
+	.loh AdrpAdd	Lloh57, Lloh58
+Lfunc_end3:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table5:
+Lexception3:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
+	.byte	1
+	.uleb128 Lcst_end3-Lcst_begin3
+Lcst_begin3:
+	.uleb128 Ltmp32-Lfunc_begin3
+	.uleb128 Ltmp33-Ltmp32
+	.uleb128 Ltmp34-Lfunc_begin3
+	.byte	1
+Lcst_end3:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase2:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
 	.p2align	2
 SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0):
@@ -479,66 +551,15 @@ SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::d
 	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
 SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
-Lloh55:
-	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh56:
-	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
-	ldapr	x8, [x8]
-	cbnz	x8, LBB6_2
-Lloh57:
-	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh58:
-	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
-	ret
-LBB6_2:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
-	mov	w8, #1
-	strb	w8, [sp, #7]
-	add	x8, sp, #7
-	str	x8, [sp, #8]
-Lloh59:
-	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh60:
-	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
-Lloh61:
-	adrp	x3, l_anon.[ID].0@PAGE
-Lloh62:
-	add	x3, x3, l_anon.[ID].0@PAGEOFF
 Lloh63:
-	adrp	x4, l_anon.[ID].11@PAGE
-Lloh64:
-	add	x4, x4, l_anon.[ID].11@PAGEOFF
-	add	x2, sp, #8
-	mov	w1, #0
-	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-Lloh65:
-	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh66:
-	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
-	ret
-	.loh AdrpAdd	Lloh55, Lloh56
-	.loh AdrpLdr	Lloh57, Lloh58
-	.loh AdrpLdr	Lloh65, Lloh66
-	.loh AdrpAdd	Lloh63, Lloh64
-	.loh AdrpAdd	Lloh61, Lloh62
-	.loh AdrpAdd	Lloh59, Lloh60
-
-	.globl	_fn_access_class
-	.p2align	2
-_fn_access_class:
-Lloh67:
 	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh68:
+Lloh64:
 	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
 	ldapr	x8, [x8]
 	cbnz	x8, LBB7_2
-Lloh69:
+Lloh65:
 	adrp	x8, ___CLASS_DropIvars@PAGE
-Lloh70:
+Lloh66:
 	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
 	ret
 LBB7_2:
@@ -549,46 +570,103 @@ LBB7_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh71:
+Lloh67:
 	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
-Lloh72:
+Lloh68:
 	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
-Lloh73:
+Lloh69:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh74:
+Lloh70:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh75:
+Lloh71:
 	adrp	x4, l_anon.[ID].11@PAGE
-Lloh76:
+Lloh72:
 	add	x4, x4, l_anon.[ID].11@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
+Lloh73:
+	adrp	x8, ___CLASS_DropIvars@PAGE
+Lloh74:
+	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh63, Lloh64
+	.loh AdrpLdr	Lloh65, Lloh66
+	.loh AdrpLdr	Lloh73, Lloh74
+	.loh AdrpAdd	Lloh71, Lloh72
+	.loh AdrpAdd	Lloh69, Lloh70
+	.loh AdrpAdd	Lloh67, Lloh68
+
+	.globl	_fn_access_class
+	.p2align	2
+_fn_access_class:
+Lloh75:
+	adrp	x8, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh76:
+	add	x8, x8, ___REGISTER_CLASS_DropIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB8_2
 Lloh77:
 	adrp	x8, ___CLASS_DropIvars@PAGE
 Lloh78:
 	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
 	ret
-	.loh AdrpAdd	Lloh67, Lloh68
-	.loh AdrpLdr	Lloh69, Lloh70
-	.loh AdrpLdr	Lloh77, Lloh78
+LBB8_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh79:
+	adrp	x0, ___REGISTER_CLASS_DropIvars@PAGE
+Lloh80:
+	add	x0, x0, ___REGISTER_CLASS_DropIvars@PAGEOFF
+Lloh81:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh82:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh83:
+	adrp	x4, l_anon.[ID].11@PAGE
+Lloh84:
+	add	x4, x4, l_anon.[ID].11@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh85:
+	adrp	x8, ___CLASS_DropIvars@PAGE
+Lloh86:
+	ldr	x0, [x8, ___CLASS_DropIvars@PAGEOFF]
+	ret
 	.loh AdrpAdd	Lloh75, Lloh76
-	.loh AdrpAdd	Lloh73, Lloh74
-	.loh AdrpAdd	Lloh71, Lloh72
+	.loh AdrpLdr	Lloh77, Lloh78
+	.loh AdrpLdr	Lloh85, Lloh86
+	.loh AdrpAdd	Lloh83, Lloh84
+	.loh AdrpAdd	Lloh81, Lloh82
+	.loh AdrpAdd	Lloh79, Lloh80
 
 	.globl	_fn_access_ivars
 	.p2align	2
 _fn_access_ivars:
-Lloh79:
+Lloh87:
 	adrp	x8, ___IVAR_OFFSET_DropIvars@PAGE
-Lloh80:
+Lloh88:
 	ldr	x8, [x8, ___IVAR_OFFSET_DropIvars@PAGEOFF]
 	add	x8, x0, x8
 	ldp	x0, x1, [x8]
 	ret
-	.loh AdrpLdr	Lloh79, Lloh80
+	.loh AdrpLdr	Lloh87, Lloh88
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__const
 	.p2align	3, 0x0

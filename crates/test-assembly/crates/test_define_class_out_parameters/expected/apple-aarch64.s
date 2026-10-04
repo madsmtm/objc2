@@ -377,21 +377,93 @@ SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam>::two_nonnull_nonnull,
 SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam>::null_null, 0):
 	b	_external
 
-	.globl	SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.globl	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 	.p2align	2
-SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
+SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
 Lloh41:
 	adrp	x8, ___REGISTER_CLASS_OutParam@PAGE
 Lloh42:
 	add	x8, x8, ___REGISTER_CLASS_OutParam@PAGEOFF
 	ldapr	x8, [x8]
 	cbnz	x8, LBB12_2
-Lloh43:
-	adrp	x8, ___CLASS_OutParam@PAGE
-Lloh44:
-	ldr	x0, [x8, ___CLASS_OutParam@PAGEOFF]
+LBB12_1:
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
 	ret
 LBB12_2:
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Ltmp19:
+Lloh43:
+	adrp	x0, ___REGISTER_CLASS_OutParam@PAGE
+Lloh44:
+	add	x0, x0, ___REGISTER_CLASS_OutParam@PAGEOFF
+Lloh45:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh46:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh47:
+	adrp	x4, l_anon.[ID].7@PAGE
+Lloh48:
+	add	x4, x4, l_anon.[ID].7@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+Ltmp20:
+	b	LBB12_1
+LBB12_3:
+Ltmp21:
+	bl	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
+	.loh AdrpAdd	Lloh41, Lloh42
+	.loh AdrpAdd	Lloh47, Lloh48
+	.loh AdrpAdd	Lloh45, Lloh46
+	.loh AdrpAdd	Lloh43, Lloh44
+Lfunc_end2:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table12:
+Lexception2:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase1-Lttbaseref1
+Lttbaseref1:
+	.byte	1
+	.uleb128 Lcst_end2-Lcst_begin2
+Lcst_begin2:
+	.uleb128 Ltmp19-Lfunc_begin2
+	.uleb128 Ltmp20-Ltmp19
+	.uleb128 Ltmp21-Lfunc_begin2
+	.byte	1
+Lcst_end2:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase1:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.p2align	2
+SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
+Lloh49:
+	adrp	x8, ___REGISTER_CLASS_OutParam@PAGE
+Lloh50:
+	add	x8, x8, ___REGISTER_CLASS_OutParam@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB13_2
+Lloh51:
+	adrp	x8, ___CLASS_OutParam@PAGE
+Lloh52:
+	ldr	x0, [x8, ___CLASS_OutParam@PAGEOFF]
+	ret
+LBB13_2:
 	sub	sp, sp, #32
 	stp	x29, x30, [sp, #16]
 	add	x29, sp, #16
@@ -399,34 +471,34 @@ LBB12_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh45:
+Lloh53:
 	adrp	x0, ___REGISTER_CLASS_OutParam@PAGE
-Lloh46:
+Lloh54:
 	add	x0, x0, ___REGISTER_CLASS_OutParam@PAGEOFF
-Lloh47:
+Lloh55:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh48:
+Lloh56:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh49:
+Lloh57:
 	adrp	x4, l_anon.[ID].7@PAGE
-Lloh50:
+Lloh58:
 	add	x4, x4, l_anon.[ID].7@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
-Lloh51:
+Lloh59:
 	adrp	x8, ___CLASS_OutParam@PAGE
-Lloh52:
+Lloh60:
 	ldr	x0, [x8, ___CLASS_OutParam@PAGEOFF]
 	ret
-	.loh AdrpAdd	Lloh41, Lloh42
-	.loh AdrpLdr	Lloh43, Lloh44
-	.loh AdrpLdr	Lloh51, Lloh52
 	.loh AdrpAdd	Lloh49, Lloh50
-	.loh AdrpAdd	Lloh47, Lloh48
-	.loh AdrpAdd	Lloh45, Lloh46
+	.loh AdrpLdr	Lloh51, Lloh52
+	.loh AdrpLdr	Lloh59, Lloh60
+	.loh AdrpAdd	Lloh57, Lloh58
+	.loh AdrpAdd	Lloh55, Lloh56
+	.loh AdrpAdd	Lloh53, Lloh54
 
 	.section	__TEXT,__objc_methname,cstring_literals
 	.globl	L_OBJC_METH_VAR_NAME_06f3315fc4e8da1a
@@ -474,6 +546,12 @@ _OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
 	.p2align	3, 0x0
 _OBJC_SELECTOR_REFERENCES_d04fae079395572d:
 	.quad	L_OBJC_METH_VAR_NAME_d04fae079395572d
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_06f3315fc4e8da1a

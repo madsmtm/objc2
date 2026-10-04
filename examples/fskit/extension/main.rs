@@ -1,6 +1,5 @@
 #![no_main] // The entry point is specified with `-e _NSExtensionMain` instead.
 
-use objc2::ClassType;
 use tracing::{error, trace};
 use tracing_oslog::OsLogger;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -31,7 +30,5 @@ fn setup() {
         default_hook(info);
     }));
 
-    // Register `FileSystem` class with the Objective-C runtime.
-    let _ = filesystem::FileSystem::class();
     trace!("setup finished");
 }

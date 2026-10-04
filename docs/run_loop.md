@@ -54,6 +54,7 @@ define_class!(
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
     #[derive(Debug)]
+    #[name = "AppDelegate"] // For storyboards, see below
     struct AppDelegate {
         // Whatever state you want to store in your delegate.
     }
@@ -102,15 +103,13 @@ fn main() {
 }
 
 // AppKit (macOS), if bundled and using a storyboard.
+//
+// The name specified in `#[name = "AppDelegate"]` must
+// match what's specified in the storyboard file.
 #[cfg(target_os = "macos")]
 # #[cfg(with_storyboard)] // Hack to make example compile.
 fn main() {
     let mtm = objc2::MainThreadMarker::new().unwrap();
-    // Initialize the class so that the storyboard can see it.
-    //
-    // The name specified in `define_class!`, i.e. "AppDelegate", must
-    // match what's specified in the storyboard.
-    let _cls = AppDelegate::class();
     objc2_app_kit::NSApplication::main(mtm);
 }
 

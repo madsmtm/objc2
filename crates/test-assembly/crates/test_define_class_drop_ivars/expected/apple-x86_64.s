@@ -383,6 +383,61 @@ Lttbase1:
 	.p2align	2, 0x0
 
 	.section	__TEXT,__text,regular,pure_instructions
+	.globl	SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
+	.p2align	4
+SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin3:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_DropIvars]
+	test	rax, rax
+	jne	LBB5_1
+LBB5_2:
+	add	rsp, 16
+	pop	rbp
+	ret
+LBB5_1:
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+Ltmp32:
+	lea	rdi, [rip + ___REGISTER_CLASS_DropIvars]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].11]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+Ltmp33:
+	jmp	LBB5_2
+LBB5_3:
+Ltmp34:
+	call	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
+Lfunc_end3:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table5:
+Lexception3:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
+	.byte	1
+	.uleb128 Lcst_end3-Lcst_begin3
+Lcst_begin3:
+	.uleb128 Ltmp32-Lfunc_begin3
+	.uleb128 Ltmp33-Ltmp32
+	.uleb128 Ltmp34-Lfunc_begin3
+	.byte	1
+Lcst_end3:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase2:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0)
 	.p2align	4
 SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::drop::Drop>::drop, 0):
@@ -398,10 +453,10 @@ SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as core[CRATE_ID]::ops::d
 SYM(<test_define_class_drop_ivars[CRATE_ID]::DropIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_DropIvars]
 	test	rax, rax
-	jne	LBB6_1
+	jne	LBB7_1
 	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
 	ret
-LBB6_1:
+LBB7_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -424,10 +479,10 @@ LBB6_1:
 _fn_access_class:
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_DropIvars]
 	test	rax, rax
-	jne	LBB7_1
+	jne	LBB8_1
 	mov	rax, qword ptr [rip + ___CLASS_DropIvars]
 	ret
-LBB7_1:
+LBB8_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -455,6 +510,12 @@ _fn_access_ivars:
 	mov	rdx, qword ptr [rdi + rcx + 8]
 	pop	rbp
 	ret
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_drop_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__const
 	.p2align	3, 0x0

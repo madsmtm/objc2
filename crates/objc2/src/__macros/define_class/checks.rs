@@ -370,12 +370,26 @@ impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
 
 #[cfg(test)]
 mod tests {
+    use std::ffi::CString;
+
+    use objc2_encode::Encoding;
+
     use crate::{
-        define_class, extern_protocol,
+        define_class,
+        encode::Encode,
+        extern_protocol,
         rc::Retained,
-        runtime::{AnyObject, NSObject, NSZone},
-        ClassType, ProtocolType,
+        runtime::{method_type_encoding, AnyObject, NSObject, NSZone, Sel},
+        sel,
     };
+
+    use super::*;
+
+    define_class!(
+        #[unsafe(super(NSObject))]
+        #[name = "DefineClassChecksTestHelper"]
+        struct Custom;
+    );
 
     extern_protocol!(
         #[allow(clippy::missing_safety_doc)]
@@ -413,41 +427,24 @@ mod tests {
     #[test]
     #[cfg_attr(
         debug_assertions,
-        should_panic = "defined invalid method -[DefineClassTestInvalidMethod description]: expected return to have type code '@', but found 'v'"
-    )]
-    fn invalid_method() {
-        define_class!(
-            #[unsafe(super(NSObject))]
-            #[name = "DefineClassTestInvalidMethod"]
-            struct Custom;
-
-            impl Custom {
-                // Override `description` with a bad return type
-                #[unsafe(method(description))]
-                fn description(&self) {}
-            }
-        );
-
-        let _cls = Custom::class();
-    }
-
-    #[test]
-    #[cfg_attr(
-        debug_assertions,
         should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
     )]
     fn missing_protocol_method() {
-        define_class!(
-            #[unsafe(super(NSObject))]
-            #[name = "DefineClassTestMissingProtocolMethod"]
-            struct Custom;
+        let c_name = CString::new("DefineClassTestMissingProtocolMethod").unwrap();
+        let builder = ClassBuilder::new(&c_name, NSObject::class()).unwrap();
+        let mut builder = ClassBuilderHelper::<Custom> {
+            builder,
+            p: PhantomData,
+        };
 
-            unsafe impl NSCopying for Custom {
-                // Missing required method
-            }
-        );
+        // Don't add the required method.
+        {
+            let builder = builder.add_protocol_methods::<dyn NSCopying>();
+            builder.finish();
+        }
 
-        let _cls = Custom::class();
+        // Should panic!
+        let _ = builder.builder.register();
     }
 
     #[test]
@@ -476,23 +473,45 @@ mod tests {
         should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"
     )]
     fn extra_protocol_method() {
-        define_class!(
-            #[unsafe(super(NSObject))]
-            #[name = "DefineClassTestExtraProtocolMethod"]
-            struct Custom;
+        let c_name = CString::new("DefineClassTestExtraProtocolMethod").unwrap();
+        let builder = ClassBuilder::new(&c_name, NSObject::class()).unwrap();
+        let mut builder = ClassBuilderHelper::<Custom> {
+            builder,
+            p: PhantomData,
+        };
 
-            unsafe impl NSCopying for Custom {
-                #[unsafe(method(copyWithZone:))]
-                fn copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
-                    unimplemented!()
-                }
+        {
+            let mut builder = builder.add_protocol_methods::<dyn NSCopying>();
 
-                // This doesn't exist on the protocol
-                #[unsafe(method(someOtherMethod))]
-                fn some_other_method(&self) {}
+            extern "C" fn copy_with_zone(
+                _this: &Custom,
+                _sel: Sel,
+                _zone: Option<&NSZone>,
+            ) -> *mut AnyObject {
+                unimplemented!()
             }
-        );
+            unsafe {
+                builder.add_method(
+                    sel!(copyWithZone:),
+                    copy_with_zone as extern "C" fn(_, _, _) -> _,
+                    &method_type_encoding(&Encoding::Object, &[<Option<&NSZone>>::ENCODING]),
+                )
+            };
 
-        let _cls = Custom::class();
+            // This doesn't exist on the protocol!
+            extern "C" fn some_other_method(_this: &Custom, _sel: Sel) {}
+            unsafe {
+                builder.add_method(
+                    sel!(someOtherMethod),
+                    some_other_method as extern "C" fn(_, _) -> _,
+                    &method_type_encoding(&Encoding::Void, &[]),
+                )
+            };
+
+            builder.finish();
+        }
+
+        // Should panic!
+        let _ = builder.builder.register();
     }
 }

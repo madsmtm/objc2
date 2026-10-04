@@ -234,69 +234,90 @@ Lloh41:
 	.loh AdrpLdrGotLdr	Lloh39, Lloh40, Lloh41
 	.loh AdrpLdrGotLdr	Lloh36, Lloh37, Lloh38
 
-	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
+	.globl	SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 	.p2align	2
-SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
+SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin1:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
 Lloh42:
 	adrp	x8, ___REGISTER_CLASS_ForgetableIvars@PAGE
 Lloh43:
 	add	x8, x8, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
 	ldapr	x8, [x8]
 	cbnz	x8, LBB4_2
-Lloh44:
-	adrp	x8, ___CLASS_ForgetableIvars@PAGE
-Lloh45:
-	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
+LBB4_1:
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
 	ret
 LBB4_2:
-	sub	sp, sp, #32
-	stp	x29, x30, [sp, #16]
-	add	x29, sp, #16
 	mov	w8, #1
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh46:
+Ltmp5:
+Lloh44:
 	adrp	x0, ___REGISTER_CLASS_ForgetableIvars@PAGE
-Lloh47:
+Lloh45:
 	add	x0, x0, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
-Lloh48:
+Lloh46:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh49:
+Lloh47:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh50:
+Lloh48:
 	adrp	x4, l_anon.[ID].8@PAGE
-Lloh51:
+Lloh49:
 	add	x4, x4, l_anon.[ID].8@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
-	ldp	x29, x30, [sp, #16]
-	add	sp, sp, #32
-Lloh52:
-	adrp	x8, ___CLASS_ForgetableIvars@PAGE
-Lloh53:
-	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
-	ret
+Ltmp6:
+	b	LBB4_1
+LBB4_3:
+Ltmp7:
+	bl	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
 	.loh AdrpAdd	Lloh42, Lloh43
-	.loh AdrpLdr	Lloh44, Lloh45
-	.loh AdrpLdr	Lloh52, Lloh53
-	.loh AdrpAdd	Lloh50, Lloh51
 	.loh AdrpAdd	Lloh48, Lloh49
 	.loh AdrpAdd	Lloh46, Lloh47
+	.loh AdrpAdd	Lloh44, Lloh45
+Lfunc_end1:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table4:
+Lexception1:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end1-Lcst_begin1
+Lcst_begin1:
+	.uleb128 Ltmp5-Lfunc_begin1
+	.uleb128 Ltmp6-Ltmp5
+	.uleb128 Ltmp7-Lfunc_begin1
+	.byte	1
+Lcst_end1:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
 
-	.globl	_fn_access_class
+	.section	__TEXT,__text,regular,pure_instructions
+	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	2
-_fn_access_class:
-Lloh54:
+SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
+Lloh50:
 	adrp	x8, ___REGISTER_CLASS_ForgetableIvars@PAGE
-Lloh55:
+Lloh51:
 	add	x8, x8, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
 	ldapr	x8, [x8]
 	cbnz	x8, LBB5_2
-Lloh56:
+Lloh52:
 	adrp	x8, ___CLASS_ForgetableIvars@PAGE
-Lloh57:
+Lloh53:
 	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
 	ret
 LBB5_2:
@@ -307,47 +328,104 @@ LBB5_2:
 	strb	w8, [sp, #7]
 	add	x8, sp, #7
 	str	x8, [sp, #8]
-Lloh58:
+Lloh54:
 	adrp	x0, ___REGISTER_CLASS_ForgetableIvars@PAGE
-Lloh59:
+Lloh55:
 	add	x0, x0, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
-Lloh60:
+Lloh56:
 	adrp	x3, l_anon.[ID].0@PAGE
-Lloh61:
+Lloh57:
 	add	x3, x3, l_anon.[ID].0@PAGEOFF
-Lloh62:
+Lloh58:
 	adrp	x4, l_anon.[ID].8@PAGE
-Lloh63:
+Lloh59:
 	add	x4, x4, l_anon.[ID].8@PAGEOFF
 	add	x2, sp, #8
 	mov	w1, #0
 	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	ldp	x29, x30, [sp, #16]
 	add	sp, sp, #32
+Lloh60:
+	adrp	x8, ___CLASS_ForgetableIvars@PAGE
+Lloh61:
+	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
+	ret
+	.loh AdrpAdd	Lloh50, Lloh51
+	.loh AdrpLdr	Lloh52, Lloh53
+	.loh AdrpLdr	Lloh60, Lloh61
+	.loh AdrpAdd	Lloh58, Lloh59
+	.loh AdrpAdd	Lloh56, Lloh57
+	.loh AdrpAdd	Lloh54, Lloh55
+
+	.globl	_fn_access_class
+	.p2align	2
+_fn_access_class:
+Lloh62:
+	adrp	x8, ___REGISTER_CLASS_ForgetableIvars@PAGE
+Lloh63:
+	add	x8, x8, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
+	ldapr	x8, [x8]
+	cbnz	x8, LBB6_2
 Lloh64:
 	adrp	x8, ___CLASS_ForgetableIvars@PAGE
 Lloh65:
 	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
 	ret
-	.loh AdrpAdd	Lloh54, Lloh55
-	.loh AdrpLdr	Lloh56, Lloh57
-	.loh AdrpLdr	Lloh64, Lloh65
+LBB6_2:
+	sub	sp, sp, #32
+	stp	x29, x30, [sp, #16]
+	add	x29, sp, #16
+	mov	w8, #1
+	strb	w8, [sp, #7]
+	add	x8, sp, #7
+	str	x8, [sp, #8]
+Lloh66:
+	adrp	x0, ___REGISTER_CLASS_ForgetableIvars@PAGE
+Lloh67:
+	add	x0, x0, ___REGISTER_CLASS_ForgetableIvars@PAGEOFF
+Lloh68:
+	adrp	x3, l_anon.[ID].0@PAGE
+Lloh69:
+	add	x3, x3, l_anon.[ID].0@PAGEOFF
+Lloh70:
+	adrp	x4, l_anon.[ID].8@PAGE
+Lloh71:
+	add	x4, x4, l_anon.[ID].8@PAGEOFF
+	add	x2, sp, #8
+	mov	w1, #0
+	bl	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+	ldp	x29, x30, [sp, #16]
+	add	sp, sp, #32
+Lloh72:
+	adrp	x8, ___CLASS_ForgetableIvars@PAGE
+Lloh73:
+	ldr	x0, [x8, ___CLASS_ForgetableIvars@PAGEOFF]
+	ret
 	.loh AdrpAdd	Lloh62, Lloh63
-	.loh AdrpAdd	Lloh60, Lloh61
-	.loh AdrpAdd	Lloh58, Lloh59
+	.loh AdrpLdr	Lloh64, Lloh65
+	.loh AdrpLdr	Lloh72, Lloh73
+	.loh AdrpAdd	Lloh70, Lloh71
+	.loh AdrpAdd	Lloh68, Lloh69
+	.loh AdrpAdd	Lloh66, Lloh67
 
 	.globl	_fn_access_ivars
 	.p2align	2
 _fn_access_ivars:
-Lloh66:
+Lloh74:
 	adrp	x8, ___IVAR_OFFSET_ForgetableIvars@PAGE
-Lloh67:
+Lloh75:
 	ldr	x8, [x8, ___IVAR_OFFSET_ForgetableIvars@PAGEOFF]
 	add	x8, x0, x8
 	ldr	w1, [x8]
 	ldrb	w0, [x8, #4]
 	ret
-	.loh AdrpLdr	Lloh66, Lloh67
+	.loh AdrpLdr	Lloh74, Lloh75
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__const
 	.p2align	3, 0x0

@@ -483,15 +483,70 @@ LBB11_1:
 	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
 	jmp	LBB11_2
 
+	.globl	SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
+	.p2align	4
+SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin3:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_NoIvars]
+	test	rax, rax
+	jne	LBB12_1
+LBB12_2:
+	add	rsp, 16
+	pop	rbp
+	ret
+LBB12_1:
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+Ltmp25:
+	lea	rdi, [rip + ___REGISTER_CLASS_NoIvars]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].13]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+Ltmp26:
+	jmp	LBB12_2
+LBB12_3:
+Ltmp27:
+	call	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
+Lfunc_end3:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table12:
+Lexception3:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase2-Lttbaseref2
+Lttbaseref2:
+	.byte	1
+	.uleb128 Lcst_end3-Lcst_begin3
+Lcst_begin3:
+	.uleb128 Ltmp25-Lfunc_begin3
+	.uleb128 Ltmp26-Ltmp25
+	.uleb128 Ltmp27-Lfunc_begin3
+	.byte	1
+Lcst_end3:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase2:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4
 SYM(<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_NoIvars]
 	test	rax, rax
-	jne	LBB12_1
+	jne	LBB13_1
 	mov	rax, qword ptr [rip + ___CLASS_NoIvars]
 	ret
-LBB12_1:
+LBB13_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -564,6 +619,12 @@ _OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
 	.p2align	3, 0x0
 _OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0:
 	.quad	L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_44ec46acb208c3d4

@@ -324,15 +324,70 @@ SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam>::null_null, 0):
 	pop	rbp
 	jmp	_external
 
+	.globl	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0)
+	.p2align	4
+SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin2:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_OutParam]
+	test	rax, rax
+	jne	LBB12_1
+LBB12_2:
+	add	rsp, 16
+	pop	rbp
+	ret
+LBB12_1:
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+Ltmp19:
+	lea	rdi, [rip + ___REGISTER_CLASS_OutParam]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].7]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+Ltmp20:
+	jmp	LBB12_2
+LBB12_3:
+Ltmp21:
+	call	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
+Lfunc_end2:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table12:
+Lexception2:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase1-Lttbaseref1
+Lttbaseref1:
+	.byte	1
+	.uleb128 Lcst_end2-Lcst_begin2
+Lcst_begin2:
+	.uleb128 Ltmp19-Lfunc_begin2
+	.uleb128 Ltmp20-Ltmp19
+	.uleb128 Ltmp21-Lfunc_begin2
+	.byte	1
+Lcst_end2:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase1:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4
 SYM(<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_OutParam]
 	test	rax, rax
-	jne	LBB12_1
+	jne	LBB13_1
 	mov	rax, qword ptr [rip + ___CLASS_OutParam]
 	ret
-LBB12_1:
+LBB13_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -396,6 +451,12 @@ _OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
 	.p2align	3, 0x0
 _OBJC_SELECTOR_REFERENCES_d04fae079395572d:
 	.quad	L_OBJC_METH_VAR_NAME_d04fae079395572d
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
 	.globl	L_OBJC_IMAGE_INFO_06f3315fc4e8da1a

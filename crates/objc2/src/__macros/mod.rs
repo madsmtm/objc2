@@ -46,11 +46,13 @@ pub use core::default::Default;
 pub use core::ffi::CStr;
 pub use core::fmt;
 pub use core::hash::{Hash, Hasher};
+pub use core::hint::black_box;
 pub use core::marker::{PhantomData, Sized};
 pub use core::mem::{size_of, transmute, ManuallyDrop, MaybeUninit};
 pub use core::ops::Deref;
 pub use core::option::Option::{self, None, Some};
 pub use core::primitive::{bool, isize, str, u8, usize};
+pub use core::ptr::addr_of;
 pub use core::{compile_error, concat, env, module_path, panic, stringify};
 pub use std::sync::Once;
 
@@ -66,7 +68,7 @@ pub use self::cstr::class_c_name;
 pub use self::define_class::{
     define_class, method_encoding_str_array, method_encoding_str_len, ClassBuilderHelper,
     ClassFnKind, ClassFnResultKind, ClassProtocolMethodsBuilder, ConvertDefinedFn,
-    DefinedIvarsHelper, FnToExternFn, LifetimeAssign, MethodKind, MethodResultKind,
+    DefinedIvarsHelper, DefinedOffset, FnToExternFn, LifetimeAssign, MethodKind, MethodResultKind,
     ThreadKindAutoTraits,
 };
 pub use self::extern_class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};

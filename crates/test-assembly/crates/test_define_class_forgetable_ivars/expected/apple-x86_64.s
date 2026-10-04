@@ -157,15 +157,70 @@ LBB3_2:
 	pop	rbp
 	ret
 
+	.globl	SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
+	.p2align	4
+SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0):
+Lfunc_begin1:
+	push	rbp
+	mov	rbp, rsp
+	sub	rsp, 16
+	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
+	test	rax, rax
+	jne	LBB4_1
+LBB4_2:
+	add	rsp, 16
+	pop	rbp
+	ret
+LBB4_1:
+	mov	byte ptr [rbp - 1], 1
+	lea	rax, [rbp - 1]
+	mov	qword ptr [rbp - 16], rax
+Ltmp5:
+	lea	rdi, [rip + ___REGISTER_CLASS_ForgetableIvars]
+	lea	rcx, [rip + l_anon.[ID].0]
+	lea	r8, [rip + l_anon.[ID].8]
+	lea	rdx, [rbp - 16]
+	xor	esi, esi
+	call	SYM(<std[CRATE_ID]::sys::sync::once::queue::Once>::call, 0)
+Ltmp6:
+	jmp	LBB4_2
+LBB4_3:
+Ltmp7:
+	call	SYM(core[CRATE_ID]::panicking::panic_cannot_unwind, 0)
+Lfunc_end1:
+	.section	__TEXT,__gcc_except_tab
+	.p2align	2, 0x0
+GCC_except_table4:
+Lexception1:
+	.byte	255
+	.byte	155
+	.uleb128 Lttbase0-Lttbaseref0
+Lttbaseref0:
+	.byte	1
+	.uleb128 Lcst_end1-Lcst_begin1
+Lcst_begin1:
+	.uleb128 Ltmp5-Lfunc_begin1
+	.uleb128 Ltmp6-Ltmp5
+	.uleb128 Ltmp7-Lfunc_begin1
+	.byte	1
+Lcst_end1:
+	.byte	127
+	.byte	0
+	.p2align	2, 0x0
+Lttbase0:
+	.byte	0
+	.p2align	2, 0x0
+
+	.section	__TEXT,__text,regular,pure_instructions
 	.globl	SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0)
 	.p2align	4
 SYM(<test_define_class_forgetable_ivars[CRATE_ID]::ForgetableIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class, 0):
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
 	test	rax, rax
-	jne	LBB4_1
+	jne	LBB5_1
 	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
 	ret
-LBB4_1:
+LBB5_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -188,10 +243,10 @@ LBB4_1:
 _fn_access_class:
 	mov	rax, qword ptr [rip + ___REGISTER_CLASS_ForgetableIvars]
 	test	rax, rax
-	jne	LBB5_1
+	jne	LBB6_1
 	mov	rax, qword ptr [rip + ___CLASS_ForgetableIvars]
 	ret
-LBB5_1:
+LBB6_1:
 	push	rbp
 	mov	rbp, rsp
 	sub	rsp, 16
@@ -219,6 +274,12 @@ _fn_access_ivars:
 	mov	edx, dword ptr [rdi + rcx]
 	pop	rbp
 	ret
+
+	.section	__DATA,__mod_init_func,mod_init_funcs
+	.globl	SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT, 0)
+	.p2align	3, 0x0
+SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT, 0):
+	.quad	SYM(test_define_class_forgetable_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__const
 	.p2align	3, 0x0
