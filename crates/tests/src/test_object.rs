@@ -209,8 +209,15 @@ fn test_class() {
     let cls = MyTestObject::class();
     assert_eq!(MyTestObject::add_numbers(-3, 15), 12);
 
+    let count_before = AnyClass::classes_count();
     let classes = AnyClass::classes();
-    assert_eq!(classes.len(), AnyClass::classes_count());
+    let count_after = AnyClass::classes_count();
+    // The list of classes might have changed in between these calls.
+    assert!(
+        count_before <= classes.len() && classes.len() <= count_after,
+        "{count_before} <= {} <= {count_after}",
+        classes.len()
+    );
     assert_in!(cls, classes);
 
     // Test objc2::runtime functionality
