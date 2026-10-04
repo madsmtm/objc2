@@ -31,31 +31,31 @@
 //! - [Cross-compiling from Linux/Windows][cross_compiling].
 #![allow(clippy::needless_doctest_main)]
 
-#[doc = include_str!("about_generated.md")]
+#[doc = include_str!("docs/about_generated.md")]
 pub mod about_generated {} // Referenced by header-translator
-#[doc = include_str!("alternatives.md")]
+#[doc = include_str!("docs/alternatives.md")]
 pub mod alternatives {}
-#[doc = include_str!("crate_interop.md")]
+#[doc = include_str!("docs/crate_interop.md")]
 pub mod crate_interop {}
-#[doc = include_str!("cross_compiling.md")]
+#[doc = include_str!("docs/cross_compiling.md")]
 pub mod cross_compiling {}
-#[doc = include_str!("goals.md")]
+#[doc = include_str!("docs/goals.md")]
 pub mod goals {}
-#[doc = include_str!("kvo.md")]
+#[doc = include_str!("docs/kvo.md")]
 pub mod kvo {}
-#[doc = include_str!("layered_safety.md")]
+#[doc = include_str!("docs/layered_safety.md")]
 pub mod layered_safety {}
-#[doc = include_str!("migrating_from_objc.md")]
+#[doc = include_str!("docs/migrating_from_objc.md")]
 pub mod migrating_from_objc {}
-#[doc = include_str!("mvc.md")]
+#[doc = include_str!("docs/mvc.md")]
 pub mod mvc {}
-#[doc = include_str!("interior_mutability.md")]
+#[doc = include_str!("docs/interior_mutability.md")]
 pub mod interior_mutability {}
-#[doc = include_str!("swift.md")]
+#[doc = include_str!("docs/swift.md")]
 pub mod swift {}
-#[doc = include_str!("weak_property.md")]
+#[doc = include_str!("docs/weak_property.md")]
 pub mod weak_property {} // Referenced by header-translator
-#[doc = include_str!("run_loop.md")]
+#[doc = include_str!("docs/run_loop.md")]
 pub mod run_loop {}
 
 #[cfg(not(doctest))]
@@ -63,14 +63,14 @@ pub mod run_loop {}
 pub mod changelog {}
 
 pub mod frameworks_list;
-#[doc = include_str!("frameworks_cargo_features.md")]
+#[doc = include_str!("docs/frameworks_cargo_features.md")]
 pub mod frameworks_cargo_features {}
-#[doc = include_str!("frameworks_deref.md")]
+#[doc = include_str!("docs/frameworks_deref.md")]
 pub mod frameworks_deref {}
 #[cfg(not(doctest))]
-#[doc = include_str!("FRAMEWORKS_CHANGELOG.md")]
+#[doc = include_str!("docs/FRAMEWORKS_CHANGELOG.md")]
 pub mod frameworks_changelog {}
-#[doc = include_str!("frameworks_soundness.md")]
+#[doc = include_str!("docs/frameworks_soundness.md")]
 pub mod frameworks_soundness {}
-#[doc = include_str!("frameworks_deprecations.md")]
+#[doc = include_str!("docs/frameworks_deprecations.md")]
 pub mod frameworks_deprecations {}

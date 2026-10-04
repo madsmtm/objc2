@@ -846,8 +846,7 @@ fn update_list(
 ) -> io::Result<()> {
     let _span = info_span!("updating lists").entered();
 
-    let mut f =
-        fs::File::create(workspace_dir.join("crates/objc2/src/topics/frameworks_list_data.md"))?;
+    let mut f = fs::File::create(workspace_dir.join("docs/frameworks_list_data.md"))?;
 
     writeln!(f, "| Framework | Crate | Docs.rs |")?;
     writeln!(f, "| --- | --- | --- |")?;
@@ -860,9 +859,7 @@ fn update_list(
         writeln!(f, "| `{name}` | [`{package}`](https://crates.io/crates/{package}) | [![docs.rs](https://docs.rs/{package}/badge.svg)](https://docs.rs/{package}/) |")?;
     }
 
-    let mut f = fs::File::create(
-        workspace_dir.join("crates/objc2/src/topics/frameworks_list_unsupported.md"),
-    )?;
+    let mut f = fs::File::create(workspace_dir.join("docs/frameworks_list_unsupported.md"))?;
 
     writeln!(f, "| Framework | Why is this unsupported? |")?;
     writeln!(f, "| --- | --- |")?;

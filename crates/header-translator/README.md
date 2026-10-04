@@ -88,7 +88,7 @@ See [objc2-foundation](../../framework-crates/objc2-foundation) for a good examp
 
 ### Safety
 
-Even if our header translation was perfect, we'd still need a way to enrich the generated data, since C headers have no way to describe which methods are safe and which are not! See [this document](../objc2/src/topics/frameworks_soundness.md) for details on this.
+Even if our header translation was perfect, we'd still need a way to enrich the generated data, since C headers have no way to describe which methods are safe and which are not! See [this document](../../docs/frameworks_soundness.md) for details on this.
 
 Methods/functions/properties can be marked safe with:
 
