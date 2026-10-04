@@ -2,7 +2,6 @@
 | --- | --- |
 | `AVSystemRouting` | TODO. |
 | `Accelerate` | Very C-centric, hard for us to map. |
-| `AccessoryAccess` | TODO. |
 | `AccessoryLiveActivities` | Swift-only. |
 | `AccessoryNotifications` | Swift-only. |
 | `AccessoryTransportExtension` | Swift-only. |

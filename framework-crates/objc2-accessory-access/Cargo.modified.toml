@@ -1,0 +1,7 @@
+[dependencies]
+# HACK: `IOUSBHostDevice` needs `IOUSBHostObject` to be available.
+# (and `external.IOUSBHostDevice.module` is not enough to express that).
+objc2-io-usb-host = { workspace = true, optional = true, features = [
+    "IOUSBHostDevice",
+    "IOUSBHostObject",
+] }

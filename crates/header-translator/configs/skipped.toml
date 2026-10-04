@@ -163,7 +163,6 @@ CoreMIDIServer = "Very deprecated"
 XcodeKit = "TODO. Developer-only"
 StoreKitTest = "TODO. Developer-only"
 
-AccessoryAccess = "TODO"
 AVSystemRouting = "TODO"
 LinkSecurity = "TODO"
 StateReporting = "TODO"

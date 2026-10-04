@@ -1,0 +1,10 @@
+framework = "AccessoryAccess"
+crate = "objc2-accessory-access"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "27.0"
+
+external.IOUSBHostDevice.module = "IOUSBHost.IOUSBHostDevice.IOUSBHostDevice"
+
+# Needs xpc_object_t from XPC
+class.AAUSBAccessory.methods."initWithXPCRepresentation:".skipped = true
+class.AAUSBAccessory.methods.createXPCRepresentation.skipped = true

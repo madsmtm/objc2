@@ -1291,6 +1291,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-accessory-access"
+version = "0.3.2"
+dependencies = [
+ "block2",
+ "dispatch2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-io-usb-host",
+]
+
+[[package]]
 name = "objc2-accessory-setup-kit"
 version = "0.3.2"
 dependencies = [
@@ -4125,6 +4136,7 @@ dependencies = [
  "libc",
  "objc2",
  "objc2-accessibility",
+ "objc2-accessory-access",
  "objc2-accessory-setup-kit",
  "objc2-accounts",
  "objc2-ad-services",
