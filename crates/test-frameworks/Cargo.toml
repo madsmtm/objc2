@@ -184,6 +184,7 @@ test-frameworks = [
     "objc2-sound-analysis",
     "objc2-speech",
     "objc2-sprite-kit",
+    "objc2-state-reporting",
     "objc2-store-kit",
     "objc2-symbols",
     "objc2-system-configuration",
@@ -399,6 +400,7 @@ objc2-device-discovery-ui = ["dep:objc2-device-discovery-ui"]
 objc2-accessory-access = ["dep:objc2-accessory-access"]
 objc2-av-system-routing = ["dep:objc2-av-system-routing"]
 objc2-link-security = ["dep:objc2-link-security"]
+objc2-state-reporting = ["dep:objc2-state-reporting"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -447,6 +449,7 @@ objc2-security-ui = { workspace = true, optional = true, default-features = true
 objc2-shazam-kit = { workspace = true, optional = true, default-features = true }
 objc2-sound-analysis = { workspace = true, optional = true, default-features = true }
 objc2-sprite-kit = { workspace = true, optional = true, default-features = true }
+objc2-state-reporting = { workspace = true, optional = true, default-features = true }
 objc2-store-kit = { workspace = true, optional = true, default-features = true }
 objc2-symbols = { workspace = true, optional = true, default-features = true }
 objc2-uniform-type-identifiers = { workspace = true, optional = true, default-features = true }

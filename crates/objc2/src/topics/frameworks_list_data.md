@@ -171,6 +171,7 @@
 | `SoundAnalysis` | [`objc2-sound-analysis`](https://crates.io/crates/objc2-sound-analysis) | [![docs.rs](https://docs.rs/objc2-sound-analysis/badge.svg)](https://docs.rs/objc2-sound-analysis/) |
 | `Speech` | [`objc2-speech`](https://crates.io/crates/objc2-speech) | [![docs.rs](https://docs.rs/objc2-speech/badge.svg)](https://docs.rs/objc2-speech/) |
 | `SpriteKit` | [`objc2-sprite-kit`](https://crates.io/crates/objc2-sprite-kit) | [![docs.rs](https://docs.rs/objc2-sprite-kit/badge.svg)](https://docs.rs/objc2-sprite-kit/) |
+| `StateReporting` | [`objc2-state-reporting`](https://crates.io/crates/objc2-state-reporting) | [![docs.rs](https://docs.rs/objc2-state-reporting/badge.svg)](https://docs.rs/objc2-state-reporting/) |
 | `StoreKit` | [`objc2-store-kit`](https://crates.io/crates/objc2-store-kit) | [![docs.rs](https://docs.rs/objc2-store-kit/badge.svg)](https://docs.rs/objc2-store-kit/) |
 | `Symbols` | [`objc2-symbols`](https://crates.io/crates/objc2-symbols) | [![docs.rs](https://docs.rs/objc2-symbols/badge.svg)](https://docs.rs/objc2-symbols/) |
 | `SystemConfiguration` | [`objc2-system-configuration`](https://crates.io/crates/objc2-system-configuration) | [![docs.rs](https://docs.rs/objc2-system-configuration/badge.svg)](https://docs.rs/objc2-system-configuration/) |

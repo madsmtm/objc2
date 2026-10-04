@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `GameSave` / `objc2-game-save`.
   - `LinkSecurity` / `objc2-link-security`.
   - `SecurityUI` / `objc2-security-ui`.
+  - `StateReporting` / `objc2-state-reporting`.
   - `TouchController` / `objc2-touch-controller`.
   - `Network` / `objc2-network`.
 * **BREAKING**: Added support for out parameters in functions. This means that some functions now take `&mut Option<CFRetained<T>>` instead of `*mut *mut T`.

@@ -115,7 +115,6 @@
 | `SecureElementCredential` | Swift-only. |
 | `ServicesAccountLinking` | Effectively Swift-only. |
 | `SpatialPreview` | Swift-only. |
-| `StateReporting` | TODO. |
 | `StickerFoundation` | Basically empty. |
 | `StickerKit` | Basically empty. |
 | `StoreKitTest` | TODO. Developer-only. |

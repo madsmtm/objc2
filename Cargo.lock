@@ -3329,6 +3329,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-state-reporting"
+version = "0.3.2"
+dependencies = [
+ "objc2",
+ "objc2-foundation",
+]
+
+[[package]]
 name = "objc2-store-kit"
 version = "0.3.2"
 dependencies = [
@@ -4326,6 +4334,7 @@ dependencies = [
  "objc2-sound-analysis",
  "objc2-speech",
  "objc2-sprite-kit",
+ "objc2-state-reporting",
  "objc2-store-kit",
  "objc2-symbols",
  "objc2-system-configuration",

@@ -297,6 +297,7 @@ objc2-social = { path = "framework-crates/objc2-social", version = "0.3.2", defa
 objc2-sound-analysis = { path = "framework-crates/objc2-sound-analysis", version = "0.3.2", default-features = false }
 objc2-speech = { path = "framework-crates/objc2-speech", version = "0.3.2", default-features = false }
 objc2-sprite-kit = { path = "framework-crates/objc2-sprite-kit", version = "0.3.2", default-features = false }
+objc2-state-reporting = { path = "framework-crates/objc2-state-reporting", version = "0.3.2", default-features = false }
 objc2-store-kit = { path = "framework-crates/objc2-store-kit", version = "0.3.2", default-features = false }
 objc2-symbols = { path = "framework-crates/objc2-symbols", version = "0.3.2", default-features = false }
 objc2-system-configuration = { path = "framework-crates/objc2-system-configuration", version = "0.3.2", default-features = false }
@@ -501,6 +502,7 @@ objc2-social = { path = "framework-crates/objc2-social" }
 objc2-sound-analysis = { path = "framework-crates/objc2-sound-analysis" }
 objc2-speech = { path = "framework-crates/objc2-speech" }
 objc2-sprite-kit = { path = "framework-crates/objc2-sprite-kit" }
+objc2-state-reporting = { path = "framework-crates/objc2-state-reporting" }
 objc2-store-kit = { path = "framework-crates/objc2-store-kit" }
 objc2-symbols = { path = "framework-crates/objc2-symbols" }
 objc2-system-configuration = { path = "framework-crates/objc2-system-configuration" }

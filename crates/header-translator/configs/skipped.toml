@@ -163,7 +163,5 @@ CoreMIDIServer = "Very deprecated"
 XcodeKit = "TODO. Developer-only"
 StoreKitTest = "TODO. Developer-only"
 
-StateReporting = "TODO"
-
 # LiveExecutionResultsLogger = "Removed in Xcode 26"
 # AGL = "Removed in Xcode 26"
