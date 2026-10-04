@@ -846,10 +846,16 @@ fn update_list(
 ) -> io::Result<()> {
     let _span = info_span!("updating lists").entered();
 
-    let mut f = fs::File::create(workspace_dir.join("docs/frameworks_list_data.md"))?;
+    let mut f = fs::File::create(workspace_dir.join("docs/frameworks_list.md"))?;
+
+    writeln!(f, "# List of framework crates")?;
+    writeln!(f)?;
+    writeln!(f, "The following is a full list of all supported Apple")?;
+    writeln!(f, "frameworks, and the corresponding Rust crate.")?;
+    writeln!(f)?;
 
     writeln!(f, "| Framework | Crate | Docs.rs |")?;
-    writeln!(f, "| --- | --- | --- |")?;
+    writeln!(f, "| --------- | ----- | ------- |")?;
 
     for (name, library) in config.to_parse() {
         if library.is_library {
@@ -859,14 +865,25 @@ fn update_list(
         writeln!(f, "| `{name}` | [`{package}`](https://crates.io/crates/{package}) | [![docs.rs](https://docs.rs/{package}/badge.svg)](https://docs.rs/{package}/) |")?;
     }
 
-    let mut f = fs::File::create(workspace_dir.join("docs/frameworks_list_unsupported.md"))?;
+    writeln!(f)?;
+    writeln!(f, "## Unsupported")?;
+    writeln!(f)?;
+    writeln!(f, "Unsupported frameworks are listed below, feel free to")?;
+    writeln!(f, "[open an issue][new] if a framework that you need isn't")?;
+    writeln!(f, "supported, or if you disagree with the given reasoning.")?;
+    writeln!(f)?;
+    writeln!(f, "[new]: https://github.com/madsmtm/objc2/issues/new")?;
+    writeln!(f)?;
 
     writeln!(f, "| Framework | Why is this unsupported? |")?;
-    writeln!(f, "| --- | --- |")?;
+    writeln!(f, "| --------- | ------------------------ |")?;
 
     for (framework, why) in skipped {
         writeln!(f, "| `{framework}` | {why}. |")?;
     }
+
+    f.sync_all()?;
+    drop(f);
 
     Ok(())
 }

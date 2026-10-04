@@ -1,5 +1,10 @@
+# List of framework crates
+
+The following is a full list of all supported Apple
+frameworks, and the corresponding Rust crate.
+
 | Framework | Crate | Docs.rs |
-| --- | --- | --- |
+| --------- | ----- | ------- |
 | `ARKit` | [`objc2-ar-kit`](https://crates.io/crates/objc2-ar-kit) | [![docs.rs](https://docs.rs/objc2-ar-kit/badge.svg)](https://docs.rs/objc2-ar-kit/) |
 | `AVFAudio` | [`objc2-avf-audio`](https://crates.io/crates/objc2-avf-audio) | [![docs.rs](https://docs.rs/objc2-avf-audio/badge.svg)](https://docs.rs/objc2-avf-audio/) |
 | `AVFoundation` | [`objc2-av-foundation`](https://crates.io/crates/objc2-av-foundation) | [![docs.rs](https://docs.rs/objc2-av-foundation/badge.svg)](https://docs.rs/objc2-av-foundation/) |
@@ -195,3 +200,165 @@
 | `XCTest` | [`objc2-xc-test`](https://crates.io/crates/objc2-xc-test) | [![docs.rs](https://docs.rs/objc2-xc-test/badge.svg)](https://docs.rs/objc2-xc-test/) |
 | `XCUIAutomation` | [`objc2-xc-ui-automation`](https://crates.io/crates/objc2-xc-ui-automation) | [![docs.rs](https://docs.rs/objc2-xc-ui-automation/badge.svg)](https://docs.rs/objc2-xc-ui-automation/) |
 | `iTunesLibrary` | [`objc2-itunes-library`](https://crates.io/crates/objc2-itunes-library) | [![docs.rs](https://docs.rs/objc2-itunes-library/badge.svg)](https://docs.rs/objc2-itunes-library/) |
+
+## Unsupported
+
+Unsupported frameworks are listed below, feel free to
+[open an issue][new] if a framework that you need isn't
+supported, or if you disagree with the given reasoning.
+
+[new]: https://github.com/madsmtm/objc2/issues/new
+
+| Framework | Why is this unsupported? |
+| --------- | ------------------------ |
+| `Accelerate` | Very C-centric, hard for us to map. |
+| `AccessoryLiveActivities` | Swift-only. |
+| `AccessoryNotifications` | Swift-only. |
+| `AccessoryTransportExtension` | Swift-only. |
+| `ActivityKit` | Swift-only. |
+| `AdAttributionKit` | Swift-only. |
+| `AddressBook` | Deprecated, use Contacts instead. |
+| `AddressBookUI` | Deprecated, use Contacts instead. |
+| `AlarmKit` | Mostly Swift-only. |
+| `AppIntents` | Swift-only. |
+| `AppIntentsTesting` | Swift- and Developer-only. |
+| `AppIntentsTypeSupport` | Swift-only. |
+| `AppManagedFeatures` | Swift-only. |
+| `AppMigrationKit` | Swift-only. |
+| `AppleScriptKit` | Basically empty nowadays. |
+| `AppleScriptObjC` | Basically empty nowadays. |
+| `AssetsLibrary` | Deprecated, use PhotoKit instead. |
+| `Assignables` | Swift-only. |
+| `AudioAccessoryKit` | Swift-only. |
+| `AudioUnit` | Deprecated, use AudioToolbox instead. |
+| `AudioVideoBridging` | Deprecated, use AVKit/AVFoundation instead (maybe?). |
+| `AutomatedDeviceEnrollment` | Swift-only. |
+| `CalendarStore` | Very deprecated. |
+| `CarKey` | Swift-only. |
+| `Charts` | Swift-only. |
+| `ClassKitUI` | Swift-only. |
+| `Cocoa` | Basically empty nowadays, use AppKit. |
+| `Combine` | Swift-only. |
+| `ComputeGraph` | Only has C++ and Swift bindings. |
+| `ContactProvider` | Mostly Swift-only. |
+| `CoreAI` | Swift-only. |
+| `CoreDisplay` | Basically empty. |
+| `CoreHID` | Swift-only. |
+| `CoreMIDIServer` | Very deprecated. |
+| `CoreTransferable` | Swift-only. |
+| `CrashReportExtension` | Swift-only. |
+| `CreateML` | Swift-only. |
+| `CreateMLComponents` | Swift-only. |
+| `CryptoKit` | Swift-only. |
+| `DVDPlayback` | Deprecated, use AVKit/AVFoundation instead. |
+| `DeclaredAgeRange` | Swift-only. |
+| `DeveloperToolsSupport` | Swift-only. |
+| `DeviceActivity` | Swift-only. |
+| `DirectoryService` | Deprecated, use OpenDirectory instead. |
+| `DiscRecording` | Deprecated, use AVKit/AVFoundation instead. |
+| `DiscRecordingUI` | Deprecated, use AVKit/AVFoundation instead. |
+| `DiskImageKit` | Swift-only. |
+| `DockKit` | Swift-only. |
+| `DriverKit` | Uses C++ classes. |
+| `EnergyKit` | Swift-only. |
+| `Evaluations` | Swift- and Developer-only. |
+| `ExtensionFoundation` | Swift-only. |
+| `FamilyControls` | Swift-only. |
+| `FinanceKit` | Swift-only. |
+| `FinanceKitUI` | Swift-only. |
+| `ForceFeedback` | Very C-centric and old. |
+| `FoundationModels` | Swift-only. |
+| `FoveatedStreaming` | Swift-only. |
+| `GLUT` | Apple's redistribution of GLUT headers, better served by a different crate. |
+| `GSS` | Very C-centric and old. |
+| `GeoToolbox` | Swift-only. |
+| `GroupActivities` | Swift-only. |
+| `Hypervisor` | Very low-level, consider crates like `applevisor` instead. |
+| `ICADevices` | Deprecated, use ImageCaptureCore instead. |
+| `IdentityDocumentServices` | Swift-only. |
+| `IdentityDocumentServicesUI` | Swift-only. |
+| `ImagePlayground` | Swift-only. |
+| `ImmersiveMediaSupport` | Swift-only. |
+| `InstallerPlugins` | Deprecated. |
+| `InstantMessage` | Deprecated in macOS 10.9. |
+| `JavaNativeFoundation` | Basically empty. |
+| `JavaRuntimeSupport` | Probably not really interesting.. |
+| `JournalingSuggestions` | Swift-only. |
+| `Kerberos` | Too low-level. |
+| `Kernel` | Too low-level. |
+| `KernelManagement` | Basically empty. |
+| `LDAP` | Basically empty. |
+| `LightweightCodeRequirements` | Swift-only. |
+| `LiveCommunicationKit` | Swift-only. |
+| `LockedCameraCapture` | Swift-only. |
+| `ManagedApp` | Swift-only. |
+| `ManagedAppDistribution` | Swift-only. |
+| `ManagedSettings` | Swift-only. |
+| `ManagedSettingsUI` | Swift-only. |
+| `MarketplaceKit` | Swift-only. |
+| `Matter` | Mostly available [here](https://github.com/project-chip/connectedhomeip). |
+| `MatterSupport` | Swift-only. |
+| `MediaDevice` | Swift-only. |
+| `MediaIntelligence` | Swift-only. |
+| `MediaIntents` | Swift-only. |
+| `MediaLibrary` | Deprecated, use PhotoKit instead. |
+| `Message` | Basically empty. |
+| `MetalPerformancePrimitives` | Header-only framework used in Metal shaders. |
+| `MobileCoreServices` | Deprecated, use CoreServices + UniformTypeIdentifiers instead. |
+| `MusicKit` | Swift-only. |
+| `MusicUnderstanding` | Swift-only. |
+| `NetFS` | Deprecated, use macFUSE or FSKit instead (probably). |
+| `NowPlaying` | Swift-only. |
+| `OpenAL` | Very C-centric, use newer Audio frameworks instead. |
+| `OpenCL` | Very C-centric and old. |
+| `PCSC` | Too low-level, consider crates like `pcsc` instead. |
+| `PaperKit` | Swift-only. |
+| `PermissionKit` | Swift-only. |
+| `ProximityReader` | Swift-only. |
+| `ProximityReaderStub` | Basically empty. |
+| `Python3` | Better served by dedicated crates like `pyo3-ffi`. |
+| `QTKit` | No headers present in Xcode's SDK. |
+| `RealityFoundation` | Swift-only. |
+| `RealityKit` | Swift-only. |
+| `RelevanceKit` | Swift-only. |
+| `RoomPlan` | Swift-only. |
+| `Ruby` | Very C-centric and old. |
+| `SecureElementCredential` | Swift-only. |
+| `ServicesAccountLinking` | Effectively Swift-only. |
+| `SpatialPreview` | Swift-only. |
+| `StickerFoundation` | Basically empty. |
+| `StickerKit` | Basically empty. |
+| `StoreKitTest` | TODO. Developer-only. |
+| `SuggestedActions` | Swift-only. |
+| `SwiftData` | Swift-only. |
+| `SwiftUI` | Swift-only. |
+| `SwiftUICore` | Swift-only. |
+| `SyncServices` | Deprecated. |
+| `System` | Deprecated wrapper over libSystem.dylib. |
+| `TWAIN` | Very C-centric and old. |
+| `TabletopKit` | Swift-only. |
+| `TabularData` | Swift-only. |
+| `Tcl` | Very C-centric and old. |
+| `TelephonyMessagingKit` | Swift-only. |
+| `Testing` | Swift-only. |
+| `TipKit` | Swift-only. |
+| `Tk` | Very C-centric and old. |
+| `Translation` | Swift-only. |
+| `TranslationUIProvider` | Swift-only. |
+| `TrustInsights` | Swift-only. |
+| `Twitter` | Deprecated, use Social instead. |
+| `USDKit` | Swift-only. |
+| `VideoDecodeAcceleration` | Very C-centric and old. |
+| `VisionEntitlementServices` | Mostly Swift-only. |
+| `VisionKit` | Swift-only. |
+| `VisualIntelligence` | Swift-only. |
+| `WeatherKit` | Swift-only. |
+| `WiFiAware` | Swift-only. |
+| `WiFiInfrastructure` | Swift-only. |
+| `WidgetKit` | Mostly Swift-only. |
+| `WirelessInsights` | Swift-only. |
+| `WorkoutKit` | Swift-only. |
+| `XcodeKit` | TODO. Developer-only. |
+| `iAd` | Disabled on server side, use AdServices instead. |
+| `vecLib` | Very C-centric and old. |
+| `vmnet` | Very C-centric and old. |

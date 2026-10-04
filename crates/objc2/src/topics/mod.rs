@@ -62,7 +62,8 @@ pub mod run_loop {}
 #[doc = include_str!("../../CHANGELOG.md")]
 pub mod changelog {}
 
-pub mod frameworks_list;
+#[doc = include_str!("docs/frameworks_list.md")]
+pub mod frameworks_list {}
 #[doc = include_str!("docs/frameworks_cargo_features.md")]
 pub mod frameworks_cargo_features {}
 #[doc = include_str!("docs/frameworks_deref.md")]
