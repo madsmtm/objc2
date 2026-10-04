@@ -4,6 +4,7 @@
 //! - [The layers that make message-sending safer][layered_safety].
 //! - [Interior mutability][interior_mutability].
 //! - [Interop with other crates][crate_interop].
+//! - [How to add custom Objective-C bindings][custom_bindings].
 //! - [Migrating from the `objc` crate][migrating_from_objc].
 //! - [Alternatives to `objc2`][alternatives].
 //! - [The changelog][changelog].
@@ -57,6 +58,8 @@ pub mod swift {}
 pub mod weak_property {} // Referenced by header-translator
 #[doc = include_str!("docs/run_loop.md")]
 pub mod run_loop {}
+#[doc = include_str!("docs/custom_bindings.md")]
+pub mod custom_bindings {}
 
 #[cfg(not(doctest))]
 #[doc = include_str!("../../CHANGELOG.md")]
