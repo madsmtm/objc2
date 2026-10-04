@@ -449,6 +449,7 @@ impl UnexposedAttr {
                 None
             }
             "CF_REFINED_FOR_SWIFT"
+            | "CM_REFINED_FOR_SWIFT"
             | "DISPATCH_REFINED_FOR_SWIFT"
             | "NS_REFINED_FOR_SWIFT"
             | "AR_REFINED_FOR_SWIFT"
