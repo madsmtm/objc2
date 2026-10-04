@@ -17,6 +17,7 @@ test-frameworks = [
     "objc2-av-foundation",
     "objc2-av-kit",
     "objc2-av-routing",
+    "objc2-av-system-routing",
     "objc2-accessibility",
     "objc2-accessory-access",
     "objc2-accessory-setup-kit",
@@ -395,6 +396,7 @@ objc2-touch-controller = ["dep:objc2-touch-controller"]
 objc2-network = ["dep:objc2-network"]
 objc2-device-discovery-ui = ["dep:objc2-device-discovery-ui"]
 objc2-accessory-access = ["dep:objc2-accessory-access"]
+objc2-av-system-routing = ["dep:objc2-av-system-routing"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -484,6 +486,20 @@ objc2-thread-network = { workspace = true, optional = true, default-features = t
 objc2-user-notifications-ui = { workspace = true, optional = true, default-features = true }
 objc2-web-kit = { workspace = true, optional = true, default-features = true }
 
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2-av-system-routing = { workspace = true, optional = true, default-features = true }
+objc2-accessory-setup-kit = { workspace = true, optional = true, default-features = true }
+objc2-app-clip = { workspace = true, optional = true, default-features = true }
+objc2-browser-engine-core = { workspace = true, optional = true, default-features = true }
+objc2-browser-engine-kit = { workspace = true, optional = true, default-features = true }
+objc2-browser-kit = { workspace = true, optional = true, default-features = true }
+objc2-car-play = { workspace = true, optional = true, default-features = true }
+objc2-core-nfc = { workspace = true, optional = true, default-features = true }
+objc2-exposure-notification = { workspace = true, optional = true, default-features = true }
+objc2-messages = { workspace = true, optional = true, default-features = true }
+objc2-push-to-talk = { workspace = true, optional = true, default-features = true }
+objc2-sensor-kit = { workspace = true, optional = true, default-features = true }
+
 [target.'cfg(target_os = "macos")'.dependencies]
 objc2-accessory-access = { workspace = true, optional = true, default-features = true }
 objc2-app-kit = { workspace = true, optional = true, default-features = true }
@@ -521,19 +537,6 @@ objc2-service-management = { workspace = true, optional = true, default-features
 objc2-system-extensions = { workspace = true, optional = true, default-features = true }
 objc2-virtualization = { workspace = true, optional = true, default-features = true }
 objc2-itunes-library = { workspace = true, optional = true, default-features = true }
-
-[target.'cfg(target_os = "ios")'.dependencies]
-objc2-accessory-setup-kit = { workspace = true, optional = true, default-features = true }
-objc2-app-clip = { workspace = true, optional = true, default-features = true }
-objc2-browser-engine-core = { workspace = true, optional = true, default-features = true }
-objc2-browser-engine-kit = { workspace = true, optional = true, default-features = true }
-objc2-browser-kit = { workspace = true, optional = true, default-features = true }
-objc2-car-play = { workspace = true, optional = true, default-features = true }
-objc2-core-nfc = { workspace = true, optional = true, default-features = true }
-objc2-exposure-notification = { workspace = true, optional = true, default-features = true }
-objc2-messages = { workspace = true, optional = true, default-features = true }
-objc2-push-to-talk = { workspace = true, optional = true, default-features = true }
-objc2-sensor-kit = { workspace = true, optional = true, default-features = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
 objc2-accounts = { workspace = true, optional = true, default-features = true }

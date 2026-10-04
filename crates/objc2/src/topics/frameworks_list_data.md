@@ -5,6 +5,7 @@
 | `AVFoundation` | [`objc2-av-foundation`](https://crates.io/crates/objc2-av-foundation) | [![docs.rs](https://docs.rs/objc2-av-foundation/badge.svg)](https://docs.rs/objc2-av-foundation/) |
 | `AVKit` | [`objc2-av-kit`](https://crates.io/crates/objc2-av-kit) | [![docs.rs](https://docs.rs/objc2-av-kit/badge.svg)](https://docs.rs/objc2-av-kit/) |
 | `AVRouting` | [`objc2-av-routing`](https://crates.io/crates/objc2-av-routing) | [![docs.rs](https://docs.rs/objc2-av-routing/badge.svg)](https://docs.rs/objc2-av-routing/) |
+| `AVSystemRouting` | [`objc2-av-system-routing`](https://crates.io/crates/objc2-av-system-routing) | [![docs.rs](https://docs.rs/objc2-av-system-routing/badge.svg)](https://docs.rs/objc2-av-system-routing/) |
 | `Accessibility` | [`objc2-accessibility`](https://crates.io/crates/objc2-accessibility) | [![docs.rs](https://docs.rs/objc2-accessibility/badge.svg)](https://docs.rs/objc2-accessibility/) |
 | `AccessoryAccess` | [`objc2-accessory-access`](https://crates.io/crates/objc2-accessory-access) | [![docs.rs](https://docs.rs/objc2-accessory-access/badge.svg)](https://docs.rs/objc2-accessory-access/) |
 | `AccessorySetupKit` | [`objc2-accessory-setup-kit`](https://crates.io/crates/objc2-accessory-setup-kit) | [![docs.rs](https://docs.rs/objc2-accessory-setup-kit/badge.svg)](https://docs.rs/objc2-accessory-setup-kit/) |

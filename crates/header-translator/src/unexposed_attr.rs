@@ -139,6 +139,7 @@ impl UnexposedAttr {
             }
             // The main and UI actor is effectively the same on Apple platforms.
             "NS_SWIFT_UI_ACTOR"
+            | "NS_SWIFT_MAIN_ACTOR"
             | "WK_SWIFT_UI_ACTOR"
             | "XCT_SWIFT_MAIN_ACTOR"
             | "XCUI_SWIFT_MAIN_ACTOR"

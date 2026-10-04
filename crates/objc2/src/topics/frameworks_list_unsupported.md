@@ -1,6 +1,5 @@
 | Framework | Why is this unsupported? |
 | --- | --- |
-| `AVSystemRouting` | TODO. |
 | `Accelerate` | Very C-centric, hard for us to map. |
 | `AccessoryLiveActivities` | Swift-only. |
 | `AccessoryNotifications` | Swift-only. |

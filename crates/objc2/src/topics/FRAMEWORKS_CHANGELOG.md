@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `Default` implementations for enumerations, bitflags and structs.
 * Added new framework crates:
   - `AccessoryAccess` / `objc2-accessory-access`.
+  - `AVSystemRouting` / `objc2-av-system-routing`.
   - `BrowserKit` / `objc2-browser-kit`.
   - `DeviceDiscoveryUI` / `objc2-device-discovery-ui`.
   - `GameSave` / `objc2-game-save`.

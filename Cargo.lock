@@ -1516,6 +1516,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "objc2-av-system-routing"
+version = "0.3.2"
+dependencies = [
+ "block2",
+ "objc2",
+ "objc2-foundation",
+ "objc2-uniform-type-identifiers",
+]
+
+[[package]]
 name = "objc2-avf-audio"
 version = "0.3.2"
 dependencies = [
@@ -4153,6 +4163,7 @@ dependencies = [
  "objc2-av-foundation",
  "objc2-av-kit",
  "objc2-av-routing",
+ "objc2-av-system-routing",
  "objc2-avf-audio",
  "objc2-background-assets",
  "objc2-background-tasks",

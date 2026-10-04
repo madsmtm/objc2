@@ -1,0 +1,9 @@
+framework = "AVSystemRouting"
+crate = "objc2-av-system-routing"
+required-crates = ["objc2", "objc2-foundation"]
+maccatalyst = "27.0"
+ios = "27.0"
+
+# Needs AVPlaybackUserInterfaceControllable, which is iOS specific and isn't
+# generated yet.
+class.AVSystemRouteMediaSession.methods.playbackControl.skipped = true

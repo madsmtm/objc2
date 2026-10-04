@@ -131,6 +131,7 @@ objc2-avf-audio = { path = "framework-crates/objc2-avf-audio", version = "0.3.2"
 objc2-av-foundation = { path = "framework-crates/objc2-av-foundation", version = "0.3.2", default-features = false }
 objc2-av-kit = { path = "framework-crates/objc2-av-kit", version = "0.3.2", default-features = false }
 objc2-av-routing = { path = "framework-crates/objc2-av-routing", version = "0.3.2", default-features = false }
+objc2-av-system-routing = { path = "framework-crates/objc2-av-system-routing", version = "0.3.2", default-features = false }
 objc2-accessibility = { path = "framework-crates/objc2-accessibility", version = "0.3.2", default-features = false }
 objc2-accessory-access = { path = "framework-crates/objc2-accessory-access", version = "0.3.2", default-features = false }
 objc2-accessory-setup-kit = { path = "framework-crates/objc2-accessory-setup-kit", version = "0.3.2", default-features = false }
@@ -333,6 +334,7 @@ objc2-avf-audio = { path = "framework-crates/objc2-avf-audio" }
 objc2-av-foundation = { path = "framework-crates/objc2-av-foundation" }
 objc2-av-kit = { path = "framework-crates/objc2-av-kit" }
 objc2-av-routing = { path = "framework-crates/objc2-av-routing" }
+objc2-av-system-routing = { path = "framework-crates/objc2-av-system-routing" }
 objc2-accessibility = { path = "framework-crates/objc2-accessibility" }
 objc2-accessory-access = { path = "framework-crates/objc2-accessory-access" }
 objc2-accessory-setup-kit = { path = "framework-crates/objc2-accessory-setup-kit" }
