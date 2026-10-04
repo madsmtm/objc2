@@ -103,6 +103,7 @@
 | `JavaScriptCore` | [`objc2-javascript-core`](https://crates.io/crates/objc2-javascript-core) | [![docs.rs](https://docs.rs/objc2-javascript-core/badge.svg)](https://docs.rs/objc2-javascript-core/) |
 | `LatentSemanticMapping` | [`objc2-latent-semantic-mapping`](https://crates.io/crates/objc2-latent-semantic-mapping) | [![docs.rs](https://docs.rs/objc2-latent-semantic-mapping/badge.svg)](https://docs.rs/objc2-latent-semantic-mapping/) |
 | `LinkPresentation` | [`objc2-link-presentation`](https://crates.io/crates/objc2-link-presentation) | [![docs.rs](https://docs.rs/objc2-link-presentation/badge.svg)](https://docs.rs/objc2-link-presentation/) |
+| `LinkSecurity` | [`objc2-link-security`](https://crates.io/crates/objc2-link-security) | [![docs.rs](https://docs.rs/objc2-link-security/badge.svg)](https://docs.rs/objc2-link-security/) |
 | `LocalAuthentication` | [`objc2-local-authentication`](https://crates.io/crates/objc2-local-authentication) | [![docs.rs](https://docs.rs/objc2-local-authentication/badge.svg)](https://docs.rs/objc2-local-authentication/) |
 | `LocalAuthenticationEmbeddedUI` | [`objc2-local-authentication-embedded-ui`](https://crates.io/crates/objc2-local-authentication-embedded-ui) | [![docs.rs](https://docs.rs/objc2-local-authentication-embedded-ui/badge.svg)](https://docs.rs/objc2-local-authentication-embedded-ui/) |
 | `MLCompute` | [`objc2-ml-compute`](https://crates.io/crates/objc2-ml-compute) | [![docs.rs](https://docs.rs/objc2-ml-compute/badge.svg)](https://docs.rs/objc2-ml-compute/) |

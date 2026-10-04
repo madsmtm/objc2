@@ -78,7 +78,6 @@
 | `KernelManagement` | Basically empty. |
 | `LDAP` | Basically empty. |
 | `LightweightCodeRequirements` | Swift-only. |
-| `LinkSecurity` | TODO. |
 | `LiveCommunicationKit` | Swift-only. |
 | `LockedCameraCapture` | Swift-only. |
 | `ManagedApp` | Swift-only. |

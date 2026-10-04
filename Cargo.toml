@@ -229,6 +229,7 @@ objc2-intents-ui = { path = "framework-crates/objc2-intents-ui", version = "0.3.
 objc2-javascript-core = { path = "framework-crates/objc2-javascript-core", version = "0.3.2", default-features = false }
 objc2-latent-semantic-mapping = { path = "framework-crates/objc2-latent-semantic-mapping", version = "0.3.2", default-features = false }
 objc2-link-presentation = { path = "framework-crates/objc2-link-presentation", version = "0.3.2", default-features = false }
+objc2-link-security = { path = "framework-crates/objc2-link-security", version = "0.3.2", default-features = false }
 objc2-local-authentication = { path = "framework-crates/objc2-local-authentication", version = "0.3.2", default-features = false }
 objc2-local-authentication-embedded-ui = { path = "framework-crates/objc2-local-authentication-embedded-ui", version = "0.3.2", default-features = false }
 objc2-ml-compute = { path = "framework-crates/objc2-ml-compute", version = "0.3.2", default-features = false }
@@ -432,6 +433,7 @@ objc2-intents-ui = { path = "framework-crates/objc2-intents-ui" }
 objc2-javascript-core = { path = "framework-crates/objc2-javascript-core" }
 objc2-latent-semantic-mapping = { path = "framework-crates/objc2-latent-semantic-mapping" }
 objc2-link-presentation = { path = "framework-crates/objc2-link-presentation" }
+objc2-link-security = { path = "framework-crates/objc2-link-security" }
 objc2-local-authentication = { path = "framework-crates/objc2-local-authentication" }
 objc2-local-authentication-embedded-ui = { path = "framework-crates/objc2-local-authentication-embedded-ui" }
 objc2-ml-compute = { path = "framework-crates/objc2-ml-compute" }

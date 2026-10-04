@@ -116,6 +116,7 @@ test-frameworks = [
     "objc2-javascript-core",
     "objc2-latent-semantic-mapping",
     "objc2-link-presentation",
+    "objc2-link-security",
     "objc2-local-authentication",
     "objc2-local-authentication-embedded-ui",
     "objc2-ml-compute",
@@ -397,6 +398,7 @@ objc2-network = ["dep:objc2-network"]
 objc2-device-discovery-ui = ["dep:objc2-device-discovery-ui"]
 objc2-accessory-access = ["dep:objc2-accessory-access"]
 objc2-av-system-routing = ["dep:objc2-av-system-routing"]
+objc2-link-security = ["dep:objc2-link-security"]
 
 [dependencies]
 block2 = { workspace = true, default-features = true }
@@ -431,6 +433,7 @@ objc2-foundation = { workspace = true, optional = true, default-features = true 
 objc2-game-kit = { workspace = true, optional = true, default-features = true }
 objc2-image-io = { workspace = true, optional = true, default-features = true }
 objc2-intents = { workspace = true, optional = true, default-features = true }
+objc2-link-security = { workspace = true, optional = true, default-features = true }
 objc2-map-kit = { workspace = true, optional = true, default-features = true }
 objc2-media-player = { workspace = true, optional = true, default-features = true }
 objc2-natural-language = { workspace = true, optional = true, default-features = true }

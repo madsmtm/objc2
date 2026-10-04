@@ -1,0 +1,9 @@
+framework = "LinkSecurity"
+crate = "objc2-link-security"
+required-crates = ["objc2", "objc2-foundation"]
+macos = "27.0"
+maccatalyst = "27.0"
+ios = "27.0"
+tvos = "27.0"
+watchos = "27.0"
+visionos = "27.0"
