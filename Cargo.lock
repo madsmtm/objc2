@@ -1268,7 +1268,7 @@ checksum = "521739c6d2bac4aa25192232afe6841231376b2b26d4d9fae5ecf8ca5772e441"
 
 [[package]]
 name = "objc2"
-version = "0.6.4"
+version = "0.6.5"
 dependencies = [
  "iai",
  "libc",
