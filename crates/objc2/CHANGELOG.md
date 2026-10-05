@@ -6,13 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased - YYYY-MM-DD
 
+
+## [0.6.5] - 2026-10-05
+[0.6.5]: https://github.com/madsmtm/objc2/compare/objc2-0.6.4...objc2-0.6.5
+
 ## Fixed
 * Fixed miscompilation when calling methods that return autoreleased objects,
   see [#861](https://github.com/madsmtm/objc2/issues/861) for details.
 
 
 ## [0.6.4] - 2026-02-26
-[0.6.3]: https://github.com/madsmtm/objc2/compare/objc2-0.6.3...objc2-0.6.4
+[0.6.4]: https://github.com/madsmtm/objc2/compare/objc2-0.6.3...objc2-0.6.4
 
 ## Added
 * Added support for the unstable `darwin_objc` feature.
