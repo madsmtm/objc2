@@ -474,6 +474,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Fixed unwinding while using writeback / error parameters.
 
 
+## [0.5.3] - 2026-10-05
+[0.5.3]: https://github.com/madsmtm/objc2/compare/objc2-0.5.2...objc2-0.5.3
+
+## Fixed
+* Fixed miscompilation when calling methods that return autoreleased objects,
+  see [#861](https://github.com/madsmtm/objc2/issues/861) for details.
+
+
 ## [0.5.2] - 2024-05-21
 [0.5.2]: https://github.com/madsmtm/objc2/compare/objc2-0.5.1...objc2-0.5.2
 
