@@ -340,7 +340,7 @@ dependencies = [
 
 [[package]]
 name = "objc2"
-version = "0.5.2"
+version = "0.5.3"
 dependencies = [
  "block2",
  "core-foundation",
