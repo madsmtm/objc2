@@ -634,6 +634,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "examples-security"
+version = "0.0.0"
+dependencies = [
+ "objc2-core-foundation",
+ "objc2-security",
+]
+
+[[package]]
 name = "examples-testing"
 version = "0.0.0"
 dependencies = [
