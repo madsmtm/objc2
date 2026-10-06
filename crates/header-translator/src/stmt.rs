@@ -3957,8 +3957,16 @@ impl Stmt {
             _ => return None,
         };
 
-        // Availability is broken in MDLUtility.h for some reason?
-        if cls.name == "MDLUtility" {
+        // Availability is broken on NEURLFilter because of a stray `;`.
+        if cls.name == "NEURLFilter" {
+            return None;
+        }
+        // Missing availability on macOS.
+        if cls.name == "HKLiveWorkoutZoneUpdate" || cls.name == "PKAddIdentityDocumentMetadata" {
+            return None;
+        }
+        // `playbackVariation` is the wrong type? Seems to be an actual bug!
+        if cls.name == "PHAsset" {
             return None;
         }
 
@@ -4021,17 +4029,42 @@ impl Stmt {
                 if ["Dispatch"].contains(&id.library_name()) {
                     return None;
                 }
+                // HIToolbox has some statics that are 32-bit only.
+                if id.location().library_name() == "Carbon"
+                    && id.location().modules().next() == Some("HIToolbox")
+                {
+                    return None;
+                }
                 // Some statics are missing / have wrong availability attributes.
                 if [
                     "CBUUIDCharacteristicObservationScheduleString",
                     "kMDItemXMPCredit",
                     "kMDItemXMPDigitalSourceType",
                     "HKDataTypeIdentifierStateOfMind",
+                    "NSAccessibilityDraggingSourceDragBeganNotification",
+                    "NSAccessibilityDraggingSourceDragEndedNotification",
+                    "NSAccessibilityDraggingDestinationDropAllowedNotification",
+                    "NSAccessibilityDraggingDestinationDropNotAllowedNotification",
+                    "NSAccessibilityDraggingDestinationDragAcceptedNotification",
+                    "NSAccessibilityDraggingDestinationDragNotAcceptedNotification",
+                    "kCGAdaptiveMaximumBitDepth",
+                    "CIRAWDecoderVersion9",
+                    "CIRAWDecoderVersion9DNG",
+                    "kSecCFErrorDetachedCertificates",
+                    "kSecCodeInfoTotalSignatures",
+                    "kSecCodeInfoChosenSignature",
+                    "kSecCodeInfoSignerInfoSKID",
                 ]
                 .contains(&&*id.name)
                 {
                     return None;
                 }
+                if id.location().library_name() == "HealthKit"
+                    && id.location().modules().next() == Some("HKMedicationConcept")
+                {
+                    return None;
+                }
+
                 if !availability.is_available_host() {
                     return None;
                 }
