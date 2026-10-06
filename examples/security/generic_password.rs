@@ -4,6 +4,7 @@
 //! Accessing an existing password may prompt for permission. Only its length is printed.
 #![deny(unsafe_op_in_unsafe_fn)]
 
+use std::process::ExitCode;
 use std::ptr;
 
 use objc2_core_foundation::{
@@ -50,16 +51,22 @@ fn generic_password(service: &str, account: &str) -> Result<Option<CFRetained<CF
     Ok(Some(data))
 }
 
-fn main() {
+fn main() -> ExitCode {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 3 {
         eprintln!("Usage: generic_password SERVICE ACCOUNT");
-        std::process::exit(1);
+        return ExitCode::FAILURE;
     }
 
     match generic_password(&args[1], &args[2]) {
-        Ok(Some(data)) => println!("Found password ({} bytes)", data.len()),
-        Ok(None) => println!("No matching password found"),
+        Ok(Some(data)) => {
+            println!("Found password ({} bytes)", data.len());
+            ExitCode::SUCCESS
+        }
+        Ok(None) => {
+            println!("No matching password found");
+            ExitCode::SUCCESS
+        }
         Err(status) => {
             // SAFETY: The reserved parameter must be NULL.
             let message = unsafe { SecCopyErrorMessageString(status, ptr::null_mut()) };
@@ -68,7 +75,7 @@ fn main() {
             } else {
                 eprintln!("Keychain query failed ({status})");
             }
-            std::process::exit(1);
+            ExitCode::FAILURE
         }
     }
 }
