@@ -1,6 +1,13 @@
 framework = "SafariServices"
 crate = "objc2-safari-services"
 required-crates = ["objc2", "objc2-foundation"]
+# HACK: SafariServices uses __MAC_OS_X_VERSION_MIN_REQUIRED in front of all
+# their availability checks, which means we don't get availability information
+# unless we specify a high enough deployment target.
+flags = [
+    "-target",
+    "arm64-apple-macosx27.0",
+]
 macos = "10.12"
 maccatalyst = "13.0"
 ios = "7.0"

@@ -242,6 +242,7 @@ fn parse_library(
 
     let llvm_targets: &[_] = match &sdk.platform {
         Platform::MacOsX => {
+            // NOTE: SafariServices overrides the target!
             if data.macos.is_some() {
                 &[
                     "arm64-apple-macosx10.12.0",
@@ -257,15 +258,15 @@ fn parse_library(
             // "armv7s-apple-ios10.0.0",
         ],
         Platform::AppleTvOs => &[
-            "arm64-apple-tvos",
+            "arm64-apple-tvos10.0.0",
             // "x86_64-apple-tvos",
         ],
         Platform::WatchOs => &[
-            "arm64-apple-watchos",
+            "arm64-apple-watchos5.0.0",
             // "arm64_32-apple-watchos",
             // "armv7k-apple-watchos",
         ],
-        Platform::XrOs => &["arm64-apple-xros"],
+        Platform::XrOs => &["arm64-apple-xros1.0"],
         _ => unimplemented!("SDK platform {sdk:?}"),
     };
 
