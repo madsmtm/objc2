@@ -367,3 +367,132 @@ impl<T: DefinedClass> ClassProtocolMethodsBuilder<'_, T> {
     #[cfg(not(debug_assertions))]
     pub fn finish(self) {}
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        define_class, extern_protocol,
+        rc::Retained,
+        runtime::{AnyObject, NSObject, NSZone},
+        ClassType, ProtocolType,
+    };
+
+    extern_protocol!(
+        #[allow(clippy::missing_safety_doc)]
+        #[allow(unused)]
+        #[allow(non_snake_case)]
+        unsafe trait NSCopying {
+            #[unsafe(method(copy))]
+            #[optional]
+            fn copy(&self) -> Retained<AnyObject>;
+
+            #[unsafe(method(copyWithZone:))]
+            fn copyWithZone(&self, zone: Option<&NSZone>) -> Retained<AnyObject>;
+        }
+    );
+
+    #[test]
+    fn impl_protocol() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "DefineClassTestImplProtocol"]
+            struct Custom;
+
+            unsafe impl NSCopying for Custom {
+                #[unsafe(method(copyWithZone:))]
+                fn copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
+                    unimplemented!()
+                }
+            }
+        );
+
+        let cls = Custom::class();
+        assert!(cls.conforms_to(<dyn NSCopying>::protocol().unwrap()));
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "defined invalid method -[DefineClassTestInvalidMethod description]: expected return to have type code '@', but found 'v'"
+    )]
+    fn invalid_method() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "DefineClassTestInvalidMethod"]
+            struct Custom;
+
+            impl Custom {
+                // Override `description` with a bad return type
+                #[unsafe(method(description))]
+                fn description(&self) {}
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "must implement required protocol method -[NSCopying copyWithZone:]"
+    )]
+    fn missing_protocol_method() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "DefineClassTestMissingProtocolMethod"]
+            struct Custom;
+
+            unsafe impl NSCopying for Custom {
+                // Missing required method
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    // #[cfg_attr(debug_assertions, should_panic = "...")]
+    fn invalid_protocol_method() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "DefineClassTestInvalidProtocolMethod"]
+            struct Custom;
+
+            unsafe impl NSCopying for Custom {
+                // Override with a bad return type
+                #[unsafe(method(copyWithZone:))]
+                fn copy_with_zone(&self, _zone: Option<&NSZone>) -> u8 {
+                    42
+                }
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+
+    #[test]
+    #[cfg_attr(
+        debug_assertions,
+        should_panic = "failed overriding protocol method -[NSCopying someOtherMethod]: method not found"
+    )]
+    fn extra_protocol_method() {
+        define_class!(
+            #[unsafe(super(NSObject))]
+            #[name = "DefineClassTestExtraProtocolMethod"]
+            struct Custom;
+
+            unsafe impl NSCopying for Custom {
+                #[unsafe(method(copyWithZone:))]
+                fn copy_with_zone(&self, _zone: Option<&NSZone>) -> Retained<Self> {
+                    unimplemented!()
+                }
+
+                // This doesn't exist on the protocol
+                #[unsafe(method(someOtherMethod))]
+                fn some_other_method(&self) {}
+            }
+        );
+
+        let _cls = Custom::class();
+    }
+}
