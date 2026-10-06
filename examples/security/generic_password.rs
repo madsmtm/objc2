@@ -21,7 +21,7 @@ fn generic_password(service: &str, account: &str) -> Result<Option<CFRetained<CF
 
     // The keys are strings, but the values include both strings and a boolean.
     let query = CFMutableDictionary::<CFString, CFType>::with_capacity(5);
-    // SAFETY: These constants are provided by Security and CoreFoundation.
+    // SAFETY: Accessing these external statics is safe.
     unsafe {
         query.add(kSecClass, kSecClassGenericPassword);
         query.add(kSecAttrService, &service);
