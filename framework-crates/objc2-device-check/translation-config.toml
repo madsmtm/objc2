@@ -11,7 +11,8 @@ visionos = "1.0"
 unsafe-default-safety.documentation-is-reviewed = true
 unsafe-default-safety.bounds-checked-internally = true
 
-# The first call lazily creates the service's controller with an unsynchronized load and store, so it must not race another call on the same instance.
+# The first call lazily creates the service's controller with an unsynchronized
+# load and store, so it must not race another call on the same instance.
 class.DCAppAttestService.methods.isSupported.unsafe = true
 class.DCAppAttestService.methods."generateKeyWithCompletionHandler:".unsafe = true
 class.DCAppAttestService.methods."attestKey:clientDataHash:completionHandler:".unsafe = true
