@@ -18,8 +18,9 @@ use tracing_subscriber::util::SubscriberInitExt;
 use tracing_tree::HierarchicalLayer;
 
 use header_translator::{
-    global_analysis, run_cargo_fmt, Config, Context, EntryExt, Library, LibraryConfig, Location,
-    MacroEntity, MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS, HOST_MACOS, VERSION,
+    global_analysis, is_available, run_cargo_fmt, Config, Context, EntryExt, Library,
+    LibraryConfig, Location, MacroEntity, MacroLocation, PlatformCfg, Stmt, EXTRA_BLOCK_COMMANDS,
+    VERSION,
 };
 
 type BoxError = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -894,8 +895,8 @@ fn update_test_metadata(workspace_dir: &Path, config: &Config) {
     // Write imports
     let mut s = String::new();
     for (_, lib) in tested.clone() {
-        if let Some(macos) = &lib.macos {
-            if (HOST_MACOS as u64) < macos.major {
+        if let Some(version) = &lib.macos {
+            if !is_available(version.major as _, version.minor as _, version.patch as _) {
                 // Skip library if not available on current host.
                 continue;
             }

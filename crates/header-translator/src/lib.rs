@@ -25,7 +25,7 @@ mod stmt;
 mod thread_safety;
 mod unexposed_attr;
 
-pub use self::availability::HOST_MACOS;
+pub use self::availability::is_available;
 pub use self::cfgs::PlatformCfg;
 pub use self::clang_utils::immediate_children;
 pub use self::command::{run_cargo_fmt, run_rustfmt};
