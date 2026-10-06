@@ -1708,6 +1708,8 @@ impl Stmt {
                         let name = entity.get_name().unwrap_or_else(|| "__unknown__".into());
                         let _span = debug_span!("field", name).entered();
 
+                        let data = data.fields.get(&name).cloned().unwrap_or_default();
+
                         let ty = entity.get_type().expect("struct/union field type");
                         let field_align = ty.get_alignof().unwrap();
                         if align < field_align {
@@ -1720,7 +1722,15 @@ impl Stmt {
                         // Compute the natural alignment of the struct.
                         natural_align = natural_align.max(field_align);
 
-                        let ty = Ty::parse_record_field(ty, context);
+                        let mut ty = Ty::parse_record_field(ty, context);
+
+                        // Apply overrides.
+                        if let Some(nullability) = data.nullability {
+                            ty.change_nullability(nullability.into());
+                        }
+                        if let Some(generics) = &data.generics {
+                            ty.change_generics(generics);
+                        }
 
                         if entity.is_bit_field() {
                             error!("unsound struct/union bitfield");

@@ -28,6 +28,12 @@ const.kKERXVertical.use-value = true
 # probably also nullable.
 fn.CTRunDelegateGetRefCon.return.nullability = "nullable"
 
+# These callbacks have documented behaviour when passing NULL.
+struct.CTRunDelegateCallbacks.fields.dealloc.nullability = "nullable"
+struct.CTRunDelegateCallbacks.fields.getAscent.nullability = "nullable"
+struct.CTRunDelegateCallbacks.fields.getDescent.nullability = "nullable"
+struct.CTRunDelegateCallbacks.fields.getWidth.nullability = "nullable"
+
 ##
 ## Fixing bounds information.
 ##

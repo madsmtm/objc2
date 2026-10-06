@@ -477,6 +477,13 @@ impl LibraryConfig {
         }
 
         let allowed_in = empty()
+            .chain(self.struct_data.values())
+            .chain(self.union_data.values());
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.fields, Default::default());
+        }
+
+        let allowed_in = empty()
             .chain(self.enum_data.values())
             .chain(self.statics.values())
             .chain(self.const_data.values());
@@ -602,6 +609,10 @@ pub struct StmtData {
     // Classes and protocols.
     #[serde(default)]
     pub methods: HashMap<String, MethodData>,
+
+    /// Structs and unions.
+    #[serde(default)]
+    pub fields: HashMap<String, FieldData>,
 
     // Enums, constants and statics.
     #[serde(rename = "use-value")]
@@ -863,6 +874,15 @@ impl MethodData {
             return_: self.return_.merge_with_superclass(superclass.return_),
         }
     }
+}
+
+#[derive(Deserialize, Debug, Default, Clone, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct FieldData {
+    #[serde(default)]
+    pub nullability: Option<Nullability>,
+    #[serde(default)]
+    pub generics: Option<Vec<ItemGeneric>>,
 }
 
 impl LibraryConfig {

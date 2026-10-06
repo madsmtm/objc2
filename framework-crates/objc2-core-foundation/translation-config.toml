@@ -1260,9 +1260,8 @@ fn.CFUserNotificationCreate.arguments.4.generics = ["CoreFoundation.CFString.CFS
 fn.CFUserNotificationGetResponseDictionary.return.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.CFUserNotificationUpdate.arguments.3.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 
-# TODO: Support this in `header-translator`
-# struct.CFXMLElementInfo.fields.0.generics = [...]
-# struct.CFXMLElementInfo.fields.1.generics = [...]
+struct.CFXMLElementInfo.fields.attributes.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+struct.CFXMLElementInfo.fields.attributeOrder.generics = ["CoreFoundation.CFString.CFString"]
 
 # TODO.
 fn.CFXMLTreeCreateFromDataWithError.arguments.5.generics = []

@@ -4963,7 +4963,7 @@ impl Ty {
         }
     }
 
-    fn change_generics(&mut self, new: &[ItemGeneric]) {
+    pub(crate) fn change_generics(&mut self, new: &[ItemGeneric]) {
         fn to_cf(generic: &ItemGeneric) -> PointeeTy {
             PointeeTy::CFTypeDef {
                 id: generic.id.clone(),
