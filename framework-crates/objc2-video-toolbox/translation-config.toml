@@ -14,6 +14,9 @@ const.kVTDecodeFrame_DoNotOutputFrame.renamed = "Frame_DoNotOutputFrame"
 const.kVTDecodeFrame_1xRealTimePlayback.renamed = "Frame_1xRealTimePlayback"
 const.kVTDecodeFrame_EnableTemporalProcessing.renamed = "Frame_EnableTemporalProcessing"
 
+# Redefined to avoid encoding error when used in `AVPlannedVideoSegmentWritingRequest`
+typedef.VTCompressionOutputCallback.skipped = true
+
 ##
 ## Pointer bounds
 ##
