@@ -567,7 +567,7 @@ fn get_translation_unit<'i: 'c, 'c>(
         "-Xclang",
         "-emit-module",
         &module_name,
-        "-fsystem-module",
+        // "-fsystem-module",
         // "-fmodules-validate-system-headers",
         // "-fmodules-search-all",
         "-Xclang",
@@ -576,7 +576,7 @@ fn get_translation_unit<'i: 'c, 'c>(
         // "-fmodule-feature",
         // "-Xclang",
         // "swift",
-        "-disable-objc-default-synthesize-properties",
+        // "-disable-objc-default-synthesize-properties",
         // Explicitly enable API notes (implicitly enabled by -fmodules).
         "-fapinotes",
         "-fapinotes-modules",
