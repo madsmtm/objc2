@@ -570,6 +570,8 @@ fn.SecDecryptTransformCreate.return.nullability = "nullable"
 
 fn.SecTransformExecute.return.nullability = "nullable"
 
+static.kSecRandomDefault.nullability = "nullable"
+
 ##
 ## Lifetime.
 ##
