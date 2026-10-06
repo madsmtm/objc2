@@ -567,6 +567,7 @@ pub enum Stmt {
     ExternMethods {
         location: Location,
         availability: Availability,
+        should_show_availability: bool,
         cls: ItemIdentifier,
         cls_superclasses: Vec<ItemIdentifier>,
         cls_generics: Vec<GenericWithBound>,
@@ -976,7 +977,8 @@ impl Stmt {
                             ));
                             Some(Self::ExternMethods {
                                 location: id.location().clone(),
-                                availability: Availability::default(),
+                                availability: availability.clone(),
+                                should_show_availability: false,
                                 cls: id.clone(),
                                 cls_superclasses: cls_superclasses.clone(),
                                 cls_generics: generics.clone(),
@@ -989,9 +991,10 @@ impl Stmt {
 
                 let methods = Self::ExternMethods {
                     location: id.location().clone(),
+                    availability: availability.clone(),
                     // The class is already marked with this availability, so
                     // no need to mark the impl as well.
-                    availability: Availability::default(),
+                    should_show_availability: false,
                     cls: id.clone(),
                     cls_superclasses: cls_superclasses.clone(),
                     cls_generics: generics.clone(),
@@ -1167,6 +1170,7 @@ impl Stmt {
                                 // Assume that immutable/mutable pairs have the
                                 // same availability ...
                                 availability: availability.clone(),
+                                should_show_availability: true,
                                 cls: subclass,
                                 // ... the same required items ...
                                 cls_superclasses: cls_superclasses.clone(),
@@ -1186,6 +1190,7 @@ impl Stmt {
                     iter::once(Self::ExternMethods {
                         location: category.location().clone(),
                         availability: availability.clone(),
+                        should_show_availability: true,
                         cls: cls.clone(),
                         cls_superclasses: cls_superclasses.clone(),
                         cls_generics: generics.clone(),
@@ -2771,6 +2776,7 @@ impl Stmt {
                 Self::ExternMethods {
                     location: _,
                     availability,
+                    should_show_availability,
                     cls,
                     cls_superclasses: _,
                     cls_generics,
@@ -2778,7 +2784,9 @@ impl Stmt {
                     documentation,
                 } => {
                     write!(f, "{}", documentation.fmt(None))?;
-                    write!(f, "{availability}")?;
+                    if *should_show_availability {
+                        write!(f, "{availability}")?;
+                    }
                     write!(f, "{}", self.cfg_gate_ln(config))?;
                     // TODO: Add ?Sized here once `extern_methods!` supports it.
                     write!(
