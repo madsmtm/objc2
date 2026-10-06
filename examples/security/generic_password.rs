@@ -33,8 +33,7 @@ fn generic_password(service: &str, account: &str) -> Result<Option<CFRetained<CF
     // The output must be None on entry. The binding takes ownership of the
     // returned object's retain count, so no manual retain or release is needed.
     let mut result = None;
-    // SAFETY: Each query value has the type required by its key, and result is
-    // a valid output parameter initialized to None.
+    // SAFETY: Each query value has the type required by its key.
     let status = unsafe { SecItemCopyMatching(&query, Some(&mut result)) };
     if status == errSecItemNotFound {
         return Ok(None);
