@@ -3,6 +3,7 @@
 //! Try to keep these as few as possible, since they have a hard time
 //! inspecting other crates.
 use std::collections::{BTreeMap, HashMap};
+use std::str::FromStr;
 use std::{iter, mem};
 
 use crate::availability::Availability;
@@ -12,7 +13,7 @@ use crate::method::Method;
 use crate::module::Module;
 use crate::name_translation::{find_fn_implementor, shorten_name_when_on_parent};
 use crate::stmt::{GenericWithBound, Stmt};
-use crate::{Config, ItemIdentifier, Library};
+use crate::{Config, ItemIdentifier, Library, Location};
 
 pub fn global_analysis(library: &mut Library, config: &Config) {
     let _span = info_span!("analyzing").entered();
@@ -22,7 +23,10 @@ pub fn global_analysis(library: &mut Library, config: &Config) {
 
     for (external_name, external_data) in &library.data.external {
         implementable_mapping.insert(
-            ItemTree::from_id(external_data.clone().into_id(external_name.clone())),
+            ItemTree::from_id(ItemIdentifier::from_raw(
+                external_name.clone(),
+                Location::from_str(&external_data.module).unwrap(),
+            )),
             Vec::new(),
         );
     }
@@ -31,7 +35,11 @@ pub fn global_analysis(library: &mut Library, config: &Config) {
         .libraries
         .values()
         .flat_map(|data| &data.class_data)
-        .filter_map(|(name, data)| data.bridged_to.as_ref().map(|bridged| (&**name, bridged)))
+        .filter_map(|(name, data)| {
+            data.bridged_to
+                .as_ref()
+                .map(|bridged| (&**name, ItemIdentifier::from_str(bridged).unwrap()))
+        })
         .filter(|(_, bridged)| bridged.library_name() == library.link_name)
         .collect();
 
@@ -80,7 +88,7 @@ fn update_module(
     module: &mut Module,
     implementable_mapping: &BTreeMap<ItemTree, Vec<GenericWithBound>>,
     ident_mapping: &HashMap<String, Expr>,
-    expected_bridged_types: &mut BTreeMap<&str, &ItemIdentifier>,
+    expected_bridged_types: &mut BTreeMap<&str, ItemIdentifier>,
 ) {
     // Fix location for GetTypeId functions
     for stmt in module.stmts.iter_mut() {
@@ -413,7 +421,7 @@ fn update_module(
         } = stmt
         {
             if let Some(bridged_typedef) = expected_bridged_types.remove(&**bridged_class) {
-                if bridged_typedef != id {
+                if bridged_typedef != *id {
                     warn!("incorrect bridged typedef for {bridged_class}: found `{bridged_typedef}`, expected `{id}`");
                 }
             } else {

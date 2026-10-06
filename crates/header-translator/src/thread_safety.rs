@@ -1,11 +1,11 @@
 use clang::{Entity, EntityKind};
-use serde::Deserialize;
 
 use crate::{
+    context::LibraryFromLocation,
     immediate_children,
     method::MethodModifiers,
     protocol::parse_direct_protocols,
-    stmt::{method_or_property_entities, parse_superclasses},
+    stmt::{method_or_property_entities, parse_superclasses, stmt_data},
     unexposed_attr::UnexposedAttr,
     Context, ItemIdentifier,
 };
@@ -36,7 +36,7 @@ fn parse(entity: &Entity<'_>, context: &Context<'_>) -> (Option<bool>, bool) {
     (sendable, mainthreadonly)
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub(crate) enum ThreadSafetyAttr {
     /// The item is only accessible from the main thread.
     ///
@@ -78,7 +78,7 @@ impl ThreadSafetyAttr {
 
         let id = ItemIdentifier::new(entity, context);
 
-        let data = context.library(&id).get(entity);
+        let data = stmt_data(context.library(&id), entity);
 
         match entity.get_kind() {
             EntityKind::ObjCInterfaceDecl if is_decl => {

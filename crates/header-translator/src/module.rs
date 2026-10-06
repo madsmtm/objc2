@@ -6,6 +6,7 @@ use std::path::Path;
 use std::{fmt, fs};
 
 use crate::cfgs::PlatformCfg;
+use crate::context::LibraryFromLocation;
 use crate::display_helper::FormatterFn;
 use crate::id::{cfg_gate_ln, ItemTree};
 use crate::stmt::Stmt;
