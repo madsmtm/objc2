@@ -4382,8 +4382,14 @@ impl Ty {
 
     pub(crate) fn method_argument_encoding_type(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),
-            _ => write!(f, "{}", self.plain(true)),
+            Self::Primitive(Primitive::C99Bool | Primitive::ObjcBool) => write!(f, "Bool"),
+            // Make most-pointers use `plain` encoding (e.g. don't try
+            // anything fancy with `&` etc.), except for function pointers,
+            // for which we want to use the `method_argument` override.
+            Self::Pointer { pointee, .. } if !self.is_fn_ptr() => {
+                write!(f, "{}", self.argument(true))
+            }
+            _ => write!(f, "{}", self.method_argument()),
         })
     }
 
