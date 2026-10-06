@@ -6,6 +6,7 @@ use std::fmt;
 use std::fmt::Display;
 use std::iter;
 
+use clang::TypeKind;
 use clang::{Entity, EntityKind, EntityVisitResult};
 
 use crate::availability::Availability;
@@ -520,25 +521,24 @@ pub enum Encoding {
     Struct { name: String },
 }
 
-/// Recurse through typedef decls looking for
-/// the inner struct name (or a void*).
-///
-/// This is neither optimal nor pretty...
+/// Find the inner struct name, or a `void*`.
 fn find_encoding(entity: &Entity<'_>) -> Encoding {
-    let mut encoding = None;
-    immediate_children(entity, |entity, _span| match entity.get_kind() {
-        EntityKind::StructDecl => {
-            encoding = Some(Encoding::Struct {
-                name: entity.get_name().unwrap(),
-            });
-        }
-        EntityKind::TypeRef => {
-            let entity = entity.get_reference().expect("ref to have reference");
-            encoding = Some(find_encoding(&entity));
-        }
-        _ => {}
-    });
-    encoding.unwrap_or(Encoding::Void)
+    let ty = entity
+        .get_type()
+        .expect("entity to have type")
+        .get_canonical_type();
+    assert_eq!(ty.get_kind(), TypeKind::Pointer);
+    let ty = ty.get_pointee_type().unwrap().get_canonical_type();
+
+    if ty.get_kind() == TypeKind::Record {
+        let entity = ty.get_declaration().unwrap();
+        let name = entity.get_name().unwrap();
+        Encoding::Struct { name }
+    } else if ty.get_kind() == TypeKind::Void {
+        Encoding::Void
+    } else {
+        panic!("could not figure out encoding: {entity:?}, {ty:?}")
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -1635,8 +1635,7 @@ impl Stmt {
 
                     stmts.push(Self::OpaqueDecl {
                         id,
-                        // TODO
-                        encoding: Encoding::Void,
+                        encoding: find_encoding(entity),
                         availability: availability.clone(),
                         documentation: documentation.clone(),
                         sendable,
