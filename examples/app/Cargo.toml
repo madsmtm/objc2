@@ -18,6 +18,10 @@ path = "default_xcode_app/main.rs"
 name = "hello_world_app"
 path = "hello_world_app.rs"
 
+[[example]]
+name = "memory_pressure"
+path = "memory_pressure.rs"
+
 [features]
 unstable-darwin-objc = [
     "objc2/unstable-darwin-objc",
@@ -26,14 +30,20 @@ unstable-darwin-objc = [
 ]
 
 [dependencies]
+block2 = "0.6.2"
+dispatch2 = "0.3.1"
 objc2 = "0.6.2"
 objc2-foundation = { version = "0.3.2", default-features = false, features = [
     "std",
+    "block2",
     "NSNotification",
-    "NSString",
     "NSObject",
+    "NSOperation",
+    "NSString",
     "NSThread",
 ] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
 objc2-app-kit = { version = "0.3.2", default-features = false, features = [
     "std",
     "objc2-core-foundation",
@@ -52,4 +62,20 @@ objc2-app-kit = { version = "0.3.2", default-features = false, features = [
     "NSWindowController",
     "NSMenu",
     "NSMenuItem",
+] }
+
+[target.'cfg(any(target_os = "ios", target_os = "tvos", target_os = "visionos"))'.dependencies]
+objc2-ui-kit = { version = "0.3.1", default-features = false, features = [
+    "std",
+    "UIApplication",
+    "UIResponder",
+    "UIScene",
+    "UISceneConfiguration",
+    "UISceneDefinitions",
+    "UISceneOptions",
+    "UISceneSession",
+    "UIView",
+    "UIViewController",
+    "UIWindow",
+    "UIWindowScene",
 ] }
