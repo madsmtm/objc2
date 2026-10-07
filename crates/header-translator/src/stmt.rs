@@ -4095,6 +4095,17 @@ impl Stmt {
         if cls.name == "PHAsset" {
             return None;
         }
+        // These hang in CI for some reason?
+        if cls.name == "BAAssetPackManager"
+            || cls.name == "GKGameActivity"
+            // Unsure which GameSave API
+            || cls.name == "GSSyncedDirectoryVersion"
+            || cls.name == "GSSyncedDirectoryState"
+            || cls.name == "GSSyncedDirectory"
+            || cls.name == "LSLinkSecurityManager"
+        {
+            return None;
+        }
 
         Some(FormatterFn(move |f| {
             write!(
