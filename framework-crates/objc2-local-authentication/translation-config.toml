@@ -15,3 +15,73 @@ enum.LAPolicy.use-value = true
 enum.LACredentialType.use-value = true
 enum.LAError.use-value = true
 enum.LAAccessControlOperation.use-value = true
+
+unsafe-default-safety.documentation-is-reviewed = true
+unsafe-default-safety.bounds-checked-internally = true
+
+# Construction increments process-wide `+newInstanceId` and `+newCommandId`
+# counters without atomics or a lock (observed on macOS 26.6.2).
+class.LAContext.methods.init.unsafe = true
+class.LAContext.methods.new.unsafe = true
+class.LARight.methods.init.unsafe = true
+class.LARight.methods."initWithRequirement:".unsafe = true
+class.LARight.methods.new.unsafe = true
+
+# Increments the process-wide command counter, and its error path replaces the
+# process-wide cached biometry type.
+class.LAContext.methods."canEvaluatePolicy:error:".unsafe = true
+
+# Reads the process-wide cached biometry type without retaining it, while
+# other contexts and evaluation completions replace and release it unguarded.
+class.LAContext.methods.biometryType.unsafe = true
+class.LAContext.methods.domainState.unsafe = true
+class.LAContext.methods.evaluatedPolicyDomainState.unsafe = true
+
+# Deprecated and not reviewed.
+class.LAContext.methods.maxBiometryFailures.unsafe = true
+class.LAContext.methods."setMaxBiometryFailures:".unsafe = true
+
+# The reply runs on a framework queue and updates process-wide state shared
+# with construction. Its error pointer may be null.
+class.LAContext.methods."evaluatePolicy:localizedReason:reply:".unsafe = true
+class.LAContext.methods."evaluateAccessControl:operation:localizedReason:reply:".unsafe = true
+
+# The completion runs on a framework queue and writes the right's `state`.
+# Its error pointer may be null.
+class.LARight.methods."authorizeWithLocalizedReason:completion:".unsafe = true
+class.LARight.methods."checkCanAuthorizeWithCompletion:".unsafe = true
+class.LARight.methods."deauthorizeWithCompletion:".unsafe = true
+
+# Reads `_state` directly while authorization completions write it from a
+# framework queue.
+class.LARight.methods.state.unsafe = true
+
+# Completion result and error pointers may be null.
+class.LARightStore.methods."rightForIdentifier:completion:".unsafe = true
+class.LARightStore.methods."saveRight:identifier:completion:".unsafe = true
+class.LARightStore.methods."saveRight:identifier:secret:completion:".unsafe = true
+class.LARightStore.methods."removeRight:completion:".unsafe = true
+class.LARightStore.methods."removeRightForIdentifier:completion:".unsafe = true
+class.LARightStore.methods."removeAllRightsWithCompletion:".unsafe = true
+class.LAPrivateKey.methods."signData:secKeyAlgorithm:completion:".unsafe = true
+class.LAPrivateKey.methods."decryptData:secKeyAlgorithm:completion:".unsafe = true
+class.LAPrivateKey.methods."exchangeKeysWithPublicKey:secKeyAlgorithm:secKeyParameters:completion:".unsafe = true
+class.LAPublicKey.methods."exportBytesWithCompletion:".unsafe = true
+class.LAPublicKey.methods."encryptData:secKeyAlgorithm:completion:".unsafe = true
+class.LAPublicKey.methods."verifyData:signature:secKeyAlgorithm:completion:".unsafe = true
+class.LASecret.methods."loadDataWithCompletion:".unsafe = true
+
+# The observer is held weakly and called on a framework queue.
+class.LAEnvironment.methods."addObserver:".unsafe = true
+class.LAEnvironment.methods."removeObserver:".unsafe = true
+protocol.LAEnvironmentObserver.methods."environment:stateDidChangeFromOldState:".unsafe = true
+
+# Inherited from `NSObject` with unspecified behaviour, instances come from the
+# class factory methods.
+class.LAAuthenticationRequirement.methods.init.unsafe = true
+class.LAAuthenticationRequirement.methods.new.unsafe = true
+class.LABiometryFallbackRequirement.methods.init.unsafe = true
+class.LABiometryFallbackRequirement.methods.new.unsafe = true
+
+# Instances are only obtained through `LARightStore`.
+class.LAPersistedRight.methods."initWithRequirement:".unsafe = true
