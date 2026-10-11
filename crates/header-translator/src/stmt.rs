@@ -2175,7 +2175,7 @@ impl Stmt {
                 let safe = if let Some(unsafe_) = data.unsafe_ {
                     if safety.is_unsafe() && !unsafe_ {
                         // TODO(breaking): Disallow these.
-                        error!(?id, "unsafe function was marked as safe");
+                        error!(?id, ?safety, "unsafe function was marked as safe");
                     }
                     !unsafe_
                 } else {

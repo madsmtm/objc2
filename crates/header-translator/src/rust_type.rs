@@ -1363,7 +1363,9 @@ impl PointeeTy {
 
                 safety
             }
-            Self::CFOpaque => TypeSafety::unsafe_in_argument("must be of the correct type"),
+            // CF generic parameters are of unknown safety (requires that
+            // they're properly bound, though we don't know that here).
+            Self::CFOpaque => TypeSafety::unknown_in_argument("must be of the correct type"),
             // Dispatch objects have strong type-safety, and are thus
             // safe in both positions.
             Self::DispatchTypeDef { .. } => TypeSafety::SAFE,

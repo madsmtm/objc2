@@ -38,6 +38,7 @@ fn.CFURLGetFSRef.skipped = true
 # Needs acl_t, which is not exposed by libc
 fn.CFFileSecurityCopyAccessControlList.skipped = true
 fn.CFFileSecuritySetAccessControlList.skipped = true
+const.kCFFileSecurityRemoveACL.skipped = true
 
 # Different definition depending on pointer width
 typedef.CGFloat.skipped = true
@@ -1356,9 +1357,6 @@ fn.CFNumberFormatterCreateNumberFromString.unsafe = true # Unsure if range out o
 
 # CFPlugIn
 fn.CFPlugInInstanceCreateWithInstanceDataSize.unsafe = true # Callbacks, must be sendable?
-
-# TODO(breaking): Maybe mark this as `unsafe`?
-fn.CFPreferencesCopyMultiple.unsafe = false
 
 # CFRunLoop
 fn.CFRunLoopCopyCurrentMode.unsafe = false
