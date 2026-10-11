@@ -1,6 +1,6 @@
 //! Run test with:
 //! ```sh
-//! cargo test -ptests --features unstable-simd,objc2/disable-encoding-assertions
+//! cargo test -ptests --features unstable-simd
 //! ```
 use core::ffi::{c_char, c_float};
 use core::simd::Simd;
@@ -26,7 +26,7 @@ static FIX_LINKING: &objc2::runtime::AnyClass = {
 macro_rules! methods {
     ($(
         $(#[$($m:tt)*])*
-        $name:ident $(($padding:expr))?: $ty:ty { $expr:expr }
+        $name:ident: $ty:ty { $expr:expr }
     )*) => {$(
         #[test]
         $(#[$($m)*])*
@@ -41,9 +41,9 @@ macro_rules! methods {
 
             let res = TestSimdReturn::$name();
             #[allow(unnecessary_transmutes)]
-            let res_bytes = unsafe { core::mem::transmute_copy::<$ty, [u8; {size_of::<$ty>() $(- $padding)?}]>(&res) };
+            let res_bytes = unsafe { core::mem::transmute_copy::<$ty, [u8; {size_of::<$ty>()}]>(&res) };
             #[allow(unnecessary_transmutes)]
-            let expr_bytes = unsafe { core::mem::transmute_copy::<$ty, [u8; {size_of::<$ty>() $(- $padding)?}]>(&$expr) };
+            let expr_bytes = unsafe { core::mem::transmute_copy::<$ty, [u8; {size_of::<$ty>()}]>(&$expr) };
             assert_eq!(res_bytes, expr_bytes);
         }
     )*};
@@ -70,11 +70,11 @@ struct Float4(Simd<f32, 4>);
 encode_none!(Float4);
 
 #[repr(transparent)]
-struct Float8([f32; 8]);
+struct Float8([f32; 8]); // Not supported by ABI checks
 encode_none!(Float8);
 
 #[repr(transparent)]
-struct Float16([f32; 16]);
+struct Float16([f32; 16]); // Not supported by ABI checks
 encode_none!(Float16);
 
 #[repr(transparent)]
@@ -98,11 +98,11 @@ struct Char16(Simd<i8, 16>);
 encode_none!(Char16);
 
 #[repr(transparent)]
-struct Char32([i8; 32]);
+struct Char32([i8; 32]); // Not supported by ABI checks
 encode_none!(Char32);
 
 #[repr(transparent)]
-struct Char64([i8; 64]);
+struct Char64([i8; 64]); // Not supported by ABI checks
 encode_none!(Char64);
 
 #[repr(C)]
@@ -137,42 +137,42 @@ unsafe impl Encode for Float4x4 {
 methods! {
     float1: c_float { 42.0 }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
-    float2: Float2 { Float2(Simd::splat(42.0)) }
+    float2: Float2 { Float2([42.0; 2].into()) }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
-    float3 (4): Float3 { Float3(Simd::splat(42.0)) }
+    float3: Float3 { Float3([42.0; 3].into()) }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
-    float4: Float4 { Float4(Simd::splat(42.0)) }
+    float4: Float4 { Float4([42.0; 4].into()) }
     #[cfg_attr(not(target_arch = "aarch64"), ignore = "Rust does not yet support SIMD in FFI")]
-    float8: Float8 { Float8([42.0; 8]) }
+    float8: Float8 { Float8([42.0; 8].into()) }
     #[cfg_attr(not(target_arch = "aarch64"), ignore = "Rust does not yet support SIMD in FFI")]
-    float16: Float16 { Float16([42.0; 16]) }
+    float16: Float16 { Float16([42.0; 16].into()) }
 
     char1: c_char { 42 }
-    char2: Char2 { Char2(Simd::splat(42)) }
+    #[cfg_attr(target_arch = "x86_64", ignore = "Rust does not yet support SIMD in FFI")]
+    char2: Char2 { Char2([42; 2].into()) }
+    #[cfg_attr(target_arch = "aarch64", ignore = "Rust does not yet support SIMD in FFI")]
+    char3: Char3 { Char3([42; 3].into()) }
     #[cfg_attr(target_arch = "x86", ignore = "Rust does not yet support SIMD in FFI")]
     #[cfg_attr(target_arch = "x86_64", ignore = "Rust does not yet support SIMD in FFI")]
-    char3 (1): Char3 { Char3(Simd::splat(42)) }
-    #[cfg_attr(target_arch = "x86", ignore = "Rust does not yet support SIMD in FFI")]
-    #[cfg_attr(target_arch = "x86_64", ignore = "Rust does not yet support SIMD in FFI")]
-    char4: Char4 { Char4(Simd::splat(42)) }
+    char4: Char4 { Char4([42; 4].into()) }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
-    char8: Char8 { Char8(Simd::splat(42)) }
+    char8: Char8 { Char8([42; 8].into()) }
     #[cfg_attr(target_pointer_width = "32", ignore = "Rust does not yet support SIMD in FFI")]
-    char16: Char16 { Char16(Simd::splat(42)) }
+    char16: Char16 { Char16([42; 16].into()) }
     #[cfg_attr(not(target_arch = "aarch64"), ignore = "Rust does not yet support SIMD in FFI")]
-    char32: Char32 { Char32([42; 32]) }
+    char32: Char32 { Char32([42; 32].into()) }
     #[cfg_attr(not(target_arch = "aarch64"), ignore = "Rust does not yet support SIMD in FFI")]
-    char64: Char64 { Char64([42; 64]) }
+    char64: Char64 { Char64([42; 64].into()) }
 
     #[cfg_attr(target_arch = "arm", ignore = "Rust does not yet support SIMD in FFI")]
-    quatf: Quatf { Quatf(Float4(Simd::splat(42.0))) }
+    quatf: Quatf { Quatf(Float4([42.0; 4].into())) }
 
     #[cfg_attr(target_arch = "arm", ignore = "Rust does not yet support SIMD in FFI")]
-    float2x2: Float2x2 { Float2x2([Float2(Simd::splat(42.0)), Float2(Simd::splat(42.0))]) }
+    float2x2: Float2x2 { Float2x2([Float2([42.0; 2].into()), Float2([42.0; 2].into())]) }
     #[cfg_attr(target_arch = "arm", ignore = "Rust does not yet support SIMD in FFI")]
     #[cfg_attr(target_arch = "aarch64", ignore = "Rust does not yet support SIMD in FFI")]
-    float2x4: Float2x4 { Float2x4([Float4(Simd::splat(42.0)), Float4(Simd::splat(42.0))]) }
+    float2x4: Float2x4 { Float2x4([Float4([42.0; 4].into()), Float4([42.0; 4].into())]) }
     #[cfg_attr(target_arch = "arm", ignore = "Rust does not yet support SIMD in FFI")]
     #[cfg_attr(target_arch = "aarch64", ignore = "Rust does not yet support SIMD in FFI")]
-    float4x4: Float4x4 { Float4x4([Float4(Simd::splat(42.0)), Float4(Simd::splat(42.0)), Float4(Simd::splat(42.0)), Float4(Simd::splat(42.0))]) }
+    float4x4: Float4x4 { Float4x4([Float4([42.0; 4].into()), Float4([42.0; 4].into()), Float4([42.0; 4].into()), Float4([42.0; 4].into())]) }
 }

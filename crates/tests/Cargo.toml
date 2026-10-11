@@ -13,7 +13,7 @@ workspace = true
 exception = ["objc2/exception"]
 catch-all = ["objc2/catch-all", "exception"]
 
-unstable-simd = []
+unstable-simd = ["objc2/disable-encoding-assertions"] # TODO
 
 gnustep-1-7 = ["block2/gnustep-1-7", "objc2/gnustep-1-7", "objc2-foundation/gnustep-1-7"]
 gnustep-1-8 = ["gnustep-1-7", "block2/gnustep-1-8", "objc2/gnustep-1-8", "objc2-foundation/gnustep-1-8"]
