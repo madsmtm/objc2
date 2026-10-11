@@ -5,9 +5,6 @@ mod output_impls;
 mod register_impls;
 mod thunk;
 
-use core::cell::UnsafeCell;
-use core::mem::MaybeUninit;
-
 pub use self::checks::*;
 pub use self::encoding::*;
 pub use self::ivars::*;
@@ -28,7 +25,8 @@ pub use self::thunk::*;
 ///
 /// The class is guaranteed to have been created and registered with the
 /// Objective-C runtime after the [`ClassType::class`] function has been
-/// called.
+/// called. It might have been registered before that (such as in a static
+/// constructor).
 ///
 /// See [Apple's documentation] on defining classes for a more in-depth
 /// introduction.
@@ -657,91 +655,74 @@ macro_rules! __define_class_inner {
             )]
             static __OBJC2_CLASS: $crate::__macros::SyncUnsafeCell<
                 $crate::__macros::MaybeUninit<&'static $crate::runtime::AnyClass>
-            > = $crate::__macros::SyncUnsafeCell::new(if $crate::__define_class_name_is_auto_generated!($($name)*) {
-                // HACK: Make sure that the static constructor is referenced
-                // if the class itself is used anywhere.
-                //
-                // This has a similar effect as `#[used]`, though scoped to
-                // only happen if this symbol is used in the final binary, to
-                // hopefully allow dead-code elimination when the class isn't
-                // used.
-                //
-                // This is needed to ensure that the linker will see the
-                // special static (which it otherwise might not if it ends up
-                // in a different object file than the rest of the class
-                // implementation).
-                //
-                // Note that we never actually use this value, it's just here
-                // to reference the symbol from the linker's perspective.
-                // Ideally, Rust would expose a better way of doing this,
-                // though I'm not really aware of one.
-                $crate::__macros::MaybeUninit::new(
-                    unsafe { $crate::__macros::transmute::<&'static extern "C" fn(), &'static $crate::runtime::AnyClass>(&__OBJC2_INIT) }
-                )
-            } else {
-                // Don't do this weirdness if we don't have to. Using
-                // uninitialized memory here is also very slightly more
-                // performant.
-                $crate::__macros::MaybeUninit::uninit()
-            });
+            > = $crate::__macros::SyncUnsafeCell::new($crate::__macros::MaybeUninit::uninit());
 
             #[export_name = $crate::__macros::concat!(
                 "__IVAR_OFFSET_",
                 $crate::__define_class_name!($class, $($name)*),
             )]
-            static __OBJC2_IVAR_OFFSET: $crate::__macros::DefinedOffset = $crate::__macros::DefinedOffset::new(if $crate::__define_class_name_is_auto_generated!($($name)*) {
-                // See above for why we do this.
-                $crate::__macros::MaybeUninit::new($crate::__macros::addr_of!(__OBJC2_INIT).cast())
-            } else {
-                $crate::__macros::MaybeUninit::uninit()
-            });
+            static __OBJC2_IVAR_OFFSET: $crate::__macros::SyncUnsafeCell<
+                $crate::__macros::MaybeUninit<$crate::__macros::isize>
+            > = $crate::__macros::SyncUnsafeCell::new($crate::__macros::MaybeUninit::uninit());
 
             #[export_name = $crate::__macros::concat!(
                 "__DROP_FLAG_OFFSET_",
                 $crate::__define_class_name!($class, $($name)*),
             )]
-            static __OBJC2_DROP_FLAG_OFFSET: $crate::__macros::DefinedOffset = $crate::__macros::DefinedOffset::new(if $crate::__define_class_name_is_auto_generated!($($name)*) {
-                // See above for why we do this.
-                $crate::__macros::MaybeUninit::new($crate::__macros::addr_of!(__OBJC2_INIT).cast())
-            } else {
-                $crate::__macros::MaybeUninit::uninit()
-            });
+            static __OBJC2_DROP_FLAG_OFFSET: $crate::__macros::SyncUnsafeCell<
+                $crate::__macros::MaybeUninit<$crate::__macros::isize>
+            > = $crate::__macros::SyncUnsafeCell::new($crate::__macros::MaybeUninit::uninit());
 
-            // If a custom name is specified, add `#[used]`, since that
-            // implies that the class is publicly exposed, and might be
-            // referenced by a storyboard or an `Info.plist`.
+            // Initialize the class in a static constructor.
             //
-            // This is also detected by the compiler, which means that
-            // unused warnings will not trigger when the class has a name.
-            $crate::__define_class_add_used_if_has_name! {
-                ($($name)*)
-
-                // Initialize the class in a static constructor.
-                //
-                // Ideally, we would define the entire class in statics, see
-                // https://github.com/madsmtm/objc2/issues/604.
-                //
-                // That is hard though, so in the meantime, we at least make
-                // sure the class is actually defined at program startup,
-                // instead of the user having to call `$class::class()`.
-                //
-                // This is also needed to work around
-                //
-                // See https://github.com/madsmtm/objc2/issues/825.
-                #[cfg_attr(target_vendor = "apple", link_section = "__DATA,__mod_init_func,mod_init_funcs")]
-                #[cfg_attr(target_os = "windows", link_section = ".CRT$XCU")]
-                #[cfg_attr(target_arch = "xtensa", link_section = ".ctors")]
-                #[cfg_attr(
-                    not(any(target_vendor = "apple", target_os = "windows", target_arch = "xtensa")),
-                    link_section = ".init_array",
-                )]
-                static __OBJC2_INIT: extern "C" fn() = {
-                    extern "C" fn init() {
-                        let _ = <$class as $crate::ClassType>::class();
-                    }
-                    init
-                };
-            }
+            // Ideally, we would define the entire class in statics, see
+            // https://github.com/madsmtm/objc2/issues/604.
+            //
+            // That is hard though, so in the meantime, we at least make
+            // sure the class is actually defined at program startup,
+            // instead of the user having to call `$class::class()`.
+            //
+            // This is also needed to work around
+            //
+            // See https://github.com/madsmtm/objc2/issues/825.
+            #[cfg_attr(target_vendor = "apple", link_section = "__DATA,__mod_init_func,mod_init_funcs")]
+            #[cfg_attr(target_os = "windows", link_section = ".CRT$XCU")]
+            #[cfg_attr(target_arch = "xtensa", link_section = ".ctors")]
+            #[cfg_attr(
+                not(any(target_vendor = "apple", target_os = "windows", target_arch = "xtensa")),
+                link_section = ".init_array",
+            )]
+            // `#[used]` is needed to ensure that the linker will see the
+            // special static (which it otherwise might not if it ends up
+            // in a different translation unit than the rest of the class
+            // implementation).
+            //
+            // Ideally, we would only add `#[used]` if a custom name is
+            // specified, since that implies that the class is publicly
+            // exposed and referenced by a storyboard or `Info.plist` etc.
+            //
+            // Unfortunately, we also need to add it when no custom name is
+            // specified, since there isn't otherwise a way to ensure that
+            // the class is initialized before `__ivars_offset` etc. is
+            // called. This breaks dead-code elimination.
+            //
+            // Ideally, Rust would expose a better way of ensuring this static
+            // ends up in the same translation unit as the statics above / is
+            // referenced by the translation unit that `__OBJC2_CLASS` is in.
+            //
+            // (You'd think we could work around it with
+            // `black_box(&__OBJC2_INIT)` or `__OBJC2_CLASS = &__OBJC2_INIT`,
+            // but both of those cause linker errors when `-fixup_chains` is
+            // passed (which it is with newer deployment targets)).
+            #[used]
+            // ^ is detected by the compiler, which means that unused warnings
+            // etc. will not trigger.
+            static mut __OBJC2_INIT: extern "C" fn() = {
+                extern "C" fn init() {
+                    let _ = <$class as $crate::ClassType>::class();
+                }
+                init
+            };
 
             // Creation
             unsafe impl $crate::ClassType for $class {
@@ -796,10 +777,10 @@ macro_rules! __define_class_inner {
                         unsafe {
                             __OBJC2_CLASS.get().write($crate::__macros::MaybeUninit::new(__objc2_cls));
                             if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_IVARS {
-                                __OBJC2_IVAR_OFFSET.set(__objc2_ivar_offset);
+                                __OBJC2_IVAR_OFFSET.get().write($crate::__macros::MaybeUninit::new(__objc2_ivar_offset));
                             }
                             if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_DROP_FLAG {
-                                __OBJC2_DROP_FLAG_OFFSET.set(__objc2_drop_flag_offset);
+                                __OBJC2_DROP_FLAG_OFFSET.get().write($crate::__macros::MaybeUninit::new(__objc2_drop_flag_offset));
                             }
                         }
                     });
@@ -854,7 +835,7 @@ macro_rules! __define_class_inner {
                         // been called before the dylib gets to access data
                         // from a calling dylib, so we can still rely on this
                         // being valid then).
-                        unsafe { __OBJC2_IVAR_OFFSET.get() }
+                        unsafe { __OBJC2_IVAR_OFFSET.get().read().assume_init() }
                     } else {
                         // Fall back to an offset of zero.
                         //
@@ -868,7 +849,7 @@ macro_rules! __define_class_inner {
                 fn __drop_flag_offset() -> $crate::__macros::isize {
                     if <Self as $crate::__macros::DefinedIvarsHelper>::HAS_DROP_FLAG {
                         // SAFETY: Same as above.
-                        unsafe { __OBJC2_DROP_FLAG_OFFSET.get() }
+                        unsafe { __OBJC2_DROP_FLAG_OFFSET.get().read().assume_init() }
                     } else {
                         // Fall back to an offset of zero.
                         //
@@ -1067,19 +1048,6 @@ macro_rules! __define_class_name_is_auto_generated {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! __define_class_add_used_if_has_name {
-    (($name:expr) $($t:tt)*) => {
-        #[used]
-        $($t)*
-    };
-    (() $($t:tt)*) => {
-        // If no custom name is specified.
-        $($t)*
-    };
-}
-
-#[doc(hidden)]
-#[macro_export]
 macro_rules! __define_class_name {
     ($class:ident, $($name:tt)+) => {
         $($name)+
@@ -1141,39 +1109,6 @@ macro_rules! __define_class_ivar_accessors {
             "invalid ivars\n",
             $crate::__macros::stringify!($($ivars)*),
         ));
-    }
-}
-
-/// A helper for storing drop flag and ivar offsets in a static.
-#[derive(Debug)]
-pub struct DefinedOffset {
-    // Actually isize, but we want to sometimes store `&extern "C" fn()`, so
-    // needs to be a pointer.
-    inner: UnsafeCell<MaybeUninit<*const ()>>,
-}
-
-// SAFETY: We ensure proper synchronization by initializing with a `Once` in
-// `REGISTER_CLASS` before getting it out again.
-unsafe impl Sync for DefinedOffset {}
-
-impl DefinedOffset {
-    #[inline(always)]
-    pub const fn new(value: MaybeUninit<*const ()>) -> Self {
-        Self {
-            inner: UnsafeCell::new(value),
-        }
-    }
-
-    #[inline(always)]
-    pub unsafe fn set(&self, value: isize) {
-        // SAFETY: Upheld by caller.
-        unsafe { self.inner.get().write(MaybeUninit::new(value as *const ())) };
-    }
-
-    #[inline(always)]
-    pub unsafe fn get(&self) -> isize {
-        // SAFETY: Upheld by caller.
-        unsafe { self.inner.get().read().assume_init() as isize }
     }
 }
 

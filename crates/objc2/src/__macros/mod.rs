@@ -68,7 +68,7 @@ pub use self::cstr::class_c_name;
 pub use self::define_class::{
     define_class, method_encoding_str_array, method_encoding_str_len, ClassBuilderHelper,
     ClassFnKind, ClassFnResultKind, ClassProtocolMethodsBuilder, ConvertDefinedFn,
-    DefinedIvarsHelper, DefinedOffset, FnToExternFn, LifetimeAssign, MethodKind, MethodResultKind,
+    DefinedIvarsHelper, FnToExternFn, LifetimeAssign, MethodKind, MethodResultKind,
     ThreadKindAutoTraits,
 };
 pub use self::extern_class::{DoesNotImplDrop, MainThreadOnlyDoesNotImplSendSync, ValidThreadKind};
