@@ -8,3 +8,12 @@ macos = "10.4"
 class.OSALanguage.methods."initWithComponent:".skipped = true
 class.OSALanguage.methods.componentInstance.skipped = true
 class.OSALanguageInstance.methods.componentInstance.skipped = true
+
+###
+### Safety
+###
+
+# SAFETY: OSAKit methods are well-behaved.
+unsafe-default-safety.documentation-is-reviewed = true
+# OSAKit is internally bounds-checked.
+unsafe-default-safety.bounds-checked-internally = true

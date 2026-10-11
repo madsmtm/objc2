@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 * Marked a bunch of functions safe in:
   - `CoreText` / `objc2-core-text`.
+  - `OSAKit` / `objc2-osa-kit`.
   - `ScreenCaptureKit` / `objc2-screen-capture-kit`.
   - `Network` / `objc2-network`.
 * Added a few missing APIs that uses arrays.
