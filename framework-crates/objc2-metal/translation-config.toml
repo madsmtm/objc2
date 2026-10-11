@@ -186,6 +186,23 @@ protocol.MTLIntersectionFunctionTable.methods.gpuResourceID.unsafe = false
 protocol.MTLVisibleFunctionTable.unsafe = true
 protocol.MTLVisibleFunctionTable.methods.gpuResourceID.unsafe = false
 
+# SAFETY: Metal does not fully validate `MTLTensorDescriptor` in methods that
+# consume it, and can crash or create tensors that extend past their backing
+# buffer. Tested on Apple M5 Pro / macOS 27, see:
+# https://github.com/madsmtm/objc2/issues/782#issuecomment-6103681259
+#
+# Segfaults if `descriptor.strides` is nil and the rank is greater than 0 (it
+# does not validate the descriptor at all).
+protocol.MTLDevice.methods."tensorSizeAndAlignWithDescriptor:".unsafe = true
+# Validates the descriptor, but segfaults if the tensor's size in bytes exceeds
+# `maxBufferLength`, instead of returning an error.
+protocol.MTLDevice.methods."newTensorWithDescriptor:error:".unsafe = true
+# These validate the descriptor against the size of the backing buffer, but
+# that check is bypassed if computing the tensor's size from the dimensions and
+# strides overflows.
+protocol.MTLDevice.methods."newTensorWithDescriptor:attachments:error:".unsafe = true
+protocol.MTLBuffer.methods."newTensorWithDescriptor:offset:error:".unsafe = true
+
 # TODO(breaking): Mark these as unsafe, they probably require synchronization.
 class.MTLRenderPassAttachmentDescriptor.methods."setTexture:".unsafe = false
 class.MTLRenderPassAttachmentDescriptor.methods."setResolveTexture:".unsafe = false

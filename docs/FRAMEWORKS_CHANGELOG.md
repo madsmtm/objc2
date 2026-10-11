@@ -52,6 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Changed the value of `kUSBHostPortPropertyPortNumber`.
 * **BREAKING**: Fixed a bunch of nullability, bounds and generics information in various frameworks.
 * **BREAKING**: Made `NSWindow::delegate`/`NSWindow::setDelegate` `unsafe`, it breaks type-safety if used together with `NSSavePanel`.
+* **BREAKING**: Made `MTLDevice::tensorSizeAndAlignWithDescriptor` and `MTLDevice::newTensorWithDescriptor_error` `unsafe`, Metal does not fully validate the descriptor, and can crash. The new `MTLDevice::newTensorWithDescriptor_attachments_error` is `unsafe` for the same reason.
 * **BREAKING**: Renamed some deprecated `objc2-network-extension` classes to have a `NE` prefix instead of `NW` (to not clash with the types from `objc2-network`).
 * **BREAKING**: Renamed `BAAssetPackManager::getStatusOfAssetPackWithIdentifier_completionHandler` to `getLocalStatusOfAssetPackWithIdentifier_completionHandler`.
 * **BREAKING**: Marked `CPTemplateApplicationSceneDelegate` as `MainThreadOnly`.
