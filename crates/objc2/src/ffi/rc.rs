@@ -46,6 +46,8 @@ extern_c_unwind! {
     pub fn objc_retainAutorelease(value: *mut AnyObject) -> *mut AnyObject;
     pub fn objc_retainAutoreleaseReturnValue(value: *mut AnyObject) -> *mut AnyObject;
     pub fn objc_retainAutoreleasedReturnValue(value: *mut AnyObject) -> *mut AnyObject;
+    #[cfg(feature = "unstable-apple-new")]
+    pub fn objc_claimAutoreleasedReturnValue(value: *mut AnyObject) -> *mut AnyObject;
     // Defined in objc-abi.h
     pub fn objc_retainBlock(value: *mut AnyObject) -> *mut AnyObject;
 

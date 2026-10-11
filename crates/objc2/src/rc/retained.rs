@@ -544,10 +544,9 @@ impl<T: Message> Retained<T> {
             // On macOS 13.0 / iOS 16.0 / tvOS 16.0 / watchOS 9.0, the runtime
             // also checks the return pointer address, so we do not need to
             // emit this extra instruction when the deployment target is high
-            // enough, see this video:
+            // enough for `objc_claimAutoreleasedReturnValue` to be available,
+            // see this video:
             // https://developer.apple.com/videos/play/wwdc2022/110363/
-            //
-            // TODO: Use `objc_claimAutoreleasedReturnValue` in this case instead?
             #[cfg(all(target_arch = "aarch64", not(feature = "unstable-apple-new")))]
             unsafe {
                 // Same as `mov x29, x29`.
@@ -585,7 +584,12 @@ impl<T: Message> Retained<T> {
         //   (Note that tail-calls are probably not strictly broken on the
         //   32-bit targets, but we might as well enforce it everywhere to be
         //   sure, the extra `nop` doesn't cost that much).
+        #[cfg(not(all(target_arch = "aarch64", feature = "unstable-apple-new")))]
         let res: *mut T = unsafe { ffi::objc_retainAutoreleasedReturnValue(ptr.cast()) }.cast();
+        // With the newer runtime, we can avoid the nop instruction above if
+        // we use the `objc_claimAutoreleasedReturnValue` symbol instead.
+        #[cfg(all(target_arch = "aarch64", feature = "unstable-apple-new"))]
+        let res: *mut T = unsafe { ffi::objc_claimAutoreleasedReturnValue(ptr.cast()) }.cast();
 
         // Ideally, we'd be able to just tell the compiler that the above call
         // should never be tail-call optimized. Rust doesn't really have a

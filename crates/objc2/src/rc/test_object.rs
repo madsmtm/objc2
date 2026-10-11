@@ -293,7 +293,7 @@ impl RcTestObject {
 }
 
 #[allow(dead_code)]
-pub(crate) const AUTORELEASE_SKIPPED: bool = if cfg!(feature = "gnustep-1-7") {
+pub(crate) const AUTORELEASE_SKIPPED_ALWAYS: bool = if cfg!(feature = "gnustep-1-7") {
     // GNUStep does the optimization a different way, so it isn't
     // optimization-dependent.
     true
@@ -314,3 +314,14 @@ pub(crate) const AUTORELEASE_SKIPPED: bool = if cfg!(feature = "gnustep-1-7") {
     // seems to interfere with this for some reason?
     true
 };
+
+/// Whether autorelease calls can be elided on `RcTestObject`.
+#[allow(dead_code)]
+pub(crate) const AUTORELEASE_SKIPPED: bool =
+    if cfg!(all(target_arch = "aarch64", feature = "unstable-apple-new")) {
+        // `objc_claimAutoreleasedReturnValue` requires that the object doesn't
+        // have a custom retain/release/autorelease method.
+        false
+    } else {
+        AUTORELEASE_SKIPPED_ALWAYS
+    };

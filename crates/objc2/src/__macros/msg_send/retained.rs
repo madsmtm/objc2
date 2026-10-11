@@ -260,6 +260,7 @@ mod tests {
 
     use crate::rc::{
         autoreleasepool, Allocated, PartialInit, RcTestObject, ThreadTestData, AUTORELEASE_SKIPPED,
+        AUTORELEASE_SKIPPED_ALWAYS,
     };
     use crate::runtime::{AnyObject, NSObject, NSObjectProtocol, NSZone};
     use crate::{class, define_class, extern_methods, msg_send, AnyThread, Ivars};
@@ -856,7 +857,7 @@ mod tests {
             // When compiled in release mode / with optimizations enabled,
             // subsequent usage of `retain_autoreleased` will succeed in
             // retaining the autoreleased value!
-            let expected = if AUTORELEASE_SKIPPED { 1 } else { 2 };
+            let expected = if AUTORELEASE_SKIPPED_ALWAYS { 1 } else { 2 };
 
             let data = create_obj();
             assert_eq!(data.retainCount(), expected);
