@@ -1,20 +1,24 @@
 #![deny(unsafe_op_in_unsafe_fn)]
+#![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 use std::cell::OnceCell;
 
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
 use objc2::{define_class, msg_send, sel, Ivars, MainThreadOnly};
+#[cfg(target_os = "macos")]
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSApplicationDelegate, NSAutoresizingMaskOptions,
     NSBackingStoreType, NSColor, NSFont, NSMenu, NSMenuItem, NSTextAlignment, NSTextField,
     NSWindow, NSWindowDelegate, NSWindowStyleMask,
 };
+#[cfg(target_os = "macos")]
 use objc2_foundation::{
     ns_string, MainThreadMarker, NSNotification, NSObject, NSObjectProtocol, NSPoint, NSRect,
     NSSize,
 };
 
+#[cfg(target_os = "macos")]
 define_class!(
     // SAFETY:
     // - The superclass NSObject does not have any subclassing requirements.
@@ -136,6 +140,7 @@ define_class!(
     }
 );
 
+#[cfg(target_os = "macos")]
 impl Delegate {
     fn new(mtm: MainThreadMarker) -> Retained<Self> {
         let this = Self::alloc(mtm).set_ivars(Ivars::<Self> {
@@ -146,6 +151,7 @@ impl Delegate {
     }
 }
 
+#[cfg(target_os = "macos")]
 fn main() {
     let mtm = MainThreadMarker::new().unwrap();
 
@@ -154,4 +160,9 @@ fn main() {
     app.setDelegate(Some(ProtocolObject::from_ref(&*delegate)));
 
     app.run();
+}
+
+#[cfg(not(target_os = "macos"))]
+fn main() {
+    panic!("This example is currently only supported on macOS");
 }
