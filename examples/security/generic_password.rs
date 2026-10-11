@@ -2,8 +2,6 @@
 //!
 //! Run with `cargo run -p examples-security --example generic_password -- SERVICE ACCOUNT`.
 //! Accessing an existing password may prompt for permission. Only its length is printed.
-#![deny(unsafe_op_in_unsafe_fn)]
-
 use std::process::ExitCode;
 use std::ptr;
 

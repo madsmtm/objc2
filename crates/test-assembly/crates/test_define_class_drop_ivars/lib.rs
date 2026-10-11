@@ -1,5 +1,4 @@
 //! Test assembly output of `define_class!`.
-#![deny(unsafe_op_in_unsafe_fn)]
 // Limit to Apple targets only, since we don't particularly care about GNUStep code-size for now.
 #![cfg(target_vendor = "apple")]
 // Limit to 64-bit since we don't do anything special on other targets, and the assembly files are _huge_.

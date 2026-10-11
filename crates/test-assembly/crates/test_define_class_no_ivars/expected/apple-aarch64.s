@@ -270,9 +270,9 @@ Lloh42:
 	cbz	x0, LBB6_14
 	str	x0, [sp, #8]
 Lloh43:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_258a1fe3f81f9309@PAGE
 Lloh44:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_a9fb958c74006297@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_258a1fe3f81f9309@PAGEOFF]
 Ltmp6:
 Lloh45:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
@@ -287,9 +287,9 @@ Lloh48:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp7:
 Lloh49:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_a91a3c49e1b00e67@PAGE
 Lloh50:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_adfe2eb45443b755@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_a91a3c49e1b00e67@PAGEOFF]
 Ltmp8:
 Lloh51:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
@@ -304,9 +304,9 @@ Lloh54:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp9:
 Lloh55:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_66e56c5b3c99103b@PAGE
 Lloh56:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_66e56c5b3c99103b@PAGEOFF]
 Ltmp10:
 Lloh57:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, bool, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGE
@@ -321,9 +321,9 @@ Lloh60:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp11:
 Lloh61:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_4596410b47fed09e@PAGE
 Lloh62:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_4596410b47fed09e@PAGEOFF]
 Ltmp12:
 Lloh63:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars>, 0)@PAGE
@@ -338,9 +338,9 @@ Lloh66:
 	bl	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_method_inner, 0)
 Ltmp13:
 Lloh67:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_3baab06f3b437f6b@PAGE
 Lloh68:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_3baab06f3b437f6b@PAGEOFF]
 Ltmp14:
 Lloh69:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, bool>, 0)@PAGE
@@ -375,9 +375,9 @@ Lloh76:
 	bl	_class_addProtocol
 LBB6_11:
 Lloh77:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGE
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_091aa4b34684693a@PAGE
 Lloh78:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_996a3b5043cf563d@PAGEOFF]
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_091aa4b34684693a@PAGEOFF]
 Ltmp16:
 Lloh79:
 	adrp	x2, SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_no_ivars[CRATE_ID]::NoIvars as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &test_define_class_no_ivars[CRATE_ID]::NoIvars, core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<test_define_class_no_ivars[CRATE_ID]::NoIvars>>, objc2[CRATE_ID]::__macros::method_family::MethodFamily<4u8>, test_define_class_no_ivars[CRATE_ID]::NoIvars, *const objc2[CRATE_ID]::runtime::nszone::NSZone>, 0)@PAGE
@@ -847,60 +847,60 @@ Lloh146:
 	.loh AdrpAdd	Lloh139, Lloh140
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_44ec46acb208c3d4
-L_OBJC_METH_VAR_NAME_44ec46acb208c3d4:
-	.asciz	"methodRetained"
-
-	.globl	L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9
-L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9:
-	.asciz	"methodBool:"
-
-	.globl	L_OBJC_METH_VAR_NAME_996a3b5043cf563d
-L_OBJC_METH_VAR_NAME_996a3b5043cf563d:
+	.globl	L_OBJC_METH_VAR_NAME_091aa4b34684693a
+L_OBJC_METH_VAR_NAME_091aa4b34684693a:
 	.asciz	"copyWithZone:"
 
-	.globl	L_OBJC_METH_VAR_NAME_a9fb958c74006297
-L_OBJC_METH_VAR_NAME_a9fb958c74006297:
+	.globl	L_OBJC_METH_VAR_NAME_258a1fe3f81f9309
+L_OBJC_METH_VAR_NAME_258a1fe3f81f9309:
 	.asciz	"classMethod"
 
-	.globl	L_OBJC_METH_VAR_NAME_adfe2eb45443b755
-L_OBJC_METH_VAR_NAME_adfe2eb45443b755:
-	.asciz	"method"
-
-	.globl	L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0
-L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0:
+	.globl	L_OBJC_METH_VAR_NAME_3baab06f3b437f6b
+L_OBJC_METH_VAR_NAME_3baab06f3b437f6b:
 	.asciz	"methodRetainedWithParam:"
 
+	.globl	L_OBJC_METH_VAR_NAME_4596410b47fed09e
+L_OBJC_METH_VAR_NAME_4596410b47fed09e:
+	.asciz	"methodRetained"
+
+	.globl	L_OBJC_METH_VAR_NAME_66e56c5b3c99103b
+L_OBJC_METH_VAR_NAME_66e56c5b3c99103b:
+	.asciz	"methodBool:"
+
+	.globl	L_OBJC_METH_VAR_NAME_a91a3c49e1b00e67
+L_OBJC_METH_VAR_NAME_a91a3c49e1b00e67:
+	.asciz	"method"
+
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4
+	.globl	_OBJC_SELECTOR_REFERENCES_091aa4b34684693a
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_44ec46acb208c3d4:
-	.quad	L_OBJC_METH_VAR_NAME_44ec46acb208c3d4
+_OBJC_SELECTOR_REFERENCES_091aa4b34684693a:
+	.quad	L_OBJC_METH_VAR_NAME_091aa4b34684693a
 
-	.globl	_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9
+	.globl	_OBJC_SELECTOR_REFERENCES_258a1fe3f81f9309
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_71045e8f6bc4d4f9:
-	.quad	L_OBJC_METH_VAR_NAME_71045e8f6bc4d4f9
+_OBJC_SELECTOR_REFERENCES_258a1fe3f81f9309:
+	.quad	L_OBJC_METH_VAR_NAME_258a1fe3f81f9309
 
-	.globl	_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d
+	.globl	_OBJC_SELECTOR_REFERENCES_3baab06f3b437f6b
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_996a3b5043cf563d:
-	.quad	L_OBJC_METH_VAR_NAME_996a3b5043cf563d
+_OBJC_SELECTOR_REFERENCES_3baab06f3b437f6b:
+	.quad	L_OBJC_METH_VAR_NAME_3baab06f3b437f6b
 
-	.globl	_OBJC_SELECTOR_REFERENCES_a9fb958c74006297
+	.globl	_OBJC_SELECTOR_REFERENCES_4596410b47fed09e
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_a9fb958c74006297:
-	.quad	L_OBJC_METH_VAR_NAME_a9fb958c74006297
+_OBJC_SELECTOR_REFERENCES_4596410b47fed09e:
+	.quad	L_OBJC_METH_VAR_NAME_4596410b47fed09e
 
-	.globl	_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755
+	.globl	_OBJC_SELECTOR_REFERENCES_66e56c5b3c99103b
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_adfe2eb45443b755:
-	.quad	L_OBJC_METH_VAR_NAME_adfe2eb45443b755
+_OBJC_SELECTOR_REFERENCES_66e56c5b3c99103b:
+	.quad	L_OBJC_METH_VAR_NAME_66e56c5b3c99103b
 
-	.globl	_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0
+	.globl	_OBJC_SELECTOR_REFERENCES_a91a3c49e1b00e67
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_d63b759d5c7ed4f0:
-	.quad	L_OBJC_METH_VAR_NAME_d63b759d5c7ed4f0
+_OBJC_SELECTOR_REFERENCES_a91a3c49e1b00e67:
+	.quad	L_OBJC_METH_VAR_NAME_a91a3c49e1b00e67
 
 	.section	__DATA,__mod_init_func,mod_init_funcs
 	.globl	SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT, 0)
@@ -909,34 +909,34 @@ SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT, 0):
 	.quad	SYM(test_define_class_no_ivars[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_44ec46acb208c3d4
+	.globl	L_OBJC_IMAGE_INFO_091aa4b34684693a
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_44ec46acb208c3d4:
+L_OBJC_IMAGE_INFO_091aa4b34684693a:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_71045e8f6bc4d4f9
+	.globl	L_OBJC_IMAGE_INFO_258a1fe3f81f9309
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_71045e8f6bc4d4f9:
+L_OBJC_IMAGE_INFO_258a1fe3f81f9309:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_996a3b5043cf563d
+	.globl	L_OBJC_IMAGE_INFO_3baab06f3b437f6b
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_996a3b5043cf563d:
+L_OBJC_IMAGE_INFO_3baab06f3b437f6b:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_a9fb958c74006297
+	.globl	L_OBJC_IMAGE_INFO_4596410b47fed09e
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_a9fb958c74006297:
+L_OBJC_IMAGE_INFO_4596410b47fed09e:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_adfe2eb45443b755
+	.globl	L_OBJC_IMAGE_INFO_66e56c5b3c99103b
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_adfe2eb45443b755:
+L_OBJC_IMAGE_INFO_66e56c5b3c99103b:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_d63b759d5c7ed4f0
+	.globl	L_OBJC_IMAGE_INFO_a91a3c49e1b00e67
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_d63b759d5c7ed4f0:
+L_OBJC_IMAGE_INFO_a91a3c49e1b00e67:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__const
@@ -991,7 +991,7 @@ l_anon.[ID].12:
 	.p2align	3, 0x0
 l_anon.[ID].13:
 	.quad	l_anon.[ID].12
-	.asciz	"=\000\000\000\000\000\000\000\r\000\000\000\001\000\000"
+	.asciz	"=\000\000\000\000\000\000\000\f\000\000\000\001\000\000"
 
 	.globl	___CLASS_NoIvars
 .zerofill __DATA,__common,___CLASS_NoIvars,8,3

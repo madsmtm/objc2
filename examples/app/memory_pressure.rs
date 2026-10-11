@@ -29,6 +29,7 @@
 //!
 //! I'm unsure how to trigger this outside the simulator, other than filling
 //! up all the available memory with something.
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 
 use block2::RcBlock;
 use dispatch2::{

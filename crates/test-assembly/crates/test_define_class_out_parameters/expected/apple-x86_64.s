@@ -179,7 +179,7 @@ Lfunc_begin1:
 	test	rax, rax
 	je	LBB5_9
 	mov	qword ptr [rbp - 16], rax
-	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_d04fae079395572d]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_829e15f715f28f47]
 Ltmp8:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -187,7 +187,7 @@ Ltmp8:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp9:
-	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_aa84092ac6f93ec5]
 Ltmp10:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, core[CRATE_ID]::option::Option<&mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -195,7 +195,7 @@ Ltmp10:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp11:
-	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_87015ede50af46c9]
 Ltmp12:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -203,7 +203,7 @@ Ltmp12:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp13:
-	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_c7aef0b6fa267711]
 Ltmp14:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, core[CRATE_ID]::option::Option<&mut core[CRATE_ID]::option::Option<objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].3]
@@ -211,7 +211,7 @@ Ltmp14:
 	mov	r8d, 6
 	call	SYM(<objc2[CRATE_ID]::runtime::define::ClassBuilder>::add_class_method_inner, 0)
 Ltmp15:
-	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_9c279b7fa093536a]
+	mov	rsi, qword ptr [rip + _OBJC_SELECTOR_REFERENCES_da26f8bc1a88ebad]
 Ltmp16:
 	lea	rdx, [rip + SYM(objc2[CRATE_ID]::__macros::define_class::thunk::_::thunk::<<test_define_class_out_parameters[CRATE_ID]::OutParam as objc2[CRATE_ID]::top_level_traits::ClassType>::class::{closure#0}::{closure#0}::__FnMarker, &objc2[CRATE_ID]::runtime::anyclass::AnyClass, (), objc2[CRATE_ID]::__macros::method_family::MethodFamily<6u8>, test_define_class_out_parameters[CRATE_ID]::OutParam, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>, &mut objc2[CRATE_ID]::rc::retained::Retained<objc2[CRATE_ID]::runtime::nsobject::NSObject>>, 0)]
 	lea	rcx, [rip + L_anon.[ID].4]
@@ -406,51 +406,51 @@ LBB13_1:
 	ret
 
 	.section	__TEXT,__objc_methname,cstring_literals
-	.globl	L_OBJC_METH_VAR_NAME_06f3315fc4e8da1a
-L_OBJC_METH_VAR_NAME_06f3315fc4e8da1a:
-	.asciz	"nonnull_null:"
-
-	.globl	L_OBJC_METH_VAR_NAME_48e4a002a77cbcfe
-L_OBJC_METH_VAR_NAME_48e4a002a77cbcfe:
-	.asciz	"null_nonnull:"
-
-	.globl	L_OBJC_METH_VAR_NAME_77a278f49aa73e0a
-L_OBJC_METH_VAR_NAME_77a278f49aa73e0a:
-	.asciz	"null_null:"
-
-	.globl	L_OBJC_METH_VAR_NAME_9c279b7fa093536a
-L_OBJC_METH_VAR_NAME_9c279b7fa093536a:
-	.asciz	"two:nonnull_nonnull:"
-
-	.globl	L_OBJC_METH_VAR_NAME_d04fae079395572d
-L_OBJC_METH_VAR_NAME_d04fae079395572d:
+	.globl	L_OBJC_METH_VAR_NAME_829e15f715f28f47
+L_OBJC_METH_VAR_NAME_829e15f715f28f47:
 	.asciz	"nonnull_nonnull:"
 
+	.globl	L_OBJC_METH_VAR_NAME_87015ede50af46c9
+L_OBJC_METH_VAR_NAME_87015ede50af46c9:
+	.asciz	"nonnull_null:"
+
+	.globl	L_OBJC_METH_VAR_NAME_aa84092ac6f93ec5
+L_OBJC_METH_VAR_NAME_aa84092ac6f93ec5:
+	.asciz	"null_nonnull:"
+
+	.globl	L_OBJC_METH_VAR_NAME_c7aef0b6fa267711
+L_OBJC_METH_VAR_NAME_c7aef0b6fa267711:
+	.asciz	"null_null:"
+
+	.globl	L_OBJC_METH_VAR_NAME_da26f8bc1a88ebad
+L_OBJC_METH_VAR_NAME_da26f8bc1a88ebad:
+	.asciz	"two:nonnull_nonnull:"
+
 	.section	__DATA,__objc_selrefs,literal_pointers
-	.globl	_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a
+	.globl	_OBJC_SELECTOR_REFERENCES_829e15f715f28f47
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_06f3315fc4e8da1a:
-	.quad	L_OBJC_METH_VAR_NAME_06f3315fc4e8da1a
+_OBJC_SELECTOR_REFERENCES_829e15f715f28f47:
+	.quad	L_OBJC_METH_VAR_NAME_829e15f715f28f47
 
-	.globl	_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe
+	.globl	_OBJC_SELECTOR_REFERENCES_87015ede50af46c9
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_48e4a002a77cbcfe:
-	.quad	L_OBJC_METH_VAR_NAME_48e4a002a77cbcfe
+_OBJC_SELECTOR_REFERENCES_87015ede50af46c9:
+	.quad	L_OBJC_METH_VAR_NAME_87015ede50af46c9
 
-	.globl	_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a
+	.globl	_OBJC_SELECTOR_REFERENCES_aa84092ac6f93ec5
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_77a278f49aa73e0a:
-	.quad	L_OBJC_METH_VAR_NAME_77a278f49aa73e0a
+_OBJC_SELECTOR_REFERENCES_aa84092ac6f93ec5:
+	.quad	L_OBJC_METH_VAR_NAME_aa84092ac6f93ec5
 
-	.globl	_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a
+	.globl	_OBJC_SELECTOR_REFERENCES_c7aef0b6fa267711
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_9c279b7fa093536a:
-	.quad	L_OBJC_METH_VAR_NAME_9c279b7fa093536a
+_OBJC_SELECTOR_REFERENCES_c7aef0b6fa267711:
+	.quad	L_OBJC_METH_VAR_NAME_c7aef0b6fa267711
 
-	.globl	_OBJC_SELECTOR_REFERENCES_d04fae079395572d
+	.globl	_OBJC_SELECTOR_REFERENCES_da26f8bc1a88ebad
 	.p2align	3, 0x0
-_OBJC_SELECTOR_REFERENCES_d04fae079395572d:
-	.quad	L_OBJC_METH_VAR_NAME_d04fae079395572d
+_OBJC_SELECTOR_REFERENCES_da26f8bc1a88ebad:
+	.quad	L_OBJC_METH_VAR_NAME_da26f8bc1a88ebad
 
 	.section	__DATA,__mod_init_func,mod_init_funcs
 	.globl	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT, 0)
@@ -459,29 +459,29 @@ SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT, 0):
 	.quad	SYM(test_define_class_out_parameters[CRATE_ID]::_::__OBJC2_INIT::init, 0)
 
 	.section	__DATA,__objc_imageinfo,regular,no_dead_strip
-	.globl	L_OBJC_IMAGE_INFO_06f3315fc4e8da1a
+	.globl	L_OBJC_IMAGE_INFO_829e15f715f28f47
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_06f3315fc4e8da1a:
+L_OBJC_IMAGE_INFO_829e15f715f28f47:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_48e4a002a77cbcfe
+	.globl	L_OBJC_IMAGE_INFO_87015ede50af46c9
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_48e4a002a77cbcfe:
+L_OBJC_IMAGE_INFO_87015ede50af46c9:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_77a278f49aa73e0a
+	.globl	L_OBJC_IMAGE_INFO_aa84092ac6f93ec5
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_77a278f49aa73e0a:
+L_OBJC_IMAGE_INFO_aa84092ac6f93ec5:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_9c279b7fa093536a
+	.globl	L_OBJC_IMAGE_INFO_c7aef0b6fa267711
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_9c279b7fa093536a:
+L_OBJC_IMAGE_INFO_c7aef0b6fa267711:
 	.asciz	"\000\000\000\000@\000\000"
 
-	.globl	L_OBJC_IMAGE_INFO_d04fae079395572d
+	.globl	L_OBJC_IMAGE_INFO_da26f8bc1a88ebad
 	.p2align	2, 0x0
-L_OBJC_IMAGE_INFO_d04fae079395572d:
+L_OBJC_IMAGE_INFO_da26f8bc1a88ebad:
 	.asciz	"\000\000\000\000@\000\000"
 
 	.section	__DATA,__const
@@ -518,7 +518,7 @@ L_anon.[ID].6:
 	.p2align	3, 0x0
 l_anon.[ID].7:
 	.quad	L_anon.[ID].6
-	.asciz	"C\000\000\000\000\000\000\000\033\000\000\000\001\000\000"
+	.asciz	"C\000\000\000\000\000\000\000\032\000\000\000\001\000\000"
 
 	.globl	___CLASS_OutParam
 .zerofill __DATA,__common,___CLASS_OutParam,8,3

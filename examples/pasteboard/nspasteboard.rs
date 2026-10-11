@@ -1,8 +1,6 @@
 //! Read from the global NSPasteboard, and write a new string into it.
 //!
 //! Works on macOS 10.7+
-#![deny(unsafe_op_in_unsafe_fn)]
-
 use objc2::rc::Retained;
 use objc2::runtime::ProtocolObject;
 use objc2::ClassType;

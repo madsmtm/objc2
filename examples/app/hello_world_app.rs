@@ -1,4 +1,3 @@
-#![deny(unsafe_op_in_unsafe_fn)]
 #![cfg_attr(not(target_os = "macos"), allow(dead_code, unused))]
 #![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
 use std::cell::OnceCell;

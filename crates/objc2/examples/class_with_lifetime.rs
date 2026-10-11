@@ -1,6 +1,5 @@
 //! Note: We can't use the `define_class!` macro for this, it doesn't support
 //! such use-cases (yet). Instead, we'll create it manually.
-#![deny(unsafe_op_in_unsafe_fn)]
 use std::cell::Cell;
 use std::marker::PhantomData;
 use std::sync::Once;
