@@ -1355,7 +1355,6 @@ fn.CFMessagePortSetInvalidationCallBack.unsafe = true # Callback must be sendabl
 fn.CFNumberFormatterCreateNumberFromString.unsafe = true # Unsure if range out of bounds is UB
 
 # CFPlugIn
-fn.CFPlugInRegisterFactoryFunction.unsafe = false # TODO(breaking): Make this unsafe
 fn.CFPlugInInstanceCreateWithInstanceDataSize.unsafe = true # Callbacks, must be sendable?
 
 # TODO(breaking): Maybe mark this as `unsafe`?
