@@ -1,5 +1,4 @@
 use core::ffi::CStr;
-use std::sync::OnceLock;
 
 use crate::ffi::NSInteger;
 use crate::rc::{autoreleasepool, Retained};
@@ -64,24 +63,8 @@ impl<T: ClassType> IsNSError for T {
     };
 }
 
-#[cold] // Mark the NULL error branch as cold
-fn null_error() -> Retained<NSObject> {
-    static CACHED_NULL_ERROR: OnceLock<NSErrorWrapper> = OnceLock::new();
-
-    // We use a OnceLock here, since performance doesn't really matter, and
-    // using an AtomicPtr would leak under (very) high initialization
-    // contention.
-    CACHED_NULL_ERROR.get_or_init(create_null_error).0.clone()
-}
-
-struct NSErrorWrapper(Retained<NSObject>);
-
-// SAFETY: NSError is immutable and thread safe.
-unsafe impl Send for NSErrorWrapper {}
-unsafe impl Sync for NSErrorWrapper {}
-
 #[cold] // Mark the error creation branch as cold
-fn create_null_error() -> NSErrorWrapper {
+fn null_error() -> Retained<NSObject> {
     // Wrap creation in an autoreleasepool, since we don't know anything about
     // the outside world, and we don't want to appear to leak.
     autoreleasepool(|_| {
@@ -110,7 +93,7 @@ fn create_null_error() -> NSErrorWrapper {
         // SAFETY: The signature is correct.
         let err: Retained<NSObject> =
             unsafe { msg_send![cls, errorWithDomain: domain, code: code, userInfo: user_info] };
-        NSErrorWrapper(err)
+        err
     })
 }
 
@@ -120,7 +103,9 @@ fn foundation_not_linked() -> &'static AnyClass {
 
 #[cfg(test)]
 mod tests {
-    use std::ffi::CString;
+    use alloc::ffi::CString;
+
+    use crate::runtime::__nsstring::nsstring_to_str;
 
     use super::*;
 
@@ -138,7 +123,16 @@ mod tests {
     }
 
     #[test]
-    fn test_create() {
-        let _ = create_null_error().0;
+    fn domain_code() {
+        autoreleasepool(|pool| {
+            let err = null_error();
+
+            let domain: Retained<NSObject> = unsafe { msg_send![&err, domain] };
+            let domain = unsafe { nsstring_to_str(&domain, pool) };
+            assert_eq!(domain, "__objc2.missingError");
+
+            let code: NSInteger = unsafe { msg_send![&err, code] };
+            assert_eq!(code, 0);
+        });
     }
 }
