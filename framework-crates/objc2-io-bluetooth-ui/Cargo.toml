@@ -116,6 +116,7 @@ IOBluetoothServiceBrowserController = [
     "objc2-app-kit/NSWindow",
     "objc2-app-kit/NSWindowController",
     "objc2-foundation/NSArray",
+    "objc2-foundation/NSData",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]

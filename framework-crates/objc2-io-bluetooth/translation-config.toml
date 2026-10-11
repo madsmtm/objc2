@@ -125,3 +125,36 @@ fn.OBEXAddObjectClassHeader.arguments.2.generics = ["CoreFoundation.CFString.CFS
 fn.OBEXAddAuthorizationChallengeHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.OBEXAddAuthorizationResponseHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
 fn.OBEXAddUserDefinedHeader.arguments.2.generics = ["CoreFoundation.CFString.CFString", "CoreFoundation.CFType"]
+
+class.IOBluetoothDevice.methods."performSDPQuery:uuids:".arguments.1.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]
+class.IOBluetoothDevice.methods.services.return.generics = ["IOBluetooth.IOBluetoothSDPServiceRecord.IOBluetoothSDPServiceRecord"]
+class.IOBluetoothDevice.methods.getServices.return.generics = ["IOBluetooth.IOBluetoothSDPServiceRecord.IOBluetoothSDPServiceRecord"]
+class.IOBluetoothDevice.methods.favoriteDevices.return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+class.IOBluetoothDevice.methods."recentDevices:".return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+class.IOBluetoothDevice.methods.pairedDevices.return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+class.IOBluetoothDevice.methods."openL2CAPChannelSync:withPSM:withConfiguration:delegate:".arguments.2.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+class.IOBluetoothDevice.methods."openL2CAPChannelAsync:withPSM:withConfiguration:delegate:".arguments.2.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+
+protocol.IOBluetoothHandsFreeDeviceDelegate.methods."handsFree:currentCall:".arguments.1.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+protocol.IOBluetoothHandsFreeDeviceDelegate.methods."handsFree:incomingSMS:".arguments.1.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+
+class.IOBluetoothDeviceInquiry.methods.foundDevices.return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+
+class.IOBluetoothL2CAPChannel.methods."setDelegate:withConfiguration:".arguments.1.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+
+# class.IOBluetoothSDPDataElement.methods.getArrayValue.return.generics = [] # Exact repr is undocumented
+
+class.IOBluetoothSDPServiceRecord.methods."publishedServiceRecordWithDictionary:".arguments.0.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+class.IOBluetoothSDPServiceRecord.methods."withServiceDictionary:device:".arguments.0.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+class.IOBluetoothSDPServiceRecord.methods."initWithServiceDictionary:device:".arguments.0.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+class.IOBluetoothSDPServiceRecord.methods.attributes.return.generics = ["Foundation.NSValue.NSNumber", "IOBluetooth.IOBluetoothSDPDataElement.IOBluetoothSDPDataElement"]
+class.IOBluetoothSDPServiceRecord.methods.getAttributes.return.generics = ["Foundation.NSValue.NSNumber", "IOBluetooth.IOBluetoothSDPDataElement.IOBluetoothSDPDataElement"]
+class.IOBluetoothSDPServiceRecord.methods."matchesUUIDArray:".arguments.0.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]
+class.IOBluetoothSDPServiceRecord.methods."matchesSearchArray:".arguments.0.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]
+class.IOBluetoothSDPServiceRecord.methods."hasServiceFromArray:".arguments.0.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]
+class.IOBluetoothSDPServiceRecord.methods.sortedAttributes.return.generics = ["IOBluetooth.IOBluetoothSDPServiceAttribute.IOBluetoothSDPServiceAttribute"]
+
+# OBEXFileTransferServicesDelegate category
+class.NSObject.methods."fileTransferServicesRetrieveFolderListingComplete:error:listing:".arguments.2.generics = ["Foundation.NSDictionary.NSDictionary<Foundation.NSString.NSString, ObjectiveC.AnyObject>"]
+class.NSObject.methods."fileTransferServicesSendFileProgress:transferProgress:".arguments.1.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]
+class.NSObject.methods."fileTransferServicesCopyRemoteFileProgress:transferProgress:".arguments.1.generics = ["Foundation.NSString.NSString", "ObjectiveC.AnyObject"]

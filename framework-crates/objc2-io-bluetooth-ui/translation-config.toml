@@ -20,3 +20,20 @@ class.IOBluetoothPairingController.methods.getSearchAttributes.return.bounds = "
 class.IOBluetoothServiceBrowserController.methods."discoverWithDeviceAttributes:serviceList:serviceRecord:".arguments.0.bounds = "single"
 class.IOBluetoothServiceBrowserController.methods."setSearchAttributes:".arguments.0.bounds = "single"
 class.IOBluetoothServiceBrowserController.methods.getSearchAttributes.return.bounds = "single"
+
+##
+## Generics
+##
+
+class.IOBluetoothDeviceSelectorController.methods.getResults.return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+class.IOBluetoothDeviceSelectorController.methods."addAllowedUUIDArray:".arguments.0.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]
+
+# Unclear from docs whether this is NSURL or NSString (or both?)
+# class.IOBluetoothObjectPushUIController.methods."initObjectPushWithBluetoothDevice:withFiles:delegate:".arguments.1.generics = []
+
+class.IOBluetoothPairingController.methods.getResults.return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+class.IOBluetoothPairingController.methods."addAllowedUUIDArray:".arguments.0.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]
+
+class.IOBluetoothServiceBrowserController.methods."discoverWithDeviceAttributes:serviceList:serviceRecord:".arguments.1.generics = ["Foundation.NSData.NSData"]
+class.IOBluetoothServiceBrowserController.methods.getResults.return.generics = ["IOBluetooth.IOBluetoothDevice.IOBluetoothDevice"]
+class.IOBluetoothServiceBrowserController.methods."addAllowedUUIDArray:".arguments.0.generics = ["IOBluetooth.IOBluetoothSDPUUID.IOBluetoothSDPUUID"]

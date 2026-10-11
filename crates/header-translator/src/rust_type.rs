@@ -4972,6 +4972,19 @@ impl Ty {
     }
 
     pub(crate) fn change_generics(&mut self, new: &[ItemGeneric]) {
+        fn to_ns(generic: &ItemGeneric) -> PointeeTy {
+            PointeeTy::Class {
+                id: generic.id.clone(),
+                generics: generic.generics.iter().map(to_ns).collect(),
+                // TODO: How would we get this information correctly?
+                declaration_generics: vec![],
+                protocols: vec![],
+                sendable: false,
+                thread_safety: ThreadSafety::dummy(),
+                superclasses: vec![],
+            }
+        }
+
         fn to_cf(generic: &ItemGeneric) -> PointeeTy {
             PointeeTy::CFTypeDef {
                 id: generic.id.clone(),
@@ -4988,6 +5001,9 @@ impl Ty {
             // generic of `**CFArray` to `**CFArray<CFString>`.
             Ty::Pointer { pointee, .. } => pointee.change_generics(new),
             Ty::Pointee(pointee) => match pointee {
+                PointeeTy::Class { generics, .. } => {
+                    *generics = new.iter().map(to_ns).collect();
+                }
                 PointeeTy::CFTypeDef { generics, .. } => {
                     *generics = new.iter().map(to_cf).collect();
                 }
