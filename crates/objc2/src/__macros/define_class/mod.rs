@@ -477,6 +477,32 @@ pub use self::thunk::*;
 ///
 /// @end
 /// ```
+///
+/// If you want to import such a Rust-defined class into Objective-C, you'd
+/// do something like this:
+///
+/// ```objc
+/// #import <Foundation/Foundation.h>
+///
+/// // Must match the name set in `#[name = "MyCustomObject"]`.
+/// __attribute__((objc_runtime_name("MyCustomObject")))
+/// // Required for now, see https://github.com/madsmtm/objc2/issues/604.
+/// __attribute__((objc_runtime_visible))
+/// @interface MyCustomObject: NSObject <NSCopying>
+/// - (instancetype)initWithFoo:(uint8_t)foo;
+/// - (uint8_t)foo;
+/// - (NSObject*)object;
+/// + (BOOL)myClassMethod;
+/// @end
+///
+/// int main() {
+///     @autoreleasepool {
+///         MyCustomObject *obj = [MyCustomObject initWithFoo: 42];
+///         NSAssert([obj foo] == 42, "foo should be 42");
+///         NSAssert([MyCustomObject myClassMethod], "myClassMethod should return true");
+///     }
+/// }
+/// ```
 #[doc(alias = "@interface")]
 #[doc(alias = "@implementation")]
 #[macro_export]
