@@ -31,6 +31,62 @@ const.kIOPMMessageSleepWakeUUIDCleared.skipped = true
 const.kIOPSFamilyCodeUnsupported.skipped = true
 
 # IOKit/IOReturn.h
+# Custom define IOReturn = Result<(), IOError>.
+typedef.IOReturn.skipped = true
+const.kIOReturnSuccess.skipped = true
+const.kIOReturnError.skipped = true
+const.kIOReturnNoMemory.skipped = true
+const.kIOReturnNoResources.skipped = true
+const.kIOReturnIPCError.skipped = true
+const.kIOReturnNoDevice.skipped = true
+const.kIOReturnNotPrivileged.skipped = true
+const.kIOReturnBadArgument.skipped = true
+const.kIOReturnLockedRead.skipped = true
+const.kIOReturnLockedWrite.skipped = true
+const.kIOReturnExclusiveAccess.skipped = true
+const.kIOReturnBadMessageID.skipped = true
+const.kIOReturnUnsupported.skipped = true
+const.kIOReturnVMError.skipped = true
+const.kIOReturnInternalError.skipped = true
+const.kIOReturnIOError.skipped = true
+const.kIOReturnCannotLock.skipped = true
+const.kIOReturnNotOpen.skipped = true
+const.kIOReturnNotReadable.skipped = true
+const.kIOReturnNotWritable.skipped = true
+const.kIOReturnNotAligned.skipped = true
+const.kIOReturnBadMedia.skipped = true
+const.kIOReturnStillOpen.skipped = true
+const.kIOReturnRLDError.skipped = true
+const.kIOReturnDMAError.skipped = true
+const.kIOReturnBusy.skipped = true
+const.kIOReturnTimeout.skipped = true
+const.kIOReturnOffline.skipped = true
+const.kIOReturnNotReady.skipped = true
+const.kIOReturnNotAttached.skipped = true
+const.kIOReturnNoChannels.skipped = true
+const.kIOReturnNoSpace.skipped = true
+const.kIOReturnPortExists.skipped = true
+const.kIOReturnCannotWire.skipped = true
+const.kIOReturnNoInterrupt.skipped = true
+const.kIOReturnNoFrames.skipped = true
+const.kIOReturnMessageTooLarge.skipped = true
+const.kIOReturnNotPermitted.skipped = true
+const.kIOReturnNoPower.skipped = true
+const.kIOReturnNoMedia.skipped = true
+const.kIOReturnUnformattedMedia.skipped = true
+const.kIOReturnUnsupportedMode.skipped = true
+const.kIOReturnUnderrun.skipped = true
+const.kIOReturnOverrun.skipped = true
+const.kIOReturnDeviceError.skipped = true
+const.kIOReturnNoCompletion.skipped = true
+const.kIOReturnAborted.skipped = true
+const.kIOReturnNoBandwidth.skipped = true
+const.kIOReturnNotResponding.skipped = true
+const.kIOReturnIsoTooOld.skipped = true
+const.kIOReturnIsoTooNew.skipped = true
+const.kIOReturnNotFound.skipped = true
+const.kIOReturnInvalid.skipped = true
+
 # Defines
 const.sub_iokit_common.skipped = false
 const.sub_iokit_usb.skipped = false
@@ -75,9 +131,6 @@ fn.IOServiceGetMatchingServices.skipped = true
 fn.IOServiceAddMatchingNotification.skipped = true
 # + a few methods from DriverKit.framework and Kernel.framework, but those
 # are written in C++, so we're not going to ever handle them anyhow.
-
-# Unnecessarily requires `libc`
-typedef.IOReturn.skipped = true
 
 # Complex expression involving `sizeof`
 const.kOSAsyncRef64Size.skipped = true

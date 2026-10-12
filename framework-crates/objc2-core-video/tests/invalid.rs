@@ -49,5 +49,6 @@ fn invalid_plane_index() {
 #[should_panic = "parameter `pixel_buffer_out` must point to `None` on entry"]
 fn new_buffer_with_existing() {
     let mut buffer = Some(new_buffer());
-    unsafe { CVPixelBuffer::new(None, 100, 100, kCVPixelFormatType_32BGRA, None, &mut buffer) };
+    unsafe { CVPixelBuffer::new(None, 100, 100, kCVPixelFormatType_32BGRA, None, &mut buffer) }
+        .unwrap();
 }

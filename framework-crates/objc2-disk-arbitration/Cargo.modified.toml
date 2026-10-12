@@ -1,0 +1,6 @@
+# Add `libc` dependency, header-translator believes it's needed for DAReturn.
+[dependencies]
+libc = { workspace = true, optional = true }
+
+[features]
+libc = ["dep:libc"]

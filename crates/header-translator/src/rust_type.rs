@@ -3197,18 +3197,6 @@ impl Ty {
         matches!(self, Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t"))
     }
 
-    fn has_zero_niche(&self) -> bool {
-        matches!(
-            self,
-            Self::Pointer {
-                nullability: Nullability::NonNull,
-                ..
-            } | Self::Sel {
-                nullability: Nullability::NonNull,
-            }
-        )
-    }
-
     pub(crate) fn has_zero_default(&self) -> bool {
         match self {
             Self::Primitive(Primitive::Void | Primitive::VaList) => false,
@@ -3248,15 +3236,16 @@ impl Ty {
             // HACK: MTLPackedFloat3 is redefined as a simple struct, which
             // implements `Default`.
             Self::Struct { id, .. } if matches!(&*id.name, "_MTLPackedFloat3" | "_MPSPackedFloat3") => true,
+            // HACK: These are `Result` internally, which doesn't have a
+            // `Default` implementation (even though it could when `T` has
+            // a `Default`).
+            Self::TypeDef { id, .. } if matches!(&*id.name, "CVReturn" | "DAReturn" | "IOReturn") => false,
             Self::Struct {
                 fields,
                 is_bridged: false,
                 ..
             } => fields.iter().all(|(_, field)| field.has_zero_default()),
             Self::TypeDef { to, .. } => to.has_zero_default(),
-            Self::Result { ty, err, .. } if **ty == Self::VOID => {
-                err.has_zero_niche()
-            },
             _ => false,
         }
     }

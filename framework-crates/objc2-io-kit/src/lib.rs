@@ -18,6 +18,7 @@ extern crate std;
 
 #[cfg(feature = "libc")]
 mod consumes_argument;
+mod error;
 mod generated;
 mod macros;
 
@@ -25,22 +26,16 @@ mod macros;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::consumes_argument::*;
 #[allow(unused_imports, unreachable_pub)]
+pub use self::error::*;
+#[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::macros::*;
 
-// IOKit/IOReturn.h
-/// [Apple's documentation](https://developer.apple.com/documentation/iokit/ioreturn?language=objc)
-pub type IOReturn = core::ffi::c_int; // kern_return_t
-
-/// [Apple's documentation](https://developer.apple.com/documentation/iokit/kioreturnsuccess?language=objc)
-#[allow(non_upper_case_globals)]
-pub const kIOReturnSuccess: IOReturn = 0;
-
 // IOKit/IOPM.h
 /// [Apple's documentation](https://developer.apple.com/documentation/kernel/2876248-anonymous/kiopsfamilycodeunsupported/)
 #[allow(non_upper_case_globals)]
-pub const kIOPSFamilyCodeUnsupported: core::ffi::c_int = kIOReturnUnsupported as core::ffi::c_int;
+pub const kIOPSFamilyCodeUnsupported: core::ffi::c_int = IOError::Unsupported.get();
 
 // MacTypes.h
 #[allow(dead_code)]

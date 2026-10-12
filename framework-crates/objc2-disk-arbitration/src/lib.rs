@@ -16,7 +16,12 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[doc(alias = "DADissenter")]
+mod error;
 mod generated;
+
+#[doc(alias = "DADissenter")]
+pub use self::error::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 

@@ -16,7 +16,12 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "CVReturn")]
+mod error;
 mod generated;
+
+#[cfg(feature = "CVReturn")]
+pub use self::error::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 

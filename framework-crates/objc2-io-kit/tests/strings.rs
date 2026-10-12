@@ -4,8 +4,8 @@ use std::ffi::{CStr, CString};
 
 use libc::MACH_PORT_NULL;
 use objc2_io_kit::{
-    kIOReturnSuccess, kIOServicePlane, IOObjectConformsTo, IOObjectCopyClass, IOObjectGetClass,
-    IOObjectRelease, IORegistryEntryFromPath, IORegistryEntryGetPath, IORegistryGetRootEntry,
+    kIOServicePlane, IOObjectConformsTo, IOObjectCopyClass, IOObjectGetClass, IOObjectRelease,
+    IORegistryEntryFromPath, IORegistryEntryGetPath, IORegistryGetRootEntry,
 };
 
 #[test]
@@ -13,10 +13,7 @@ fn out_pointer() {
     let obj = IORegistryGetRootEntry(main_port());
 
     let mut name = [0; 128];
-    assert_eq!(
-        unsafe { IOObjectGetClass(obj, Some(&mut name)) },
-        kIOReturnSuccess
-    );
+    assert_eq!(unsafe { IOObjectGetClass(obj, Some(&mut name)) }, 0);
     let name = name.map(|c| c as u8);
     let name = CStr::from_bytes_until_nul(&name).unwrap();
 
@@ -25,7 +22,7 @@ fn out_pointer() {
     assert_eq!(name.to_str().unwrap(), cf_name.to_string());
     assert_eq!(name, c"IORegistryEntry");
 
-    assert_eq!(IOObjectRelease(obj), kIOReturnSuccess);
+    assert_eq!(IOObjectRelease(obj), 0);
 }
 
 #[test]
@@ -35,7 +32,7 @@ fn in_pointer() {
     assert!(unsafe { IOObjectConformsTo(obj, Some(c"IORegistryEntry")) });
     assert!(!unsafe { IOObjectConformsTo(obj, Some(c"BogusClassName")) });
 
-    assert_eq!(IOObjectRelease(obj), kIOReturnSuccess);
+    assert_eq!(IOObjectRelease(obj), 0);
 }
 
 #[test]
@@ -48,13 +45,13 @@ fn entry_path() {
     let mut out_path = [0; 512];
     assert_eq!(
         unsafe { IORegistryEntryGetPath(obj, Some(kIOServicePlane), Some(&mut out_path)) },
-        kIOReturnSuccess
+        0
     );
     let out_path = out_path.map(|c| c as u8);
     let out_path = CStr::from_bytes_until_nul(&out_path).unwrap();
     assert_eq!(out_path, path);
 
-    assert_eq!(IOObjectRelease(obj), kIOReturnSuccess);
+    assert_eq!(IOObjectRelease(obj), 0);
 }
 
 #[test]
@@ -71,7 +68,7 @@ fn in_pointer_too_long() {
     let name = CString::new([b'x'; 1000]).unwrap();
     assert!(!unsafe { IOObjectConformsTo(obj, Some(&name)) });
 
-    assert_eq!(IOObjectRelease(obj), kIOReturnSuccess);
+    assert_eq!(IOObjectRelease(obj), 0);
 }
 
 fn main_port() -> libc::mach_port_t {

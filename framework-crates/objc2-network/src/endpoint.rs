@@ -26,9 +26,10 @@ impl NWEndpoint {
 
 #[cfg(test)]
 #[cfg(feature = "libc")]
+#[cfg(feature = "alloc")]
 mod tests {
+    use alloc::ffi::CString;
     use core::str::FromStr;
-    use std::ffi::CString;
 
     use super::*;
     use crate::sockaddr::*;

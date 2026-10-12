@@ -37,6 +37,29 @@ fn.CVPixelBufferGetTypeID.unsafe = false
 fn.CVBufferGetAttachment.renamed = "get_attachment"
 fn.CVBufferGetAttachments.renamed = "get_attachments"
 
+# Custom-define CVReturn = Result<(), CVError>.
+typedef.CVReturn.skipped = true
+const.kCVReturnSuccess.skipped = true
+const.kCVReturnFirst.skipped = true
+const.kCVReturnError.skipped = true
+const.kCVReturnInvalidArgument.skipped = true
+const.kCVReturnAllocationFailed.skipped = true
+const.kCVReturnUnsupported.skipped = true
+const.kCVReturnInvalidDisplay.skipped = true
+const.kCVReturnDisplayLinkAlreadyRunning.skipped = true
+const.kCVReturnDisplayLinkNotRunning.skipped = true
+const.kCVReturnDisplayLinkCallbacksNotSet.skipped = true
+const.kCVReturnInvalidPixelFormat.skipped = true
+const.kCVReturnInvalidSize.skipped = true
+const.kCVReturnInvalidPixelBufferAttributes.skipped = true
+const.kCVReturnPixelBufferNotOpenGLCompatible.skipped = true
+const.kCVReturnPixelBufferNotMetalCompatible.skipped = true
+const.kCVReturnWouldExceedAllocationThreshold.skipped = true
+const.kCVReturnPoolAllocationFailed.skipped = true
+const.kCVReturnInvalidPoolAttributes.skipped = true
+const.kCVReturnRetry.skipped = true
+const.kCVReturnLast.skipped = true
+
 ##
 ## Fixing pointer bounds.
 ##

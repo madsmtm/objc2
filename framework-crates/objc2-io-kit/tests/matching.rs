@@ -5,8 +5,8 @@ use objc2_core_foundation::{
     CFBoolean, CFDictionary, CFRetained, CFString, CFStringBuiltInEncodings, CFType,
 };
 use objc2_io_kit::{
-    kIOEthernetInterfaceClass, kIOPrimaryInterface, kIOPropertyMatchKey, kIOReturnSuccess,
-    IOObjectRelease, IOServiceGetMatchingService, IOServiceMatching,
+    kIOEthernetInterfaceClass, kIOPrimaryInterface, kIOPropertyMatchKey, IOObjectRelease,
+    IOServiceGetMatchingService, IOServiceMatching,
 };
 
 #[test]
@@ -23,7 +23,7 @@ fn matching_ethernet_interface() {
     let service =
         unsafe { IOServiceGetMatchingService(main_port(), Some((&matching_dict).into())) };
 
-    assert_eq!(IOObjectRelease(service), kIOReturnSuccess);
+    assert_eq!(IOObjectRelease(service), 0);
 }
 
 /// A smaller helper function to construct a `CFString` from a UTF-8 `CStr`.

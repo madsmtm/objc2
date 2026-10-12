@@ -33,7 +33,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `TouchController` / `objc2-touch-controller`.
   - `Network` / `objc2-network`.
 * **BREAKING**: Added support for out parameters in functions. This means that some functions now take `&mut Option<CFRetained<T>>` instead of `*mut *mut T`.
-* **BREAKING**: Added support for converting `CFError` parameters to `Result<..., CFError>`.
 * Added support for interop between `CFAllocator` and `std::alloc::Allocator` behind the `"unstable-allocator-api"` Cargo feature.
 * Added missing `AudioToolbox` unions and functions using these.
 
@@ -77,6 +76,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `SCBondInterface` and `SCVLANInterface`.
 * **BREAKING**: Renamed `THClient::enableCredentialSharingMode` to `enableCredentialSharingModeWithExtendedPANId_completion`.
 * **BREAKING**: Split parts of `FSVolumeOperations` into `FSVolumeCommonOperations`.
+* **BREAKING**: Converted `CFError` parameters to `Result<..., CFRetained<CFError>>`.
+* **BREAKING**: Converted `CVReturn`, `DAReturn` and `IOReturn` to `Result<(), XXError>`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

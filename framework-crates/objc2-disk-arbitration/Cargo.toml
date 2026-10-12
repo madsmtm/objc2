@@ -17,7 +17,6 @@ workspace = true
 
 [dependencies]
 dispatch2 = { workspace = true, optional = true, features = ["alloc"] }
-libc = { workspace = true, optional = true }
 objc2 = { workspace = true, optional = true, features = ["std"] }
 objc2-core-foundation = { workspace = true, features = [
     "CFArray",
@@ -25,6 +24,7 @@ objc2-core-foundation = { workspace = true, features = [
     "CFString",
     "CFURL",
 ] }
+libc = { workspace = true, optional = true }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -42,13 +42,12 @@ default = [
     "DADissenter",
     "DASession",
     "dispatch2",
-    "libc",
     "objc2",
 ]
 std = ["alloc"]
 alloc = []
-dispatch2 = ["dep:dispatch2"]
 libc = ["dep:libc"]
+dispatch2 = ["dep:dispatch2"]
 objc2 = [
     "dep:objc2",
     "dispatch2?/objc2",
