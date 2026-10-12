@@ -128,6 +128,12 @@ fn.CFGetAllocator.renamed = "allocator"
 fn.CFShowStr.implementor = "CoreFoundation.CFString.CFString"
 fn.CFShowStr.renamed = "show"
 
+# Custom-defined as NonZeroIsize, similar to `CGError`.
+typedef.CFSocketError.renamed = "Result<(), CFSocketError>"
+typedef.CFSocketError.skipped = true
+enum.CFSocketError.renamed = "Result<(), CFSocketError>"
+enum.CFSocketError.skipped = true
+
 ##
 ## Fixing const-ness, nullability and bounds information.
 ##

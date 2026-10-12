@@ -16,10 +16,14 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(all(feature = "HIServices", feature = "AXError"))]
+mod error;
 mod generated;
 #[cfg(all(feature = "QD", feature = "Quickdraw"))]
 mod quickdraw;
 
+#[cfg(all(feature = "HIServices", feature = "AXError"))]
+pub use self::error::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
 #[cfg(all(feature = "QD", feature = "Quickdraw"))]

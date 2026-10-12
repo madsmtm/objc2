@@ -16,6 +16,8 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+#[cfg(feature = "CGError")]
+mod error;
 mod generated;
 #[cfg(feature = "CGImage")]
 mod image;
@@ -27,6 +29,8 @@ pub use self::generated::*;
 #[cfg(feature = "CGPDFContext")]
 pub use self::pdf_context::*;
 
+#[cfg(feature = "CGError")]
+pub use self::error::*;
 #[allow(dead_code)]
 pub(crate) type UniCharCount = core::ffi::c_ulong;
 #[allow(dead_code)]

@@ -85,6 +85,16 @@ const.kCGEventFilterMaskPermitAllEvents.skipped = true
 typedef.CGPDFMarkedContentItemRef.skipped = true
 typedef.CGPDFStructureElementRef.skipped = true
 
+# Custom-defined as NonZeroI32, which means that the ABI is compatible with
+# this. It's kind of a hack that we use the renaming like this, but it works
+# for now, so who's complaining?
+typedef.CGError.renamed = "Result<(), CGError>"
+typedef.CGError.skipped = true
+enum.CGError.renamed = "Result<(), CGError>"
+enum.CGError.skipped = true
+# Keep this method on CGError.
+fn.CGErrorSetCallback.implementor = "CoreGraphics.CGError.CGError"
+
 ##
 ## Fix bounds information.
 ##

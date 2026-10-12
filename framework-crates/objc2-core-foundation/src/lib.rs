@@ -34,6 +34,8 @@ mod date;
 mod dictionary;
 #[cfg(feature = "CFFileDescriptor")]
 mod filedescriptor;
+#[cfg(feature = "CFSocket")]
+mod socket;
 // Allow `default` methods on CFAllocator and CFTimeZone
 #[allow(clippy::should_implement_trait)]
 #[allow(clippy::missing_transmute_annotations)]
@@ -71,6 +73,8 @@ pub use self::generated::*;
 #[cfg(feature = "CFCGTypes")]
 pub use self::geometry::*;
 pub use self::retained::CFRetained;
+#[cfg(feature = "CFSocket")]
+pub use self::socket::*;
 pub use self::type_traits::{ConcreteType, Type};
 
 // Expose `$crate::__core` for macros.

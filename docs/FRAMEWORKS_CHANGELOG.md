@@ -77,7 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Renamed `THClient::enableCredentialSharingMode` to `enableCredentialSharingModeWithExtendedPANId_completion`.
 * **BREAKING**: Split parts of `FSVolumeOperations` into `FSVolumeCommonOperations`.
 * **BREAKING**: Converted `CFError` parameters to `Result<..., CFRetained<CFError>>`.
-* **BREAKING**: Converted `CVReturn`, `DAReturn` and `IOReturn` to `Result<(), XXError>`.
+* **BREAKING**: Converted `CVReturn`, `DAReturn`, `IOReturn`, `CGError`, `CFSocketError` and `AXError` to `Result<(), XXError>`.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

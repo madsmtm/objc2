@@ -132,6 +132,12 @@ const.cmColorSpaceReservedMask.use-value = true
 const.cmDeviceStateForceNotify.use-value = true
 const.cmDeviceStateAppleRsvdBits.use-value = true
 
+# Custom-defined as NonZeroI32, similar to `CGError`.
+typedef.AXError.renamed = "Result<(), AXError>"
+typedef.AXError.skipped = true
+enum.AXError.renamed = "Result<(), AXError>"
+enum.AXError.skipped = true
+
 ##
 ## Nullability
 ##
