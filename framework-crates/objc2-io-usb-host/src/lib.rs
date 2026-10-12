@@ -24,10 +24,6 @@ pub use self::generated::*;
 #[allow(dead_code, non_camel_case_types)]
 pub(crate) type uuid_t = [u8; 16];
 
-// IOKit/IOReturn.h
-#[allow(dead_code)]
-pub(crate) type IOReturn = core::ffi::c_int; // kern_return_t
-
 #[allow(unused_macros)]
 macro_rules! IOUSBBit {
     ($bit:expr) => {

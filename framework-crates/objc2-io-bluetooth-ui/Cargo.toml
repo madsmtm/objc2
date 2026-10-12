@@ -29,6 +29,11 @@ objc2-io-bluetooth = { workspace = true, optional = true, features = [
     "IOBluetoothUserLib",
     "objc2",
     "objc2-foundation",
+    "objc2-io-kit",
+] }
+objc2-io-kit = { workspace = true, optional = true, features = [
+    "libc",
+    "objc2",
 ] }
 
 [package.metadata.docs.rs]
@@ -51,12 +56,14 @@ default = [
     "objc2",
     "objc2-core-foundation",
     "objc2-io-bluetooth",
+    "objc2-io-kit",
 ]
 std = ["alloc"]
 alloc = []
 objc2 = []
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-io-bluetooth = ["dep:objc2-io-bluetooth"]
+objc2-io-kit = ["dep:objc2-io-kit"]
 unstable-darwin-objc = []
 
 IOBluetoothDeviceSelectorController = [

@@ -35,6 +35,7 @@ objc2-foundation = { workspace = true, optional = true, features = [
     "NSValue",
     "alloc",
 ] }
+objc2-io-kit = { workspace = true, optional = true, features = ["libc"] }
 
 [package.metadata.docs.rs]
 default-target = "aarch64-apple-darwin"
@@ -77,6 +78,7 @@ default = [
     "objc2",
     "objc2-core-foundation",
     "objc2-foundation",
+    "objc2-io-kit",
 ]
 std = ["alloc"]
 alloc = []
@@ -84,9 +86,11 @@ libc = ["dep:libc"]
 objc2 = [
     "dep:objc2",
     "objc2-core-foundation?/objc2",
+    "objc2-io-kit?/objc2",
 ]
 objc2-core-foundation = ["dep:objc2-core-foundation"]
 objc2-foundation = ["dep:objc2-foundation"]
+objc2-io-kit = ["dep:objc2-io-kit"]
 unstable-darwin-objc = []
 
 Bluetooth = []

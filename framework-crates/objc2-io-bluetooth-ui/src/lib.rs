@@ -19,7 +19,3 @@ extern crate std;
 mod generated;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
-
-// IOKit/IOReturn.h
-#[allow(dead_code)]
-pub(crate) type IOReturn = core::ffi::c_int; // kern_return_t

@@ -24,14 +24,6 @@ pub use self::generated::*;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::macros::*;
 
-// IOKit/IOReturn.h
-#[allow(dead_code)]
-pub(crate) type IOReturn = core::ffi::c_int; // kern_return_t
-
-// IOKit/IOTypes.h
-#[allow(dead_code)]
-pub(crate) type IOItemCount = u32; // UInt32
-
 // MacTypes.h
 #[allow(dead_code)]
 pub(crate) type Boolean = u8;
