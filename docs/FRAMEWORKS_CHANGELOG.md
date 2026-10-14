@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Added support for out parameters in functions. This means that some functions now take `&mut Option<CFRetained<T>>` instead of `*mut *mut T`.
 * Added support for interop between `CFAllocator` and `std::alloc::Allocator` behind the `"unstable-allocator-api"` Cargo feature.
 * Added missing `AudioToolbox` unions and functions using these.
+* Added unsigned `CFNumber` methods (`new_usize`, `as_u32` etc.).
 
 ### Changed
 * Updated SDK from Xcode 26.0.1 to 27.0.

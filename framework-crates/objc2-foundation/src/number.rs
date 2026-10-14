@@ -31,6 +31,7 @@ macro_rules! def_new_fn {
         ($fn_name:ident($fn_inp:ty); $method_name:ident),
     )*} => {$(
         $(#[$($m)*])*
+        #[doc = concat!("Construct a new `NSNumber` from a [`", stringify!($fn_inp), "`].")]
         pub fn $fn_name(val: $fn_inp) -> Retained<Self> {
             Self::$method_name(val as _)
         }
@@ -55,6 +56,7 @@ impl NSNumber {
         (new_f64(f64); numberWithDouble),
     }
 
+    /// Construct a new `NSNumber` from a [`CGFloat`][objc2_core_foundation::CGFloat].
     #[inline]
     #[cfg(all(feature = "objc2-core-foundation", feature = "NSGeometry"))]
     pub fn new_cgfloat(val: objc2_core_foundation::CGFloat) -> Retained<Self> {
@@ -75,6 +77,7 @@ macro_rules! def_get_fn {
         ($fn_name:ident -> $fn_ret:ty; $method_name:ident),
     )*} => {$(
         $(#[$($m)*])*
+        #[doc = concat!("Extract the value of the `NSNumber` as a [`", stringify!($fn_ret), "`].")]
         pub fn $fn_name(&self) -> $fn_ret {
             self.$method_name() as _
         }
@@ -99,6 +102,7 @@ impl NSNumber {
         (as_f64 -> f64; doubleValue),
     }
 
+    /// Extract the value of the `NSNumber` as a [`CGFloat`][objc2_core_foundation::CGFloat].
     #[inline]
     #[cfg(all(feature = "objc2-core-foundation", feature = "NSGeometry"))]
     pub fn as_cgfloat(&self) -> objc2_core_foundation::CGFloat {
