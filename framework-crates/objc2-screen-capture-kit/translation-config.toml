@@ -19,3 +19,7 @@ class.SCContentSharingPickerConfiguration.generics = []
 unsafe-default-safety.documentation-is-reviewed = true
 # ScreenCaptureKit is internally bounds-checked.
 unsafe-default-safety.bounds-checked-internally = true
+
+# Hands the same picker to every thread, and its setters release the previous
+# value without a lock, so racing them releases it twice (FB25187882).
+class.SCContentSharingPicker.methods.sharedPicker.unsafe = true
