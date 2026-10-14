@@ -421,7 +421,11 @@ mod tests {
         let cls = ClassBuilder::new(s, NSObject::class()).unwrap().register();
         let obj: Retained<NSObject> = unsafe { msg_send![cls, new] };
 
-        let expected = format!("<My\u{f8ff}êÄClass: {:p}>", &*obj);
+        // How the non-UTF-8 bytes are decoded depends on the system text
+        // encoding (MacRoman, MacJapanese, ...), so build the expected class
+        // name the same way that `-description` does.
+        let cls_name: Retained<NSObject> = unsafe { msg_send![cls, description] };
+        let expected = format!("<{cls_name:?}: {:p}>", &*obj);
         assert_eq!(format!("{obj:?}"), expected);
     }
 
