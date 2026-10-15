@@ -7,3 +7,10 @@ ios = "11.0"
 tvos = "11.0"
 watchos = "9.0"
 visionos = "1.0"
+
+unsafe-default-safety.documentation-is-reviewed = true
+unsafe-default-safety.bounds-checked-internally = true
+
+# Every thread gets the same instance, whose first method call lazily creates
+# its controller with an unsynchronized load and store (FB25187723).
+class.DCAppAttestService.methods.sharedService.unsafe = true
