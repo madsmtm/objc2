@@ -9,7 +9,7 @@ use objc2::runtime::{Bool, ProtocolObject};
 use objc2::{define_class, msg_send, AnyThread, ClassType, Ivars, MainThreadOnly};
 use objc2_core_foundation::CGSize;
 use objc2_foundation::{
-    ns_string, NSDictionary, NSNull, NSNumber, NSObject, NSObjectProtocol, NSURL,
+    ns_dictionary, ns_string, NSNull, NSNumber, NSObject, NSObjectProtocol, NSURL,
 };
 use objc2_metal::{
     MTLBuffer, MTLCommandBuffer, MTLCommandEncoder, MTLCommandQueue, MTLCompareFunction,
@@ -257,18 +257,10 @@ fn load_color_map(
     device: &ProtocolObject<dyn MTLDevice>,
 ) -> Retained<ProtocolObject<dyn MTLTexture>> {
     let texture_loader = MTKTextureLoader::initWithDevice(MTKTextureLoader::alloc(), device);
-    let options = NSDictionary::from_slices(
-        unsafe {
-            &[
-                MTKTextureLoaderOptionTextureUsage,
-                MTKTextureLoaderOptionTextureStorageMode,
-            ]
-        },
-        &[
-            NSNumber::new_usize(MTLTextureUsage::ShaderRead.0).as_ref(),
-            NSNumber::new_usize(MTLStorageMode::Private.0).as_ref(),
-        ],
-    );
+    let options = ns_dictionary! {
+        unsafe { MTKTextureLoaderOptionTextureUsage } => NSNumber::new_usize(MTLTextureUsage::ShaderRead.0).as_ref(),
+        unsafe { MTKTextureLoaderOptionTextureStorageMode } => NSNumber::new_usize(MTLStorageMode::Private.0).as_ref(),
+    };
     unsafe {
         texture_loader.newTextureWithContentsOfURL_options_error(
             &NSURL::fileURLWithPath(ns_string!(env!("CARGO_MANIFEST_DIR")))

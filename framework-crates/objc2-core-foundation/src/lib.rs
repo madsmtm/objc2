@@ -18,6 +18,7 @@ extern crate alloc;
 #[cfg(feature = "std")]
 extern crate std;
 
+mod __cf_macros;
 #[cfg(feature = "unstable-allocator-api")]
 mod allocator;
 #[cfg(feature = "CFArray")]

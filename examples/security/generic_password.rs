@@ -6,7 +6,7 @@ use std::process::ExitCode;
 use std::ptr;
 
 use objc2_core_foundation::{
-    kCFBooleanTrue, CFData, CFMutableDictionary, CFRetained, CFString, CFType,
+    cf_dictionary, CFBoolean, CFData, CFDictionary, CFRetained, CFString, CFType,
 };
 use objc2_security::{
     errSecItemNotFound, errSecSuccess, kSecAttrAccount, kSecAttrService, kSecClass,
@@ -18,16 +18,16 @@ fn generic_password(service: &str, account: &str) -> Result<Option<CFRetained<CF
     let service = CFString::from_str(service);
     let account = CFString::from_str(account);
 
-    // The keys are strings, but the values include both strings and a boolean.
-    let query = CFMutableDictionary::<CFString, CFType>::with_capacity(5);
     // SAFETY: Accessing these external statics is safe.
-    unsafe {
-        query.add(kSecClass, kSecClassGenericPassword);
-        query.add(kSecAttrService, &service);
-        query.add(kSecAttrAccount, &account);
-        query.add(kSecMatchLimit, kSecMatchLimitOne);
-        query.add(kSecReturnData, kCFBooleanTrue);
-    }
+    let query: CFRetained<CFDictionary<CFString, CFType>> = unsafe {
+        cf_dictionary! {
+            kSecClass => kSecClassGenericPassword,
+            kSecAttrService => &service,
+            kSecAttrAccount => &account,
+            kSecMatchLimit => kSecMatchLimitOne,
+            kSecReturnData => CFBoolean::new(true),
+        }
+    };
 
     // The output must be None on entry. The binding takes ownership of the
     // returned object's retain count, so no manual retain or release is needed.

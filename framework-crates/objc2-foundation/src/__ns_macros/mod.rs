@@ -1,4 +1,6 @@
 mod cached;
+#[cfg(feature = "NSDictionary")]
+mod ns_dictionary;
 #[cfg(feature = "NSString")]
 mod ns_string;
 
