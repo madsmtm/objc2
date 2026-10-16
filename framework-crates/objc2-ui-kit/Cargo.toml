@@ -156,6 +156,7 @@ default = [
     "UIAppearance",
     "UIApplication",
     "UIApplicationShortcutItem",
+    "UIArrangementViewController",
     "UIAttachmentBehavior",
     "UIBackgroundConfiguration",
     "UIBackgroundExtensionView",
@@ -280,6 +281,8 @@ default = [
     "UIGravityBehavior",
     "UIGuidedAccess",
     "UIGuidedAccessRestrictions",
+    "UIHinge",
+    "UIHingeInteraction",
     "UIHoverEffect",
     "UIHoverEffectLayer",
     "UIHoverGestureRecognizer",
@@ -341,6 +344,7 @@ default = [
     "UINotificationFeedbackGenerator",
     "UIOpenURLContext",
     "UIOrientation",
+    "UIOverlayArrangement",
     "UIPageControl",
     "UIPageControlProgress",
     "UIPageViewController",
@@ -425,6 +429,7 @@ default = [
     "UISliderTrackConfiguration",
     "UISmartReplySuggestion",
     "UISnapBehavior",
+    "UISplitArrangement",
     "UISplitViewController",
     "UISplitViewControllerLayoutEnvironment",
     "UISpringLoadedInteraction",
@@ -504,6 +509,7 @@ default = [
     "UIUpdateLink",
     "UIUserActivity",
     "UIUserNotificationSettings",
+    "UIVerticalBarEdge",
     "UIVibrancyEffect",
     "UIVideoEditorController",
     "UIView",
@@ -515,6 +521,7 @@ default = [
     "UIViewControllerTransitioning",
     "UIViewLayoutRegion",
     "UIViewPropertyAnimator",
+    "UIViewReservedRegion",
     "UIVisualEffect",
     "UIVisualEffectView",
     "UIWebView",
@@ -846,6 +853,11 @@ UIApplication = [
 ]
 UIApplicationShortcutItem = [
     "objc2-foundation/NSDictionary",
+    "objc2-foundation/NSObject",
+    "objc2-foundation/NSString",
+]
+UIArrangementViewController = [
+    "objc2-foundation/NSBundle",
     "objc2-foundation/NSObject",
     "objc2-foundation/NSString",
 ]
@@ -1281,6 +1293,8 @@ UIGuidedAccess = [
     "objc2-foundation/NSString",
 ]
 UIGuidedAccessRestrictions = []
+UIHinge = ["objc2-foundation/NSObject"]
+UIHingeInteraction = ["objc2-foundation/NSObject"]
 UIHoverEffect = ["objc2-foundation/NSObject"]
 UIHoverEffectLayer = ["objc2-foundation/NSObject"]
 UIHoverGestureRecognizer = []
@@ -1481,6 +1495,7 @@ UINibLoading = ["objc2-foundation/NSString"]
 UINotificationFeedbackGenerator = []
 UIOpenURLContext = ["objc2-foundation/NSURL"]
 UIOrientation = ["bitflags"]
+UIOverlayArrangement = ["objc2-foundation/NSObject"]
 UIPageControl = ["objc2-foundation/NSObject"]
 UIPageControlProgress = ["objc2-foundation/NSDate"]
 UIPageViewController = [
@@ -1742,6 +1757,7 @@ UISliderTrackConfiguration = [
 ]
 UISmartReplySuggestion = ["objc2-foundation/NSString"]
 UISnapBehavior = []
+UISplitArrangement = ["objc2-foundation/NSObject"]
 UISplitViewController = [
     "objc2-foundation/NSArray",
     "objc2-foundation/NSBundle",
@@ -2003,6 +2019,7 @@ UIUserNotificationSettings = [
     "objc2-foundation/NSSet",
     "objc2-foundation/NSString",
 ]
+UIVerticalBarEdge = ["objc2-foundation/NSArray"]
 UIVibrancyEffect = ["objc2-foundation/NSObject"]
 UIVideoEditorController = [
     "objc2-foundation/NSBundle",
@@ -2049,6 +2066,10 @@ UIViewControllerTransitioning = [
 UIViewLayoutRegion = []
 UIViewPropertyAnimator = [
     "objc2-foundation/NSDate",
+    "objc2-foundation/NSObject",
+]
+UIViewReservedRegion = [
+    "bitflags",
     "objc2-foundation/NSObject",
 ]
 UIVisualEffect = ["objc2-foundation/NSObject"]
