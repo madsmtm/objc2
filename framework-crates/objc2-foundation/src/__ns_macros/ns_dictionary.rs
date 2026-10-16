@@ -29,6 +29,7 @@
 ///     ns_string!("cocoa") => unsafe { objc2_foundation::NSCocoaErrorDomain },
 ///     ns_string!("posix") => unsafe { objc2_foundation::NSPOSIXErrorDomain },
 ///     ns_string!("osstatus") => unsafe { objc2_foundation::NSOSStatusErrorDomain },
+///     # #[cfg(target_vendor = "apple")]
 ///     ns_string!("mach") => unsafe { objc2_foundation::NSMachErrorDomain },
 /// };
 ///
@@ -36,6 +37,7 @@
 ///     unsafe { objc2_foundation::NSCocoaErrorDomain } => ns_string!("cocoa"),
 ///     unsafe { objc2_foundation::NSPOSIXErrorDomain } => ns_string!("posix"),
 ///     unsafe { objc2_foundation::NSOSStatusErrorDomain } => ns_string!("osstatus"),
+///     # #[cfg(target_vendor = "apple")]
 ///     unsafe { objc2_foundation::NSMachErrorDomain } => ns_string!("mach"),
 /// };
 /// ```
