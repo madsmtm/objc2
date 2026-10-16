@@ -18,8 +18,12 @@ extern crate alloc;
 extern crate std;
 
 mod generated;
+#[cfg(feature = "GLKMathTypes")]
+mod math_types;
 #[allow(unused_imports, unreachable_pub)]
 pub use self::generated::*;
+#[cfg(feature = "GLKMathTypes")]
+pub use self::math_types::*;
 
 // OpenGL/gltypes.h
 // Not re-exported by objc2-open-gl.

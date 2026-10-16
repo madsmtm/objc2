@@ -17,6 +17,23 @@ typedef.GLKTextureLoaderCallback.sendable = true
 # Uses constants from OpenGL.
 enum.GLKTextureTarget.use-value = true
 
+# Redefine types with a custom `Encode` impl that uses the `union` type that
+# these actually are.
+struct._GLKMatrix2.skipped = true
+typedef.GLKMatrix2.skipped = true
+struct._GLKMatrix3.skipped = true
+typedef.GLKMatrix3.skipped = true
+struct._GLKMatrix4.skipped = true
+typedef.GLKMatrix4.skipped = true
+struct._GLKVector2.skipped = true
+typedef.GLKVector2.skipped = true
+struct._GLKVector3.skipped = true
+typedef.GLKVector3.skipped = true
+struct._GLKVector4.skipped = true
+typedef.GLKVector4.skipped = true
+struct._GLKQuaternion.skipped = true
+typedef.GLKQuaternion.skipped = true
+
 ##
 ## Pointer bounds
 ##
