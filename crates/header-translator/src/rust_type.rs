@@ -13,7 +13,8 @@ use crate::id::{ItemIdentifier, ItemTree};
 use crate::name_translation::cf_no_ref;
 use crate::protocol::ProtocolRef;
 use crate::stmt::{
-    anonymous_record_name, bridged_to, parse_class_generics, stmt_data, GenericWithBound,
+    anonymous_record_name, bridged_to, field_name, parse_class_generics, stmt_data,
+    GenericWithBound,
 };
 use crate::stmt::{parse_superclasses, superclasses_required_items};
 use crate::thread_safety::ThreadSafety;
@@ -1829,9 +1830,8 @@ impl Ty {
                         .expect("struct fields")
                         .into_iter()
                         .map(|field| {
-                            let field_name = field.get_name().unwrap();
                             (
-                                field_name,
+                                field_name(&field),
                                 Self::parse(
                                     field.get_type().expect("struct field type"),
                                     false,

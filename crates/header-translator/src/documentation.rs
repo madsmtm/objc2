@@ -69,7 +69,7 @@ impl Documentation {
     /// `@constant child_name` or `@var child_name`, and adds it to the child
     /// instead.
     pub fn child(&mut self, entity: &Entity<'_>, context: &Context<'_>) -> Self {
-        let child_name = entity.get_name().unwrap_or_else(|| "__unknown__".into());
+        let child_name = entity.get_name().expect("documentation child name");
 
         let mut documentation = Self::from_entity(entity, context);
 
