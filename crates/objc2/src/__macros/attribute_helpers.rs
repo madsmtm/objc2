@@ -1015,7 +1015,9 @@ macro_rules! __extract_attributes_inner {
     // (`doc`, `deprecated`, `repr`, `non_exhaustive`, `expect/warn/deny/forbid`, `cfg_attr`, etc.)
     {
         (
-            #[$($parsed:tt)*]
+            // Matched as the `#` and `[...]` tokens, so that they keep their
+            // span (Clippy's doc lints ignore docs from external macros).
+            $pound:tt $group:tt
             $($rest:tt)*
         )
 
@@ -1039,7 +1041,7 @@ macro_rules! __extract_attributes_inner {
             // Pass all other attributes onwards to the struct.
             (
                 $($attr_item)*
-                #[$($parsed)*]
+                $pound $group
             )
             ($($attr_impl)*)
 

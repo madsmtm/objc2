@@ -154,6 +154,24 @@
 #[doc(alias = "@protocol")]
 #[macro_export]
 macro_rules! extern_protocol {
+    ($($input:tt)*) => {
+        $crate::__extern_protocol_check_syntax! {
+            $($input)*
+        }
+
+        // Move the attributes as the tokens the caller wrote, see
+        // `__extern_protocol_attributes!` for why.
+        $crate::__extern_protocol_attributes! {
+            ()
+            $($input)*
+        }
+    };
+}
+
+/// Check the syntax of `extern_protocol!`, so that errors point here.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_check_syntax {
     (
         // The special #[name = $name:literal] attribute is supported here.
         $(#[$($attrs:tt)*])*
@@ -164,9 +182,27 @@ macro_rules! extern_protocol {
             // #[optional]
             $($methods:tt)*
         }
+    ) => {};
+}
+
+/// tt-munch the attributes of `extern_protocol!`.
+///
+/// Each attribute is moved as its two tokens, `#` and `[...]`, instead of
+/// being matched as `#[$($attrs:tt)*]` and rebuilt. A rebuilt attribute has
+/// the span of this macro, and Clippy ignores doc comments that come from an
+/// external macro, so `missing_safety_doc` would fire on every protocol even
+/// when it has a `# Safety` section (#887).
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_attributes {
+    (
+        ($($attrs:tt)*)
+        $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
+            $($methods:tt)*
+        }
     ) => {
         $crate::__extract_attributes! {
-            ($(#[$($attrs)*])*)
+            ($($attrs)*)
 
             ($crate::__extern_protocol_inner)
             ($protocol)
@@ -177,6 +213,20 @@ macro_rules! extern_protocol {
             })
         }
     };
+
+    (
+        ($($attrs:tt)*)
+        $pound:tt $group:tt
+        $($rest:tt)*
+    ) => {
+        $crate::__extern_protocol_attributes! {
+            ($($attrs)* $pound $group)
+            $($rest)*
+        }
+    };
+
+    // Invalid syntax, already reported by `__extern_protocol_check_syntax!`.
+    ($($invalid:tt)*) => {};
 }
 
 #[doc(hidden)]
@@ -378,7 +428,9 @@ mod tests {
     #[test]
     fn explicit_name() {
         extern_protocol!(
-            #[allow(clippy::missing_safety_doc)]
+            /// # Safety
+            ///
+            /// Is the `NSObject` protocol.
             #[name = "NSObject"]
             unsafe trait Foo {}
         );
