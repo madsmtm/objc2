@@ -154,7 +154,29 @@
 #[doc(alias = "@protocol")]
 #[macro_export]
 macro_rules! extern_protocol {
+    ($($input:tt)*) => {
+        $crate::__extern_protocol_check_syntax! {
+            ($($input)*)
+            $($input)*
+        }
+    };
+}
+
+/// Check the syntax of `extern_protocol!`, and extract its attributes.
+///
+/// The attributes are extracted from a copy of the input, so that each `#`
+/// and `[...]` keeps the span the caller wrote. A rebuilt `#[...]` has the
+/// span of this macro, and Clippy ignores docs that come from an external
+/// macro, so `missing_safety_doc` fired on every protocol (#887).
+///
+/// This calls `__extract_attributes_inner!` directly, so that the protocol
+/// is not expanded any deeper than through `__extract_attributes!`.
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __extern_protocol_check_syntax {
     (
+        ($($input:tt)*)
+
         // The special #[name = $name:literal] attribute is supported here.
         $(#[$($attrs:tt)*])*
         $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
@@ -165,16 +187,18 @@ macro_rules! extern_protocol {
             $($methods:tt)*
         }
     ) => {
-        $crate::__extract_attributes! {
-            ($(#[$($attrs)*])*)
+        $crate::__extract_attributes_inner! {
+            // The attributes, followed by the protocol.
+            ($($input)*)
+
+            () // superclasses
+            () // thread_kind
+            () // name
+            () // derive
+            () // attr_item
+            () // attr_impl
 
             ($crate::__extern_protocol_inner)
-            ($protocol)
-            ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
-                $crate::__extern_protocol_rewrite_methods! {
-                    $($methods)*
-                }
-            })
         }
     };
 }
@@ -183,8 +207,9 @@ macro_rules! extern_protocol {
 #[macro_export]
 macro_rules! __extern_protocol_inner {
     (
-        ($protocol:ident)
-        ($protocol_definition:item)
+        ($v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
+            $($methods:tt)*
+        })
 
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
@@ -194,7 +219,11 @@ macro_rules! __extern_protocol_inner {
         ($($attr_impl:tt)*)
     ) => {
         $($attr_protocol)*
-        $protocol_definition
+        $v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
+            $crate::__extern_protocol_rewrite_methods! {
+                $($methods)*
+            }
+        }
 
         $($attr_impl)*
         unsafe impl<T> $protocol for $crate::runtime::ProtocolObject<T>
@@ -378,7 +407,9 @@ mod tests {
     #[test]
     fn explicit_name() {
         extern_protocol!(
-            #[allow(clippy::missing_safety_doc)]
+            /// # Safety
+            ///
+            /// Is the `NSObject` protocol.
             #[name = "NSObject"]
             unsafe trait Foo {}
         );

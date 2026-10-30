@@ -119,6 +119,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Allow `return` in methods defined in `define_class!`.
 * Improved Rust-Analyzer support in `define_class!`.
 * Fixed leak when triggering debug assertion in writeback parameters.
+* Fixed `clippy::missing_safety_doc` firing on traits created with
+  `extern_protocol!`, even when they had a `# Safety` section.
 
 
 ## [0.6.5] - 2026-10-05
