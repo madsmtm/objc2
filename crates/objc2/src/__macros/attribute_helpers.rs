@@ -662,6 +662,35 @@ macro_rules! __extract_attributes_inner {
         }
     };
 
+    // The attributes end where an `unsafe trait` begins (`extern_protocol!`).
+    //
+    // The trait is passed to the output macro before the attributes.
+    {
+        ($v:vis unsafe trait $($item:tt)*)
+
+        ($($superclasses:tt)*)
+        ($($thread_kind:tt)*)
+        ($($name:tt)*)
+        ($($derives:tt)*)
+        ($($attr_item:tt)*)
+        ($($attr_impl:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $out_macro! {
+            $($out_args)*
+            ($v unsafe trait $($item)*)
+
+            ($($superclasses)*)
+            ($($thread_kind)*)
+            ($($name)*)
+            ($($derives)*)
+            ($($attr_item)*)
+            ($($attr_impl)*)
+        }
+    };
+
     // `unsafe(super(...))`
     {
         (

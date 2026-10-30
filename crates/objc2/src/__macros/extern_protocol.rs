@@ -156,23 +156,27 @@
 macro_rules! extern_protocol {
     ($($input:tt)*) => {
         $crate::__extern_protocol_check_syntax! {
-            $($input)*
-        }
-
-        // Move the attributes as the tokens the caller wrote, see
-        // `__extern_protocol_attributes!` for why.
-        $crate::__extern_protocol_attributes! {
-            ()
+            ($($input)*)
             $($input)*
         }
     };
 }
 
-/// Check the syntax of `extern_protocol!`, so that errors point here.
+/// Check the syntax of `extern_protocol!`, and extract its attributes.
+///
+/// The attributes are extracted from a copy of the input, so that each `#`
+/// and `[...]` keeps the span the caller wrote. A rebuilt `#[...]` has the
+/// span of this macro, and Clippy ignores docs that come from an external
+/// macro, so `missing_safety_doc` fired on every protocol (#887).
+///
+/// This calls `__extract_attributes_inner!` directly, so that the protocol
+/// is not expanded any deeper than through `__extract_attributes!`.
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_protocol_check_syntax {
     (
+        ($($input:tt)*)
+
         // The special #[name = $name:literal] attribute is supported here.
         $(#[$($attrs:tt)*])*
         $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
@@ -182,59 +186,30 @@ macro_rules! __extern_protocol_check_syntax {
             // #[optional]
             $($methods:tt)*
         }
-    ) => {};
-}
-
-/// tt-munch the attributes of `extern_protocol!`.
-///
-/// Each attribute is moved as its two tokens, `#` and `[...]`, instead of
-/// being matched as `#[$($attrs:tt)*]` and rebuilt. A rebuilt attribute has
-/// the span of this macro, and Clippy ignores doc comments that come from an
-/// external macro, so `missing_safety_doc` would fire on every protocol even
-/// when it has a `# Safety` section (#887).
-#[doc(hidden)]
-#[macro_export]
-macro_rules! __extern_protocol_attributes {
-    (
-        ($($attrs:tt)*)
-        $v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
-            $($methods:tt)*
-        }
     ) => {
-        $crate::__extract_attributes! {
-            ($($attrs)*)
+        $crate::__extract_attributes_inner! {
+            // The attributes, followed by the protocol.
+            ($($input)*)
+
+            () // superclasses
+            () // thread_kind
+            () // name
+            () // derive
+            () // attr_item
+            () // attr_impl
 
             ($crate::__extern_protocol_inner)
-            ($protocol)
-            ($v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
-                $crate::__extern_protocol_rewrite_methods! {
-                    $($methods)*
-                }
-            })
         }
     };
-
-    (
-        ($($attrs:tt)*)
-        $pound:tt $group:tt
-        $($rest:tt)*
-    ) => {
-        $crate::__extern_protocol_attributes! {
-            ($($attrs)* $pound $group)
-            $($rest)*
-        }
-    };
-
-    // Invalid syntax, already reported by `__extern_protocol_check_syntax!`.
-    ($($invalid:tt)*) => {};
 }
 
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __extern_protocol_inner {
     (
-        ($protocol:ident)
-        ($protocol_definition:item)
+        ($v:vis unsafe trait $protocol:ident $(: $conforms_to:ident $(+ $conforms_to_rest:ident)*)? {
+            $($methods:tt)*
+        })
 
         ($($superclasses:tt)*)
         ($($thread_kind:tt)*)
@@ -244,7 +219,11 @@ macro_rules! __extern_protocol_inner {
         ($($attr_impl:tt)*)
     ) => {
         $($attr_protocol)*
-        $protocol_definition
+        $v unsafe trait $protocol $(: $conforms_to $(+ $conforms_to_rest)*)? {
+            $crate::__extern_protocol_rewrite_methods! {
+                $($methods)*
+            }
+        }
 
         $($attr_impl)*
         unsafe impl<T> $protocol for $crate::runtime::ProtocolObject<T>
