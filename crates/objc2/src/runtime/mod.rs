@@ -92,7 +92,7 @@ pub use self::anyobject::Object;
 pub use self::anyprotocol::AnyProtocol;
 #[allow(deprecated)]
 pub use self::anyprotocol::Protocol;
-pub use self::bool::Bool;
+pub use self::bool::{Bool, CBool};
 pub use self::define::{ClassBuilder, ProtocolBuilder};
 pub use self::ivar::Ivar;
 pub use self::message_receiver::MessageReceiver;
