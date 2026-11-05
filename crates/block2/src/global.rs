@@ -122,11 +122,11 @@ impl<Signature> fmt::Debug for GlobalBlock<Signature> {
 /// The syntax is similar to a static closure, except that all types have to
 /// be specified. Note that the block cannot capture its environment.
 ///
-/// The block's parameter types must be [`EncodeArgument`] and the return type
-/// must be [`EncodeReturn`].
+/// The block's parameter types must be [`EncodeBlockArgument`] and the return
+/// type must be [`EncodeBlockReturn`].
 ///
-/// [`EncodeArgument`]: objc2::encode::EncodeArgument
-/// [`EncodeReturn`]: objc2::encode::EncodeReturn
+/// [`EncodeBlockArgument`]: objc2::encode::EncodeBlockArgument
+/// [`EncodeBlockReturn`]: objc2::encode::EncodeBlockReturn
 ///
 /// # Examples
 ///
@@ -161,7 +161,8 @@ impl<Signature> fmt::Debug for GlobalBlock<Signature> {
 /// }
 /// ```
 ///
-/// The following does not compile because [`Box`] is not [`EncodeArgument`]:
+/// The following does not compile because [`Box`] is not
+/// [`EncodeBlockArgument`]:
 ///
 /// ```compile_fail,E0277
 /// use block2::global_block;

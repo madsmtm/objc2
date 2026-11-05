@@ -17,7 +17,6 @@ fn main() {
     is_encode::<c_void>();
 
     is_encode::<&Block<'_, fn((), i32)>>();
-    is_encode::<&Block<'_, fn() -> bool>>();
 
     is_encode::<fn() -> &'static ()>();
     is_encode::<fn(())>();

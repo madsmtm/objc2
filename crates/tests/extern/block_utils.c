@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 #include <Block.h>
 #include <Foundation/NSObject.h>
@@ -12,6 +13,7 @@ typedef int32_t (^AddBlock)(int32_t);
 typedef int32_t (^Add12)(int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t, int32_t);
 typedef LargeStruct (^LargeStructBlock)(LargeStruct);
 typedef int32_t (^ArrayBlock)(int32_t[4]);
+typedef bool (^NotBlock)(bool, bool *);
 
 
 IntBlock get_int_block() {
@@ -93,6 +95,14 @@ ArrayBlock get_array_block() {
 
 int32_t invoke_array_block(ArrayBlock block, int32_t arr[4]) {
     return block(arr);
+}
+
+NotBlock get_not_block() {
+    return ^bool (bool a, bool *out) { *out = a; return !a; };
+}
+
+bool invoke_not_block(NotBlock block, bool a, bool *out) {
+    return block(a, out);
 }
 
 

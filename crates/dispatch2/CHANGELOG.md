@@ -49,6 +49,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added `DispatchBlockFlags` (wasn't previously exposed).
 - Made `dispatch_main` `unsafe`.
 - Fixed the value of `DispatchQueueGlobalPriority::Background`.
+- Removed the `u8` to `bool` transmute in `DispatchData::to_vec`.
 
 
 ## [0.3.1] - 2026-02-26

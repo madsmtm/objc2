@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Added `SendableBlock` type alias and the ability in general
   for blocks to be thread-safe through their `ThreadKind` generic parameter.
 * Added `AsRef` conversions between `RcBlock`/`StackBlock` and `Block`.
+* Allow C's `bool` in block signatures.
 
 ### Changed
 * **BREAKING**: Removed extra parentheses when invoking `Block::call`.
