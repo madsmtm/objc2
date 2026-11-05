@@ -424,8 +424,12 @@ impl LibraryConfig {
         for data in all.clone().filter(filter_ptr(allowed_in)) {
             assert_eq!(data.no_implementor, bool::default());
             assert_eq!(data.implementor, Default::default());
-            assert_eq!(data.arguments, Default::default());
             assert_eq!(data.return_, Default::default());
+        }
+
+        let allowed_in = self.fns.values().chain(self.typedef_data.values());
+        for data in all.clone().filter(filter_ptr(allowed_in)) {
+            assert_eq!(data.arguments, Default::default());
         }
 
         let allowed_in = self
@@ -517,9 +521,13 @@ pub struct StmtData {
     pub no_implementor: bool,
     #[serde(default)]
     pub implementor: Option<String>,
+
+    // Functions and typedefs to blocks.
     #[serde(default)]
     #[serde(deserialize_with = "deserialize_argument_overrides")]
     pub arguments: HashMap<usize, TypeOverride>,
+
+    // Functions only.
     #[serde(rename = "return")]
     #[serde(default)]
     pub return_: TypeOverride,

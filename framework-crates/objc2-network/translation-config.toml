@@ -340,6 +340,15 @@ fn.nw_ws_response_add_additional_header.arguments.1.bounds = "null-terminated"
 fn.nw_ws_response_add_additional_header.arguments.2.bounds = "null-terminated"
 
 ##
+## Fixing nullability
+##
+
+# Network passes NULL as the old result of an added service and as the new
+# result of a removed one, matching `nw_browse_result_get_changes`.
+typedef.nw_browser_browse_results_changed_handler_t.arguments.0.nullability = "nullable"
+typedef.nw_browser_browse_results_changed_handler_t.arguments.1.nullability = "nullable"
+
+##
 ## Safety
 ##
 
