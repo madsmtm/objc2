@@ -4,8 +4,7 @@ use core::marker::PhantomData;
 use core::mem;
 use core::ptr;
 
-use objc2::encode::EncodeArguments;
-use objc2::encode::{EncodeArgument, EncodeReturn};
+use objc2::encode::{EncodeBlockArgument, EncodeBlockReturn, Encoding};
 
 use crate::{Block, StackBlock};
 
@@ -31,8 +30,8 @@ mod private_signature {
 /// Types that represent block parameters/arguments and return types.
 ///
 /// This is implemented for [`fn`][prim@fn] pointer types with up to 12
-/// parameters, where each parameter implements [`EncodeArgument`] and the
-/// return type implements [`EncodeReturn`].
+/// parameters, where each parameter implements [`EncodeBlockArgument`] and
+/// the return type implements [`EncodeBlockReturn`].
 ///
 ///
 /// # Safety
@@ -43,13 +42,13 @@ mod private_signature {
 /// Note: `block2` does not (yet?) have a concept of `unsafe` blocks, which
 /// means that [the `call` method][Block::call] is always safe.
 pub unsafe trait BlockSignature: private_signature::Sealed + Sized {
-    /// The parameters/arguments to the block.
+    /// The encodings of the parameters/arguments to the block.
     #[doc(hidden)]
-    type __Args: EncodeArguments;
+    const __ARGUMENT_ENCODINGS: &'static [Encoding];
 
-    /// The return type of the block.
+    /// The encoding of the return type of the block.
     #[doc(hidden)]
-    type __Output: EncodeReturn;
+    const __RETURN_ENCODING: Encoding;
 }
 
 mod private_into {
@@ -59,8 +58,8 @@ mod private_into {
 /// Types that may be converted into a block.
 ///
 /// This is implemented for [`fn`] ptrs of up to 12 parameters, where each
-/// parameter implements [`EncodeArgument`] and the return type implements
-/// [`EncodeReturn`].
+/// parameter implements [`EncodeBlockArgument`] and the return type
+/// implements [`EncodeBlockReturn`].
 ///
 ///
 /// # Safety
@@ -81,17 +80,17 @@ pub unsafe trait __DynToBlock {
 
 macro_rules! impl_traits {
     ($($a:ident: $t:ident),*) => {
-        impl<$($t: EncodeArgument,)* R: EncodeReturn> private_signature::Sealed for fn($($t),*) -> R {}
+        impl<$($t: EncodeBlockArgument,)* R: EncodeBlockReturn> private_signature::Sealed for fn($($t),*) -> R {}
 
-        unsafe impl<$($t: EncodeArgument,)* R: EncodeReturn> BlockSignature for fn($($t),*) -> R {
-            type __Args = ($($t,)*);
-            type __Output = R;
+        unsafe impl<$($t: EncodeBlockArgument,)* R: EncodeBlockReturn> BlockSignature for fn($($t),*) -> R {
+            const __ARGUMENT_ENCODINGS: &'static [Encoding] = &[$($t::ENCODING_BLOCK_ARGUMENT),*];
+            const __RETURN_ENCODING: Encoding = R::ENCODING_BLOCK_RETURN;
         }
 
         impl<'b, $($t,)* R, Closure> private_into::Sealed<'b, fn($($t,)*) -> R> for Closure
         where
-            $($t: EncodeArgument,)*
-            R: EncodeReturn,
+            $($t: EncodeBlockArgument,)*
+            R: EncodeBlockReturn,
             Closure: Fn($($t),*) -> R + 'b,
         {}
 
@@ -111,8 +110,8 @@ macro_rules! impl_traits {
 
             unsafe impl<'b, $($t,)* R, Closure> IntoBlock<'b, fn($($t,)*) -> R> for Closure
             where
-                $($t: EncodeArgument,)*
-                R: EncodeReturn,
+                $($t: EncodeBlockArgument,)*
+                R: EncodeBlockReturn,
                 Closure: Fn($($t),*) -> R + 'b,
             {
                 #[inline]
@@ -319,8 +318,8 @@ where
     if cfg!(debug_assertions) && !E::IS_NONE {
         // TODO: relax to check for equivalence instead of strict equality.
         let signature_string = crate::encoding::block_signature_string(
-            Signature::__Args::ENCODINGS,
-            Signature::__Output::ENCODING_RETURN,
+            Signature::__ARGUMENT_ENCODINGS,
+            Signature::__RETURN_ENCODING,
         );
         assert_eq!(E::ENCODING_CSTR, &*signature_string);
     }

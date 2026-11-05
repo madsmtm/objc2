@@ -3,7 +3,7 @@ use core::fmt;
 use core::marker::PhantomData;
 use core::ptr::NonNull;
 
-use objc2::encode::{EncodeArgument, EncodeReturn, Encoding, RefEncode};
+use objc2::encode::{EncodeBlockArgument, EncodeBlockReturn, Encoding, RefEncode};
 
 use crate::abi::BlockHeader;
 use crate::debug::debug_block_header;
@@ -21,8 +21,8 @@ use crate::{BlockSignature, RcBlock};
 /// The generic type `Signature` describes the block's **signature**, that is,
 /// the parameter and return types of the block. This is described using a
 /// [function pointer type][prim@fn] that implements the [`BlockSignature`]
-/// trait. The parameter types must be [`EncodeArgument`] and the return type
-/// must be [`EncodeReturn`].
+/// trait. The parameter types must be [`EncodeBlockArgument`] and the return
+/// type must be [`EncodeBlockReturn`].
 ///
 /// As an example, you may have the type `Block<'_, fn(u8, u8) -> i32>`, and
 /// that would be a non-escaping block that takes two `u8`s, and returns an
@@ -42,8 +42,8 @@ use crate::{BlockSignature, RcBlock};
 /// to avoid having to spell that out all the time.
 ///
 /// ["escaping"]: https://docs.swift.org/swift-book/documentation/the-swift-programming-language/closures/#Escaping-Closures
-/// [`EncodeArgument`]: objc2::encode::EncodeArgument
-/// [`EncodeReturn`]: objc2::encode::EncodeReturn
+/// [`EncodeBlockArgument`]: objc2::encode::EncodeBlockArgument
+/// [`EncodeBlockReturn`]: objc2::encode::EncodeBlockReturn
 ///
 ///
 /// # Creating blocks
@@ -159,7 +159,7 @@ impl<'b, Signature, ThreadKind: ?Sized> Block<'b, Signature, ThreadKind> {
 // is the only way to avoid redundant parentheses when calling blocks.
 macro_rules! call_block {
     ($num_args:literal; $($a:ident: $t:ident),*) => {
-        impl<'b, $($t: EncodeArgument,)* R: EncodeReturn, ThreadKind: ?Sized> Block<'b, fn($($t),*) -> R, ThreadKind> {
+        impl<'b, $($t: EncodeBlockArgument,)* R: EncodeBlockReturn, ThreadKind: ?Sized> Block<'b, fn($($t),*) -> R, ThreadKind> {
             #[doc = concat!("Call the block with ", $num_args, " arguments.")]
             ///
             /// The return value is the output of the block.

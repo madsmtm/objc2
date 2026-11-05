@@ -19,8 +19,9 @@ use objc2::encode::Encoding;
 /// # Example
 ///
 /// ```ignore
-/// use objc2::encode::{EncodeArguments, EncodeReturn};
-/// assert_eq!(block_signature_string((i32, f32)::ENCODINGS, u8::ENCODING_RETURN), "C16@?0i8f12");
+/// use block2::BlockSignature;
+/// type Signature = fn(i32, f32) -> u8;
+/// assert_eq!(block_signature_string(Signature::__ARGUMENT_ENCODINGS, Signature::__RETURN_ENCODING), "C16@?0i8f12");
 /// ```
 pub(crate) fn block_signature_string(args: &[Encoding], ret: Encoding) -> CString {
     // TODO: alignment?

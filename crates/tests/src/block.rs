@@ -1,5 +1,6 @@
 use alloc::string::ToString;
 use core::cell::RefCell;
+use core::ptr::NonNull;
 use std::ffi::CStr;
 use std::thread_local;
 
@@ -107,6 +108,9 @@ extern "C-unwind" {
 
     fn get_array_block() -> *mut Block<'static, fn(*const [i32; 4]) -> i32>;
     fn invoke_array_block(block: &Block<'_, fn(*const [i32; 4]) -> i32>, s: &[i32; 4]) -> i32;
+
+    fn get_not_block() -> *mut NotBlock<'static>;
+    fn invoke_not_block(block: &NotBlock<'_>, a: bool, out: NonNull<bool>) -> bool;
 
     fn try_block_debugging(x: i32);
 }
@@ -308,6 +312,42 @@ fn test_array() {
     invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 10);
     invoke_assert(&RcBlock::with_encoding::<_, Enc>(closure), 10);
     invoke_assert(GLOBAL_BLOCK.as_ref(), 10);
+}
+
+type NotBlock<'a> = Block<'a, fn(bool, NonNull<bool>) -> bool>;
+
+/// Writes `a` to `out` and returns `!a`.
+fn not(a: bool, out: NonNull<bool>) -> bool {
+    // SAFETY: Callers pass a pointer to a live `bool`.
+    unsafe { out.write(a) };
+    !a
+}
+
+#[test]
+fn test_bool_block() {
+    #[track_caller]
+    fn invoke_assert(block: &NotBlock<'_>) {
+        for a in [false, true] {
+            let mut out = !a;
+            assert_eq!(block.call(a, NonNull::from(&mut out)), !a);
+            assert_eq!(out, a);
+
+            let mut out = !a;
+            // SAFETY: The block has the signature the C function expects.
+            let ret = unsafe { invoke_not_block(block, a, NonNull::from(&mut out)) };
+            assert_eq!((ret, out), (!a, a));
+        }
+    }
+
+    global_block! {
+        static GLOBAL_BLOCK = |a: bool, out: NonNull<bool>| -> bool { not(a, out) };
+    }
+
+    // SAFETY: The C function returns a global block.
+    invoke_assert(unsafe { &*get_not_block() });
+    invoke_assert(&StackBlock::new(not));
+    invoke_assert(&RcBlock::new(not));
+    invoke_assert(GLOBAL_BLOCK.as_ref());
 }
 
 #[test]

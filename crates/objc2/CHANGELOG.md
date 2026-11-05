@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * Added `rc::Weak::empty()`.
 * Added `rc::Weak::copy()`.
 * Added `rc::Weak::store()`.
+* Added `EncodeBlockArgument` and `EncodeBlockReturn`, which also allow C's `bool`.
 
 ## Changed
 * **BREAKING**: Changed syntax for `define_class!` ivars (instance variables).

@@ -423,6 +423,61 @@ unsafe impl<T: Encode> EncodeArgument for T {
     const ENCODING_ARGUMENT: Encoding = decay_parameter_encoding(T::ENCODING);
 }
 
+/// [`EncodeReturn`] types, plus C's `bool` and pointers to it.
+///
+/// # Safety
+///
+/// The value must be valid as the return value of a block.
+pub unsafe trait EncodeBlockReturn: return_private::Sealed {
+    /// The Objective-C type-encoding for this type.
+    const ENCODING_BLOCK_RETURN: Encoding;
+}
+
+// SAFETY: Blocks return whatever Objective-C methods can.
+unsafe impl<T: EncodeReturn> EncodeBlockReturn for T {
+    const ENCODING_BLOCK_RETURN: Encoding = T::ENCODING_RETURN;
+}
+
+/// [`EncodeArgument`] types, plus C's `bool` and pointers to it.
+///
+/// Blocks are called through the C ABI, so `bool` needs no conversion to
+/// `BOOL` here.
+///
+/// # Safety
+///
+/// The value must be valid as a parameter of a block.
+pub unsafe trait EncodeBlockArgument: argument_private::Sealed {
+    /// The Objective-C type-encoding for this type.
+    const ENCODING_BLOCK_ARGUMENT: Encoding;
+}
+
+// SAFETY: Blocks take whatever Objective-C methods can.
+unsafe impl<T: EncodeArgument> EncodeBlockArgument for T {
+    const ENCODING_BLOCK_ARGUMENT: Encoding = T::ENCODING_ARGUMENT;
+}
+
+macro_rules! encode_block_bool_impls {
+    ($($t:ty => $e:expr,)*) => ($(
+        impl return_private::Sealed for $t {}
+        impl argument_private::Sealed for $t {}
+
+        // SAFETY: Rust's `bool` is ABI compatible with C's `bool`.
+        unsafe impl EncodeBlockReturn for $t {
+            const ENCODING_BLOCK_RETURN: Encoding = $e;
+        }
+
+        // SAFETY: Same as above.
+        unsafe impl EncodeBlockArgument for $t {
+            const ENCODING_BLOCK_ARGUMENT: Encoding = $e;
+        }
+    )*);
+}
+
+encode_block_bool_impls! {
+    bool => Encoding::Bool,
+    NonNull<bool> => Encoding::Pointer(&Encoding::Bool),
+}
+
 mod args_private {
     pub trait Sealed {}
 }
