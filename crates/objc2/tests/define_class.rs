@@ -390,6 +390,42 @@ fn test_unreachable() {
     let _ = DefineClassUnreachable::class();
 }
 
+define_class!(
+    #[unsafe(super(NSObject))]
+    struct DefineClassSignatureLints;
+
+    // Ensure none of these warn, since the signature is dictated by Objective-C.
+    #[deny(
+        clippy::unused_self,
+        clippy::unnecessary_wraps,
+        clippy::trivially_copy_pass_by_ref,
+        clippy::missing_const_for_fn
+    )]
+    impl DefineClassSignatureLints {
+        #[unsafe(method(unusedSelf))]
+        fn unused_self(&self) -> i32 {
+            42
+        }
+
+        #[unsafe(method(alwaysSome))]
+        fn always_some(&self) -> Option<Retained<NSObject>> {
+            let _ = self;
+            Some(NSObject::new())
+        }
+
+        #[unsafe(method(byRef:))]
+        fn by_ref(&self, value: &u8) -> u8 {
+            let _ = self;
+            *value
+        }
+    }
+);
+
+#[test]
+fn test_signature_lints() {
+    let _ = DefineClassSignatureLints::class();
+}
+
 #[test]
 fn test_pointer_receiver_allowed() {
     define_class!(

@@ -189,6 +189,14 @@ macro_rules! __define_class_strip_custom_method_attributes {
         $($rest:tt)*
     } => {
         $($parsed)*
+        // The signature is dictated by the Objective-C method, so lints that
+        // suggest changing it cannot be followed.
+        #[allow(
+            clippy::unused_self,
+            clippy::unnecessary_wraps,
+            clippy::trivially_copy_pass_by_ref,
+            clippy::missing_const_for_fn
+        )]
         $item
 
         // Munch the rest.
