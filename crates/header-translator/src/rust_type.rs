@@ -4653,23 +4653,36 @@ impl Ty {
         Self::parse_method_return(ty, false, context)
     }
 
-    pub(crate) fn parse_typedef(
-        ty: Type<'_>,
-        context: &Context<'_>,
-        override_sendable: Option<bool>,
-    ) -> Self {
+    pub(crate) fn parse_typedef(ty: Type<'_>, context: &Context<'_>, data: &StmtData) -> Self {
         let mut ty = Self::parse(ty, false, context);
 
-        if let Some(override_sendable) = override_sendable {
-            if let Self::Pointer { pointee, .. } = &mut ty {
-                if let Self::Pointee(PointeeTy::Block { sendable, .. }) = &mut **pointee {
-                    *sendable = Some(override_sendable);
-                } else {
-                    error!(?ty, "invalid typedef sendable override");
-                }
-            } else {
-                error!(?ty, "invalid typedef sendable override");
-            }
+        if data.sendable.is_none() && data.arguments.is_empty() {
+            return ty;
+        }
+
+        let Self::Pointer { pointee, .. } = &mut ty else {
+            error!(?ty, "invalid typedef block override");
+            return ty;
+        };
+        let Self::Pointee(PointeeTy::Block {
+            sendable,
+            arguments,
+            ..
+        }) = &mut **pointee
+        else {
+            error!(?ty, "invalid typedef block override");
+            return ty;
+        };
+
+        if let Some(override_sendable) = data.sendable {
+            *sendable = Some(override_sendable);
+        }
+
+        for (index, override_) in &data.arguments {
+            arguments
+                .get_mut(*index)
+                .unwrap_or_else(|| panic!("block argument override index out of bounds {index}"))
+                .apply_override(override_);
         }
 
         ty
