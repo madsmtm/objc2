@@ -46,6 +46,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Removed `GlobalQueueIdentifier` in favour of two methods on `DispatchQueue`.
 
 ### Fixed
+- **BREAKING**: An `F: 'static` bound was added to the following methods to make
+                sure any referenced values passed to them are borrowed for long
+                enough since they perform their callbacks asynchronously (#894):
+  - `DispatchQueue::after`
+  - `DispatchGroup::notify`
+  - `DispatchQueue::set_specific`
+  - `DispatchObject::set_finalizer`
 - Added `DispatchBlockFlags` (wasn't previously exposed).
 - Made `dispatch_main` `unsafe`.
 - Fixed the value of `DispatchQueueGlobalPriority::Background`.

@@ -96,10 +96,22 @@ impl DispatchQueue {
     }
 
     /// Enqueue a function for execution at the specified time on the [`DispatchQueue`].
+    ///
+    /// The callback must not borrow data that may expire before it runs.
+    ///
+    /// ```compile_fail,E0521
+    /// use dispatch2::{DispatchQueue, DispatchTime};
+    ///
+    /// fn schedule(queue: &DispatchQueue, message: &str) {
+    ///     queue.after(DispatchTime::NOW, move || println!("{message}"));
+    /// }
+    /// ```
     #[inline]
     pub fn after<F>(&self, when: DispatchTime, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -148,10 +160,23 @@ impl DispatchQueue {
     }
 
     /// Sets a function at the given key that will be executed at [`DispatchQueue`] destruction.
+    ///
+    /// The destructor must not borrow data that may expire before it runs.
+    ///
+    /// ```compile_fail,E0521
+    /// use core::ptr::NonNull;
+    /// use dispatch2::DispatchQueue;
+    ///
+    /// fn register(queue: &DispatchQueue, key: NonNull<()>, message: &str) {
+    ///     queue.set_specific(key, move || println!("{message}"));
+    /// }
+    /// ```
     #[inline]
     pub fn set_specific<F>(&self, key: NonNull<()>, destructor: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `destructor` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 

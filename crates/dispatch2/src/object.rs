@@ -111,10 +111,22 @@ pub unsafe trait DispatchObject {
     }
 
     /// Set the finalizer function for the object.
+    ///
+    /// The destructor must not borrow data that may expire before it runs.
+    ///
+    /// ```compile_fail,E0521
+    /// use dispatch2::DispatchObject;
+    ///
+    /// fn register(object: &impl DispatchObject, message: &str) {
+    ///     object.set_finalizer(move || println!("{message}"));
+    /// }
+    /// ```
     #[inline]
     fn set_finalizer<F>(&self, destructor: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `destructor` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 
