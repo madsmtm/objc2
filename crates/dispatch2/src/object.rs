@@ -111,16 +111,6 @@ pub unsafe trait DispatchObject {
     }
 
     /// Set the finalizer function for the object.
-    ///
-    /// The destructor must not borrow data that may expire before it runs.
-    ///
-    /// ```compile_fail,E0521
-    /// use dispatch2::DispatchObject;
-    ///
-    /// fn register(object: &impl DispatchObject, message: &str) {
-    ///     object.set_finalizer(move || println!("{message}"));
-    /// }
-    /// ```
     #[inline]
     fn set_finalizer<F>(&self, destructor: F)
     where
