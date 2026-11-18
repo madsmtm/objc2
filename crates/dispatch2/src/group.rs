@@ -40,7 +40,9 @@ impl DispatchGroup {
     #[inline]
     pub fn notify<F>(&self, queue: &DispatchQueue, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast::<c_void>();
 

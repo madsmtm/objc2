@@ -114,7 +114,9 @@ pub unsafe trait DispatchObject {
     #[inline]
     fn set_finalizer<F>(&self, destructor: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `destructor` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 
