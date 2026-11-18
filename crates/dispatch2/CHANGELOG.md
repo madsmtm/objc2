@@ -46,9 +46,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Removed `GlobalQueueIdentifier` in favour of two methods on `DispatchQueue`.
 
 ### Fixed
-- **BREAKING**: An `F: 'static` bound was added to the following methods to make
-                sure any referenced values passed to them are borrowed for long
-                enough since they perform their callbacks asynchronously (#894):
+- **BREAKING**: Added `F: 'static` to the following methods since they perform their callbacks asynchronously:
   - `DispatchQueue::after`
   - `DispatchGroup::notify`
   - `DispatchQueue::set_specific`
