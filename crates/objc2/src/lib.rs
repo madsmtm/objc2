@@ -102,7 +102,7 @@
 //! [#203]: https://github.com/madsmtm/objc2/issues/203
 
 #![no_std]
-#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc))]
+#![cfg_attr(feature = "unstable-darwin-objc", feature(darwin_objc, core_os))]
 #![cfg_attr(
     feature = "unstable-arbitrary-self-types",
     feature(arbitrary_self_types)
