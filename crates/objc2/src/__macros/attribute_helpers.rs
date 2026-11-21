@@ -662,6 +662,35 @@ macro_rules! __extract_attributes_inner {
         }
     };
 
+    // The attributes end where an `unsafe trait` begins (`extern_protocol!`).
+    //
+    // The trait is passed to the output macro before the attributes.
+    {
+        ($v:vis unsafe trait $($item:tt)*)
+
+        ($($superclasses:tt)*)
+        ($($thread_kind:tt)*)
+        ($($name:tt)*)
+        ($($derives:tt)*)
+        ($($attr_item:tt)*)
+        ($($attr_impl:tt)*)
+
+        ($out_macro:path)
+        $($out_args:tt)*
+    } => {
+        $out_macro! {
+            $($out_args)*
+            ($v unsafe trait $($item)*)
+
+            ($($superclasses)*)
+            ($($thread_kind)*)
+            ($($name)*)
+            ($($derives)*)
+            ($($attr_item)*)
+            ($($attr_impl)*)
+        }
+    };
+
     // `unsafe(super(...))`
     {
         (
@@ -1015,7 +1044,9 @@ macro_rules! __extract_attributes_inner {
     // (`doc`, `deprecated`, `repr`, `non_exhaustive`, `expect/warn/deny/forbid`, `cfg_attr`, etc.)
     {
         (
-            #[$($parsed:tt)*]
+            // Matched as the `#` and `[...]` tokens, so that they keep their
+            // span (Clippy's doc lints ignore docs from external macros).
+            $pound:tt $group:tt
             $($rest:tt)*
         )
 
@@ -1039,7 +1070,7 @@ macro_rules! __extract_attributes_inner {
             // Pass all other attributes onwards to the struct.
             (
                 $($attr_item)*
-                #[$($parsed)*]
+                $pound $group
             )
             ($($attr_impl)*)
 
