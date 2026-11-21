@@ -99,7 +99,9 @@ impl DispatchQueue {
     #[inline]
     pub fn after<F>(&self, when: DispatchTime, work: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `work` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let work_boxed = Box::into_raw(Box::new(work)).cast();
 
@@ -151,7 +153,9 @@ impl DispatchQueue {
     #[inline]
     pub fn set_specific<F>(&self, key: NonNull<()>, destructor: F)
     where
-        F: Send + FnOnce(),
+        // We need `'static` to make sure any referenced values are borrowed for
+        // long enough since `destructor` will be performed asynchronously.
+        F: Send + FnOnce() + 'static,
     {
         let destructor_boxed = Box::into_raw(Box::new(destructor)).cast();
 
