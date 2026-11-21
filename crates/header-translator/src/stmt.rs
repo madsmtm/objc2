@@ -1418,7 +1418,7 @@ impl Stmt {
                 let ty = entity
                     .get_typedef_underlying_type()
                     .expect("typedef underlying type");
-                let mut ty = Ty::parse_typedef(ty, context, data.sendable);
+                let mut ty = Ty::parse_typedef(ty, context, data);
 
                 if let Some(nullability) = data.nullability {
                     ty.change_nullability(nullability_to_clang(nullability));
