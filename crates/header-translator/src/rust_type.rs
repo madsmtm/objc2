@@ -4656,7 +4656,10 @@ impl Ty {
     pub(crate) fn parse_typedef(ty: Type<'_>, context: &Context<'_>, data: &StmtData) -> Self {
         let mut ty = Self::parse(ty, false, context);
 
-        if data.sendable.is_none() && data.arguments.is_empty() {
+        if data.sendable.is_none()
+            && data.arguments.is_empty()
+            && data.return_ == TypeOverride::default()
+        {
             return ty;
         }
 
@@ -4667,6 +4670,7 @@ impl Ty {
         let Self::Pointee(PointeeTy::Block {
             sendable,
             arguments,
+            result_type,
             ..
         }) = &mut **pointee
         else {
@@ -4684,6 +4688,8 @@ impl Ty {
                 .unwrap_or_else(|| panic!("block argument override index out of bounds {index}"))
                 .apply_override(override_);
         }
+
+        result_type.apply_override(&data.return_);
 
         ty
     }
