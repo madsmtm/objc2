@@ -246,7 +246,8 @@ impl CGRect {
     #[doc(alias = "CGRectZero")]
     pub const ZERO: Self = Self::new(CGPoint::ZERO, CGSize::ZERO);
 
-    /// Returns a rectangle with a positive width and height.
+    /// Returns a rectangle with a nonnegative width and height, moving the
+    /// origin to preserve the rectangle's extent.
     ///
     ///
     /// # Examples
@@ -256,13 +257,39 @@ impl CGRect {
     /// let origin = CGPoint::new(1.0, 1.0);
     /// let size = CGSize::new(-5.0, -2.0);
     /// let rect = CGRect::new(origin, size);
-    /// assert_eq!(rect.standardize().size, CGSize::new(5.0, 2.0));
+    /// assert_eq!(
+    ///     rect.standardize(),
+    ///     CGRect::new(CGPoint::new(-4.0, -1.0), CGSize::new(5.0, 2.0)),
+    /// );
     /// ```
     #[inline]
     #[doc(alias = "CGRectStandardize")]
     #[cfg(feature = "std")] // `abs` only available in core since Rust 1.85
     pub fn standardize(self) -> Self {
-        Self::new(self.origin, self.size.abs())
+        if self.origin.x == CGFloat::INFINITY || self.origin.y == CGFloat::INFINITY {
+            return Self::new(
+                CGPoint::new(CGFloat::INFINITY, CGFloat::INFINITY),
+                CGSize::ZERO,
+            );
+        }
+        // Always add the offset, including signed zero, as CGRectStandardize does.
+        Self::new(
+            CGPoint::new(
+                self.origin.x
+                    + if self.size.width <= 0.0 {
+                        self.size.width
+                    } else {
+                        0.0
+                    },
+                self.origin.y
+                    + if self.size.height <= 0.0 {
+                        self.size.height
+                    } else {
+                        0.0
+                    },
+            ),
+            self.size.abs(),
+        )
     }
 
     /// The smallest coordinate of the rectangle.
@@ -301,7 +328,7 @@ impl CGRect {
         )
     }
 
-    /// Returns whether a rectangle has zero width or height.
+    /// Returns whether a rectangle has zero width or height, or is null.
     ///
     ///
     /// # Examples
@@ -316,9 +343,10 @@ impl CGRect {
     #[inline]
     #[doc(alias = "CGRectIsEmpty")]
     pub fn is_empty(self) -> bool {
-        !(self.size.width > 0.0 && self.size.height > 0.0)
-        // TODO: NaN handling?
-        // self.size.width <= 0.0 || self.size.height <= 0.0
+        self.size.width == 0.0
+            || self.size.height == 0.0
+            || self.origin.x == CGFloat::INFINITY
+            || self.origin.y == CGFloat::INFINITY
     }
 
     // TODO: NSContainsRect / CGRectContainsRect

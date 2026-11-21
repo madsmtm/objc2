@@ -262,3 +262,6 @@ CGWindow = [
     "objc2-core-foundation/CFDictionary",
 ]
 CGWindowLevel = []
+
+[dev-dependencies]
+objc2-core-foundation = { workspace = true, features = ["std"] }
