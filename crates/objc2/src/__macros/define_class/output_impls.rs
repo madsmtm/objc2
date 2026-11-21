@@ -189,8 +189,8 @@ macro_rules! __define_class_strip_custom_method_attributes {
         $($rest:tt)*
     } => {
         $($parsed)*
-        // The signature is dictated by the Objective-C method, so lints that
-        // suggest changing it cannot be followed.
+        // The signature is dictated by Objective-C, so these lints cannot be followed.
+        // FIXME: Only allow them on overridden and protocol methods once we have `#[override]`.
         #[allow(
             clippy::unused_self,
             clippy::unnecessary_wraps,

@@ -5,8 +5,8 @@ use std::marker::PhantomData;
 use std::panic::{RefUnwindSafe, UnwindSafe};
 
 use objc2::rc::{Allocated, Retained};
-use objc2::runtime::NSObject;
-use objc2::{define_class, extern_methods, sel, ClassType, MainThreadOnly};
+use objc2::runtime::{NSObject, NSObjectProtocol};
+use objc2::{define_class, extern_methods, extern_protocol, sel, ClassType, MainThreadOnly};
 use static_assertions::{assert_impl_all, assert_not_impl_any};
 
 // Test that adding the `deprecated` attribute does not mean that warnings
@@ -390,6 +390,21 @@ fn test_unreachable() {
     let _ = DefineClassUnreachable::class();
 }
 
+extern_protocol!(
+    #[allow(clippy::missing_safety_doc)]
+    #[name = "DefineClassSignatureLintsProtocol"]
+    unsafe trait SignatureLintsProtocol: NSObjectProtocol {
+        #[unsafe(method(protocolUnusedSelf))]
+        fn protocol_unused_self(&self) -> i32;
+
+        #[unsafe(method(protocolAlwaysSome))]
+        fn protocol_always_some(&self) -> Option<Retained<NSObject>>;
+
+        #[unsafe(method(protocolByRef:))]
+        fn protocol_by_ref(&self, value: &u8) -> u8;
+    }
+);
+
 define_class!(
     #[unsafe(super(NSObject))]
     struct DefineClassSignatureLints;
@@ -415,6 +430,35 @@ define_class!(
 
         #[unsafe(method(byRef:))]
         fn by_ref(&self, value: &u8) -> u8 {
+            let _ = self;
+            *value
+        }
+    }
+
+    // SAFETY: `NSObject` implements `NSObjectProtocol`.
+    unsafe impl NSObjectProtocol for DefineClassSignatureLints {}
+
+    // SAFETY: The method signatures match the protocol declaration.
+    #[deny(
+        clippy::unused_self,
+        clippy::unnecessary_wraps,
+        clippy::trivially_copy_pass_by_ref,
+        clippy::missing_const_for_fn
+    )]
+    unsafe impl SignatureLintsProtocol for DefineClassSignatureLints {
+        #[unsafe(method(protocolUnusedSelf))]
+        fn protocol_unused_self(&self) -> i32 {
+            42
+        }
+
+        #[unsafe(method(protocolAlwaysSome))]
+        fn protocol_always_some(&self) -> Option<Retained<NSObject>> {
+            let _ = self;
+            Some(NSObject::new())
+        }
+
+        #[unsafe(method(protocolByRef:))]
+        fn protocol_by_ref(&self, value: &u8) -> u8 {
             let _ = self;
             *value
         }
