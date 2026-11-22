@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - **BREAKING**: Renamed `dispatch_source_proc_flags_t` to `DispatchSourceProcessFlags`.
 - **BREAKING**: Renamed `dispatch_source_timer_flags_t` to `DispatchSourceTimerFlags`.
 - **BREAKING**: Renamed `dispatch_source_vnode_flags_t` to `DispatchSourceFileSystemFlags`.
+- **BREAKING**: `DispatchDataApplier` and `DispatchIOHandler` take and return `objc2::runtime::CBool` instead of `bool`, which makes them usable.
 
 ### Removed
 - **BREAKING**: Removed `QueueAfterError`.

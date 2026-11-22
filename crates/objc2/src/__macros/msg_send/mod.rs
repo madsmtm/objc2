@@ -181,9 +181,11 @@ pub use self::retained::*;
 /// translated to use `bool` on the Rust side.
 ///
 /// If you want to handle the conversion explicitly, or the Objective-C method
-/// expects e.g. a pointer to a `BOOL`, use [`runtime::Bool`] instead.
+/// expects e.g. a pointer to a `BOOL`, use [`runtime::Bool`] instead. Methods
+/// that use the actual C `bool` type should use [`runtime::CBool`] to get the right ABI.
 ///
 /// [`runtime::Bool`]: crate::runtime::Bool
+/// [`runtime::CBool`]: crate::runtime::CBool
 ///
 ///
 /// ## `CStr` handling

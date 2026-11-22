@@ -81,6 +81,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 * **BREAKING**: Split parts of `FSVolumeOperations` into `FSVolumeCommonOperations`.
 * **BREAKING**: Converted `CFError` parameters to `Result<..., CFRetained<CFError>>`.
 * **BREAKING**: Converted `CVReturn`, `DAReturn`, `IOReturn`, `CGError`, `CFSocketError` and `AXError` to `Result<(), XXError>`.
+* **BREAKING**: Blocks and Objective-C methods use `objc2::runtime::CBool` for C's `bool`, which makes such blocks usable and fixes ABI issues.
 
 ### Removed
 * **BREAKING**: Removed a lot of deprecated function aliases. Use the methods instead.

@@ -1,4 +1,5 @@
 #![allow(unused_imports)]
+use core::ffi::c_void;
 use core::ptr::{self, NonNull};
 
 use crate::generated::_dispatch_data_empty;
@@ -110,33 +111,24 @@ impl DispatchData {
     #[inline]
     pub fn to_vec(&self) -> alloc::vec::Vec<u8> {
         let contents = core::cell::RefCell::new(alloc::vec::Vec::new());
-        let block = block2::RcBlock::new(
-            |_region, _offset, buffer: NonNull<core::ffi::c_void>, size| {
+        let block = block2::StackBlock::new(
+            |_region: NonNull<DispatchData>,
+             _offset: usize,
+             buffer: NonNull<c_void>,
+             size: usize| {
                 // SAFETY: Dispatch guarantees that the slice is valid.
                 let buffer =
                     unsafe { core::slice::from_raw_parts(buffer.cast::<u8>().as_ptr(), size) };
                 contents.borrow_mut().extend_from_slice(buffer);
-                1
+                objc2::runtime::CBool(true)
             },
         );
 
-        // SAFETY: Transmute from return type `u8` to `bool` is safe, since we
-        // only ever return `1` / `true`.
-        // TODO: Fix the need for this in `block2`.
+        // SAFETY: Only extends the lifetime, the applier is `DISPATCH_NOESCAPE`.
         let block = unsafe {
-            core::mem::transmute::<
-                &'_ block2::Block<
-                    '_,
-                    fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> u8,
-                >,
-                &'_ block2::Block<
-                    '_,
-                    fn(NonNull<DispatchData>, usize, NonNull<core::ffi::c_void>, usize) -> bool,
-                >,
-            >(&block)
+            core::mem::transmute::<&block2::Block<'_, _>, &crate::DispatchDataApplier>(&*block)
         };
 
-        // SAFETY: The block is implemented correctly.
         self.apply(block);
         contents.take()
     }

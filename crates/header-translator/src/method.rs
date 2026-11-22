@@ -502,13 +502,12 @@ impl Method {
                     parse_param_children(&entity, context);
 
                 let ty = entity.get_type().expect("argument type");
-                let mut ty = Ty::parse_function_argument(
+                let mut ty = Ty::parse_method_argument(
                     ty,
                     qualifier,
                     sendable,
                     no_escape,
                     out_pointer_retained,
-                    false,
                     context,
                 );
 

@@ -86,8 +86,7 @@ mod inner {
 ///
 /// This is FFI-safe and can be used directly with `msg_send!` and `extern`
 /// functions as a substitute for `BOOL` in Objective-C. If your Objective-C
-/// code uses C99 `_Bool`, you should use a `#[repr(transparent)]` wrapper
-/// around `bool` instead.
+/// code uses C99 `_Bool`, you should use [`CBool`] instead.
 ///
 /// Note that this is able to contain more states than `bool` on some
 /// platforms, but these cases should not be relied on! The comparison traits
@@ -245,6 +244,38 @@ unsafe impl Encode for Bool {
 // @encode(char*); // -> "*"
 // ```
 unsafe impl RefEncode for Bool {
+    const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
+}
+
+/// C's `bool`, as opposed to Objective-C's [`BOOL`][Bool].
+///
+/// `msg_send!` treats Rust's [`bool`] as `BOOL`, so signatures that use C's
+/// `bool` (such as sometimes done in blocks) should use this instead to get the right ABI.
+#[repr(transparent)]
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct CBool(pub bool);
+
+impl From<bool> for CBool {
+    #[inline]
+    fn from(b: bool) -> CBool {
+        CBool(b)
+    }
+}
+
+impl From<CBool> for bool {
+    #[inline]
+    fn from(b: CBool) -> bool {
+        b.0
+    }
+}
+
+// SAFETY: `CBool` is `repr(transparent)`, and Rust's `bool` is C's `bool`.
+unsafe impl Encode for CBool {
+    const ENCODING: Encoding = Encoding::Bool;
+}
+
+// SAFETY: Same as above.
+unsafe impl RefEncode for CBool {
     const ENCODING_REF: Encoding = Encoding::Pointer(&Self::ENCODING);
 }
 

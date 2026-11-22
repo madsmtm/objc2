@@ -376,6 +376,8 @@ pub enum Primitive {
     /// `()` or `c_void`
     Void,
     C99Bool,
+    /// C99's `bool` where Rust's `bool` would mean `BOOL`.
+    CBool,
     Char,
     SChar,
     UChar,
@@ -421,6 +423,7 @@ impl Primitive {
     fn required_items(&self) -> impl Iterator<Item = ItemTree> {
         match self {
             Self::ObjcBool => Some(ItemTree::objc("Bool")),
+            Self::CBool => Some(ItemTree::objc("CBool")),
             Self::NSInteger => Some(ItemTree::objc("NSInteger")),
             Self::NSUInteger => Some(ItemTree::objc("NSUInteger")),
             Self::Imp => Some(ItemTree::objc("Imp")),
@@ -444,6 +447,7 @@ impl Primitive {
             // Primitives
             Self::Void => "()",
             Self::C99Bool => "bool",
+            Self::CBool => "CBool",
             Self::Char => "c_char",
             Self::SChar => "c_schar",
             Self::UChar => "c_uchar",
@@ -2082,22 +2086,26 @@ impl Ty {
                     Self::Pointee(PointeeTy::Fn {
                         is_variadic: false,
                         no_escape: fn_no_escape,
-                        arguments,
-                        result_type,
-                    }) => Self::Pointer {
-                        nullability,
-                        read: true,
-                        // TODO: What does `const` mean on block pointers?
-                        written: !is_const,
-                        lifetime,
-                        bounds: PointerBounds::Single,
-                        pointee: Box::new(Self::Pointee(PointeeTy::Block {
-                            sendable,
-                            no_escape: fn_no_escape || no_escape,
-                            arguments,
-                            result_type,
-                        })),
-                    },
+                        mut arguments,
+                        mut result_type,
+                    }) => {
+                        arguments.iter_mut().for_each(Self::use_cbool);
+                        result_type.use_cbool();
+                        Self::Pointer {
+                            nullability,
+                            read: true,
+                            // TODO: What does `const` mean on block pointers?
+                            written: !is_const,
+                            lifetime,
+                            bounds: PointerBounds::Single,
+                            pointee: Box::new(Self::Pointee(PointeeTy::Block {
+                                sendable,
+                                no_escape: fn_no_escape || no_escape,
+                                arguments,
+                                result_type,
+                            })),
+                        }
+                    }
                     pointee => panic!("unexpected pointee in block: {pointee:?}"),
                 }
             }
@@ -3195,6 +3203,16 @@ impl Ty {
         matches!(self.through_wrapper(), Self::Primitive(Primitive::ObjcBool))
     }
 
+    /// Use `CBool` for C99's `bool` in blocks and Objective-C methods, where
+    /// Rust's `bool` means `BOOL`.
+    fn use_cbool(&mut self) {
+        match self {
+            Self::Primitive(primitive @ Primitive::C99Bool) => *primitive = Primitive::CBool,
+            Self::Pointer { pointee, .. } => pointee.use_cbool(),
+            _ => {}
+        }
+    }
+
     fn is_cf_bool(&self) -> bool {
         matches!(self, Self::TypeDef { id, .. } if matches!(&*id.name, "Boolean" | "boolean_t"))
     }
@@ -3450,10 +3468,6 @@ impl Ty {
                     write!(f, "Option<&CStr>")
                 }
             }
-            Self::Primitive(Primitive::C99Bool) => {
-                warn!("C99's bool as Objective-C method return is ill supported");
-                write!(f, "bool")
-            }
             Self::Primitive(Primitive::ObjcBool) => write!(f, "bool"),
             Self::Result { ty, err, .. } => {
                 // Using `Result<Option<X>, Y>` will be detected by `objc2`,
@@ -3501,16 +3515,11 @@ impl Ty {
                 })
             }
             // NO -> error
-            Self::Primitive(Primitive::C99Bool) | Self::Primitive(Primitive::ObjcBool) => {
-                if *self == Self::Primitive(Primitive::C99Bool) && is_method {
-                    warn!("C99's bool as Objective-C method return is ill supported");
-                }
-                Some(Self::Result {
-                    ty: Box::new(Self::Primitive(Primitive::Void)),
-                    err: Box::new(err),
-                    original_ty: Box::new(self.clone()),
-                })
-            }
+            Self::Primitive(Primitive::C99Bool | Primitive::ObjcBool) => Some(Self::Result {
+                ty: Box::new(Self::Primitive(Primitive::Void)),
+                err: Box::new(err),
+                original_ty: Box::new(self.clone()),
+            }),
             _ if self.is_cf_bool() && !is_method => Some(Self::Result {
                 ty: Box::new(Self::Primitive(Primitive::Void)),
                 err: Box::new(err),
@@ -3522,7 +3531,6 @@ impl Ty {
 
     pub(crate) fn method_return_encoding_type(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Primitive(Primitive::C99Bool) => write!(f, "Bool"),
             Self::Pointer { pointee, .. } if **pointee == Self::Pointee(PointeeTy::Self_) => {
                 write!(f, "*mut This")
             }
@@ -4367,10 +4375,6 @@ impl Ty {
 
     pub(crate) fn method_argument(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Primitive(Primitive::C99Bool) => {
-                warn!("C99's bool as Objective-C method argument is ill supported");
-                write!(f, "bool")
-            }
             Self::Primitive(Primitive::ObjcBool) => {
                 write!(f, "bool")
             }
@@ -4478,7 +4482,7 @@ impl Ty {
 
     pub(crate) fn method_argument_encoding_type(&self) -> impl fmt::Display + '_ {
         FormatterFn(move |f| match self {
-            Self::Primitive(Primitive::C99Bool | Primitive::ObjcBool) => write!(f, "Bool"),
+            Self::Primitive(Primitive::ObjcBool) => write!(f, "Bool"),
             // Make most-pointers use `plain` encoding (e.g. don't try
             // anything fancy with `&` etc.), except for function pointers,
             // for which we want to use the `method_argument` override.
@@ -4625,12 +4629,34 @@ impl Ty {
         ty
     }
 
+    pub(crate) fn parse_method_argument(
+        ty: Type<'_>,
+        qualifier: Option<MethodArgumentQualifier>,
+        sendable: Option<bool>,
+        no_escape: bool,
+        out_pointer_retained: Option<bool>,
+        context: &Context<'_>,
+    ) -> Self {
+        let mut ty = Self::parse_function_argument(
+            ty,
+            qualifier,
+            sendable,
+            no_escape,
+            out_pointer_retained,
+            false,
+            context,
+        );
+        ty.use_cbool();
+        ty
+    }
+
     pub(crate) fn parse_method_return(
         ty: Type<'_>,
         default_nonnull: bool,
         context: &Context<'_>,
     ) -> Self {
         let mut ty = Self::parse(ty, false, context);
+        ty.use_cbool();
 
         // As in `parse_property_return`, the nullability is not guaranteed by
         // the method, and can also fail in OOM situations, but that is
@@ -4650,7 +4676,7 @@ impl Ty {
     }
 
     pub(crate) fn parse_function_return(ty: Type<'_>, context: &Context<'_>) -> Self {
-        Self::parse_method_return(ty, false, context)
+        Self::parse(ty, false, context)
     }
 
     pub(crate) fn parse_typedef(
@@ -4682,6 +4708,7 @@ impl Ty {
         context: &Context<'_>,
     ) -> Self {
         let mut ty = Self::parse(ty, false, context);
+        ty.use_cbool();
 
         // `@property(copy)` is expected to always return a nonnull instance
         // (e.g. for strings it returns the empty string, while
@@ -4724,6 +4751,7 @@ impl Ty {
         context: &Context<'_>,
     ) -> Self {
         let mut ty = Self::parse(ty, true, context);
+        ty.use_cbool();
 
         // See `parse_property_getter` above.
         if is_copy {

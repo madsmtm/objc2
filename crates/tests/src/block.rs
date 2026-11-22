@@ -1,12 +1,13 @@
 use alloc::string::ToString;
 use core::cell::RefCell;
+use core::ptr::NonNull;
 use std::ffi::CStr;
 use std::thread_local;
 
 use block2::{global_block, Block, ManualBlockEncoding, RcBlock, StackBlock};
-use objc2::encode::{Encode, Encoding};
+use objc2::encode::{Encode, Encoding, RefEncode};
 use objc2::rc::Retained;
-use objc2::runtime::{AnyObject, Bool, NSObject};
+use objc2::runtime::{AnyObject, Bool, CBool, NSObject};
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -107,6 +108,12 @@ extern "C-unwind" {
 
     fn get_array_block() -> *mut Block<'static, fn(*const [i32; 4]) -> i32>;
     fn invoke_array_block(block: &Block<'_, fn(*const [i32; 4]) -> i32>, s: &[i32; 4]) -> i32;
+
+    fn get_bool_block() -> *mut BoolBlock<'static, CBool>;
+    fn invoke_bool_block(block: &BoolBlock<'_, CBool>, a: CBool, out: NonNull<CBool>) -> CBool;
+
+    fn get_objc_bool_block() -> *mut BoolBlock<'static, Bool>;
+    fn invoke_objc_bool_block(block: &BoolBlock<'_, Bool>, a: Bool, out: NonNull<Bool>) -> Bool;
 
     fn try_block_debugging(x: i32);
 }
@@ -308,6 +315,59 @@ fn test_array() {
     invoke_assert(&StackBlock::with_encoding::<Enc>(closure), 10);
     invoke_assert(&RcBlock::with_encoding::<_, Enc>(closure), 10);
     invoke_assert(GLOBAL_BLOCK.as_ref(), 10);
+}
+
+type BoolBlock<'a, B> = Block<'a, fn(B, NonNull<B>) -> B>;
+
+/// Writes `a` to `out` and returns `!a`.
+fn not<B: Copy + From<bool> + Into<bool>>(a: B, out: NonNull<B>) -> B {
+    // SAFETY: Callers pass a pointer to a live boolean.
+    unsafe { out.write(a) };
+    B::from(!a.into())
+}
+
+#[track_caller]
+fn assert_not<B: Encode + RefEncode + Copy + From<bool> + Into<bool>>(
+    block: &BoolBlock<'_, B>,
+    invoke: unsafe extern "C-unwind" fn(&BoolBlock<'_, B>, B, NonNull<B>) -> B,
+) {
+    for a in [false, true] {
+        let mut out = B::from(!a);
+        let ret = block.call(B::from(a), NonNull::from(&mut out));
+        assert_eq!((ret.into(), out.into()), (!a, a));
+
+        let mut out = B::from(!a);
+        // SAFETY: The block has the signature the C function expects, and
+        // `out` outlives the call.
+        let ret = unsafe { invoke(block, B::from(a), NonNull::from(&mut out)) };
+        assert_eq!((ret.into(), out.into()), (!a, a));
+    }
+}
+
+#[test]
+fn test_c_bool_block() {
+    global_block! {
+        static GLOBAL_BLOCK = |a: CBool, out: NonNull<CBool>| -> CBool { not(a, out) };
+    }
+
+    // SAFETY: The C function returns a global block.
+    assert_not(unsafe { &*get_bool_block() }, invoke_bool_block);
+    assert_not(&StackBlock::new(not::<CBool>), invoke_bool_block);
+    assert_not(&RcBlock::new(not::<CBool>), invoke_bool_block);
+    assert_not(GLOBAL_BLOCK.as_ref(), invoke_bool_block);
+}
+
+#[test]
+fn test_objc_bool_block() {
+    global_block! {
+        static GLOBAL_BLOCK = |a: Bool, out: NonNull<Bool>| -> Bool { not(a, out) };
+    }
+
+    // SAFETY: The C function returns a global block.
+    assert_not(unsafe { &*get_objc_bool_block() }, invoke_objc_bool_block);
+    assert_not(&StackBlock::new(not::<Bool>), invoke_objc_bool_block);
+    assert_not(&RcBlock::new(not::<Bool>), invoke_objc_bool_block);
+    assert_not(GLOBAL_BLOCK.as_ref(), invoke_objc_bool_block);
 }
 
 #[test]

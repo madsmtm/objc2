@@ -28,7 +28,8 @@ pub use libc;
 pub use objc2::ffi::{NSInteger, NSUInteger};
 pub use objc2::rc::{Allocated, Retained};
 pub use objc2::runtime::{
-    AnyClass, AnyObject, AnyProtocol, Bool, Imp, NSObject, NSObjectProtocol, ProtocolObject, Sel,
+    AnyClass, AnyObject, AnyProtocol, Bool, CBool, Imp, NSObject, NSObjectProtocol, ProtocolObject,
+    Sel,
 };
 pub use objc2::{available, sel, ClassType, MainThreadMarker};
 use std::hint::black_box;
